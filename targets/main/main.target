@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.5"?>
+
+<target name="Beacon Main Target">
+<locations>
+<location includeAllPlatforms="false" includeMode="slicer" type="InstallableUnit">
+<unit id="org.eclipse.equinox.sdk.feature.group" version="3.5.2.r352_v20100209-7G7MAD7lQiEeG_QL5AOoAHLYaYBg"/>
+<repository location="http://download.eclipse.org/releases/galileo"/>
+</location>
+<location path="${workspace_loc:/Beacon Main Target/plugins}" type="Directory"/>
+</locations>
+</target>

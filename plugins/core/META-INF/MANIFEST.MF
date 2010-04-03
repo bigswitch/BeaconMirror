@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Beacon Core
+Bundle-SymbolicName: org.beacon.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.openflow.example;version="0.1.0",
+ org.openflow.io;version="0.1.0",
+ org.openflow.protocol;version="0.1.0",
+ org.openflow.protocol.action;version="0.1.0",
+ org.openflow.protocol.factory;version="0.1.0",
+ org.openflow.util;version="0.1.0",
+ org.osgi.framework
+Bundle-Activator: org.beacon.core.Activator
