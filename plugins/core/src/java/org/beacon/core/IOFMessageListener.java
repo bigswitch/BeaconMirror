@@ -2,14 +2,14 @@ package org.beacon.core;
 
 import org.openflow.protocol.OFMessage;
 
-public interface IOFMessageListener<E extends OFMessage> {
+public interface IOFMessageListener {
 
   /**
    * 
    * @param sw
    * @param msg
    */
-  public void receive(IOFSwitch sw, E msg);
+  public void receive(IOFSwitch sw, OFMessage msg);
 
   /**
    * 

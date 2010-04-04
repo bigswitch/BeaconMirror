@@ -1,5 +1,31 @@
 package org.beacon.core;
 
-public interface IOFSwitch {
+import java.nio.channels.SocketChannel;
 
+import org.openflow.io.OFMessageAsyncStream;
+
+public interface IOFSwitch {
+    /**
+     * 
+     * @return
+     */
+    public OFMessageAsyncStream getStream();
+
+    /**
+     * 
+     * @param stream
+     */
+    public void setStream(OFMessageAsyncStream stream);
+
+    /**
+     * 
+     * @return
+     */
+    public SocketChannel getSocketChannel();
+
+    /**
+     * 
+     * @param channel
+     */
+    public void setSocketChannel(SocketChannel channel);
 }

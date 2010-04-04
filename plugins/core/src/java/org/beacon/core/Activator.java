@@ -7,18 +7,16 @@ import org.osgi.framework.ServiceRegistration;
 
 public class Activator implements BundleActivator {
   protected ServiceRegistration beaconProviderService;
+  protected Controller controller;
 
   @Override
   public void start(BundleContext context) throws Exception {
-    Controller cc = new Controller(6633);
-    cc.run();
-    beaconProviderService = context.registerService(
-        "org.beacon.core.IBeaconProvider", cc, null);
+    controller = new Controller();
+    controller.startup();
   }
 
   @Override
   public void stop(BundleContext context) throws Exception {
-    if (beaconProviderService != null)
-      beaconProviderService.unregister();
+      controller.shutdown();
   }
 }
