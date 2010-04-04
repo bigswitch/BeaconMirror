@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startUp" deactivate="shutDown" name="org.beacon.plugins.hub">
+   <implementation class="org.beacon.plugins.hub.Hub"/>
+   <reference bind="setBeaconProvider" cardinality="1..1" interface="org.beacon.core.IBeaconProvider" name="IBeaconProvider" policy="static"/>
+</scr:component>

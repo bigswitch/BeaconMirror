@@ -23,7 +23,7 @@ import org.openflow.util.U16;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (derickso@stanford.edu) - 04/04/10
  */
 public class LearningSwitch implements IOFMessageListener {
     protected IBeaconProvider beaconProvider;
@@ -35,7 +35,6 @@ public class LearningSwitch implements IOFMessageListener {
      */
     public void setBeaconProvider(IBeaconProvider beaconProvider) {
         this.beaconProvider = beaconProvider;
-        System.out.println("setbeaconprovider");
     }
 
     public void startUp() {
@@ -48,7 +47,7 @@ public class LearningSwitch implements IOFMessageListener {
 
     @Override
     public String getName() {
-        return null;
+        return LearningSwitch.class.getPackage().getName();
     }
 
     @Override

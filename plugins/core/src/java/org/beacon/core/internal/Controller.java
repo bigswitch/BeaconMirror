@@ -166,7 +166,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         Controller sc = new Controller();
         if (cmd.hasOption("t"))
             sc.threadCount = Integer.valueOf(cmd.getOptionValue("t"));
-        sc.startup();
+        sc.startUp();
     }
 
     public static CommandLine parseArgs(String[] args) {
@@ -218,7 +218,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         }
     }
 
-    public void startup() throws IOException {
+    public void startUp() throws IOException {
         listenSock = ServerSocketChannel.open();
         listenSock.configureBlocking(false);
         listenSock.socket().bind(new java.net.InetSocketAddress(6633));
@@ -265,7 +265,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         );
     }
 
-    public void shutdown() throws IOException {
+    public void shutDown() throws IOException {
         // shutdown listening for new switches
         listenSelectLoop.shutdown();
         listenSock.socket().close();
