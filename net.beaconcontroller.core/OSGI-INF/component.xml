@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startUp" deactivate="shutDown" name="net.beaconcontroller.core" immediate="true">
+   <implementation class="net.beaconcontroller.core.internal.Controller"/>
+   <service>
+      <provide interface="net.beaconcontroller.core.IBeaconProvider"/>
+   </service>
+</scr:component>

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Beacon Core
+Bundle-SymbolicName: net.beaconcontroller.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.commons.cli;version="1.2.0",
+ org.openflow.example;version="0.1.0",
+ org.openflow.io;version="0.1.0",
+ org.openflow.protocol;version="0.1.0",
+ org.openflow.protocol.action;version="0.1.0",
+ org.openflow.protocol.factory;version="0.1.0",
+ org.openflow.util;version="0.1.0",
+ org.osgi.framework
+Service-Component: OSGI-INF/component.xml
+Export-Package: net.beaconcontroller.core,
+ net.beaconcontroller.core.internal;x-internal:=true
