@@ -38,12 +38,10 @@ public class Hub implements IOFMessageListener {
         beaconProvider.removeListener(OFType.PACKET_IN, this);
     }
 
-    @Override
     public String getName() {
         return Hub.class.getPackage().getName();
     }
 
-    @Override
     public void receive(IOFSwitch sw, OFMessage msg) {
         OFPacketIn pi = (OFPacketIn) msg;
         OFPacketOut po = (OFPacketOut) sw.getStream().getMessageFactory()

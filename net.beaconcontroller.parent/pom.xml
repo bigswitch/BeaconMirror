@@ -10,10 +10,11 @@
     <beacon.version>0.0.1-SNAPSHOT</beacon.version>
   </properties>
   <modules>
+    <module>../target-platform</module>
     <module>../net.beaconcontroller.core</module>
     <module>../net.beaconcontroller.hub</module>
     <module>../net.beaconcontroller.learningswitch</module>
-    <module>../target-platform</module>
+    <module>../net.beaconcontroller.product</module>
   </modules>
   <build>
     <plugins>
@@ -30,6 +31,13 @@
         <configuration>
           <resolver>p2</resolver>
           <pomDependencies>consider</pomDependencies>
+          <environments>
+            <environment>
+              <os>linux</os>
+              <ws>gtk</ws>
+              <arch>x86</arch>
+            </environment>
+          </environments>
           <target>
             <artifact>
               <groupId>net.beaconcontroller</groupId>
@@ -42,6 +50,13 @@
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.openflow</groupId>
+      <artifactId>openflow</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+  </dependencies>
   <repositories>
     <repository>
       <id>gallileo</id>

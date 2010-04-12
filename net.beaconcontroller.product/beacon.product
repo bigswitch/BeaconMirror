@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="Beacon Controller" uid="net.beaconcontroller" version="0.0.1" useFeatures="false" includeLaunchers="true">
+
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console</programArgs>
+      <vmArgs>-server
+-XX:-UseParallelOldGC
+-XX:-UseParallelGC
+-Declipse.ignoreApp=true
+-Dosgi.noShutdown=true
+-Dequinox.ds.print=true</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <windowImages/>
+
+
+   <launcher name="beacon">
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+
+   <vm>
+   </vm>
+
+
+   <plugins>
+      <plugin id="com.springsource.org.apache.commons.cli"/>
+      <plugin id="net.beaconcontroller.core"/>
+      <plugin id="net.beaconcontroller.hub"/>
+      <plugin id="net.beaconcontroller.learningswitch"/>
+      <plugin id="org.eclipse.equinox.ds"/>
+      <plugin id="org.eclipse.equinox.util"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.openflow"/>
+   </plugins>
+
+   <configurations>
+      <plugin id="com.springsource.org.apache.commons.cli" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.core" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.hub" autoStart="false" startLevel="0" />
+      <plugin id="net.beaconcontroller.learningswitch" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.util" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
+      <plugin id="org.eclipse.osgi.services" autoStart="true" startLevel="0" />
+      <plugin id="org.openflow" autoStart="true" startLevel="0" />
+   </configurations>
+
+</product>

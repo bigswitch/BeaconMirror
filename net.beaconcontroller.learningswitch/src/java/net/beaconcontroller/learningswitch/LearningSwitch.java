@@ -46,12 +46,10 @@ public class LearningSwitch implements IOFMessageListener {
         beaconProvider.removeListener(OFType.PACKET_IN, this);
     }
 
-    @Override
     public String getName() {
         return LearningSwitch.class.getPackage().getName();
     }
 
-    @Override
     public void receive(IOFSwitch sw, OFMessage msg) {
         OFPacketIn pi = (OFPacketIn) msg;
         Map<Integer, Short> macTable = macTables.get(sw);
