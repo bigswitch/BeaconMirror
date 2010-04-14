@@ -8,7 +8,7 @@
 <repository location="http://download.eclipse.org/releases/galileo"/>
 </location>
 <location includeAllPlatforms="false" includeMode="slicer" type="InstallableUnit">
-<unit id="libraries.feature.feature.group" version="1.0.0"/>
+<unit id="libraries.feature.feature.group" version="1.0.1"/>
 <repository location="http://epic.stanford.edu/libraries"/>
 </location>
 </locations>

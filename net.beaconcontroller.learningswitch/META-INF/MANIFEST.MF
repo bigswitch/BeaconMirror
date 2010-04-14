@@ -10,4 +10,5 @@ Import-Package: net.beaconcontroller.core,
  org.openflow.protocol,
  org.openflow.protocol.action,
  org.openflow.protocol.factory,
- org.openflow.util
+ org.openflow.util,
+ org.slf4j;version="1.5.11"

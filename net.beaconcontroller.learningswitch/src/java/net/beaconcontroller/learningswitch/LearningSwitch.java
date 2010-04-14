@@ -21,12 +21,15 @@ import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.util.LRULinkedHashMap;
 import org.openflow.util.U16;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author David Erickson (derickso@stanford.edu) - 04/04/10
  */
 public class LearningSwitch implements IOFMessageListener {
+    protected static Logger logger = LoggerFactory.getLogger(LearningSwitch.class);
     protected IBeaconProvider beaconProvider;
     protected Map<IOFSwitch, Map<Integer, Short>> macTables =
         new HashMap<IOFSwitch, Map<Integer, Short>>();
@@ -39,10 +42,12 @@ public class LearningSwitch implements IOFMessageListener {
     }
 
     public void startUp() {
+        logger.info("Starting");
         beaconProvider.addListener(OFType.PACKET_IN, this);
     }
 
     public void shutDown() {
+        logger.info("Stopping");
         beaconProvider.removeListener(OFType.PACKET_IN, this);
     }
 
