@@ -4,5 +4,5 @@ Bundle-Name: net.beaconcontroller.logback.config
 Bundle-SymbolicName: net.beaconcontroller.logging.config
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: net.beaconcontroller
-Fragment-Host: ch.qos.logback.core;bundle-version="0.9.20"
+Fragment-Host: ch.qos.logback.classic;bundle-version="0.9.20"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

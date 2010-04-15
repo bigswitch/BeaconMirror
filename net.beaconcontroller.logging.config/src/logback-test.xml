@@ -6,8 +6,20 @@
       </pattern>
     </encoder>
   </appender>
+  <appender name="test.log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/test.log</file>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>logs/test.%d.log.zip</fileNamePattern>
+      <maxHistory>1</maxHistory>
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
+    </encoder>
+  </appender>
 
   <root level="debug">
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="test.log" />
   </root>
 </configuration>

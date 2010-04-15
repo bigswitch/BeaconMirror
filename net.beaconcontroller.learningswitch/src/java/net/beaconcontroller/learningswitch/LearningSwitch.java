@@ -24,6 +24,9 @@ import org.openflow.util.U16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
+
 /**
  *
  * @author David Erickson (derickso@stanford.edu) - 04/04/10
@@ -42,12 +45,12 @@ public class LearningSwitch implements IOFMessageListener {
     }
 
     public void startUp() {
-        logger.info("Starting");
+        logger.trace("Starting");
         beaconProvider.addListener(OFType.PACKET_IN, this);
     }
 
     public void shutDown() {
-        logger.info("Stopping");
+        logger.trace("Stopping");
         beaconProvider.removeListener(OFType.PACKET_IN, this);
     }
 

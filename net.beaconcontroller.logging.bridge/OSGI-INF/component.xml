@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startUp" deactivate="shutDown" name="net.beaconcontroller.logging.bridge">
+   <implementation class="net.beaconcontroller.logging.bridge.OSGIToSLF4JLoggingBridge"/>
+   <reference bind="addLogReaderService" cardinality="0..n" interface="org.osgi.service.log.LogReaderService" name="LogReaderService" policy="dynamic" unbind="removeLogReaderService"/>
+   <reference bind="addExtendedLogReaderService" cardinality="0..n" interface="org.eclipse.equinox.log.ExtendedLogReaderService" name="ExtendedLogReaderService" policy="dynamic" unbind="removeExtendedLogReaderService"/>
+</scr:component>

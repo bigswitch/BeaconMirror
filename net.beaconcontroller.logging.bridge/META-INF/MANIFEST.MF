@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: net.beaconcontroller.logging.bridge
+Bundle-SymbolicName: net.beaconcontroller.logging.bridge;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: net.beaconcontroller
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.equinox.log;version="1.0.0",
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.log;version="1.3.0",
+ org.slf4j;version="1.5.11"
+Service-Component: OSGI-INF/component.xml
