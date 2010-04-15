@@ -24,9 +24,6 @@ import org.openflow.util.U16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.util.StatusPrinter;
-
 /**
  *
  * @author David Erickson (derickso@stanford.edu) - 04/04/10
