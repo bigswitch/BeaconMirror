@@ -1,0 +1,198 @@
+23:46:39.377 [Start Level Event Dispatcher] INFO  org.mortbay.log - Logging to Logger[org.mortbay.log] via org.mortbay.log.Slf4jLog
+23:46:39.422 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container Server@6e3e28 + SelectChannelConnector@0.0.0.0:80 as connector
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - filterNameMap=null
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - pathFilters=null
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletFilterMap=null
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletPathMap={/*=org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-591370671}
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletNameMap={org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-591370671=org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-591370671}
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container Server@6e3e28 + org.mortbay.jetty.servlet.Context@40d1e07c{/,null} as handler
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container ServletHandler@12e90e23 + org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-591370671 as servlet
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container ServletHandler@12e90e23 + (S=org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-591370671,[/*]) as servletMapping
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container SessionHandler@29f2588 + ServletHandler@12e90e23 as handler
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container SessionHandler@29f2588 + org.mortbay.jetty.servlet.HashSessionManager@1e590510 as sessionManager
+23:46:39.454 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container org.mortbay.jetty.servlet.Context@40d1e07c{/,null} + SessionHandler@29f2588 as handler
+23:46:39.455 [Start Level Event Dispatcher] INFO  org.mortbay.log - jetty-6.1.x
+23:46:39.462 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container Server@6e3e28 + org.mortbay.thread.QueuedThreadPool@22dca7d0 as threadpool
+23:46:39.463 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.mortbay.thread.QueuedThreadPool@22dca7d0
+23:46:39.487 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container org.mortbay.jetty.servlet.Context@40d1e07c{/,null} + ErrorHandler@58f41393 as errorHandler
+23:46:39.489 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container Server@6e3e28 + org.mortbay.jetty.servlet.HashSessionIdManager@56b18494 as sessionIdManager
+23:46:39.489 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Init SecureRandom.
+23:46:44.772 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.mortbay.jetty.servlet.HashSessionIdManager@56b18494
+23:46:44.773 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.mortbay.jetty.servlet.HashSessionManager@1e590510
+23:46:44.773 [Start Level Event Dispatcher] DEBUG org.mortbay.log - filterNameMap=null
+23:46:44.773 [Start Level Event Dispatcher] DEBUG org.mortbay.log - pathFilters=null
+23:46:44.773 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletFilterMap=null
+23:46:44.774 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletPathMap={/*=org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-591370671}
+23:46:44.774 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletNameMap={org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-591370671=org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-591370671}
+23:46:44.774 [Start Level Event Dispatcher] DEBUG org.mortbay.log - starting ServletHandler@12e90e23
+23:46:44.774 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started ServletHandler@12e90e23
+23:46:44.774 [Start Level Event Dispatcher] DEBUG org.mortbay.log - starting SessionHandler@29f2588
+23:46:44.774 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started SessionHandler@29f2588
+23:46:44.774 [Start Level Event Dispatcher] DEBUG org.mortbay.log - starting org.mortbay.jetty.servlet.Context@40d1e07c{/,null}
+23:46:44.774 [Start Level Event Dispatcher] DEBUG org.mortbay.log - starting ErrorHandler@58f41393
+23:46:44.774 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started ErrorHandler@58f41393
+23:46:44.776 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-591370671
+23:46:44.776 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.mortbay.jetty.servlet.Context@40d1e07c{/,null}
+23:46:44.776 [Start Level Event Dispatcher] DEBUG org.mortbay.log - starting Server@6e3e28
+23:46:44.779 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.mortbay.jetty.nio.SelectChannelConnector$1@134683c0
+23:46:44.785 [Start Level Event Dispatcher] WARN  org.mortbay.log - failed SelectChannelConnector@0.0.0.0:80
+java.net.SocketException: Permission denied
+	at sun.nio.ch.Net.bind(Native Method) ~[na:1.6.0_15]
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:119) ~[na:1.6.0_15]
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:59) ~[na:1.6.0_15]
+	at org.mortbay.jetty.nio.SelectChannelConnector.open(SelectChannelConnector.java:216) ~[na:na]
+	at org.mortbay.jetty.nio.SelectChannelConnector.doStart(SelectChannelConnector.java:315) ~[na:na]
+	at org.mortbay.component.AbstractLifeCycle.start(AbstractLifeCycle.java:50) ~[na:na]
+	at org.mortbay.jetty.Server.doStart(Server.java:233) ~[na:na]
+	at org.mortbay.component.AbstractLifeCycle.start(AbstractLifeCycle.java:50) ~[na:na]
+	at org.eclipse.equinox.http.jetty.internal.HttpServerManager.updated(HttpServerManager.java:109) ~[na:na]
+	at org.eclipse.equinox.http.jetty.internal.Activator.start(Activator.java:60) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl$1.run(BundleContextImpl.java:783) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at java.security.AccessController.doPrivileged(Native Method) [na:1.6.0_15]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.startActivator(BundleContextImpl.java:774) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.start(BundleContextImpl.java:755) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.BundleHost.startWorker(BundleHost.java:352) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.AbstractBundle.resume(AbstractBundle.java:370) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.Framework.resumeBundle(Framework.java:1068) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.resumeBundles(StartLevelManager.java:557) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.incFWSL(StartLevelManager.java:464) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.doSetStartLevel(StartLevelManager.java:248) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.dispatchEvent(StartLevelManager.java:445) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:227) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:337) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+23:46:44.788 [Start Level Event Dispatcher] WARN  org.mortbay.log - failed Server@6e3e28
+java.net.SocketException: Permission denied
+	at sun.nio.ch.Net.bind(Native Method) ~[na:1.6.0_15]
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:119) ~[na:1.6.0_15]
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:59) ~[na:1.6.0_15]
+	at org.mortbay.jetty.nio.SelectChannelConnector.open(SelectChannelConnector.java:216) ~[na:na]
+	at org.mortbay.jetty.nio.SelectChannelConnector.doStart(SelectChannelConnector.java:315) ~[na:na]
+	at org.mortbay.component.AbstractLifeCycle.start(AbstractLifeCycle.java:50) ~[na:na]
+	at org.mortbay.jetty.Server.doStart(Server.java:233) ~[na:na]
+	at org.mortbay.component.AbstractLifeCycle.start(AbstractLifeCycle.java:50) ~[na:na]
+	at org.eclipse.equinox.http.jetty.internal.HttpServerManager.updated(HttpServerManager.java:109) ~[na:na]
+	at org.eclipse.equinox.http.jetty.internal.Activator.start(Activator.java:60) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl$1.run(BundleContextImpl.java:783) ~[na:na]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.6.0_15]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.startActivator(BundleContextImpl.java:774) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.start(BundleContextImpl.java:755) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.BundleHost.startWorker(BundleHost.java:352) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.AbstractBundle.resume(AbstractBundle.java:370) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.Framework.resumeBundle(Framework.java:1068) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.resumeBundles(StartLevelManager.java:557) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.incFWSL(StartLevelManager.java:464) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.doSetStartLevel(StartLevelManager.java:248) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.dispatchEvent(StartLevelManager.java:445) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:227) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:337) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+23:46:45.572 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container Server@255b5c1f + SelectChannelConnector@0.0.0.0:80 as connector
+23:46:45.572 [Start Level Event Dispatcher] DEBUG org.mortbay.log - filterNameMap=null
+23:46:45.573 [Start Level Event Dispatcher] DEBUG org.mortbay.log - pathFilters=null
+23:46:45.573 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletFilterMap=null
+23:46:45.573 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletPathMap={/*=org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-285018722}
+23:46:45.573 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletNameMap={org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-285018722=org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-285018722}
+23:46:45.573 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container Server@255b5c1f + org.mortbay.jetty.servlet.Context@54b4b0a4{/,null} as handler
+23:46:45.574 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container ServletHandler@10ba5a81 + org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-285018722 as servlet
+23:46:45.574 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container ServletHandler@10ba5a81 + (S=org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-285018722,[/*]) as servletMapping
+23:46:45.574 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container SessionHandler@3a8bd3bb + ServletHandler@10ba5a81 as handler
+23:46:45.574 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container SessionHandler@3a8bd3bb + org.mortbay.jetty.servlet.HashSessionManager@31f9b804 as sessionManager
+23:46:45.574 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container org.mortbay.jetty.servlet.Context@54b4b0a4{/,null} + SessionHandler@3a8bd3bb as handler
+23:46:45.574 [Start Level Event Dispatcher] INFO  org.mortbay.log - jetty-6.1.x
+23:46:45.574 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container Server@255b5c1f + org.mortbay.thread.QueuedThreadPool@1a0283e as threadpool
+23:46:45.575 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.mortbay.thread.QueuedThreadPool@1a0283e
+23:46:45.576 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container org.mortbay.jetty.servlet.Context@54b4b0a4{/,null} + ErrorHandler@7220b722 as errorHandler
+23:46:45.576 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Container Server@255b5c1f + org.mortbay.jetty.servlet.HashSessionIdManager@3de3940a as sessionIdManager
+23:46:45.576 [Start Level Event Dispatcher] DEBUG org.mortbay.log - Init SecureRandom.
+23:46:45.576 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.mortbay.jetty.servlet.HashSessionIdManager@3de3940a
+23:46:45.584 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.mortbay.jetty.servlet.HashSessionManager@31f9b804
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - filterNameMap=null
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - pathFilters=null
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletFilterMap=null
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletPathMap={/*=org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-285018722}
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - servletNameMap={org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-285018722=org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-285018722}
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - starting ServletHandler@10ba5a81
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started ServletHandler@10ba5a81
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - starting SessionHandler@3a8bd3bb
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started SessionHandler@3a8bd3bb
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - starting org.mortbay.jetty.servlet.Context@54b4b0a4{/,null}
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - starting ErrorHandler@7220b722
+23:46:45.585 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started ErrorHandler@7220b722
+23:46:45.587 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet-285018722
+23:46:45.587 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.mortbay.jetty.servlet.Context@54b4b0a4{/,null}
+23:46:45.587 [Start Level Event Dispatcher] DEBUG org.mortbay.log - starting Server@255b5c1f
+23:46:45.588 [Start Level Event Dispatcher] DEBUG org.mortbay.log - started org.mortbay.jetty.nio.SelectChannelConnector$1@2bbe8bf1
+23:46:45.591 [Start Level Event Dispatcher] WARN  org.mortbay.log - failed SelectChannelConnector@0.0.0.0:80
+java.net.SocketException: Permission denied
+	at sun.nio.ch.Net.bind(Native Method) ~[na:1.6.0_15]
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:119) ~[na:1.6.0_15]
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:59) ~[na:1.6.0_15]
+	at org.mortbay.jetty.nio.SelectChannelConnector.open(SelectChannelConnector.java:216) ~[na:na]
+	at org.mortbay.jetty.nio.SelectChannelConnector.doStart(SelectChannelConnector.java:315) ~[na:na]
+	at org.mortbay.component.AbstractLifeCycle.start(AbstractLifeCycle.java:50) ~[na:na]
+	at org.mortbay.jetty.Server.doStart(Server.java:233) ~[na:na]
+	at org.mortbay.component.AbstractLifeCycle.start(AbstractLifeCycle.java:50) ~[na:na]
+	at org.eclipse.equinox.http.jetty.internal.HttpServerManager.updated(HttpServerManager.java:109) ~[na:na]
+	at org.eclipse.equinox.http.jetty.internal.Activator.start(Activator.java:60) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl$1.run(BundleContextImpl.java:783) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at java.security.AccessController.doPrivileged(Native Method) [na:1.6.0_15]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.startActivator(BundleContextImpl.java:774) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.start(BundleContextImpl.java:755) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.BundleHost.startWorker(BundleHost.java:352) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.AbstractBundle.resume(AbstractBundle.java:370) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.Framework.resumeBundle(Framework.java:1068) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.setBundleSL(StartLevelManager.java:691) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.dispatchEvent(StartLevelManager.java:442) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:227) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:337) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+23:46:45.595 [Start Level Event Dispatcher] WARN  org.mortbay.log - failed Server@255b5c1f
+java.net.SocketException: Permission denied
+	at sun.nio.ch.Net.bind(Native Method) ~[na:1.6.0_15]
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:119) ~[na:1.6.0_15]
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:59) ~[na:1.6.0_15]
+	at org.mortbay.jetty.nio.SelectChannelConnector.open(SelectChannelConnector.java:216) ~[na:na]
+	at org.mortbay.jetty.nio.SelectChannelConnector.doStart(SelectChannelConnector.java:315) ~[na:na]
+	at org.mortbay.component.AbstractLifeCycle.start(AbstractLifeCycle.java:50) ~[na:na]
+	at org.mortbay.jetty.Server.doStart(Server.java:233) ~[na:na]
+	at org.mortbay.component.AbstractLifeCycle.start(AbstractLifeCycle.java:50) ~[na:na]
+	at org.eclipse.equinox.http.jetty.internal.HttpServerManager.updated(HttpServerManager.java:109) ~[na:na]
+	at org.eclipse.equinox.http.jetty.internal.Activator.start(Activator.java:60) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl$1.run(BundleContextImpl.java:783) ~[na:na]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.6.0_15]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.startActivator(BundleContextImpl.java:774) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.BundleContextImpl.start(BundleContextImpl.java:755) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.BundleHost.startWorker(BundleHost.java:352) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.AbstractBundle.resume(AbstractBundle.java:370) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.Framework.resumeBundle(Framework.java:1068) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.setBundleSL(StartLevelManager.java:691) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.dispatchEvent(StartLevelManager.java:442) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:227) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:337) [org.eclipse.osgi_3.5.2.R35x_v20100126.jar:na]
+23:50:28.903 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] INFO  n.b.logging.bridge.SLF4JLogListener - BundleEvent STARTED
+23:50:28.925 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] INFO  n.b.logging.bridge.SLF4JLogListener - ServiceEvent REGISTERED
+23:50:28.928 [Framework Event Dispatcher] INFO  n.b.l.bridge.BeaconBundleListener - Started: net.beaconcontroller.core
+23:50:28.929 [Framework Event Dispatcher] INFO  n.b.l.bridge.BeaconBundleListener - Started: org.openflow
+23:50:28.929 [Framework Event Dispatcher] ERROR n.b.l.b.BeaconFrameworkListener - Error: org.eclipse.pde.junit.runtime
+23:50:28.929 [Framework Event Dispatcher] INFO  n.b.l.bridge.BeaconBundleListener - Started: org.eclipse.osgi
+23:50:28.929 [Framework Event Dispatcher] INFO  n.b.l.b.BeaconFrameworkListener - Started: org.eclipse.osgi
+23:50:28.929 [Framework Event Dispatcher] INFO  n.b.l.b.BeaconFrameworkListener - Startlevel Changed: org.eclipse.osgi
+23:50:28.948 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] INFO  n.b.logging.bridge.SLF4JLogListener - BundleEvent STARTED
+23:50:28.949 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] INFO  n.b.logging.bridge.SLF4JLogListener - BundleEvent STARTED
+23:50:28.954 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] ERROR n.b.logging.bridge.SLF4JLogListener - FrameworkEvent ERROR
+org.osgi.framework.BundleException: The bundle could not be resolved. Reason: Missing Constraint: Require-Bundle: org.eclipse.core.runtime; bundle-version="[3.3.0,4.0.0)"
+	at org.eclipse.osgi.framework.internal.core.AbstractBundle.getResolverError(AbstractBundle.java:1313) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.AbstractBundle.getResolutionFailureException(AbstractBundle.java:1297) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.BundleHost.startWorker(BundleHost.java:309) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.AbstractBundle.resume(AbstractBundle.java:370) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.Framework.resumeBundle(Framework.java:1068) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.resumeBundles(StartLevelManager.java:557) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.incFWSL(StartLevelManager.java:464) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.doSetStartLevel(StartLevelManager.java:248) ~[na:na]
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.dispatchEvent(StartLevelManager.java:445) ~[na:na]
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:227) ~[na:na]
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:337) ~[na:na]
+23:50:28.954 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] INFO  n.b.logging.bridge.SLF4JLogListener - BundleEvent STARTED
+23:50:28.954 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] INFO  n.b.logging.bridge.SLF4JLogListener - FrameworkEvent STARTED
+23:50:28.954 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] INFO  n.b.logging.bridge.SLF4JLogListener - FrameworkEvent STARTLEVEL CHANGED
+23:50:28.954 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] INFO  n.b.logging.bridge.SLF4JLogListener - ServiceEvent REGISTERED
+23:50:28.965 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] INFO  n.b.logging.bridge.SLF4JLogListener - ServiceEvent UNREGISTERING
+23:50:28.966 [net.beaconcontroller.logging.bridge.SLF4JLogListener@4aee260b] INFO  n.b.logging.bridge.SLF4JLogListener - ServiceEvent UNREGISTERING

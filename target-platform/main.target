@@ -11,5 +11,6 @@
 <unit id="libraries.feature.feature.group" version="1.0.1"/>
 <repository location="http://epic.stanford.edu/libraries"/>
 </location>
+<location path="${resource_loc:/libraries.target}" type="Profile"/>
 </locations>
 </target>
