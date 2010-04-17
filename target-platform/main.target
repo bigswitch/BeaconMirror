@@ -7,10 +7,6 @@
 <unit id="org.eclipse.equinox.sdk.feature.group" version="3.5.2.r352_v20100209-7G7MAD7lQiEeG_QL5AOoAHLYaYBg"/>
 <repository location="http://download.eclipse.org/releases/galileo"/>
 </location>
-<location includeAllPlatforms="false" includeMode="slicer" type="InstallableUnit">
-<unit id="libraries.feature.feature.group" version="1.0.1"/>
-<repository location="http://epic.stanford.edu/libraries"/>
-</location>
-<location path="${resource_loc:/libraries.target}" type="Profile"/>
+<location path="${resource_loc:/Beacon Libraries}" type="Profile"/>
 </locations>
 </target>

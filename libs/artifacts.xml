@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?artifactRepository version='1.1.0'?>
+<repository name='file:/home/derickso/git/beacon/libs/ - artifacts' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1'>
+  <properties size='2'>
+    <property name='p2.timestamp' value='1271476364939'/>
+    <property name='p2.compressed' value='false'/>
+  </properties>
+  <mappings size='3'>
+    <rule filter='(&amp; (classifier=osgi.bundle))' output='${repoUrl}/plugins/${id}_${version}.jar'/>
+    <rule filter='(&amp; (classifier=binary))' output='${repoUrl}/binary/${id}_${version}'/>
+    <rule filter='(&amp; (classifier=org.eclipse.update.feature))' output='${repoUrl}/features/${id}_${version}.jar'/>
+  </mappings>
+  <artifacts size='9'>
+    <artifact classifier='osgi.bundle' id='slf4j.api' version='1.5.11'>
+      <properties size='3'>
+        <property name='artifact.size' value='23671'/>
+        <property name='download.size' value='23671'/>
+        <property name='download.md5' value='39bc264c656651e42f76136bcbe31dc7'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='ch.qos.logback.classic' version='0.9.20'>
+      <properties size='3'>
+        <property name='artifact.size' value='182806'/>
+        <property name='download.size' value='182806'/>
+        <property name='download.md5' value='19c55e360768fffbb4ad25663a93d091'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='jul.to.slf4j' version='1.5.11'>
+      <properties size='3'>
+        <property name='artifact.size' value='4542'/>
+        <property name='download.size' value='4542'/>
+        <property name='download.md5' value='1d1c49ace6a6a822f1ca1c50bf13aabe'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='libraries.org.junit' version='3.8.2'>
+      <properties size='3'>
+        <property name='artifact.size' value='120607'/>
+        <property name='download.size' value='120607'/>
+        <property name='download.md5' value='9eac6bc6e7c74d6e22daa8d3f84fce20'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.logging' version='1.1.1'>
+      <properties size='3'>
+        <property name='artifact.size' value='61464'/>
+        <property name='download.size' value='61464'/>
+        <property name='download.md5' value='8c9b8640b3b3821b8260294026c3864f'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='log4j.over.slf4j' version='1.5.11'>
+      <properties size='3'>
+        <property name='artifact.size' value='11620'/>
+        <property name='download.size' value='11620'/>
+        <property name='download.md5' value='26dcb5a52b793a5e630fa57e5a9081fc'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='jcl.over.slf4j' version='1.5.11'>
+      <properties size='3'>
+        <property name='artifact.size' value='17288'/>
+        <property name='download.size' value='17288'/>
+        <property name='download.md5' value='40c4111c491ffa7ee2d2900e98d18746'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.cli' version='1.2.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='41571'/>
+        <property name='download.size' value='41571'/>
+        <property name='download.md5' value='ba1e00c6c3d315aca2bcee7208ca03f0'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='ch.qos.logback.core' version='0.9.20'>
+      <properties size='3'>
+        <property name='artifact.size' value='293495'/>
+        <property name='download.size' value='293495'/>
+        <property name='download.md5' value='ebc9cf92c11ce27274e65879ba791d7c'/>
+      </properties>
+    </artifact>
+  </artifacts>
+</repository>
