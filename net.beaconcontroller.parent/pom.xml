@@ -14,7 +14,7 @@
     <module>../net.beaconcontroller.core</module>
     <module>../net.beaconcontroller.hub</module>
     <module>../net.beaconcontroller.learningswitch</module>
-    <!-- <module>../net.beaconcontroller.learningswitch.tests</module> -->
+    <module>../net.beaconcontroller.learningswitch.tests</module>
     <module>../net.beaconcontroller.logging.bridge</module>
     <module>../net.beaconcontroller.logging.config</module>
     <module>../net.beaconcontroller.product</module>

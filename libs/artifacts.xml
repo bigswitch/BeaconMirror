@@ -2,7 +2,7 @@
 <?artifactRepository version='1.1.0'?>
 <repository name='file:/home/derickso/git/beacon/libs/ - artifacts' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1'>
   <properties size='2'>
-    <property name='p2.timestamp' value='1271476364939'/>
+    <property name='p2.timestamp' value='1271560275482'/>
     <property name='p2.compressed' value='false'/>
   </properties>
   <mappings size='3'>
