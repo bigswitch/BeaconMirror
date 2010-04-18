@@ -22,41 +22,6 @@
           <useUIHarness>false</useUIHarness>
           <!-- <debugPort>8000</debugPort> -->
           <bundleStartLevel>
-            <bundle>
-              <id>com.springsource.org.apache.commons.cli</id>
-              <level>4</level>
-              <autoStart>true</autoStart>
-            </bundle>
-            <bundle>
-              <id>net.beaconcontroller.core</id>
-              <level>4</level>
-              <autoStart>true</autoStart>
-            </bundle>
-            <bundle>
-              <id>net.beaconcontroller.learningswitch</id>
-              <level>4</level>
-              <autoStart>true</autoStart>
-            </bundle>
-            <bundle>
-              <id>org.eclipse.equinox.ds</id>
-              <level>4</level>
-              <autoStart>true</autoStart>
-            </bundle>
-            <bundle>
-              <id>org.eclipse.equinox.util</id>
-              <level>4</level>
-              <autoStart>true</autoStart>
-            </bundle>
-            <bundle>
-              <id>org.eclipse.osgi.services</id>
-              <level>4</level>
-              <autoStart>true</autoStart>
-            </bundle>
-            <bundle>
-              <id>org.openflow</id>
-              <level>4</level>
-              <autoStart>true</autoStart>
-            </bundle>
           </bundleStartLevel>
           <dependencies>
           </dependencies>
