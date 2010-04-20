@@ -12,6 +12,5 @@ Import-Package: org.apache.commons.cli;version="1.2.0",
  org.openflow.protocol.factory,
  org.openflow.util,
  org.osgi.framework
-Service-Component: OSGI-INF/component.xml
 Export-Package: net.beaconcontroller.core,
  net.beaconcontroller.core.internal;x-internal:=true

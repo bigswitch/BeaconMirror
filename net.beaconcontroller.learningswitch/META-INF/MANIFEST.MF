@@ -4,12 +4,7 @@ Bundle-Name: Learning Layer-2 Switch
 Bundle-SymbolicName: net.beaconcontroller.learningswitch
 Bundle-Version: 0.0.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Service-Component: OSGI-INF/component.xml
-Import-Package: ch.qos.logback.classic;version="0.9.20",
- ch.qos.logback.core;version="0.9.20",
- ch.qos.logback.core.util;version="0.9.20",
- net.beaconcontroller.core,
- org.apache.commons.logging,
+Import-Package: net.beaconcontroller.core,
  org.openflow.io,
  org.openflow.protocol,
  org.openflow.protocol.action,

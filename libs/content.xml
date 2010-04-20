@@ -2,10 +2,10 @@
 <?metadataRepository version='1.1.0'?>
 <repository name='file:/home/derickso/git/beacon/libs/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
   <properties size='2'>
-    <property name='p2.timestamp' value='1271560275484'/>
+    <property name='p2.timestamp' value='1271723901391'/>
     <property name='p2.compressed' value='false'/>
   </properties>
-  <units size='9'>
+  <units size='18'>
     <unit id='ch.qos.logback.classic' version='0.9.20' singleton='false'>
       <update id='ch.qos.logback.classic' range='[0.0.0,0.9.20)' severity='0'/>
       <properties size='4'>
@@ -105,6 +105,616 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='com.springsource.net.sf.cglib' version='2.1.3' singleton='false'>
+      <update id='com.springsource.net.sf.cglib' range='[0.0.0,2.1.3)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='CGLIB Code Generation Library'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+      </properties>
+      <provides size='13'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='com.springsource.net.sf.cglib' version='2.1.3'/>
+        <provided namespace='osgi.bundle' name='com.springsource.net.sf.cglib' version='2.1.3'/>
+        <provided namespace='java.package' name='net.sf.cglib.asm' version='2.1.3'/>
+        <provided namespace='java.package' name='net.sf.cglib.asm.attrs' version='2.1.3'/>
+        <provided namespace='java.package' name='net.sf.cglib.beans' version='2.1.3'/>
+        <provided namespace='java.package' name='net.sf.cglib.core' version='2.1.3'/>
+        <provided namespace='java.package' name='net.sf.cglib.proxy' version='2.1.3'/>
+        <provided namespace='java.package' name='net.sf.cglib.reflect' version='2.1.3'/>
+        <provided namespace='java.package' name='net.sf.cglib.transform' version='2.1.3'/>
+        <provided namespace='java.package' name='net.sf.cglib.transform.hook' version='2.1.3'/>
+        <provided namespace='java.package' name='net.sf.cglib.transform.impl' version='2.1.3'/>
+        <provided namespace='java.package' name='net.sf.cglib.util' version='2.1.3'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='java.package' name='org.apache.tools.ant' range='[1.7.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.types' range='[1.7.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.codehaus.aspectwerkz.hook' range='[0.8.1,0.9.0)' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='com.springsource.net.sf.cglib' version='2.1.3'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: SpringSource&#xA;Bundle-ManifestVersion: 2&#xA;Import-Package: org.apache.tools.ant;version=&quot;[1.7.0, 2.0.0)&quot;;resolution:=optional,org.apache.tools.ant.types;version=&quot;[1.7.0, 2.0.0)&quot;;resolution:=optional,org.codehaus.aspectwerkz.hook;version=&quot;[0.8.1, 0.9.0)&quot;;resolution:=optional&#xA;Bundle-Name: CGLIB Code Generation Library&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: com.springsource.net.sf.cglib&#xA;Bundle-Version: 2.1.3&#xA;Created-By: 1.4.2_05-b04 (Sun Microsystems Inc.)&#xA;Export-Package: net.sf.cglib.asm;version=&quot;2.1.3&quot;,net.sf.cglib.asm.attrs;version=&quot;2.1.3&quot;;uses:=&quot;net.sf.cglib.asm&quot;,net.sf.cglib.beans;version=&quot;2.1.3&quot;;uses:=&quot;net.sf.cglib.asm,net.sf.cglib.core&quot;,net.sf.cglib.core;version=&quot;2.1.3&quot;;uses:=&quot;net.sf.cglib.asm&quot;,net.sf.cglib.proxy;version=&quot;2.1.3&quot;;uses:=&quot;net.sf.cglib.asm,net.sf.cglib.core,net.sf.cglib.reflect&quot;,net.sf.cglib.reflect;version=&quot;2.1.3&quot;;uses:=&quot;net.sf.cglib.asm,net.sf.cglib.core&quot;,net.sf.cglib.transform;version=&quot;2.1.3&quot;;uses:=&quot;net.sf.cglib.asm,net.sf.cglib.core,org.apache.tools.ant,org.apache.tools.ant.types&quot;,net.sf.cglib.transform.hook;version=&quot;2.1.3&quot;;uses:=&quot;net.sf.cglib.asm,net.sf.cglib.transform&quot;,net.sf.cglib.transform.impl;version=&quot;2.1.3&quot;;uses:=&quot;net.sf.cglib.asm,net.sf.cglib.core&quot;,net.sf.cglib.util;version=&quot;2.1.3&quot;;uses:=&quot;net.sf.cglib.asm,net.sf.cglib.core&quot;&#xA;JarJarStringTransformer: com.tonicsystems.jarjar.GeneratedStringTransformer&#xA;Ant-Version: Apache Ant 1.6.2&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='com.springsource.org.aopalliance' version='1.0.0' singleton='false'>
+      <update id='com.springsource.org.aopalliance' range='[0.0.0,1.0.0)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='AOP Alliance API'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+      </properties>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='com.springsource.org.aopalliance' version='1.0.0'/>
+        <provided namespace='osgi.bundle' name='com.springsource.org.aopalliance' version='1.0.0'/>
+        <provided namespace='java.package' name='org.aopalliance.aop' version='1.0.0'/>
+        <provided namespace='java.package' name='org.aopalliance.intercept' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='com.springsource.org.aopalliance' version='1.0.0'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Bundle-Classpath: .&#xA;Created-By: 1.4.2_01-b06 (Sun Microsystems Inc.)&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.0.0&#xA;Export-Package: org.aopalliance.aop;version=&quot;1.0.0&quot;,org.aopalliance.intercept;version=&quot;1.0.0&quot;&#xA;Bundle-SymbolicName: com.springsource.org.aopalliance&#xA;Ant-Version: Apache Ant 1.5.4&#xA;Bundle-Name: AOP Alliance API&#xA;Bundle-Vendor: SpringSource&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.context' version='2.5.6.SEC01' singleton='false'>
+      <update id='org.springframework.context' range='[0.0.0,2.5.6.SEC01)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Spring Context'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+      </properties>
+      <provides size='51'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.context' version='2.5.6.SEC01'/>
+        <provided namespace='osgi.bundle' name='org.springframework.context' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.context' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.context.access' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.context.annotation' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.context.config' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.context.event' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.context.i18n' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.context.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.context.weaving' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.ejb.access' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.ejb.config' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.ejb.interceptor' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.ejb.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.instrument.classloading' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.instrument.classloading.glassfish' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.instrument.classloading.oc4j' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.instrument.classloading.weblogic' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jmx' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jmx.access' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jmx.export' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jmx.export.annotation' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jmx.export.assembler' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jmx.export.metadata' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jmx.export.naming' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jmx.export.notification' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jmx.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jndi' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.jndi.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.remoting' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.remoting.rmi' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.remoting.soap' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.remoting.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scheduling' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scheduling.backportconcurrent' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scheduling.concurrent' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scheduling.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scheduling.timer' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scripting' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scripting.bsh' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scripting.config' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scripting.groovy' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scripting.jruby' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.scripting.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.stereotype' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.ui' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.ui.context' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.ui.context.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.validation' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.validation.support' version='2.5.6.SEC01'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='73'>
+        <required namespace='java.package' name='bsh' range='[2.0.0.b4,3.0.0)' optional='true'/>
+        <required namespace='java.package' name='com.ibm.websphere.management' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='com.sun.enterprise.loader' range='[1.0.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='com.sun.net.httpserver' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='edu.emory.mathcs.backport.java.util.concurrent' range='[3.0.0,4.0.0)' optional='true'/>
+        <required namespace='java.package' name='groovy.lang' range='[1.5.1,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='javax.annotation' range='[1.0.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='javax.ejb' range='[3.0.0,4.0.0)' optional='true'/>
+        <required namespace='java.package' name='javax.interceptor' range='[3.0.0,4.0.0)' optional='true'/>
+        <required namespace='java.package' name='javax.jms' range='[1.1.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='javax.management' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.management.modelmbean' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.management.openmbean' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.management.remote' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.naming' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.persistence' range='[1.0.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='javax.persistence.spi' range='[1.0.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='javax.rmi' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.rmi.CORBA' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.namespace' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.ws' range='[2.1.1,3.0.0)' optional='true'/>
+        <required namespace='java.package' name='net.sf.cglib.asm' range='[2.1.3,2.2.0)' optional='true'/>
+        <required namespace='java.package' name='net.sf.cglib.core' range='[2.1.3,2.2.0)' optional='true'/>
+        <required namespace='java.package' name='net.sf.cglib.proxy' range='[2.1.3,2.2.0)' optional='true'/>
+        <required namespace='java.package' name='oracle.classloader.util' range='[10.1.3.1,10.2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aopalliance.aop' range='[1.0.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aopalliance.intercept' range='[1.0.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.4,2.0.0)'/>
+        <required namespace='java.package' name='org.aspectj.weaver.loadtime' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.codehaus.groovy.control' range='[1.5.1,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.jruby' range='[1.1.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.jruby.ast' range='[1.1.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.jruby.exceptions' range='[1.1.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.jruby.javasupport' range='[1.1.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.jruby.runtime' range='[1.1.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.jruby.runtime.builtin' range='[1.1.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.omg.CORBA' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.omg.CORBA.portable' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.omg.CORBA_2_3.portable' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.springframework.aop' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.aop.framework' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.aop.framework.adapter' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.aop.scope' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.aop.support' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.aop.target' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.aop.target.dynamic' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.annotation' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.access' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.annotation' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.parsing' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.support' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.xml' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.propertyeditors' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.support' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.annotation' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.io' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.io.support' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.task' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.task.support' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.type' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.type.classreading' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.type.filter' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.instrument' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.metadata' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.orm.jpa.support' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.util' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.util.xml' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.w3c.dom' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.context' version='2.5.6.SEC01'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Ant-Version: Apache Ant 1.7.0&#xA;Bundle-Name: Spring Context&#xA;Created-By: 10.0-b23 (Sun Microsystems Inc.)&#xA;Manifest-Version: 1.0&#xA;Bundle-Vendor: SpringSource&#xA;Bundle-SymbolicName: org.springframework.context&#xA;Import-Package: bsh;version=&quot;[2.0.0.b4, 3.0.0)&quot;;resolution:=optional,com.ibm.websphere.management;resolution:=optional,com.sun.enterprise.loader;version=&quot;[1.0.0, 2.0.0)&quot;;resolution:=optional,com.sun.net.httpserver;resolution:=optional,edu.emory.mathcs.backport.java.util.concurrent;version=&quot;[3.0.0, 4.0.0)&quot;;resolution:=optional,groovy.lang;version=&quot;[1.5.1, 2.0.0)&quot;;resolution:=optional,javax.annotation;version=&quot;[1.0.0, 2.0.0)&quot;;resolution:=optional,javax.ejb;version=&quot;[3.0.0, 4.0.0)&quot;;resolution:=optional,javax.interceptor;version=&quot;[3.0.0, 4.0.0)&quot;;resolution:=optional,javax.jms;version=&quot;[1.1.0, 2.0.0)&quot;;resolution:=optional,javax.management;resolution:=optional,javax.management.modelmbean;resolution:=optional,javax.management.openmbean;resolution:=optional,javax.management.remote;resolution:=optional,javax.naming;resolution:=optional,javax.persistence;version=&quot;[1.0.0, 2.0.0)&quot;;resolution:=optional,javax.persistence.spi;version=&quot;[1.0.0, 2.0.0)&quot;;resolution:=optional,javax.rmi;resolution:=optional,javax.rmi.CORBA;resolution:=optional,javax.xml.namespace;resolution:=optional,javax.xml.ws;version=&quot;[2.1.1, 3.0.0)&quot;;resolution:=optional,net.sf.cglib.asm;version=&quot;[2.1.3, 2.2.0)&quot;;resolution:=optional,net.sf.cglib.core;version=&quot;[2.1.3, 2.2.0)&quot;;resolution:=optional,net.sf.cglib.proxy;version=&quot;[2.1.3, 2.2.0)&quot;;resolution:=optional,oracle.classloader.util;version=&quot;[10.1.3.1, 10.2.0.0)&quot;;resolution:=optional,org.aopalliance.aop;version=&quot;[1.0.0, 2.0.0)&quot;;resolution:=optional,org.aopalliance.intercept;version=&quot;[1.0.0, 2.0.0)&quot;;resolution:=optional,org.apache.commons.logging;version=&quot;[1.0.4, 2.0.0)&quot;,org.aspectj.weaver.loadtime;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.codehaus.groovy.control;version=&quot;[1.5.1, 2.0.0)&quot;;resolution:=optional,org.jruby;version=&quot;[1.1.0, 2.0.0)&quot;;resolution:=optional,org.jruby.ast;version=&quot;[1.1.0, 2.0.0)&quot;;resolution:=optional,org.jruby.exceptions;version=&quot;[1.1.0, 2.0.0)&quot;;resolution:=optional,org.jruby.javasupport;version=&quot;[1.1.0, 2.0.0)&quot;;resolution:=optional,org.jruby.runtime;version=&quot;[1.1.0, 2.0.0)&quot;;resolution:=optional,org.jruby.runtime.builtin;version=&quot;[1.1.0, 2.0.0)&quot;;resolution:=optional,org.omg.CORBA;resolution:=optional,org.omg.CORBA.portable;resolution:=optional,org.omg.CORBA_2_3.portable;resolution:=optional,org.springframework.aop;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.aop.framework;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.aop.framework.adapter;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.aop.scope;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.aop.support;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.aop.target;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.aop.target.dynamic;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.annotation;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory.access;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory.annotation;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory.config;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory.parsing;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory.support;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory.xml;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.propertyeditors;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.support;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.annotation;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.io;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.io.support;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.task;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.task.support;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.type;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.type.classreading;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.type.filter;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.instrument;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.metadata;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.orm.jpa.support;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.util;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.util.xml;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.w3c.dom;resolution:=optional,org.xml.sax;resolution:=optional&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Version: 2.5.6.SEC01&#xA;Implementation-Title: Spring Framework&#xA;Bundle-Version: 2.5.6.SEC01&#xA;Export-Package: org.springframework.context;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.beans.factory.config,org.springframework.core.io&quot;,org.springframework.context.access;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.access,org.springframework.context&quot;,org.springframework.context.annotation;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.annotation,org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.springframework.core.io,org.springframework.core.type,org.springframework.core.type.classreading,org.springframework.core.type.filter,org.w3c.dom&quot;,org.springframework.context.config;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.w3c.dom&quot;,org.springframework.context.event;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.aopalliance.intercept,org.springframework.context,org.springframework.core.task&quot;,org.springframework.context.i18n;version=&quot;2.5.6.SEC01&quot;,org.springframework.context.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.springframework.context,org.springframework.core.io,org.springframework.core.io.support,org.springframework.util&quot;,org.springframework.context.weaving;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.instrument.classloading&quot;,org.springframework.ejb.access;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.ejb,javax.naming,org.aopalliance.intercept&quot;,org.springframework.ejb.config;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.w3c.dom&quot;,org.springframework.ejb.interceptor;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.interceptor,org.springframework.beans.factory,org.springframework.beans.factory.access,org.springframework.beans.factory.annotation&quot;,org.springframework.ejb.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.ejb,org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.access&quot;,org.springframework.instrument.classloading;version=&quot;2.5.6.SEC01&quot;,org.springframework.instrument.classloading.glassfish;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;com.sun.enterprise.loader&quot;,org.springframework.instrument.classloading.oc4j;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;oracle.classloader.util&quot;,org.springframework.instrument.classloading.weblogic;version=&quot;2.5.6.SEC01&quot;,org.springframework.jmx;version=&quot;2.5.6.SEC01&quot;,org.springframework.jmx.access;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.management,javax.management.remote,org.aopalliance.intercept,org.springframework.jmx&quot;,org.springframework.jmx.export;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.management,javax.management.modelmbean,org.springframework.beans.factory,org.springframework.jmx.export.assembler,org.springframework.jmx.export.naming&quot;,org.springframework.jmx.export.annotation;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.jmx.export.metadata&quot;,org.springframework.jmx.export.assembler;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.management,javax.management.modelmbean,org.springframework.jmx.export.metadata&quot;,org.springframework.jmx.export.metadata;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.management.modelmbean,org.springframework.metadata&quot;,org.springframework.jmx.export.naming;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.management,org.springframework.core.io,org.springframework.jmx.export.metadata&quot;,org.springframework.jmx.export.notification;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.management,javax.management.modelmbean&quot;,org.springframework.jmx.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.management,javax.management.remote,org.springframework.jmx&quot;,org.springframework.jndi;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.naming,org.aopalliance.intercept&quot;,org.springframework.jndi.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.beans.factory&quot;,org.springframework.remoting;version=&quot;2.5.6.SEC01&quot;,org.springframework.remoting.rmi;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.naming,org.aopalliance.intercept,org.omg.CORBA,org.omg.CORBA.portable,org.springframework.jndi,org.springframework.remoting,org.springframework.remoting.support&quot;,org.springframework.remoting.soap;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.xml.namespace&quot;,org.springframework.remoting.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;com.sun.net.httpserver,org.aopalliance.intercept,org.springframework.core.task&quot;,org.springframework.scheduling;version=&quot;2.5.6.SEC01&quot;,org.springframework.scheduling.backportconcurrent;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;edu.emory.mathcs.backport.java.util.concurrent&quot;,org.springframework.scheduling.concurrent;version=&quot;2.5.6.SEC01&quot;,org.springframework.scheduling.support;version=&quot;2.5.6.SEC01&quot;,org.springframework.scheduling.timer;version=&quot;2.5.6.SEC01&quot;,org.springframework.scripting;version=&quot;2.5.6.SEC01&quot;,org.springframework.scripting.bsh;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;bsh,org.springframework.scripting&quot;,org.springframework.scripting.config;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.w3c.dom&quot;,org.springframework.scripting.groovy;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;groovy.lang,org.springframework.beans,org.springframework.beans.factory,org.springframework.scripting&quot;,org.springframework.scripting.jruby;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.jruby,org.jruby.ast,org.jruby.exceptions,org.jruby.runtime.builtin,org.springframework.scripting&quot;,org.springframework.scripting.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.aop,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.core.io,org.springframework.scripting&quot;,org.springframework.stereotype;version=&quot;2.5.6.SEC01&quot;,org.springframework.ui;version=&quot;2.5.6.SEC01&quot;,org.springframework.ui.context;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.context&quot;,org.springframework.ui.context.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.context,org.springframework.ui.context&quot;,org.springframework.validation;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.core&quot;,org.springframework.validation.support;version=&quot;2.5.6.SEC01&quot;&#xA;Spring-Version: 2.5.6.SEC01&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.core' version='2.5.6.SEC01' singleton='false'>
+      <update id='org.springframework.core' range='[0.0.0,2.5.6.SEC01)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Spring Core'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+      </properties>
+      <provides size='22'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.core' version='2.5.6.SEC01'/>
+        <provided namespace='osgi.bundle' name='org.springframework.core' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.asm' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.asm.commons' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.asm.signature' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core.annotation' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core.enums' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core.io' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core.io.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core.style' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core.task' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core.task.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core.type' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core.type.classreading' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.core.type.filter' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.metadata' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.metadata.commons' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.util' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.util.comparator' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.util.xml' version='2.5.6.SEC01'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='15'>
+        <required namespace='java.package' name='edu.emory.mathcs.backport.java.util.concurrent' range='[3.0.0,4.0.0)' optional='true'/>
+        <required namespace='java.package' name='javax.xml.transform' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.attributes' range='[2.2.0,3.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.collections' range='[3.2.0,4.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.collections.map' range='[3.2.0,4.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.4,2.0.0)'/>
+        <required namespace='java.package' name='org.apache.log4j' range='[1.2.15,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.log4j.xml' range='[1.2.15,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.bridge' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.weaver' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.weaver.bcel' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.weaver.patterns' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.eclipse.core.runtime' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.w3c.dom' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.core' version='2.5.6.SEC01'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Ant-Version: Apache Ant 1.7.0&#xA;Bundle-Name: Spring Core&#xA;Created-By: 10.0-b23 (Sun Microsystems Inc.)&#xA;Manifest-Version: 1.0&#xA;Bundle-Vendor: SpringSource&#xA;Bundle-SymbolicName: org.springframework.core&#xA;Import-Package: edu.emory.mathcs.backport.java.util.concurrent;version=&quot;[3.0.0, 4.0.0)&quot;;resolution:=optional,javax.xml.transform;resolution:=optional,org.apache.commons.attributes;version=&quot;[2.2.0, 3.0.0)&quot;;resolution:=optional,org.apache.commons.collections;version=&quot;[3.2.0, 4.0.0)&quot;;resolution:=optional,org.apache.commons.collections.map;version=&quot;[3.2.0, 4.0.0)&quot;;resolution:=optional,org.apache.commons.logging;version=&quot;[1.0.4, 2.0.0)&quot;,org.apache.log4j;version=&quot;[1.2.15, 2.0.0)&quot;;resolution:=optional,org.apache.log4j.xml;version=&quot;[1.2.15, 2.0.0)&quot;;resolution:=optional,org.aspectj.bridge;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.weaver;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.weaver.bcel;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.weaver.patterns;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.eclipse.core.runtime;common=&quot;split&quot;;resolution:=optional,org.w3c.dom;resolution:=optional,org.xml.sax;resolution:=optional&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Version: 2.5.6.SEC01&#xA;Implementation-Title: Spring Framework&#xA;Bundle-Version: 2.5.6.SEC01&#xA;Export-Package: org.springframework.asm;version=&quot;2.5.6.SEC01&quot;,org.springframework.asm.commons;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.asm&quot;,org.springframework.asm.signature;version=&quot;2.5.6.SEC01&quot;,org.springframework.core;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.apache.commons.logging,org.springframework.asm,org.springframework.util&quot;,org.springframework.core.annotation;version=&quot;2.5.6.SEC01&quot;,org.springframework.core.enums;version=&quot;2.5.6.SEC01&quot;,org.springframework.core.io;version=&quot;2.5.6.SEC01&quot;,org.springframework.core.io.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.core.io,org.springframework.util&quot;,org.springframework.core.style;version=&quot;2.5.6.SEC01&quot;,org.springframework.core.task;version=&quot;2.5.6.SEC01&quot;,org.springframework.core.task.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.core.task&quot;,org.springframework.core.type;version=&quot;2.5.6.SEC01&quot;,org.springframework.core.type.classreading;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.asm,org.springframework.core.io,org.springframework.core.type&quot;,org.springframework.core.type.filter;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.core.type,org.springframework.core.type.classreading&quot;,org.springframework.metadata;version=&quot;2.5.6.SEC01&quot;,org.springframework.metadata.commons;version=&quot;2.5.6.SEC01&quot;,org.springframework.util;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.apache.commons.logging&quot;,org.springframework.util.comparator;version=&quot;2.5.6.SEC01&quot;,org.springframework.util.xml;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.xml.transform,org.apache.commons.logging,org.w3c.dom,org.xml.sax&quot;&#xA;Spring-Version: 2.5.6.SEC01&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='slf4j.api' version='1.5.11' singleton='false'>
+      <update id='slf4j.api' range='[0.0.0,1.5.11)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='slf4j-api'/>
+        <property name='org.eclipse.equinox.p2.description' value='The slf4j API'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SLF4J.ORG'/>
+      </properties>
+      <provides size='6'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='slf4j.api' version='1.5.11'/>
+        <provided namespace='osgi.bundle' name='slf4j.api' version='1.5.11'/>
+        <provided namespace='java.package' name='org.slf4j' version='1.5.11'/>
+        <provided namespace='java.package' name='org.slf4j.spi' version='1.5.11'/>
+        <provided namespace='java.package' name='org.slf4j.helpers' version='1.5.11'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='1'>
+        <required namespace='java.package' name='org.slf4j.impl' range='1.5.5'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='slf4j.api' version='1.5.11'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Import-Package: org.slf4j.impl;version=1.5.5&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Title: slf4j-api&#xA;Implementation-Version: 1.5.11&#xA;Created-By: Apache Maven&#xA;Archiver-Version: Plexus Archiver&#xA;Manifest-Version: 1.0&#xA;Bundle-Name: slf4j-api&#xA;Bundle-Vendor: SLF4J.ORG&#xA;Build-Jdk: 1.6.0_16&#xA;Bundle-Description: The slf4j API&#xA;Bundle-Version: 1.5.11&#xA;Export-Package: org.slf4j;version=1.5.11, org.slf4j.spi;version=1.5.11, org.slf4j.helpers;version=1.5.11&#xA;Bundle-SymbolicName: slf4j.api&#xA;Built-By: ceki&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.3&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='libraries.org.junit' version='3.8.2' singleton='false'>
+      <update id='libraries.org.junit' range='[0.0.0,3.8.2)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='libraries.org.junit'/>
+        <property name='org.eclipse.equinox.p2.provider' value='various'/>
+      </properties>
+      <provides size='9'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='libraries.org.junit' version='3.8.2'/>
+        <provided namespace='osgi.bundle' name='libraries.org.junit' version='3.8.2'/>
+        <provided namespace='java.package' name='junit.awtui' version='0.0.0'/>
+        <provided namespace='java.package' name='junit.extensions' version='0.0.0'/>
+        <provided namespace='java.package' name='junit.framework' version='0.0.0'/>
+        <provided namespace='java.package' name='junit.runner' version='0.0.0'/>
+        <provided namespace='java.package' name='junit.swingui' version='0.0.0'/>
+        <provided namespace='java.package' name='junit.textui' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='libraries.org.junit' version='3.8.2'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Export-Package: junit.awtui,junit.extensions,junit.framework,junit.runner,junit.swingui,junit.textui&#xA;Bundle-Name: libraries.org.junit&#xA;Bundle-Version: 3.8.2&#xA;Bundle-SymbolicName: libraries.org.junit&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Vendor: various&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.osgi.core' version='1.2.1' singleton='false'>
+      <update id='org.springframework.osgi.core' range='[0.0.0,1.2.1)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-core'/>
+        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi core classes. Offers OSGi-based application context and importer/exporter functionality.'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
+      </properties>
+      <provides size='18'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.core' version='1.2.1'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.core' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.bundle' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.compendium.cm' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.compendium.config' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.config' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.context' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.context.event' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.context.support' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service.exporter' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service.exporter.support' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service.importer' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service.importer.event' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service.importer.support' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.util' version='1.2.1'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='28'>
+        <required namespace='java.package' name='org.aopalliance.aop' range='0.0.0'/>
+        <required namespace='java.package' name='org.aopalliance.intercept' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.cm' range='1.2.0' optional='true'/>
+        <required namespace='java.package' name='org.osgi.service.packageadmin' range='1.2.0'/>
+        <required namespace='java.package' name='org.osgi.service.startlevel' range='1.0.0' optional='true'/>
+        <required namespace='java.package' name='org.springframework.aop' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.aop.framework' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.aop.support' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.support' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.xml' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.propertyeditors' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context.event' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context.support' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.enums' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io.support' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.osgi.io' range='[1.2.1,1.2.1]'/>
+        <required namespace='java.package' name='org.springframework.util' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.util.xml' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.w3c.dom' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.core' version='1.2.1'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Implementation-Version: 1.2.1&#xA;Import-Package: org.aopalliance.aop;version=&quot;0.0.0&quot;,org.aopalliance.intercept;version=&quot;0.0.0&quot;,org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.cm;version=&quot;1.2&quot;;resolution:=optional,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.osgi.service.startlevel;version=&quot;1.0&quot;;resolution:=optional,org.springframework.aop;version=&quot;[2.5.6,4.0)&quot;,org.springframework.aop.framework;version=&quot;[2.5.6,4.0)&quot;,org.springframework.aop.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.config;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.xml;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.propertyeditors;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context.event;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.enums;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.io;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.io.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.osgi.io;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.util;version=&quot;[2.5.6,4.0)&quot;,org.springframework.util.xml;version=&quot;[2.5.6,4.0)&quot;,org.w3c.dom;resolution:=optional,org.xml.sax;resolution:=optional&#xA;Spring-DM-Version: 1.2.1&#xA;Built-By: costin&#xA;Bundle-Description: Spring/OSGi core classes. Offers OSGi-based application context and importer/exporter functionality.&#xA;Spring-Version: 2.5.6.SEC01&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Vendor: SpringSource&#xA;Export-Package: org.springframework.osgi;version=&quot;1.2.1&quot;,org.springframework.osgi.bundle;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans.factory,org.springframework.context,org.springframework.core.enums,org.springframework.core.io,org.springframework.osgi.context&quot;,org.springframework.osgi.compendium.cm;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans.factory,org.springframework.osgi.context&quot;,org.springframework.osgi.compendium.config;version=&quot;1.2.1&quot;;uses:=&quot;org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.springframework.osgi.config.internal.util,org.w3c.dom&quot;,org.springframework.osgi.config;version=&quot;1.2.1&quot;;uses:=&quot;org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.springframework.osgi.config.internal.util,org.springframework.osgi.service.importer.support,org.w3c.dom&quot;,org.springframework.osgi.context;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans,org.springframework.beans.factory.config,org.springframework.context,org.springframework.osgi.context.event&quot;,org.springframework.osgi.context.event;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.context,org.springframework.context.event&quot;,org.springframework.osgi.context.support;version=&quot;1.2.1&quot;;uses:=&quot;org.apache.commons.logging,org.osgi.framework,org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.springframework.context,org.springframework.context.event,org.springframework.context.support,org.springframework.core.io,org.springframework.core.io.support,org.springframework.osgi.context,org.springframework.osgi.context.event,org.springframework.osgi.util.internal,org.xml.sax&quot;,org.springframework.osgi.service;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.osgi&quot;,org.springframework.osgi.service.exporter;version=&quot;1.2.1&quot;,org.springframework.osgi.service.exporter.support;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans,org.springframework.beans.factory,org.springframework.core,org.springframework.core.enums,org.springframework.osgi.context,org.springframework.osgi.service.exporter,org.springframework.osgi.service.exporter.support.internal.controller&quot;,org.springframework.osgi.service.importer;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.osgi.service&quot;,org.springframework.osgi.service.importer.event;version=&quot;1.2.1&quot;;uses:=&quot;org.springframework.context,org.springframework.osgi.service.importer&quot;,org.springframework.osgi.service.importer.support;version=&quot;1.2.1&quot;;uses:=&quot;org.aopalliance.aop,org.aopalliance.intercept,org.osgi.framework,org.springframework.beans.factory,org.springframework.context,org.springframework.core.enums,org.springframework.osgi.context,org.springframework.osgi.context.internal.classloader,org.springframework.osgi.service.importer,org.springframework.osgi.service.importer.support.internal.aop,org.springframework.osgi.service.importer.support.internal.collection,org.springframework.osgi.service.importer.support.internal.controller,org.springframework.osgi.service.importer.support.internal.dependency&quot;,org.springframework.osgi.util;version=&quot;1.2.1&quot;;uses:=&quot;org.apache.commons.logging,org.osgi.framework,org.springframework.util&quot;&#xA;Bundle-Name: spring-osgi-core&#xA;Bundle-Version: 1.2.1&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Bundle-Classpath: .&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Vendor: SpringSource&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Bundle-SymbolicName: org.springframework.osgi.core&#xA;Build-Jdk: 1.5.0_22&#xA;Unversioned-Imports: *&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.osgi.extender' version='1.2.1' singleton='false'>
+      <update id='org.springframework.osgi.extender' range='[0.0.0,1.2.1)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-extender'/>
+        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi extender. Listens for and bootstraps Spring-powered OSGi bundles.'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
+      </properties>
+      <provides size='7'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.extender' version='1.2.1'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.extender' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.extender' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.extender.event' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.extender.support' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.extender.support.scanning' version='1.2.1'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='25'>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.packageadmin' range='1.2.0'/>
+        <required namespace='java.package' name='org.springframework.beans' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.xml' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context.event' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.enums' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.task' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.osgi' range='[1.2.1,1.2.1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.context' range='[1.2.1,1.2.1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.context.event' range='[1.2.1,1.2.1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.context.support' range='[1.2.1,1.2.1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.extensions.annotation' range='[1.2.1,1.2.1]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.importer' range='[1.2.1,1.2.1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.importer.event' range='[1.2.1,1.2.1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.importer.support' range='[1.2.1,1.2.1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.util' range='[1.2.1,1.2.1]'/>
+        <required namespace='java.package' name='org.springframework.scheduling.timer' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.util' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.extender' version='1.2.1'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: SpringSource&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.springframework.osgi.extender.internal.activator.ContextLoaderListener&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Manifest-Version: 1.0&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-SymbolicName: org.springframework.osgi.extender&#xA;Spring-DM-Version: 1.2.1&#xA;Bundle-Description: Spring/OSGi extender. Listens for and bootstraps Spring-powered OSGi bundles.&#xA;Spring-Version: 2.5.6.SEC01&#xA;Implementation-Vendor: SpringSource&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Export-Package: org.springframework.osgi.extender;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans,org.springframework.beans.factory.config,org.springframework.osgi.context&quot;,org.springframework.osgi.extender.event;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.context,org.springframework.osgi.context.event,org.springframework.osgi.service.importer.event&quot;,org.springframework.osgi.extender.support;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans.factory,org.springframework.osgi.context,org.springframework.osgi.extender,org.springframework.osgi.extender.support.scanning&quot;,org.springframework.osgi.extender.support.scanning;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework&quot;&#xA;Implementation-Version: 1.2.1&#xA;Bundle-Classpath: .&#xA;Built-By: costin&#xA;Import-Package: org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.springframework.beans;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.config;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.xml;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context.event;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.enums;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.io;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.task;version=&quot;[2.5.6,4.0)&quot;,org.springframework.osgi;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.context;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.context.event;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.context.support;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.extensions.annotation;version=&quot;[1.2.1,1.2.1]&quot;;resolution:=optional,org.springframework.osgi.service.importer;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.service.importer.event;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.service.importer.support;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.util;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.scheduling.timer;version=&quot;[2.5.6,4.0)&quot;,org.springframework.util;version=&quot;[2.5.6,4.0)&quot;,org.xml.sax;resolution:=optional&#xA;Bundle-Name: spring-osgi-extender&#xA;Build-Jdk: 1.5.0_22&#xA;Bundle-Version: 1.2.1&#xA;Unversioned-Imports: *&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='jul.to.slf4j' version='1.5.11' singleton='false'>
+      <update id='jul.to.slf4j' range='[0.0.0,1.5.11)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='jul-to-slf4j'/>
+        <property name='org.eclipse.equinox.p2.provider' value='various'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='jul.to.slf4j' version='1.5.11'/>
+        <provided namespace='osgi.bundle' name='jul.to.slf4j' version='1.5.11'/>
+        <provided namespace='java.package' name='org.slf4j.bridge' version='1.5.11'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='2'>
+        <required namespace='java.package' name='org.slf4j' range='1.5.11'/>
+        <required namespace='java.package' name='org.slf4j.spi' range='1.5.11'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='jul.to.slf4j' version='1.5.11'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Import-Package: org.slf4j;version=&quot;1.5.11&quot;,org.slf4j.spi;version=&quot;1.5.11&quot;&#xA;Bundle-Version: 1.5.11&#xA;Export-Package: org.slf4j.bridge;version=&quot;1.5.11&quot;;uses:=&quot;org.slf4j,org.slf4j.spi&quot;&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: jul.to.slf4j&#xA;Bundle-Name: jul-to-slf4j&#xA;Bundle-Vendor: various&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='com.springsource.org.apache.commons.cli' version='1.2.0' singleton='false'>
+      <update id='com.springsource.org.apache.commons.cli' range='[0.0.0,1.2.0)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Apache Commons Command Line Interface'/>
+        <property name='org.eclipse.equinox.p2.description' value='Commons CLI provides a simple API for presenting, processing and validating a command line interface.'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://commons.apache.org/cli/'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='com.springsource.org.apache.commons.cli' version='1.2.0'/>
+        <provided namespace='osgi.bundle' name='com.springsource.org.apache.commons.cli' version='1.2.0'/>
+        <provided namespace='java.package' name='org.apache.commons.cli' version='1.2.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.cli' version='1.2.0'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Specification-Version: 1.2&#xA;Implementation-Title: Commons CLI&#xA;Export-Package: org.apache.commons.cli;version=&quot;1.2.0&quot;&#xA;Archiver-Version: Plexus Archiver&#xA;Bundle-Name: Apache Commons Command Line Interface&#xA;Implementation-Vendor-Id: org.apache&#xA;X-Compile-Target-JDK: 1.4&#xA;Bundle-Vendor: SpringSource&#xA;Bundle-Description: Commons CLI provides a simple API for presenting, processing and validating a command line interface.&#xA;X-Compile-Source-JDK: 1.4&#xA;Created-By: 1.5.0_16 (Apple Computer, Inc.)&#xA;Manifest-Version: 1.0&#xA;Tool: Bundlor 1.0.0.CI-B166&#xA;Built-By: hen&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt&#xA;Build-Jdk: 1.5.0_16&#xA;Bundle-DocURL: http://commons.apache.org/cli/&#xA;Specification-Title: Commons CLI&#xA;Bundle-Version: 1.2.0&#xA;Implementation-Version: 1.2&#xA;Bundle-SymbolicName: com.springsource.org.apache.commons.cli&#xA;Implementation-Vendor: The Apache Software Foundation&#xA;Specification-Vendor: The Apache Software Foundation&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='com.springsource.org.apache.commons.logging' version='1.1.1' singleton='false'>
+      <update id='com.springsource.org.apache.commons.logging' range='[0.0.0,1.1.1)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Apache Commons Logging'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+      </properties>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='com.springsource.org.apache.commons.logging' version='1.1.1'/>
+        <provided namespace='osgi.bundle' name='com.springsource.org.apache.commons.logging' version='1.1.1'/>
+        <provided namespace='java.package' name='org.apache.commons.logging' version='1.1.1'/>
+        <provided namespace='java.package' name='org.apache.commons.logging.impl' version='1.1.1'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='4'>
+        <required namespace='java.package' name='javax.servlet' range='[2.1.0,3.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.avalon.framework.logger' range='[4.1.3,4.1.3]' optional='true'/>
+        <required namespace='java.package' name='org.apache.log' range='[1.0.1,1.0.1]' optional='true'/>
+        <required namespace='java.package' name='org.apache.log4j' range='[1.2.15,2.0.0)' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.logging' version='1.1.1'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Manifest-Version: 1.0&#xA;Implementation-Title: Jakarta Commons Logging&#xA;Implementation-Vendor: Apache Software Foundation&#xA;Created-By: Apache Maven&#xA;Implementation-Version: 1.1.1&#xA;Built-By: dlg01&#xA;X-Compile-Target-JDK: 1.2&#xA;Bundle-Vendor: SpringSource&#xA;Import-Package: javax.servlet;version=&quot;[2.1.0, 3.0.0)&quot;;resolution:=optional,org.apache.avalon.framework.logger;version=&quot;[4.1.3, 4.1.3]&quot;;resolution:=optional,org.apache.log;version=&quot;[1.0.1, 1.0.1]&quot;;resolution:=optional,org.apache.log4j;version=&quot;[1.2.15, 2.0.0)&quot;;resolution:=optional&#xA;Specification-Version: 1.0&#xA;Specification-Title: Jakarta Commons Logging&#xA;Archiver-Version: Plexus Archiver&#xA;Bundle-Name: Apache Commons Logging&#xA;Implementation-Vendor-Id: org.apache&#xA;Export-Package: org.apache.commons.logging;version=&quot;1.1.1&quot;,org.apache.commons.logging.impl;version=&quot;1.1.1&quot;;uses:=&quot;javax.servlet,org.apache.avalon.framework.logger,org.apache.commons.logging,org.apache.log,org.apache.log4j&quot;&#xA;Bundle-Version: 1.1.1&#xA;X-Compile-Source-JDK: 1.2&#xA;Bundle-ManifestVersion: 2&#xA;Extension-Name: org.apache.commons.logging&#xA;Specification-Vendor: Apache Software Foundation&#xA;Build-Jdk: 1.4.2_16&#xA;Bundle-SymbolicName: com.springsource.org.apache.commons.logging&#xA;Bundle-Classpath: .&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.aop' version='2.5.6.SEC01' singleton='false'>
+      <update id='org.springframework.aop' range='[0.0.0,2.5.6.SEC01)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Spring AOP'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+      </properties>
+      <provides size='18'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.aop' version='2.5.6.SEC01'/>
+        <provided namespace='osgi.bundle' name='org.springframework.aop' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.aspectj' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.aspectj.annotation' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.aspectj.autoproxy' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.config' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.framework' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.framework.adapter' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.framework.autoproxy' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.framework.autoproxy.target' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.interceptor' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.scope' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.support.annotation' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.target' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.aop.target.dynamic' version='2.5.6.SEC01'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='32'>
+        <required namespace='java.package' name='com.jamonapi' range='[2.4.0,3.0.0)' optional='true'/>
+        <required namespace='java.package' name='net.sf.cglib.core' range='[2.1.3,2.2.0)' optional='true'/>
+        <required namespace='java.package' name='net.sf.cglib.proxy' range='[2.1.3,2.2.0)' optional='true'/>
+        <required namespace='java.package' name='net.sf.cglib.transform.impl' range='[2.1.3,2.2.0)' optional='true'/>
+        <required namespace='java.package' name='org.aopalliance.aop' range='[1.0.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aopalliance.intercept' range='[1.0.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.4,2.0.0)'/>
+        <required namespace='java.package' name='org.apache.commons.pool' range='[1.3.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.pool.impl' range='[1.3.0,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.bridge' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.lang' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.lang.annotation' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.lang.reflect' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.runtime.internal' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.util' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.weaver' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.weaver.ast' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.weaver.internal.tools' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.weaver.patterns' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.weaver.reflect' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.aspectj.weaver.tools' range='[1.5.4,2.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.parsing' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.support' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.xml' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.annotation' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.util' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.util.xml' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.w3c.dom' range='0.0.0' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.aop' version='2.5.6.SEC01'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Ant-Version: Apache Ant 1.7.0&#xA;Bundle-Name: Spring AOP&#xA;Created-By: 10.0-b23 (Sun Microsystems Inc.)&#xA;Manifest-Version: 1.0&#xA;Bundle-Vendor: SpringSource&#xA;Bundle-SymbolicName: org.springframework.aop&#xA;Import-Package: com.jamonapi;version=&quot;[2.4.0, 3.0.0)&quot;;resolution:=optional,net.sf.cglib.core;version=&quot;[2.1.3, 2.2.0)&quot;;resolution:=optional,net.sf.cglib.proxy;version=&quot;[2.1.3, 2.2.0)&quot;;resolution:=optional,net.sf.cglib.transform.impl;version=&quot;[2.1.3, 2.2.0)&quot;;resolution:=optional,org.aopalliance.aop;version=&quot;[1.0.0, 2.0.0)&quot;;resolution:=optional,org.aopalliance.intercept;version=&quot;[1.0.0, 2.0.0)&quot;;resolution:=optional,org.apache.commons.logging;version=&quot;[1.0.4, 2.0.0)&quot;,org.apache.commons.pool;version=&quot;[1.3.0, 2.0.0)&quot;;resolution:=optional,org.apache.commons.pool.impl;version=&quot;[1.3.0, 2.0.0)&quot;;resolution:=optional,org.aspectj.bridge;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.lang;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.lang.annotation;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.lang.reflect;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.runtime.internal;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.util;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.weaver;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.weaver.ast;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.weaver.internal.tools;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.weaver.patterns;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.weaver.reflect;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.aspectj.weaver.tools;version=&quot;[1.5.4, 2.0.0)&quot;;resolution:=optional,org.springframework.beans;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory.config;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory.parsing;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory.support;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.beans.factory.xml;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.annotation;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.util;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.util.xml;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.w3c.dom;resolution:=optional&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Version: 2.5.6.SEC01&#xA;Implementation-Title: Spring Framework&#xA;Bundle-Version: 2.5.6.SEC01&#xA;Export-Package: org.springframework.aop;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.aopalliance.aop,org.aopalliance.intercept&quot;,org.springframework.aop.aspectj;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.aopalliance.aop,org.aopalliance.intercept,org.aspectj.bridge,org.aspectj.lang,org.aspectj.lang.reflect,org.aspectj.runtime.internal,org.aspectj.weaver.ast,org.aspectj.weaver.internal.tools,org.aspectj.weaver.reflect,org.aspectj.weaver.tools,org.springframework.aop,org.springframework.beans.factory,org.springframework.core&quot;,org.springframework.aop.aspectj.annotation;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.aopalliance.aop,org.aspectj.lang.reflect,org.springframework.aop,org.springframework.aop.aspectj,org.springframework.aop.framework,org.springframework.beans.factory,org.springframework.beans.factory.config&quot;,org.springframework.aop.aspectj.autoproxy;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.aop&quot;,org.springframework.aop.config;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.w3c.dom&quot;,org.springframework.aop.framework;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;net.sf.cglib.proxy,org.aopalliance.aop,org.aopalliance.intercept,org.springframework.aop,org.springframework.aop.framework.adapter,org.springframework.beans,org.springframework.beans.factory&quot;,org.springframework.aop.framework.adapter;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.aopalliance.aop,org.aopalliance.intercept,org.springframework.aop,org.springframework.beans&quot;,org.springframework.aop.framework.autoproxy;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.aop,org.springframework.aop.framework,org.springframework.aop.framework.adapter,org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config&quot;,org.springframework.aop.framework.autoproxy.target;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.aop,org.springframework.aop.target,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.beans.factory.support&quot;,org.springframework.aop.interceptor;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.aopalliance.aop,org.aopalliance.intercept,org.apache.commons.logging,org.springframework.aop&quot;,org.springframework.aop.scope;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.beans.factory.support&quot;,org.springframework.aop.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.aopalliance.aop,org.aopalliance.intercept,org.springframework.aop,org.springframework.beans.factory&quot;,org.springframework.aop.support.annotation;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.aop&quot;,org.springframework.aop.target;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.apache.commons.pool,org.springframework.aop,org.springframework.aop.support,org.springframework.beans,org.springframework.beans.factory&quot;,org.springframework.aop.target.dynamic;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans.factory&quot;&#xA;Spring-Version: 2.5.6.SEC01&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='ch.qos.logback.core' version='0.9.20' singleton='false'>
       <update id='ch.qos.logback.core' range='[0.0.0,0.9.20)' severity='0'/>
       <properties size='4'>
@@ -196,36 +806,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='slf4j.api' version='1.5.11' singleton='false'>
-      <update id='slf4j.api' range='[0.0.0,1.5.11)' severity='0'/>
-      <properties size='3'>
-        <property name='org.eclipse.equinox.p2.name' value='slf4j-api'/>
-        <property name='org.eclipse.equinox.p2.description' value='The slf4j API'/>
-        <property name='org.eclipse.equinox.p2.provider' value='SLF4J.ORG'/>
-      </properties>
-      <provides size='6'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='slf4j.api' version='1.5.11'/>
-        <provided namespace='osgi.bundle' name='slf4j.api' version='1.5.11'/>
-        <provided namespace='java.package' name='org.slf4j' version='1.5.11'/>
-        <provided namespace='java.package' name='org.slf4j.spi' version='1.5.11'/>
-        <provided namespace='java.package' name='org.slf4j.helpers' version='1.5.11'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='1'>
-        <required namespace='java.package' name='org.slf4j.impl' range='1.5.5'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='slf4j.api' version='1.5.11'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Import-Package: org.slf4j.impl;version=1.5.5&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Title: slf4j-api&#xA;Implementation-Version: 1.5.11&#xA;Created-By: Apache Maven&#xA;Archiver-Version: Plexus Archiver&#xA;Manifest-Version: 1.0&#xA;Bundle-Name: slf4j-api&#xA;Bundle-Vendor: SLF4J.ORG&#xA;Build-Jdk: 1.6.0_16&#xA;Bundle-Description: The slf4j API&#xA;Bundle-Version: 1.5.11&#xA;Export-Package: org.slf4j;version=1.5.11, org.slf4j.spi;version=1.5.11, org.slf4j.helpers;version=1.5.11&#xA;Bundle-SymbolicName: slf4j.api&#xA;Built-By: ceki&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.3&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
     <unit id='log4j.over.slf4j' version='1.5.11' singleton='false'>
       <update id='log4j.over.slf4j' range='[0.0.0,1.5.11)' severity='0'/>
       <properties size='3'>
@@ -252,6 +832,40 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-Name: log4j-over-slf4j&#xA;Bundle-Version: 1.5.11&#xA;Import-Package: org.slf4j, org.slf4j.spi&#xA;Created-By: Apache Maven&#xA;Bundle-Vendor: SLF4J.ORG&#xA;Archiver-Version: Plexus Archiver&#xA;Export-Package: org.apache.log4j&#xA;Implementation-Version: 1.5.11&#xA;Bundle-SymbolicName: log4j.over.slf4j&#xA;Built-By: ceki&#xA;Manifest-Version: 1.0&#xA;Build-Jdk: 1.6.0_16&#xA;Bundle-Description: Log4j implemented over SLF4J&#xA;Implementation-Title: log4j-over-slf4j&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.osgi.io' version='1.2.1' singleton='false'>
+      <update id='org.springframework.osgi.io' range='[0.0.0,1.2.1)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-io'/>
+        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi IO abstract classes. Provides Resource, ResourceLoader and ResourcePatternResolver for OSGi environments.'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.io' version='1.2.1'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.io' version='1.2.1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.io' version='1.2.1'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='6'>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.packageadmin' range='1.2.0'/>
+        <required namespace='java.package' name='org.springframework.core.io' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io.support' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.util' range='[2.5.6,4.0.0)'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.io' version='1.2.1'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Implementation-Version: 1.2.1&#xA;Import-Package: org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.springframework.core.io;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.io.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.util;version=&quot;[2.5.6,4.0)&quot;&#xA;Spring-DM-Version: 1.2.1&#xA;Built-By: costin&#xA;Bundle-Description: Spring/OSGi IO abstract classes. Provides Resource, ResourceLoader and ResourcePatternResolver for OSGi environments.&#xA;Spring-Version: 2.5.6.SEC01&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Vendor: SpringSource&#xA;Export-Package: org.springframework.osgi.io;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.core.io,org.springframework.core.io.support,org.springframework.osgi.io.internal.resolver&quot;&#xA;Bundle-Name: spring-osgi-io&#xA;Bundle-Version: 1.2.1&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Bundle-Classpath: .&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Vendor: SpringSource&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Bundle-SymbolicName: org.springframework.osgi.io&#xA;Build-Jdk: 1.5.0_22&#xA;Unversioned-Imports: &#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -286,116 +900,55 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='libraries.org.junit' version='3.8.2' singleton='false'>
-      <update id='libraries.org.junit' range='[0.0.0,3.8.2)' severity='0'/>
+    <unit id='org.springframework.beans' version='2.5.6.SEC01' singleton='false'>
+      <update id='org.springframework.beans' range='[0.0.0,2.5.6.SEC01)' severity='0'/>
       <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='libraries.org.junit'/>
-        <property name='org.eclipse.equinox.p2.provider' value='various'/>
-      </properties>
-      <provides size='9'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='libraries.org.junit' version='3.8.2'/>
-        <provided namespace='osgi.bundle' name='libraries.org.junit' version='3.8.2'/>
-        <provided namespace='java.package' name='junit.awtui' version='0.0.0'/>
-        <provided namespace='java.package' name='junit.extensions' version='0.0.0'/>
-        <provided namespace='java.package' name='junit.framework' version='0.0.0'/>
-        <provided namespace='java.package' name='junit.runner' version='0.0.0'/>
-        <provided namespace='java.package' name='junit.swingui' version='0.0.0'/>
-        <provided namespace='java.package' name='junit.textui' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='libraries.org.junit' version='3.8.2'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Export-Package: junit.awtui,junit.extensions,junit.framework,junit.runner,junit.swingui,junit.textui&#xA;Bundle-Name: libraries.org.junit&#xA;Bundle-Version: 3.8.2&#xA;Bundle-SymbolicName: libraries.org.junit&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Vendor: various&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='com.springsource.org.apache.commons.cli' version='1.2.0' singleton='false'>
-      <update id='com.springsource.org.apache.commons.cli' range='[0.0.0,1.2.0)' severity='0'/>
-      <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='Apache Commons Command Line Interface'/>
-        <property name='org.eclipse.equinox.p2.description' value='Commons CLI provides a simple API for presenting, processing and validating a command line interface.'/>
-        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
-        <property name='org.eclipse.equinox.p2.doc.url' value='http://commons.apache.org/cli/'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='com.springsource.org.apache.commons.cli' version='1.2.0'/>
-        <provided namespace='osgi.bundle' name='com.springsource.org.apache.commons.cli' version='1.2.0'/>
-        <provided namespace='java.package' name='org.apache.commons.cli' version='1.2.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.cli' version='1.2.0'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Specification-Version: 1.2&#xA;Implementation-Title: Commons CLI&#xA;Export-Package: org.apache.commons.cli;version=&quot;1.2.0&quot;&#xA;Archiver-Version: Plexus Archiver&#xA;Bundle-Name: Apache Commons Command Line Interface&#xA;Implementation-Vendor-Id: org.apache&#xA;X-Compile-Target-JDK: 1.4&#xA;Bundle-Vendor: SpringSource&#xA;Bundle-Description: Commons CLI provides a simple API for presenting, processing and validating a command line interface.&#xA;X-Compile-Source-JDK: 1.4&#xA;Created-By: 1.5.0_16 (Apple Computer, Inc.)&#xA;Manifest-Version: 1.0&#xA;Tool: Bundlor 1.0.0.CI-B166&#xA;Built-By: hen&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt&#xA;Build-Jdk: 1.5.0_16&#xA;Bundle-DocURL: http://commons.apache.org/cli/&#xA;Specification-Title: Commons CLI&#xA;Bundle-Version: 1.2.0&#xA;Implementation-Version: 1.2&#xA;Bundle-SymbolicName: com.springsource.org.apache.commons.cli&#xA;Implementation-Vendor: The Apache Software Foundation&#xA;Specification-Vendor: The Apache Software Foundation&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='jul.to.slf4j' version='1.5.11' singleton='false'>
-      <update id='jul.to.slf4j' range='[0.0.0,1.5.11)' severity='0'/>
-      <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='jul-to-slf4j'/>
-        <property name='org.eclipse.equinox.p2.provider' value='various'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='jul.to.slf4j' version='1.5.11'/>
-        <provided namespace='osgi.bundle' name='jul.to.slf4j' version='1.5.11'/>
-        <provided namespace='java.package' name='org.slf4j.bridge' version='1.5.11'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='2'>
-        <required namespace='java.package' name='org.slf4j' range='1.5.11'/>
-        <required namespace='java.package' name='org.slf4j.spi' range='1.5.11'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='jul.to.slf4j' version='1.5.11'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Import-Package: org.slf4j;version=&quot;1.5.11&quot;,org.slf4j.spi;version=&quot;1.5.11&quot;&#xA;Bundle-Version: 1.5.11&#xA;Export-Package: org.slf4j.bridge;version=&quot;1.5.11&quot;;uses:=&quot;org.slf4j,org.slf4j.spi&quot;&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: jul.to.slf4j&#xA;Bundle-Name: jul-to-slf4j&#xA;Bundle-Vendor: various&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='com.springsource.org.apache.commons.logging' version='1.1.1' singleton='false'>
-      <update id='com.springsource.org.apache.commons.logging' range='[0.0.0,1.1.1)' severity='0'/>
-      <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='Apache Commons Logging'/>
+        <property name='org.eclipse.equinox.p2.name' value='Spring Beans'/>
         <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
       </properties>
-      <provides size='5'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='com.springsource.org.apache.commons.logging' version='1.1.1'/>
-        <provided namespace='osgi.bundle' name='com.springsource.org.apache.commons.logging' version='1.1.1'/>
-        <provided namespace='java.package' name='org.apache.commons.logging' version='1.1.1'/>
-        <provided namespace='java.package' name='org.apache.commons.logging.impl' version='1.1.1'/>
+      <provides size='18'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.beans' version='2.5.6.SEC01'/>
+        <provided namespace='osgi.bundle' name='org.springframework.beans' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.annotation' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory.access' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory.access.el' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory.annotation' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory.config' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory.generic' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory.parsing' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory.serviceloader' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory.support' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory.wiring' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.factory.xml' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.propertyeditors' version='2.5.6.SEC01'/>
+        <provided namespace='java.package' name='org.springframework.beans.support' version='2.5.6.SEC01'/>
         <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
       </provides>
-      <requires size='4'>
-        <required namespace='java.package' name='javax.servlet' range='[2.1.0,3.0.0)' optional='true'/>
-        <required namespace='java.package' name='org.apache.avalon.framework.logger' range='[4.1.3,4.1.3]' optional='true'/>
-        <required namespace='java.package' name='org.apache.log' range='[1.0.1,1.0.1]' optional='true'/>
-        <required namespace='java.package' name='org.apache.log4j' range='[1.2.15,2.0.0)' optional='true'/>
+      <requires size='13'>
+        <required namespace='java.package' name='javax.el' range='[2.1.0,3.0.0)' optional='true'/>
+        <required namespace='java.package' name='javax.xml.parsers' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='net.sf.cglib.proxy' range='[2.1.3,2.2.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.4,2.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.annotation' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.io' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.io.support' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.core.type' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.util' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.util.xml' range='[2.5.6.SEC01,2.5.6.SEC01]' optional='true'/>
+        <required namespace='java.package' name='org.w3c.dom' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0' optional='true'/>
       </requires>
       <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.logging' version='1.1.1'/>
+        <artifact classifier='osgi.bundle' id='org.springframework.beans' version='2.5.6.SEC01'/>
       </artifacts>
       <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Manifest-Version: 1.0&#xA;Implementation-Title: Jakarta Commons Logging&#xA;Implementation-Vendor: Apache Software Foundation&#xA;Created-By: Apache Maven&#xA;Implementation-Version: 1.1.1&#xA;Built-By: dlg01&#xA;X-Compile-Target-JDK: 1.2&#xA;Bundle-Vendor: SpringSource&#xA;Import-Package: javax.servlet;version=&quot;[2.1.0, 3.0.0)&quot;;resolution:=optional,org.apache.avalon.framework.logger;version=&quot;[4.1.3, 4.1.3]&quot;;resolution:=optional,org.apache.log;version=&quot;[1.0.1, 1.0.1]&quot;;resolution:=optional,org.apache.log4j;version=&quot;[1.2.15, 2.0.0)&quot;;resolution:=optional&#xA;Specification-Version: 1.0&#xA;Specification-Title: Jakarta Commons Logging&#xA;Archiver-Version: Plexus Archiver&#xA;Bundle-Name: Apache Commons Logging&#xA;Implementation-Vendor-Id: org.apache&#xA;Export-Package: org.apache.commons.logging;version=&quot;1.1.1&quot;,org.apache.commons.logging.impl;version=&quot;1.1.1&quot;;uses:=&quot;javax.servlet,org.apache.avalon.framework.logger,org.apache.commons.logging,org.apache.log,org.apache.log4j&quot;&#xA;Bundle-Version: 1.1.1&#xA;X-Compile-Source-JDK: 1.2&#xA;Bundle-ManifestVersion: 2&#xA;Extension-Name: org.apache.commons.logging&#xA;Specification-Vendor: Apache Software Foundation&#xA;Build-Jdk: 1.4.2_16&#xA;Bundle-SymbolicName: com.springsource.org.apache.commons.logging&#xA;Bundle-Classpath: .&#xA;
+            Ant-Version: Apache Ant 1.7.0&#xA;Bundle-Name: Spring Beans&#xA;Created-By: 10.0-b23 (Sun Microsystems Inc.)&#xA;Manifest-Version: 1.0&#xA;Bundle-Vendor: SpringSource&#xA;Bundle-SymbolicName: org.springframework.beans&#xA;Import-Package: javax.el;version=&quot;[2.1.0, 3.0.0)&quot;;resolution:=optional,javax.xml.parsers;resolution:=optional,net.sf.cglib.proxy;version=&quot;[2.1.3, 2.2.0)&quot;;resolution:=optional,org.apache.commons.logging;version=&quot;[1.0.4, 2.0.0)&quot;,org.springframework.core;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.annotation;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.io;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.io.support;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.core.type;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.util;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.springframework.util.xml;version=&quot;[2.5.6.SEC01, 2.5.6.SEC01]&quot;;resolution:=optional,org.w3c.dom;resolution:=optional,org.xml.sax;resolution:=optional&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Version: 2.5.6.SEC01&#xA;Implementation-Title: Spring Framework&#xA;Bundle-Version: 2.5.6.SEC01&#xA;Export-Package: org.springframework.beans;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.core&quot;,org.springframework.beans.annotation;version=&quot;2.5.6.SEC01&quot;,org.springframework.beans.factory;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans&quot;,org.springframework.beans.factory.access;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.beans.factory&quot;,org.springframework.beans.factory.access.el;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.el,org.springframework.beans.factory&quot;,org.springframework.beans.factory.annotation;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.wiring,org.springframework.core.type&quot;,org.springframework.beans.factory.config;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.beans.factory,org.springframework.core,org.springframework.util&quot;,org.springframework.beans.factory.generic;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.beans.factory&quot;,org.springframework.beans.factory.parsing;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.apache.commons.logging,org.springframework.beans.factory.config,org.springframework.core.io&quot;,org.springframework.beans.factory.serviceloader;version=&quot;2.5.6.SEC01&quot;,org.springframework.beans.factory.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;net.sf.cglib.proxy,org.apache.commons.logging,org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.core,org.springframework.core.io,org.springframework.core.io.support,org.springframework.util&quot;,org.springframework.beans.factory.wiring;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans.factory&quot;,org.springframework.beans.factory.xml;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;javax.xml.parsers,org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.beans.factory.parsing,org.springframework.beans.factory.support,org.springframework.core.io,org.springframework.core.io.support,org.w3c.dom,org.xml.sax&quot;,org.springframework.beans.propertyeditors;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.core.io&quot;,org.springframework.beans.support;version=&quot;2.5.6.SEC01&quot;;uses:=&quot;org.springframework.beans,org.springframework.core.io&quot;&#xA;Spring-Version: 2.5.6.SEC01&#xA;
           </instruction>
         </instructions>
       </touchpointData>
