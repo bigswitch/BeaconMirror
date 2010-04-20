@@ -11,7 +11,7 @@ public class BeaconTestCase extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         this.applicationContext =
-            OsgiApplicationContextHolder.getApplicationContext();
+            OsgiApplicationContextHolder.getApplicationContext(true);
     }
 
     /**

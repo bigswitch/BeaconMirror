@@ -11,16 +11,31 @@ import org.springframework.core.*;
  */
 public class OsgiApplicationContextHolder implements ApplicationContextAware {
     protected static ApplicationContext applicationContext;
+    protected static Object applicationContextLock = new Object();
 
     public OsgiApplicationContextHolder() {
     }
 
     public void setApplicationContext(ApplicationContext context)
             throws BeansException {
-        OsgiApplicationContextHolder.applicationContext = context;
+        synchronized (OsgiApplicationContextHolder.applicationContextLock) {
+            OsgiApplicationContextHolder.applicationContext = context;
+            OsgiApplicationContextHolder.applicationContextLock.notifyAll();
+        }
     }
 
-    public static ApplicationContext getApplicationContext() {
+    public static ApplicationContext getApplicationContext(boolean block) {
+        if (block) {
+            synchronized (OsgiApplicationContextHolder.applicationContextLock) {
+                if (OsgiApplicationContextHolder.applicationContext == null) {
+                    try {
+                        OsgiApplicationContextHolder.applicationContextLock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
         return OsgiApplicationContextHolder.applicationContext;
     }
 }
