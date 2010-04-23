@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?metadataRepository version='1.1.0'?>
-<repository name='file:/home/derickso/git/beacon/libs/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+<repository name='file:/home/derickso/git/beacon/libs/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
   <properties size='2'>
-    <property name='p2.timestamp' value='1271723901391'/>
+    <property name='p2.timestamp' value='1271982048861'/>
     <property name='p2.compressed' value='false'/>
   </properties>
   <units size='18'>
