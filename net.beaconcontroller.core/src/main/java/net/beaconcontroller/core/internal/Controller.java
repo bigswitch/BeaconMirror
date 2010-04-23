@@ -34,12 +34,16 @@ import org.openflow.protocol.OFEchoReply;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.BasicFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author capveg, derickso
  *
  */
 public class Controller implements IBeaconProvider, SelectListener {
+    protected static Logger logger = LoggerFactory.getLogger(Controller.class);
+
     protected ExecutorService es;
     protected BasicFactory factory;
     protected SelectLoop listenSelectLoop;
@@ -259,6 +263,7 @@ public class Controller implements IBeaconProvider, SelectListener {
                 }
             }}
         );
+        logger.info("Beacon Core Started");
     }
 
     public void shutDown() throws IOException {
@@ -280,5 +285,6 @@ public class Controller implements IBeaconProvider, SelectListener {
         }
 
         es.shutdown();
+        logger.info("Beacon Core Shutdown");
     }
 }

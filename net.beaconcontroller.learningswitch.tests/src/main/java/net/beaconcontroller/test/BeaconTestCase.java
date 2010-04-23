@@ -20,4 +20,7 @@ public class BeaconTestCase extends TestCase {
     public ApplicationContext getApplicationContext() {
         return applicationContext;
     }
+
+    public void testSanity() {
+    }
 }
