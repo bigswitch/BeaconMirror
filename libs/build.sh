@@ -9,4 +9,4 @@ java -jar $ECLIPSE_HOME/plugins/org.eclipse.equinox.launcher_*.jar \
    -metadataRepository file://$BASEDIR \
    -artifactRepository file://$BASEDIR \
    -source $BASEDIR \
-   -publishArtifacts
+#   -publishArtifacts
