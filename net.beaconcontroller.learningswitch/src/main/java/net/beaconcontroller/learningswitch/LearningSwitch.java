@@ -55,6 +55,20 @@ public class LearningSwitch implements IOFMessageListener {
         return LearningSwitch.class.getPackage().getName();
     }
 
+    /**
+     * @return the macTables
+     */
+    public Map<IOFSwitch, Map<Integer, Short>> getMacTables() {
+        return macTables;
+    }
+
+    /**
+     * @param macTables the macTables to set
+     */
+    public void setMacTables(Map<IOFSwitch, Map<Integer, Short>> macTables) {
+        this.macTables = macTables;
+    }
+
     public void receive(IOFSwitch sw, OFMessage msg) {
         OFPacketIn pi = (OFPacketIn) msg;
         Map<Integer, Short> macTable = macTables.get(sw);
