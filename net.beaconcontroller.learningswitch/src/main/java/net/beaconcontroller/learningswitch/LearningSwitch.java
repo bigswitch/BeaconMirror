@@ -79,7 +79,7 @@ public class LearningSwitch implements IOFMessageListener {
 
         // Build the Match
         OFMatch match = new OFMatch();
-        match.loadFromPacket(pi.getPacketData());
+        match.loadFromPacket(pi.getPacketData(), pi.getInPort());
         byte[] dlDst = match.getDataLayerDestination();
         Integer dlDstKey = Arrays.hashCode(dlDst);
         byte[] dlSrc = match.getDataLayerSource();
