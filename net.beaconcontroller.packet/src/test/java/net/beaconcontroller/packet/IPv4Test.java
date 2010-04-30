@@ -18,13 +18,12 @@ public class IPv4Test extends TestCase {
     }
 
     public void testSerialize() {
-        byte[] expected = new byte[] { 0x45, 0x00, 0x01, 0x6c, 0x5e, 0x4e,
-                0x00, 0x00, 0x3f, 0x06, 0x2f, (byte) 0xd6, (byte) 0xac, 0x18,
+        byte[] expected = new byte[] { 0x45, 0x00, 0x00, 0x14, 0x5e, 0x4e,
+                0x00, 0x00, 0x3f, 0x06, 0x31, 0x2e, (byte) 0xac, 0x18,
                 0x4a, (byte) 0xdf, (byte) 0xab, 0x40, 0x4a, 0x30 };
         IPv4 packet = new IPv4()
             .setIdentification((short) 24142)
             .setTtl((byte) 63)
-            .setTotalLength((short) 364)
             .setProtocol((byte) 0x06)
             .setSourceAddress("172.24.74.223")
             .setDestinationAddress("171.64.74.48");

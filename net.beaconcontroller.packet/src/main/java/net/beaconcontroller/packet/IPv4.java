@@ -10,6 +10,8 @@ import java.nio.ByteBuffer;
  *
  */
 public class IPv4 extends BasePacket {
+    public static byte PROTOCOL_UDP = 0x11;
+
     protected byte version;
     protected byte headerLength;
     protected byte diffServ;
@@ -249,7 +251,7 @@ public class IPv4 extends BasePacket {
     /**
      * Serializes the packet. Will compute and set the following fields if they
      * are set to specific values at the time serialize is called:
-     *      -checksum : null
+     *      -checksum : 0
      *      -headerLength : 0
      *      -totalLength : 0
      */
@@ -257,6 +259,7 @@ public class IPv4 extends BasePacket {
     public byte[] serialize() {
         byte[] payloadData = null;
         if (payload != null) {
+            payload.setParent(this);
             payloadData = payload.serialize();
         }
 
@@ -289,16 +292,13 @@ public class IPv4 extends BasePacket {
             bb.put(this.options);
         if (payloadData != null)
             bb.put(payloadData);
-        if (payloadData != null)
-            bb.put(payloadData);
 
         // compute checksum if needed
         if (this.checksum == 0) {
             bb.rewind();
             int accumulation = 0;
             for (int i = 0; i < this.headerLength * 2; ++i) {
-                int temp = 0xffff & bb.getShort();
-                accumulation += temp;
+                accumulation += 0xffff & bb.getShort();
             }
             accumulation = ((accumulation >> 16) & 0xffff)
                     + (accumulation & 0xffff);

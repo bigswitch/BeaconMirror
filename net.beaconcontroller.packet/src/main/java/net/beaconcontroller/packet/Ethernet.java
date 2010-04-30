@@ -79,6 +79,7 @@ public class Ethernet extends BasePacket {
     public byte[] serialize() {
         byte[] payloadData = null;
         if (payload != null) {
+            payload.setParent(this);
             payloadData = payload.serialize();
         }
         byte[] data = new byte[14 + ((payloadData == null) ? 0

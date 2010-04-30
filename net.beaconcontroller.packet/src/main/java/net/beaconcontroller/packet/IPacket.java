@@ -32,7 +32,8 @@ public interface IPacket {
     public IPacket setParent(IPacket packet);
 
     /**
-     * Serializes this packet and all payloads
+     * Sets all payloads parent packet if applicable, then serializes this 
+     * packet and all payloads
      * @return a byte[] containing this packet and payloads
      */
     public byte[] serialize();
