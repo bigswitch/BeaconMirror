@@ -38,7 +38,7 @@
 <stringAttribute key="selected_workspace_plugins" value="org.openflow@default:default,net.beaconcontroller.learningswitch@default:default,net.beaconcontroller.learningswitch.tests@default:false,net.beaconcontroller.test@default:default,net.beaconcontroller.logging.config@default:false,net.beaconcontroller.packet@default:default,net.beaconcontroller.core@default:false,net.beaconcontroller.logging.bridge@default:default"/>
 <booleanAttribute key="show_selected_only" value="true"/>
 <stringAttribute key="templateConfig" value="${target_home}/configuration/config.ini"/>
-<stringAttribute key="timestamp" value="1272671180403"/>
+<stringAttribute key="timestamp" value="1272741769881"/>
 <booleanAttribute key="tracing" value="false"/>
 <booleanAttribute key="useDefaultConfig" value="true"/>
 <booleanAttribute key="useDefaultConfigArea" value="false"/>

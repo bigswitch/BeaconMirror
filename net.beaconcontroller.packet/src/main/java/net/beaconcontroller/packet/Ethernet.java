@@ -76,7 +76,6 @@ public class Ethernet extends BasePacket {
         return this;
     }
 
-    @Override
     public byte[] serialize() {
         byte[] payloadData = null;
         if (payload != null) {

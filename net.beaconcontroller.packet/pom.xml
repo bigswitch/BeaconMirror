@@ -9,7 +9,7 @@
   </parent>
 
   <groupId>net.beaconcontroller</groupId>
-  <artifactId>net.beaconcontroller.learningswitch</artifactId>
+  <artifactId>net.beaconcontroller.packet</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <name>Beacon Packet Library</name>
   <description>This is a packet library used for assembling and decoding packets
@@ -38,11 +38,6 @@
   </build>
 
   <dependencies>
-    <dependency>
-      <groupId>commons-cli</groupId>
-      <artifactId>commons-cli</artifactId>
-      <version>1.2</version>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

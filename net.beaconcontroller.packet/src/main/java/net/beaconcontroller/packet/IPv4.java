@@ -255,7 +255,6 @@ public class IPv4 extends BasePacket {
      *      -headerLength : 0
      *      -totalLength : 0
      */
-    @Override
     public byte[] serialize() {
         byte[] payloadData = null;
         if (payload != null) {

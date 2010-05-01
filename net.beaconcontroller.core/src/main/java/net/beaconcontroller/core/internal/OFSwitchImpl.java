@@ -24,22 +24,18 @@ public class OFSwitchImpl implements IOFSwitch {
         this.socketChannel = channel;
     }
 
-    @Override
     public OFMessageInStream getInputStream() {
         return inStream;
     }
 
-    @Override
     public OFMessageOutStream getOutputStream() {
         return outStream;
     }
 
-    @Override
     public void setInputStream(OFMessageInStream stream) {
         this.inStream = stream;
     }
 
-    @Override
     public void setOutputStream(OFMessageOutStream stream) {
         this.outStream = stream;
     }

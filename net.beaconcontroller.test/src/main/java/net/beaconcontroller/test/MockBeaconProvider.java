@@ -24,7 +24,6 @@ public class MockBeaconProvider implements IBeaconProvider {
         listeners = new ConcurrentHashMap<OFType, List<IOFMessageListener>>();
     }
 
-    @Override
     public void addListener(OFType type, IOFMessageListener listener) {
         if (!listeners.containsKey(type)) {
             listeners.put(type, new ArrayList<IOFMessageListener>());
@@ -32,7 +31,6 @@ public class MockBeaconProvider implements IBeaconProvider {
         listeners.get(type).add(listener);
     }
 
-    @Override
     public void removeListener(OFType type, IOFMessageListener listener) {
         listeners.get(type).remove(listener);
     }

@@ -35,7 +35,6 @@ public class Data extends BasePacket {
         return this;
     }
 
-    @Override
     public byte[] serialize() {
         return this.data;
     }
