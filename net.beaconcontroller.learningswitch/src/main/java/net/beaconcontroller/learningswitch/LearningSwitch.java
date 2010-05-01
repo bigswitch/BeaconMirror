@@ -1,5 +1,6 @@
 package net.beaconcontroller.learningswitch;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -102,7 +103,7 @@ public class LearningSwitch implements IOFMessageListener {
 
         // push a flow mod if we know where the packet should be going
         if (outPort != null) {
-            OFFlowMod fm = (OFFlowMod) sw.getStream().getMessageFactory()
+            OFFlowMod fm = (OFFlowMod) sw.getInputStream().getMessageFactory()
                     .getMessage(OFType.FLOW_MOD);
             fm.setBufferId(bufferId);
             fm.setCommand((short) 0);
@@ -122,36 +123,45 @@ public class LearningSwitch implements IOFMessageListener {
             actions.add(action);
             fm.setActions(actions);
             fm.setLength(U16.t(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH));
-            sw.getStream().write(fm);
+            try {
+                sw.getOutputStream().write(fm);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         // Send a packet out
         if (outPort == null || pi.getBufferId() == 0xffffffff) {
-           OFPacketOut po = new OFPacketOut();
-           po.setBufferId(bufferId);
-           po.setInPort(pi.getInPort());
+            OFPacketOut po = new OFPacketOut();
+            po.setBufferId(bufferId);
+            po.setInPort(pi.getInPort());
 
-           // set actions
-           OFActionOutput action = new OFActionOutput();
-           action.setMaxLength((short) 0);
-           action.setPort((short) ((outPort == null) ? OFPort.OFPP_FLOOD.getValue() :
-               outPort));
-           List<OFAction> actions = new ArrayList<OFAction>();
-           actions.add(action);
-           po.setActions(actions);
-           po.setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
+            // set actions
+            OFActionOutput action = new OFActionOutput();
+            action.setMaxLength((short) 0);
+            action.setPort((short) ((outPort == null) ? OFPort.OFPP_FLOOD
+                    .getValue() : outPort));
+            List<OFAction> actions = new ArrayList<OFAction>();
+            actions.add(action);
+            po.setActions(actions);
+            po.setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
 
-           // set data if needed
-           if (bufferId == 0xffffffff) {
-               byte[] packetData = pi.getPacketData();
-               po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH +
-                       po.getActionsLength()+packetData.length));
-               po.setPacketData(packetData);
-           } else {
-               po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH +
-                       po.getActionsLength()));
-           }
-           sw.getStream().write(po);
+            // set data if needed
+            if (bufferId == 0xffffffff) {
+                byte[] packetData = pi.getPacketData();
+                po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH
+                        + po.getActionsLength() + packetData.length));
+                po.setPacketData(packetData);
+            } else {
+                po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH
+                        + po.getActionsLength()));
+            }
+
+            try {
+                sw.getOutputStream().write(po);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

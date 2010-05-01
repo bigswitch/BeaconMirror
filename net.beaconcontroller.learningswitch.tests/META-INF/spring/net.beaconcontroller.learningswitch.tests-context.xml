@@ -13,4 +13,8 @@
 
   <bean id="mockBeaconProvider" class="net.beaconcontroller.test.MockBeaconProvider">
   </bean>
+
+  <!-- The following bean is required if you use BeaconTestCase -->
+  <bean id="osgiApplicationContexHolder"
+    class="net.beaconcontroller.test.OsgiApplicationContextHolder" />
 </beans>

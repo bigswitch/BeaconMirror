@@ -30,6 +30,8 @@ import org.apache.commons.cli.PosixParser;
 import org.openflow.example.SelectListener;
 import org.openflow.example.SelectLoop;
 import org.openflow.io.OFMessageAsyncStream;
+import org.openflow.io.OFMessageInStream;
+import org.openflow.io.OFMessageOutStream;
 import org.openflow.protocol.OFEchoReply;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFType;
@@ -73,7 +75,8 @@ public class Controller implements IBeaconProvider, SelectListener {
         SocketChannel sock = listenSock.accept();
         IOFSwitch sw = new OFSwitchImpl();
         OFMessageAsyncStream stream = new OFMessageAsyncStream(sock, factory);
-        sw.setStream(stream);
+        sw.setInputStream(stream);
+        sw.setOutputStream(stream);
         sw.setSocketChannel(sock);
         switches.add(sw);
         System.err.println("New connection from " + sock);
@@ -95,10 +98,11 @@ public class Controller implements IBeaconProvider, SelectListener {
     }
 
     protected void handleSwitchEvent(SelectionKey key, IOFSwitch sw) {
-        OFMessageAsyncStream stream = sw.getStream();
+        OFMessageInStream in = sw.getInputStream();
+        OFMessageOutStream out = sw.getOutputStream();
         try {
             if (key.isReadable()) {
-                List<OFMessage> msgs = stream.read();
+                List<OFMessage> msgs = in.read();
                 if (msgs == null) {
                     key.cancel();
                     switches.remove(sw);
@@ -112,11 +116,11 @@ public class Controller implements IBeaconProvider, SelectListener {
                             System.err.println("HELLO from " + sw);
                             break;
                         case ECHO_REQUEST:
-                            OFEchoReply reply = (OFEchoReply) stream
+                            OFEchoReply reply = (OFEchoReply) in
                                     .getMessageFactory().getMessage(
                                             OFType.ECHO_REPLY);
                             reply.setXid(m.getXid());
-                            stream.write(reply);
+                            out.write(reply);
                             break;
                         default:
                             List<IOFMessageListener> listeners = messageListeners
@@ -137,14 +141,14 @@ public class Controller implements IBeaconProvider, SelectListener {
                 }
             }
             if (key.isWritable()) {
-                stream.flush();
+                out.flush();
             }
 
             /**
              * Only register for interest in R OR W, not both, causes stream
              * deadlock after some period of time
              */
-            if (stream.needsFlush())
+            if (out.needsFlush())
                 key.interestOps(SelectionKey.OP_WRITE);
             else
                 key.interestOps(SelectionKey.OP_READ);

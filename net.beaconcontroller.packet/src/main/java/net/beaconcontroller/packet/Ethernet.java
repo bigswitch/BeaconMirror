@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
  */
 public class Ethernet extends BasePacket {
     private static String HEXES = "0123456789ABCDEF";
+    public static short TYPE_IPv4 = 0x0800;
 
     protected byte[] destinationMACAddress;
     protected byte[] sourceMACAddress;

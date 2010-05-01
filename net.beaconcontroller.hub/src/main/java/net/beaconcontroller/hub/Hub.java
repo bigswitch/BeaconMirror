@@ -1,5 +1,6 @@
 package net.beaconcontroller.hub;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class Hub implements IOFMessageListener {
 
     public void receive(IOFSwitch sw, OFMessage msg) {
         OFPacketIn pi = (OFPacketIn) msg;
-        OFPacketOut po = (OFPacketOut) sw.getStream().getMessageFactory()
+        OFPacketOut po = (OFPacketOut) sw.getInputStream().getMessageFactory()
                 .getMessage(OFType.PACKET_OUT);
         po.setBufferId(pi.getBufferId());
         po.setInPort(pi.getInPort());
@@ -68,6 +69,10 @@ public class Hub implements IOFMessageListener {
             po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH
                     + po.getActionsLength()));
         }
-        sw.getStream().write(po);
+        try {
+            sw.getOutputStream().write(po);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
