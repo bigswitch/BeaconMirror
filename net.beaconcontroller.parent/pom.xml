@@ -4,10 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.beaconcontroller</groupId>
   <artifactId>parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
-    <beacon.version>0.0.1-SNAPSHOT</beacon.version>
+    <beacon.version>0.1.0-SNAPSHOT</beacon.version>
   </properties>
   <modules>
     <module>../target-platform</module>
@@ -18,6 +18,7 @@
     <module>../net.beaconcontroller.learningswitch.tests</module>
     <module>../net.beaconcontroller.logging.bridge</module>
     <module>../net.beaconcontroller.logging.config</module>
+    <module>../net.beaconcontroller.mactracker</module>
     <module>../net.beaconcontroller.packet</module>
     <module>../net.beaconcontroller.product</module>
     <module>../net.beaconcontroller.test</module>

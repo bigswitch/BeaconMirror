@@ -33,6 +33,7 @@ import org.openflow.io.OFMessageAsyncStream;
 import org.openflow.io.OFMessageInStream;
 import org.openflow.io.OFMessageOutStream;
 import org.openflow.protocol.OFEchoReply;
+import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.BasicFactory;
@@ -121,6 +122,9 @@ public class Controller implements IBeaconProvider, SelectListener {
                                             OFType.ECHO_REPLY);
                             reply.setXid(m.getXid());
                             out.write(reply);
+                            break;
+                        case FEATURES_REPLY:
+                            sw.setFeaturesReply((OFFeaturesReply) m);
                             break;
                         default:
                             List<IOFMessageListener> listeners = messageListeners

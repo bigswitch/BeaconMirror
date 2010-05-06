@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Beacon Controller" uid="net.beaconcontroller" version="0.0.1" useFeatures="false" includeLaunchers="true">
-
+<product name="Beacon Controller" uid="net.beaconcontroller" version="0.1.0" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -26,7 +25,6 @@
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
