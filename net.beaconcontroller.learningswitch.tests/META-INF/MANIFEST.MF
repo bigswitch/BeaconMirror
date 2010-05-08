@@ -4,7 +4,7 @@ Bundle-Name: net.beaconcontroller.learningswitch.tests
 Bundle-SymbolicName: net.beaconcontroller.learningswitch.tests
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: net.beaconcontroller
-Fragment-Host: net.beaconcontroller.learningswitch;bundle-version="0.0.1"
+Fragment-Host: net.beaconcontroller.learningswitch
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: junit.framework,
  net.beaconcontroller.packet,

@@ -14,7 +14,8 @@
   <name>Beacon Packet Library</name>
   <description>This is a packet library used for assembling and decoding packets
   </description>
-  <packaging>jar</packaging>
+  <packaging>eclipse-plugin</packaging>
+  <!--
   <build>
     <plugins>
       <plugin>
@@ -36,7 +37,7 @@
       </plugin>
     </plugins>
   </build>
-
+  -->
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
