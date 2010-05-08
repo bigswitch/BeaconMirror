@@ -8,6 +8,8 @@
   <packaging>pom</packaging>
   <properties>
     <beacon.version>0.1.0-SNAPSHOT</beacon.version>
+    <openflow.version>0.1.0</openflow.version>
+    <tycho.version>0.9.0-SNAPSHOT</tycho.version>
   </properties>
   <modules>
     <module>../target-platform</module>
@@ -53,13 +55,13 @@
       <plugin>
         <groupId>org.sonatype.tycho</groupId>
         <artifactId>tycho-maven-plugin</artifactId>
-        <version>0.9.0-SNAPSHOT</version>
+        <version>${tycho.version}</version>
         <extensions>true</extensions>
       </plugin>
       <plugin>
         <groupId>org.sonatype.tycho</groupId>
         <artifactId>target-platform-configuration</artifactId>
-        <version>0.9.0-SNAPSHOT</version>
+        <version>${tycho.version}</version>
         <configuration>
           <resolver>p2</resolver>
           <pomDependencies>consider</pomDependencies>
@@ -91,7 +93,7 @@
     <dependency>
       <groupId>org.openflow</groupId>
       <artifactId>openflow</artifactId>
-      <version>0.1.0</version>
+      <version>${openflow.version}</version>
     </dependency>
   </dependencies>
   <repositories>
