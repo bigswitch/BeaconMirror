@@ -55,4 +55,11 @@ public class OFSwitchImpl implements IOFSwitch {
     public void setFeaturesReply(OFFeaturesReply featuresReply) {
         this.featuresReply = featuresReply;
     }
+
+    @Override
+    public long getDatapathId() {
+        if (this.featuresReply == null)
+            throw new RuntimeException("Features reply has not yet been set");
+        return this.featuresReply.getDatapathId();
+    }
 }

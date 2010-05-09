@@ -56,4 +56,10 @@ public interface IOFSwitch {
      * @param featuresReply
      */
     public void setFeaturesReply(OFFeaturesReply featuresReply);
+
+    /**
+     * Get the datapathId of the switch
+     * @return
+     */
+    public long getDatapathId();
 }
