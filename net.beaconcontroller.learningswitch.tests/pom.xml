@@ -18,6 +18,7 @@
       <plugin>
         <groupId>org.sonatype.tycho</groupId>
         <artifactId>maven-osgi-test-plugin</artifactId>
+        <version>${tycho.version}</version>
         <configuration>
           <useUIHarness>false</useUIHarness>
           <showEclipseLog>true</showEclipseLog>
