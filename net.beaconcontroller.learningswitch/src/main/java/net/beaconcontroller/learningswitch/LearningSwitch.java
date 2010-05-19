@@ -103,6 +103,10 @@ public class LearningSwitch implements IOFMessageListener {
 
         // push a flow mod if we know where the packet should be going
         if (outPort != null) {
+            if (outPort == pi.getInPort()) {
+                // drop the packet
+                return;
+            }
             OFFlowMod fm = (OFFlowMod) sw.getInputStream().getMessageFactory()
                     .getMessage(OFType.FLOW_MOD);
             fm.setBufferId(bufferId);
