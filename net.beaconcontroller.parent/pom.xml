@@ -14,6 +14,7 @@
   <modules>
     <module>../target-platform</module>
     <module>../net.beaconcontroller.core</module>
+    <module>../net.beaconcontroller.core.tests</module>
     <module>../net.beaconcontroller.hub</module>
     <module>../net.beaconcontroller.hub.tests</module>
     <module>../net.beaconcontroller.learningswitch</module>

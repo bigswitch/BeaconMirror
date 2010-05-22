@@ -8,9 +8,11 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -41,12 +43,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author capveg, derickso
+ * @author David Erickson (derickso@stanford.edu) - 04/04/10
  *
  */
 public class Controller implements IBeaconProvider, SelectListener {
     protected static Logger logger = LoggerFactory.getLogger(Controller.class);
 
+    protected Map<String,String> callbackOrdering;
     protected ExecutorService es;
     protected BasicFactory factory;
     protected SelectLoop listenSelectLoop;
@@ -209,7 +212,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         formatter.printHelp(Controller.class.getCanonicalName(), options);
       }
 
-    public void addListener(OFType type, IOFMessageListener listener) {
+    public synchronized void addListener(OFType type, IOFMessageListener listener) {
         List<IOFMessageListener> listeners = messageListeners.get(type);
         if (listeners == null) {
             // Set atomically if no list exists
@@ -218,10 +221,42 @@ public class Controller implements IBeaconProvider, SelectListener {
             // Get the list, the new one or any other, guaranteed not null
             listeners = messageListeners.get(type);
         }
-        listeners.add(listener);
+
+        if (callbackOrdering != null &&
+                callbackOrdering.containsKey(type.toString()) &&
+                callbackOrdering.get(type.toString()).contains(listener.getName())) {
+            String order = callbackOrdering.get(type.toString());
+            String[] orderArray = order.split(",");
+            int myPos = 0;
+            for (int i = 0; i < orderArray.length; ++i) {
+                orderArray[i] = orderArray[i].trim();
+                if (orderArray[i].equals(listener.getName()))
+                    myPos = i;
+            }
+            List<String> beforeList = Arrays.asList(Arrays.copyOfRange(orderArray, 0, myPos));
+
+            boolean added = false;
+            // only try and walk if there are already listeners
+            if (listeners.size() > 0) {
+                // Walk through and determine where to insert
+                for (int i = 0; i < listeners.size(); ++i) {
+                    if (beforeList.contains(listeners.get(i).getName()))
+                        continue;
+                    listeners.add(i, listener);
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) {
+                listeners.add(listener);
+            }
+
+        } else {
+            listeners.add(listener);
+        }
     }
 
-    public void removeListener(OFType type, IOFMessageListener listener) {
+    public synchronized void removeListener(OFType type, IOFMessageListener listener) {
         List<IOFMessageListener> listeners = messageListeners.get(type);
         if (listeners != null) {
             listeners.remove(listener);
@@ -294,5 +329,27 @@ public class Controller implements IBeaconProvider, SelectListener {
 
         es.shutdown();
         logger.info("Beacon Core Shutdown");
+    }
+
+    /**
+     * @param callbackOrdering the callbackOrdering to set
+     */
+    public void setCallbackOrdering(Map<String, String> callbackOrdering) {
+        this.callbackOrdering = callbackOrdering;
+    }
+
+    /**
+     * @return the messageListeners
+     */
+    protected ConcurrentMap<OFType, List<IOFMessageListener>> getMessageListeners() {
+        return messageListeners;
+    }
+
+    /**
+     * @param messageListeners the messageListeners to set
+     */
+    protected void setMessageListeners(
+            ConcurrentMap<OFType, List<IOFMessageListener>> messageListeners) {
+        this.messageListeners = messageListeners;
     }
 }
