@@ -43,7 +43,7 @@ public class Hub implements IOFMessageListener {
         return Hub.class.getPackage().getName();
     }
 
-    public void receive(IOFSwitch sw, OFMessage msg) {
+    public Command receive(IOFSwitch sw, OFMessage msg) {
         OFPacketIn pi = (OFPacketIn) msg;
         OFPacketOut po = (OFPacketOut) sw.getInputStream().getMessageFactory()
                 .getMessage(OFType.PACKET_OUT);
@@ -74,5 +74,7 @@ public class Hub implements IOFMessageListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return Command.CONTINUE;
     }
 }

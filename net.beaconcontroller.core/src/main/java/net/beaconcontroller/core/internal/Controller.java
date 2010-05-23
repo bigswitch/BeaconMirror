@@ -22,13 +22,8 @@ import java.util.concurrent.Executors;
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.core.IOFMessageListener.Command;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.openflow.example.SelectListener;
 import org.openflow.example.SelectLoop;
 import org.openflow.io.OFMessageAsyncStream;
@@ -113,40 +108,9 @@ public class Controller implements IBeaconProvider, SelectListener {
                     sw.getSocketChannel().socket().close();
                     return;
                 }
-
-                for (OFMessage m : msgs) {
-                    switch (m.getType()) {
-                        case HELLO:
-                            System.err.println("HELLO from " + sw);
-                            break;
-                        case ECHO_REQUEST:
-                            OFEchoReply reply = (OFEchoReply) in
-                                    .getMessageFactory().getMessage(
-                                            OFType.ECHO_REPLY);
-                            reply.setXid(m.getXid());
-                            out.write(reply);
-                            break;
-                        case FEATURES_REPLY:
-                            sw.setFeaturesReply((OFFeaturesReply) m);
-                            break;
-                        default:
-                            List<IOFMessageListener> listeners = messageListeners
-                                    .get(m.getType());
-                            if (listeners != null) {
-                                for (IOFMessageListener listener : listeners) {
-                                    listener.receive(sw, m);
-                                }
-                            } else {
-                                System.err.println("Unhandled OF message: "
-                                        + m.getType()
-                                        + " from "
-                                        + sw.getSocketChannel().socket()
-                                                .getInetAddress());
-                            }
-                            break;
-                    }
-                }
+                handleMessages(sw, msgs);
             }
+
             if (key.isWritable()) {
                 out.flush();
             }
@@ -171,46 +135,58 @@ public class Controller implements IBeaconProvider, SelectListener {
         }
     }
 
-    public static void main(String [] args) throws IOException {
-        CommandLine cmd = parseArgs(args);
-//        int port = 6633;
-//        if (cmd.hasOption("p")) {
-//            port = Integer.valueOf(cmd.getOptionValue("p"));
-//        }
-
-        Controller sc = new Controller();
-        if (cmd.hasOption("t"))
-            sc.threadCount = Integer.valueOf(cmd.getOptionValue("t"));
-        sc.startUp();
-    }
-
-    public static CommandLine parseArgs(String[] args) {
-        Options options = new Options();
-        options.addOption("h", "help", false, "print help");
-        options.addOption("n", true, "the number of packets to send");
-        options.addOption("p", "port", true, "the port to listen on, default 6633");
-        options.addOption("t", "threads", true,
-        "the number of threads to run");
-        CommandLineParser parser = new PosixParser();
-        try {
-          CommandLine cmd = parser.parse(options, args);
-          if (cmd.hasOption("h")) {
-              printUsage(options);
-              System.exit(0);
-          }
-          return cmd;
-        } catch (ParseException e) {
-          printUsage(options);
+    /**
+     * Handle replies to certain OFMessages, and pass others off to listeners
+     * @param sw
+     * @param msgs
+     * @throws IOException
+     */
+    protected void handleMessages(IOFSwitch sw, List<OFMessage> msgs)
+            throws IOException {
+        for (OFMessage m : msgs) {
+            switch (m.getType()) {
+                case HELLO:
+                    System.err.println("HELLO from " + sw);
+                    break;
+                case ECHO_REQUEST:
+                    OFMessageInStream in = sw.getInputStream();
+                    OFMessageOutStream out = sw.getOutputStream();
+                    OFEchoReply reply = (OFEchoReply) in
+                            .getMessageFactory().getMessage(
+                                    OFType.ECHO_REPLY);
+                    reply.setXid(m.getXid());
+                    out.write(reply);
+                    break;
+                case FEATURES_REPLY:
+                    sw.setFeaturesReply((OFFeaturesReply) m);
+                    break;
+                default:
+                    List<IOFMessageListener> listeners = messageListeners
+                            .get(m.getType());
+                    if (listeners != null) {
+                        for (IOFMessageListener listener : listeners) {
+                            try {
+                                if (Command.STOP.equals(listener.receive(sw, m))) {
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                logger.error("Failure calling listener ["+
+                                        listener.toString()+
+                                        "] with message ["+m.toString()+
+                                        "]", e);
+                            }
+                        }
+                    } else {
+                        System.err.println("Unhandled OF message: "
+                                + m.getType()
+                                + " from "
+                                + sw.getSocketChannel().socket()
+                                        .getInetAddress());
+                    }
+                    break;
+            }
         }
-
-        System.exit(-1);
-        return null;
     }
-
-    public static void printUsage(Options options) {
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(Controller.class.getCanonicalName(), options);
-      }
 
     public synchronized void addListener(OFType type, IOFMessageListener listener) {
         List<IOFMessageListener> listeners = messageListeners.get(type);

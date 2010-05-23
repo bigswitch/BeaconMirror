@@ -70,7 +70,7 @@ public class LearningSwitch implements IOFMessageListener {
         this.macTables = macTables;
     }
 
-    public void receive(IOFSwitch sw, OFMessage msg) {
+    public Command receive(IOFSwitch sw, OFMessage msg) {
         OFPacketIn pi = (OFPacketIn) msg;
         Map<Integer, Short> macTable = macTables.get(sw);
         if (macTable == null) {
@@ -105,7 +105,7 @@ public class LearningSwitch implements IOFMessageListener {
         if (outPort != null) {
             if (outPort == pi.getInPort()) {
                 // drop the packet
-                return;
+                return Command.CONTINUE;
             }
             OFFlowMod fm = (OFFlowMod) sw.getInputStream().getMessageFactory()
                     .getMessage(OFType.FLOW_MOD);
@@ -167,5 +167,6 @@ public class LearningSwitch implements IOFMessageListener {
                 e.printStackTrace();
             }
         }
+        return Command.CONTINUE;
     }
 }
