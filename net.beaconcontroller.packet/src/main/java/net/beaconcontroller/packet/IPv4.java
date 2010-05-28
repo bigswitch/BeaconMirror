@@ -4,6 +4,9 @@
 package net.beaconcontroller.packet;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author derickso
@@ -11,6 +14,12 @@ import java.nio.ByteBuffer;
  */
 public class IPv4 extends BasePacket {
     public static byte PROTOCOL_UDP = 0x11;
+    public static Map<Byte, Class<? extends IPacket>> protocolClassMap;
+
+    static {
+        protocolClassMap = new HashMap<Byte, Class<? extends IPacket>>();
+        protocolClassMap.put(PROTOCOL_UDP, UDP.class);
+    }
 
     protected byte version;
     protected byte headerLength;
@@ -307,6 +316,48 @@ public class IPv4 extends BasePacket {
         return data;
     }
 
+    @Override
+    public IPacket deserialize(byte[] data, int offset, int length) {
+        ByteBuffer bb = ByteBuffer.wrap(data, offset, length);
+        short sscratch;
+
+        this.version = bb.get();
+        this.headerLength = (byte) (this.version & 0xf);
+        this.version = (byte) ((this.version >> 4) & 0xf);
+        this.diffServ = bb.get();
+        this.totalLength = bb.getShort();
+        this.identification = bb.getShort();
+        sscratch = bb.getShort();
+        this.flags = (byte) ((sscratch >> 29) & 0x7);
+        this.fragmentOffset = (short) (sscratch & 0x1fff);
+        this.ttl = bb.get();
+        this.protocol = bb.get();
+        this.checksum = bb.getShort();
+        this.sourceAddress = bb.getInt();
+        this.destinationAddress = bb.getInt();
+
+        if (this.headerLength > 5) {
+            int optionsLength = (this.headerLength - 5) * 4;
+            this.options = new byte[optionsLength];
+            bb.get(this.options);
+        }
+
+        IPacket payload;
+        if (IPv4.protocolClassMap.containsKey(this.protocol)) {
+            Class<? extends IPacket> clazz = IPv4.protocolClassMap.get(this.protocol);
+            try {
+                payload = clazz.newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("Error parsing payload for IPv4 packet", e);
+            }
+        } else {
+            payload = new Data();
+        }
+        this.payload = payload.deserialize(data, bb.position(), bb.limit()-bb.position());
+        this.payload.setParent(this);
+        return this;
+    }
+
     /**
      * Accepts an IPv4 address of the form xxx.xxx.xxx.xxx, ie 192.168.0.1 and
      * returns the corresponding 32 bit integer.
@@ -324,5 +375,69 @@ public class IPv4 extends BasePacket {
             result |= Integer.valueOf(octets[i]) << ((3-i)*8);
         }
         return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 2521;
+        int result = super.hashCode();
+        result = prime * result + checksum;
+        result = prime * result + destinationAddress;
+        result = prime * result + diffServ;
+        result = prime * result + flags;
+        result = prime * result + fragmentOffset;
+        result = prime * result + headerLength;
+        result = prime * result + identification;
+        result = prime * result + Arrays.hashCode(options);
+        result = prime * result + protocol;
+        result = prime * result + sourceAddress;
+        result = prime * result + totalLength;
+        result = prime * result + ttl;
+        result = prime * result + version;
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (!(obj instanceof IPv4))
+            return false;
+        IPv4 other = (IPv4) obj;
+        if (checksum != other.checksum)
+            return false;
+        if (destinationAddress != other.destinationAddress)
+            return false;
+        if (diffServ != other.diffServ)
+            return false;
+        if (flags != other.flags)
+            return false;
+        if (fragmentOffset != other.fragmentOffset)
+            return false;
+        if (headerLength != other.headerLength)
+            return false;
+        if (identification != other.identification)
+            return false;
+        if (!Arrays.equals(options, other.options))
+            return false;
+        if (protocol != other.protocol)
+            return false;
+        if (sourceAddress != other.sourceAddress)
+            return false;
+        if (totalLength != other.totalLength)
+            return false;
+        if (ttl != other.ttl)
+            return false;
+        if (version != other.version)
+            return false;
+        return true;
     }
 }

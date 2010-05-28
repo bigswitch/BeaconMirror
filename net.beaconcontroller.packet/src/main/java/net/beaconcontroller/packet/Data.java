@@ -1,5 +1,7 @@
 package net.beaconcontroller.packet;
 
+import java.util.Arrays;
+
 /**
  *
  * @author David Erickson (derickso@stanford.edu)
@@ -37,5 +39,39 @@ public class Data extends BasePacket {
 
     public byte[] serialize() {
         return this.data;
+    }
+
+    @Override
+    public IPacket deserialize(byte[] data, int offset, int length) {
+        this.data = Arrays.copyOfRange(data, offset, data.length);
+        return this;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 1571;
+        int result = super.hashCode();
+        result = prime * result + Arrays.hashCode(data);
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (!(obj instanceof Data))
+            return false;
+        Data other = (Data) obj;
+        if (!Arrays.equals(data, other.data))
+            return false;
+        return true;
     }
 }

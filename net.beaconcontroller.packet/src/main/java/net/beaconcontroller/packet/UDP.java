@@ -134,4 +134,55 @@ public class UDP extends BasePacket {
         }
         return data;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 5807;
+        int result = super.hashCode();
+        result = prime * result + checksum;
+        result = prime * result + destinationPort;
+        result = prime * result + length;
+        result = prime * result + sourcePort;
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (!(obj instanceof UDP))
+            return false;
+        UDP other = (UDP) obj;
+        if (checksum != other.checksum)
+            return false;
+        if (destinationPort != other.destinationPort)
+            return false;
+        if (length != other.length)
+            return false;
+        if (sourcePort != other.sourcePort)
+            return false;
+        return true;
+    }
+
+    @Override
+    public IPacket deserialize(byte[] data, int offset, int length) {
+        ByteBuffer bb = ByteBuffer.wrap(data, offset, length);
+        this.sourcePort = bb.getShort();
+        this.destinationPort = bb.getShort();
+        this.length = bb.getShort();
+        this.checksum = bb.getShort();
+
+        IPacket payload = new Data();
+        this.payload = payload.deserialize(data, bb.position(), bb.limit()-bb.position());
+        this.payload.setParent(this);
+        return this;
+    }
 }

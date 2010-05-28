@@ -37,4 +37,13 @@ public interface IPacket {
      * @return a byte[] containing this packet and payloads
      */
     public byte[] serialize();
+
+    /**
+     * Deserializes this packet layer and all possible payloads
+     * @param data
+     * @param offset offset to start deserializing from
+     * @param length length of the data to deserialize
+     * @return the deserialized data
+     */
+    public IPacket deserialize(byte[] data, int offset, int length);
 }
