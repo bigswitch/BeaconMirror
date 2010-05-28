@@ -3,9 +3,9 @@ package net.beaconcontroller.core.internal;
 import java.nio.channels.SocketChannel;
 
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.core.io.OFMessageSafeOutStream;
 
 import org.openflow.io.OFMessageInStream;
-import org.openflow.io.OFMessageOutStream;
 import org.openflow.protocol.OFFeaturesReply;
 
 /**
@@ -15,7 +15,7 @@ import org.openflow.protocol.OFFeaturesReply;
 public class OFSwitchImpl implements IOFSwitch {
     protected OFFeaturesReply featuresReply;
     protected OFMessageInStream inStream;
-    protected OFMessageOutStream outStream;
+    protected OFMessageSafeOutStream outStream;
     protected SocketChannel socketChannel;
 
     public SocketChannel getSocketChannel() {
@@ -30,7 +30,7 @@ public class OFSwitchImpl implements IOFSwitch {
         return inStream;
     }
 
-    public OFMessageOutStream getOutputStream() {
+    public OFMessageSafeOutStream getOutputStream() {
         return outStream;
     }
 
@@ -38,7 +38,7 @@ public class OFSwitchImpl implements IOFSwitch {
         this.inStream = stream;
     }
 
-    public void setOutputStream(OFMessageOutStream stream) {
+    public void setOutputStream(OFMessageSafeOutStream stream) {
         this.outStream = stream;
     }
 

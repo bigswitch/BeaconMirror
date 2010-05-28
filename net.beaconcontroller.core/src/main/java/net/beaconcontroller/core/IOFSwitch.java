@@ -2,8 +2,9 @@ package net.beaconcontroller.core;
 
 import java.nio.channels.SocketChannel;
 
+import net.beaconcontroller.core.io.OFMessageSafeOutStream;
+
 import org.openflow.io.OFMessageInStream;
-import org.openflow.io.OFMessageOutStream;
 import org.openflow.protocol.OFFeaturesReply;
 
 public interface IOFSwitch {
@@ -23,13 +24,13 @@ public interface IOFSwitch {
      *
      * @return
      */
-    public OFMessageOutStream getOutputStream();
+    public OFMessageSafeOutStream getOutputStream();
 
     /**
      * 
      * @param stream
      */
-    public void setOutputStream(OFMessageOutStream stream);
+    public void setOutputStream(OFMessageSafeOutStream stream);
 
     /**
      *

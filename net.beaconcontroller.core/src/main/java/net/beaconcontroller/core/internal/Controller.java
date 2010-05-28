@@ -23,10 +23,10 @@ import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFMessageListener.Command;
+import net.beaconcontroller.core.io.internal.OFStream;
 
 import org.openflow.example.SelectListener;
 import org.openflow.example.SelectLoop;
-import org.openflow.io.OFMessageAsyncStream;
 import org.openflow.io.OFMessageInStream;
 import org.openflow.io.OFMessageOutStream;
 import org.openflow.protocol.OFEchoReply;
@@ -73,7 +73,7 @@ public class Controller implements IBeaconProvider, SelectListener {
             throws IOException {
         SocketChannel sock = listenSock.accept();
         IOFSwitch sw = new OFSwitchImpl();
-        OFMessageAsyncStream stream = new OFMessageAsyncStream(sock, factory);
+        OFStream stream = new OFStream(sock, factory);
         sw.setInputStream(stream);
         sw.setOutputStream(stream);
         sw.setSocketChannel(sock);

@@ -13,4 +13,4 @@ Import-Package: org.openflow.example,
  org.osgi.framework,
  org.slf4j;version="[1.5.0,2.0.0)"
 Export-Package: net.beaconcontroller.core,
- net.beaconcontroller.core.internal;x-internal:=true
+ net.beaconcontroller.core.io

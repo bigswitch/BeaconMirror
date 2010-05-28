@@ -9,6 +9,7 @@ import java.util.Arrays;
 
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.core.io.OFMessageSafeOutStream;
 import net.beaconcontroller.packet.Data;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPacket;
@@ -18,7 +19,6 @@ import net.beaconcontroller.test.BeaconTestCase;
 import net.beaconcontroller.test.MockBeaconProvider;
 
 import org.openflow.io.OFMessageInStream;
-import org.openflow.io.OFMessageOutStream;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
@@ -97,7 +97,7 @@ public class LearningSwitchTest extends BeaconTestCase {
 
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
-        OFMessageOutStream mockStream = createMock(OFMessageOutStream.class);
+        OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
         mockStream.write(po);
 
@@ -137,7 +137,7 @@ public class LearningSwitchTest extends BeaconTestCase {
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         OFMessageInStream mockInStream = createMock(OFMessageInStream.class);
-        OFMessageOutStream mockStream = createMock(OFMessageOutStream.class);
+        OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
         expect(mockSwitch.getInputStream()).andReturn(mockInStream);
         expect(mockInStream.getMessageFactory()).andReturn(new BasicFactory());
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
