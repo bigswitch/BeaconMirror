@@ -3,12 +3,15 @@ package net.beaconcontroller.test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.openflow.protocol.OFType;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
+import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.core.IOFSwitchListener;
 
 /**
  *
@@ -24,14 +27,14 @@ public class MockBeaconProvider implements IBeaconProvider {
         listeners = new ConcurrentHashMap<OFType, List<IOFMessageListener>>();
     }
 
-    public void addListener(OFType type, IOFMessageListener listener) {
+    public void addOFMessageListener(OFType type, IOFMessageListener listener) {
         if (!listeners.containsKey(type)) {
             listeners.put(type, new ArrayList<IOFMessageListener>());
         }
         listeners.get(type).add(listener);
     }
 
-    public void removeListener(OFType type, IOFMessageListener listener) {
+    public void removeOFMessageListener(OFType type, IOFMessageListener listener) {
         listeners.get(type).remove(listener);
     }
 
@@ -47,5 +50,18 @@ public class MockBeaconProvider implements IBeaconProvider {
      */
     public void setListeners(Map<OFType, List<IOFMessageListener>> listeners) {
         this.listeners = listeners;
+    }
+
+    @Override
+    public Set<IOFSwitch> getSwitches() {
+        return null;
+    }
+
+    @Override
+    public void addOFSwitchListener(IOFSwitchListener listener) {
+    }
+
+    @Override
+    public void removeOFSwitchListener(IOFSwitchListener listener) {
     }
 }

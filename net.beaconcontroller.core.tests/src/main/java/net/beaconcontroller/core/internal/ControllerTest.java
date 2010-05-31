@@ -15,6 +15,7 @@ import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFMessageListener.Command;
 import net.beaconcontroller.test.BeaconTestCase;
 
+import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFType;
@@ -64,11 +65,11 @@ public class ControllerTest extends BeaconTestCase {
         replay(test1, test2, test3);
         for (String o : addOrder) {
             if ("1".equals(o)) {
-                controller.addListener(OFType.PACKET_IN, test1);
+                controller.addOFMessageListener(OFType.PACKET_IN, test1);
             } else if ("2".equals(o)) {
-                controller.addListener(OFType.PACKET_IN, test2);
+                controller.addOFMessageListener(OFType.PACKET_IN, test2);
             } else {
-                controller.addListener(OFType.PACKET_IN, test3);
+                controller.addOFMessageListener(OFType.PACKET_IN, test3);
             }
         }
 
@@ -98,6 +99,7 @@ public class ControllerTest extends BeaconTestCase {
         controller.setCallbackOrdering(callbackOrdering);
 
         IOFSwitch sw = createMock(IOFSwitch.class);
+        expect(sw.getFeaturesReply()).andReturn(new OFFeaturesReply()).anyTimes();
         OFPacketIn pi = new OFPacketIn();
         IOFMessageListener test1 = createMock(IOFMessageListener.class);
         expect(test1.getName()).andReturn("test1").anyTimes();
@@ -107,14 +109,15 @@ public class ControllerTest extends BeaconTestCase {
         expect(test2.receive(sw, pi)).andReturn(Command.CONTINUE);
 
         replay(test1, test2, sw);
-        controller.addListener(OFType.PACKET_IN, test1);
-        controller.addListener(OFType.PACKET_IN, test2);
+        controller.addOFMessageListener(OFType.PACKET_IN, test1);
+        controller.addOFMessageListener(OFType.PACKET_IN, test2);
         controller.handleMessages(sw, Arrays.asList(new OFMessage[] {pi}));
         verify(test1, test2, sw);
 
         // verify STOP works
         reset(test1, test2, sw);
         expect(test1.receive(sw, pi)).andReturn(Command.STOP);
+        expect(sw.getFeaturesReply()).andReturn(new OFFeaturesReply()).anyTimes();
         replay(test1, test2, sw);
         controller.handleMessages(sw, Arrays.asList(new OFMessage[] {pi}));
         verify(test1, test2, sw);

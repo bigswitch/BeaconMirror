@@ -9,19 +9,21 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.core.IOFMessageListener.Command;
 import net.beaconcontroller.core.io.internal.OFStream;
 
@@ -50,7 +52,8 @@ public class Controller implements IBeaconProvider, SelectListener {
     protected SelectLoop listenSelectLoop;
     protected ServerSocketChannel listenSock;
     protected ConcurrentMap<OFType, List<IOFMessageListener>> messageListeners;
-    protected List<IOFSwitch> switches;
+    protected Set<IOFSwitch> switches;
+    protected Set<IOFSwitchListener> switchListeners;
     protected List<SelectLoop> switchSelectLoops;
     protected Integer threadCount;
 
@@ -60,6 +63,7 @@ public class Controller implements IBeaconProvider, SelectListener {
     public Controller() {
         this.messageListeners =
             new ConcurrentHashMap<OFType, List<IOFMessageListener>>();
+        this.switchListeners = new CopyOnWriteArraySet<IOFSwitchListener>();
     }
 
     public void handleEvent(SelectionKey key, Object arg) throws IOException {
@@ -73,11 +77,10 @@ public class Controller implements IBeaconProvider, SelectListener {
             throws IOException {
         SocketChannel sock = listenSock.accept();
         IOFSwitch sw = new OFSwitchImpl();
-        OFStream stream = new OFStream(sock, factory);
+        OFStream stream = new OFStream(sock, factory, key);
         sw.setInputStream(stream);
         sw.setOutputStream(stream);
         sw.setSocketChannel(sock);
-        switches.add(sw);
         System.err.println("New connection from " + sock);
         List<OFMessage> l = new ArrayList<OFMessage>();
         l.add(factory.getMessage(OFType.HELLO));
@@ -104,7 +107,7 @@ public class Controller implements IBeaconProvider, SelectListener {
                 List<OFMessage> msgs = in.read();
                 if (msgs == null) {
                     key.cancel();
-                    switches.remove(sw);
+                    removeSwitch(sw);
                     sw.getSocketChannel().socket().close();
                     return;
                 }
@@ -126,7 +129,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         } catch (IOException e) {
             // if we have an exception, disconnect the switch
             key.cancel();
-            switches.remove(sw);
+            removeSwitch(sw);
             try {
                 sw.getSocketChannel().socket().close();
             } catch (IOException e1) {
@@ -159,8 +162,15 @@ public class Controller implements IBeaconProvider, SelectListener {
                     break;
                 case FEATURES_REPLY:
                     sw.setFeaturesReply((OFFeaturesReply) m);
+                    addSwitch(sw);
                     break;
                 default:
+                    // Don't pass along messages until we have the features reply
+                    if (sw.getFeaturesReply() == null) {
+                        logger.warn("Message type {} received from switch " +
+                            "{} before receiving a features reply.", m.getType(), sw);
+                        break;
+                    }
                     List<IOFMessageListener> listeners = messageListeners
                             .get(m.getType());
                     if (listeners != null) {
@@ -188,7 +198,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         }
     }
 
-    public synchronized void addListener(OFType type, IOFMessageListener listener) {
+    public synchronized void addOFMessageListener(OFType type, IOFMessageListener listener) {
         List<IOFMessageListener> listeners = messageListeners.get(type);
         if (listeners == null) {
             // Set atomically if no list exists
@@ -232,7 +242,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         }
     }
 
-    public synchronized void removeListener(OFType type, IOFMessageListener listener) {
+    public synchronized void removeOFMessageListener(OFType type, IOFMessageListener listener) {
         List<IOFMessageListener> listeners = messageListeners.get(type);
         if (listeners != null) {
             listeners.remove(listener);
@@ -246,7 +256,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         listenSock.socket().setReuseAddress(true);
 
         switchSelectLoops = new ArrayList<SelectLoop>();
-        switches = Collections.synchronizedList(new ArrayList<IOFSwitch>());
+        switches = new CopyOnWriteArraySet<IOFSwitch>();
         threadCount = 1;
         listenSelectLoop = new SelectLoop(this);
         // register this connection for accepting
@@ -327,5 +337,51 @@ public class Controller implements IBeaconProvider, SelectListener {
     protected void setMessageListeners(
             ConcurrentMap<OFType, List<IOFMessageListener>> messageListeners) {
         this.messageListeners = messageListeners;
+    }
+
+    @Override
+    public Set<IOFSwitch> getSwitches() {
+        return this.switches;
+    }
+
+    @Override
+    public void addOFSwitchListener(IOFSwitchListener listener) {
+        this.switchListeners.add(listener);
+    }
+
+    @Override
+    public void removeOFSwitchListener(IOFSwitchListener listener) {
+        this.switchListeners.remove(listener);
+    }
+
+    /**
+     * Adds a switch that has connected and returned a features reply, then
+     * calls all related listeners
+     * @param sw the new switch
+     */
+    protected void addSwitch(IOFSwitch sw) {
+        this.switches.add(sw);
+        for (IOFSwitchListener listener : this.switchListeners) {
+            try {
+                listener.addedSwitch(sw);
+            } catch (Exception e) {
+                logger.error("Error calling switch listener", e);
+            }
+        }
+    }
+
+    /**
+     * Removes a disconnected switch and calls all related listeners
+     * @param sw the switch that has disconnected
+     */
+    protected void removeSwitch(IOFSwitch sw) {
+        this.switches.remove(sw);
+        for (IOFSwitchListener listener : this.switchListeners) {
+            try {
+                listener.removedSwitch(sw);
+            } catch (Exception e) {
+                logger.error("Error calling switch listener", e);
+            }
+        }
     }
 }

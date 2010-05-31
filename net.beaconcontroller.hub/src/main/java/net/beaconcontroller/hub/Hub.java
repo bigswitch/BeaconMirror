@@ -32,11 +32,11 @@ public class Hub implements IOFMessageListener {
     }
 
     public void startUp() {
-        beaconProvider.addListener(OFType.PACKET_IN, this);
+        beaconProvider.addOFMessageListener(OFType.PACKET_IN, this);
     }
 
     public void shutDown() {
-        beaconProvider.removeListener(OFType.PACKET_IN, this);
+        beaconProvider.removeOFMessageListener(OFType.PACKET_IN, this);
     }
 
     public String getName() {

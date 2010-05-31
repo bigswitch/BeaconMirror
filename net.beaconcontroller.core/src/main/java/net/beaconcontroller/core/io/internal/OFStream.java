@@ -4,6 +4,7 @@
 package net.beaconcontroller.core.io.internal;
 
 import java.io.IOException;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.List;
 
@@ -15,20 +16,23 @@ import org.openflow.protocol.factory.OFMessageFactory;
 
 /**
  * This class is a thread-safe implementation of OFMessageAsyncStream, but only
- * for the OutStream portion.
+ * for the OutStream portion. The write functions now trigger the select stream
+ * to send the messages after being queued.
  * @author derickso
  *
  */
 public class OFStream extends OFMessageAsyncStream implements OFMessageSafeOutStream {
+    protected SelectionKey key;
 
     /**
      * @param sock
      * @param messageFactory
      * @throws IOException
      */
-    public OFStream(SocketChannel sock, OFMessageFactory messageFactory)
+    public OFStream(SocketChannel sock, OFMessageFactory messageFactory, SelectionKey key)
             throws IOException {
         super(sock, messageFactory);
+        this.key = key;
     }
 
     /**
@@ -38,6 +42,7 @@ public class OFStream extends OFMessageAsyncStream implements OFMessageSafeOutSt
         synchronized (outBuf) {
             appendMessageToOutBuf(m);
         }
+        key.interestOps(SelectionKey.OP_WRITE);
       }
 
     /**
@@ -49,6 +54,7 @@ public class OFStream extends OFMessageAsyncStream implements OFMessageSafeOutSt
                 appendMessageToOutBuf(m);
             }
         }
+        key.interestOps(SelectionKey.OP_WRITE);
     }
 
     /**

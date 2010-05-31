@@ -44,12 +44,12 @@ public class LearningSwitch implements IOFMessageListener {
 
     public void startUp() {
         logger.trace("Starting");
-        beaconProvider.addListener(OFType.PACKET_IN, this);
+        beaconProvider.addOFMessageListener(OFType.PACKET_IN, this);
     }
 
     public void shutDown() {
         logger.trace("Stopping");
-        beaconProvider.removeListener(OFType.PACKET_IN, this);
+        beaconProvider.removeOFMessageListener(OFType.PACKET_IN, this);
     }
 
     public String getName() {
