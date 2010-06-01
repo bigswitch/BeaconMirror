@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -52,7 +53,7 @@ public class Controller implements IBeaconProvider, SelectListener {
     protected SelectLoop listenSelectLoop;
     protected ServerSocketChannel listenSock;
     protected ConcurrentMap<OFType, List<IOFMessageListener>> messageListeners;
-    protected Set<IOFSwitch> switches;
+    protected Map<Long, IOFSwitch> switches;
     protected Set<IOFSwitchListener> switchListeners;
     protected List<SelectLoop> switchSelectLoops;
     protected Integer threadCount;
@@ -256,7 +257,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         listenSock.socket().setReuseAddress(true);
 
         switchSelectLoops = new ArrayList<SelectLoop>();
-        switches = new CopyOnWriteArraySet<IOFSwitch>();
+        switches = new ConcurrentHashMap<Long, IOFSwitch>();
         threadCount = 1;
         listenSelectLoop = new SelectLoop(this);
         // register this connection for accepting
@@ -302,9 +303,9 @@ public class Controller implements IBeaconProvider, SelectListener {
         listenSock.close();
 
         // close the switch connections
-        for (Iterator<IOFSwitch> it = switches.iterator(); it.hasNext();) {
-            IOFSwitch sw = it.next();
-            sw.getSocketChannel().socket().close();
+        for (Iterator<Entry<Long, IOFSwitch>> it = switches.entrySet().iterator(); it.hasNext();) {
+            Entry<Long, IOFSwitch> entry = it.next();
+            entry.getValue().getSocketChannel().socket().close();
             it.remove();
         }
 
@@ -340,7 +341,7 @@ public class Controller implements IBeaconProvider, SelectListener {
     }
 
     @Override
-    public Set<IOFSwitch> getSwitches() {
+    public Map<Long, IOFSwitch> getSwitches() {
         return this.switches;
     }
 
@@ -360,7 +361,7 @@ public class Controller implements IBeaconProvider, SelectListener {
      * @param sw the new switch
      */
     protected void addSwitch(IOFSwitch sw) {
-        this.switches.add(sw);
+        this.switches.put(sw.getDatapathId(), sw);
         for (IOFSwitchListener listener : this.switchListeners) {
             try {
                 listener.addedSwitch(sw);
@@ -375,7 +376,7 @@ public class Controller implements IBeaconProvider, SelectListener {
      * @param sw the switch that has disconnected
      */
     protected void removeSwitch(IOFSwitch sw) {
-        this.switches.remove(sw);
+        this.switches.remove(sw.getDatapathId());
         for (IOFSwitchListener listener : this.switchListeners) {
             try {
                 listener.removedSwitch(sw);

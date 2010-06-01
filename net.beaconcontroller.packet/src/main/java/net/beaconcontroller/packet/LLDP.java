@@ -20,14 +20,14 @@ public class LLDP extends BasePacket {
     /**
      * @return the chassisId
      */
-    protected LLDPTLV getChassisId() {
+    public LLDPTLV getChassisId() {
         return chassisId;
     }
 
     /**
      * @param chassisId the chassisId to set
      */
-    protected LLDP setChassisId(LLDPTLV chassisId) {
+    public LLDP setChassisId(LLDPTLV chassisId) {
         this.chassisId = chassisId;
         return this;
     }
@@ -35,14 +35,14 @@ public class LLDP extends BasePacket {
     /**
      * @return the portId
      */
-    protected LLDPTLV getPortId() {
+    public LLDPTLV getPortId() {
         return portId;
     }
 
     /**
      * @param portId the portId to set
      */
-    protected LLDP setPortId(LLDPTLV portId) {
+    public LLDP setPortId(LLDPTLV portId) {
         this.portId = portId;
         return this;
     }
@@ -50,14 +50,14 @@ public class LLDP extends BasePacket {
     /**
      * @return the ttl
      */
-    protected LLDPTLV getTtl() {
+    public LLDPTLV getTtl() {
         return ttl;
     }
 
     /**
      * @param ttl the ttl to set
      */
-    protected LLDP setTtl(LLDPTLV ttl) {
+    public LLDP setTtl(LLDPTLV ttl) {
         this.ttl = ttl;
         return this;
     }
@@ -65,14 +65,14 @@ public class LLDP extends BasePacket {
     /**
      * @return the optionalTLVList
      */
-    protected List<LLDPTLV> getOptionalTLVList() {
+    public List<LLDPTLV> getOptionalTLVList() {
         return optionalTLVList;
     }
 
     /**
      * @param optionalTLVList the optionalTLVList to set
      */
-    protected LLDP setOptionalTLVList(List<LLDPTLV> optionalTLVList) {
+    public LLDP setOptionalTLVList(List<LLDPTLV> optionalTLVList) {
         this.optionalTLVList = optionalTLVList;
         return this;
     }

@@ -3,15 +3,14 @@ package net.beaconcontroller.test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.openflow.protocol.OFType;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFSwitchListener;
+
+import org.openflow.protocol.OFType;
 
 /**
  *
@@ -53,7 +52,7 @@ public class MockBeaconProvider implements IBeaconProvider {
     }
 
     @Override
-    public Set<IOFSwitch> getSwitches() {
+    public Map<Long, IOFSwitch> getSwitches() {
         return null;
     }
 

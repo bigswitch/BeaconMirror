@@ -1,6 +1,6 @@
 package net.beaconcontroller.core;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.openflow.protocol.OFType;
 
@@ -23,7 +23,7 @@ public interface IBeaconProvider {
    * Returns a list of all actively connected OpenFlow switches
    * @return the set of connected switches
    */
-  public Set<IOFSwitch> getSwitches();
+  public Map<Long, IOFSwitch> getSwitches();
 
   /**
    * Add a switch listener
