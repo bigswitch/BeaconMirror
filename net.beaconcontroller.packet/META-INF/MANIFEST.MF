@@ -6,4 +6,4 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/component.xml
 Export-Package: net.beaconcontroller.packet
-Import-Package: junit.framework;version="3.8.2"
+Import-Package: junit.framework;version="3.8.2";resolution:=optional

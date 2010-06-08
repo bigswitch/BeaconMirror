@@ -1,6 +1,7 @@
 package net.beaconcontroller.core;
 
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.ConcurrentMap;
 
 import net.beaconcontroller.core.io.OFMessageSafeOutStream;
 
@@ -63,4 +64,10 @@ public interface IOFSwitch {
      * @return
      */
     public long getDatapathId();
+
+    /**
+     * Retrieves attributes of this switch
+     * @return
+     */
+    public ConcurrentMap<Object, Object> getAttributes();
 }

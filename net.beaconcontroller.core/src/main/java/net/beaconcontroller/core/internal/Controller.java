@@ -77,27 +77,25 @@ public class Controller implements IBeaconProvider, SelectListener {
     protected void handleListenEvent(SelectionKey key, ServerSocketChannel ssc)
             throws IOException {
         SocketChannel sock = listenSock.accept();
+        logger.info("Switch connected from {}", sock.toString());
+        sock.configureBlocking(false);
         IOFSwitch sw = new OFSwitchImpl();
-        OFStream stream = new OFStream(sock, factory, key);
+        // hash this switch into a thread
+        final SelectLoop sl = switchSelectLoops.get(sock.hashCode()
+                % switchSelectLoops.size());
+
+        // register with no interest ops so we get the key
+        SelectionKey switchKey = sl.registerBlocking(sock, 0, sw);
+
+        OFStream stream = new OFStream(sock, factory, switchKey);
         sw.setInputStream(stream);
         sw.setOutputStream(stream);
         sw.setSocketChannel(sock);
-        System.err.println("New connection from " + sock);
+
         List<OFMessage> l = new ArrayList<OFMessage>();
         l.add(factory.getMessage(OFType.HELLO));
         l.add(factory.getMessage(OFType.FEATURES_REQUEST));
         stream.write(l);
-
-        int ops = SelectionKey.OP_READ;
-        if (stream.needsFlush())
-            ops |= SelectionKey.OP_WRITE;
-
-        // hash this switch into a thread
-        SelectLoop sl = switchSelectLoops.get(sock.hashCode()
-                % switchSelectLoops.size());
-        sl.register(sock, ops, sw);
-        // force select to return and re-enter using the new set of keys
-        sl.wakeup();
     }
 
     protected void handleSwitchEvent(SelectionKey key, IOFSwitch sw) {
@@ -107,8 +105,12 @@ public class Controller implements IBeaconProvider, SelectListener {
             if (key.isReadable()) {
                 List<OFMessage> msgs = in.read();
                 if (msgs == null) {
+                    logger.info("Switch disconnected from {}",
+                            sw.getSocketChannel().socket().toString());
                     key.cancel();
-                    removeSwitch(sw);
+                    // only remove if we have a features reply (DPID)
+                    if (sw.getFeaturesReply() != null)
+                        removeSwitch(sw);
                     sw.getSocketChannel().socket().close();
                     return;
                 }
@@ -129,8 +131,12 @@ public class Controller implements IBeaconProvider, SelectListener {
                 key.interestOps(SelectionKey.OP_READ);
         } catch (IOException e) {
             // if we have an exception, disconnect the switch
+            logger.info("Switch disconnected from {}",
+                    sw.getSocketChannel().socket().toString());
             key.cancel();
-            removeSwitch(sw);
+            // only remove if we have a features reply (DPID)
+            if (sw.getFeaturesReply() != null)
+                removeSwitch(sw);
             try {
                 sw.getSocketChannel().socket().close();
             } catch (IOException e1) {
@@ -150,7 +156,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         for (OFMessage m : msgs) {
             switch (m.getType()) {
                 case HELLO:
-                    System.err.println("HELLO from " + sw);
+                    logger.debug("HELLO from {}", sw);
                     break;
                 case ECHO_REQUEST:
                     OFMessageInStream in = sw.getInputStream();
@@ -162,6 +168,7 @@ public class Controller implements IBeaconProvider, SelectListener {
                     out.write(reply);
                     break;
                 case FEATURES_REPLY:
+                    logger.debug("Features Reply from {}", sw);
                     sw.setFeaturesReply((OFFeaturesReply) m);
                     addSwitch(sw);
                     break;
@@ -270,7 +277,7 @@ public class Controller implements IBeaconProvider, SelectListener {
 
         // Launch one select loop per threadCount and start running
         for (int i = 0; i < threadCount; ++i) {
-            final SelectLoop sl = new SelectLoop(this);
+            final SelectLoop sl = new SelectLoop(this, 500);
             switchSelectLoops.add(sl);
             es.execute(new Runnable() {
                 public void run() {

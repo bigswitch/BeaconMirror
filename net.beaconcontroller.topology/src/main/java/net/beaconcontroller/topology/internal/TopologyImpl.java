@@ -1,7 +1,9 @@
 package net.beaconcontroller.topology.internal;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -9,8 +11,12 @@ import java.util.Map.Entry;
 
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
+import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFPhysicalPort;
+import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
+import org.openflow.protocol.action.OFAction;
+import org.openflow.protocol.action.OFActionOutput;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
@@ -47,37 +53,25 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     }
 
     protected void sendLLDPs() {
-        Ethernet ethernet = new Ethernet();
-        ethernet.setSourceMACAddress(new byte[6]);
-        ethernet.setDestinationMACAddress("01:80:c2:00:00:0e");
-        ethernet.setEtherType(Ethernet.TYPE_LLDP);
+        Ethernet ethernet = new Ethernet()
+            .setSourceMACAddress(new byte[6])
+            .setDestinationMACAddress("01:80:c2:00:00:0e")
+            .setEtherType(Ethernet.TYPE_LLDP);
 
         LLDP lldp = new LLDP();
-        lldp.setChassisId(new LLDPTLV().setType((byte) 1).setLength((short) 7));
-        byte[] chassisId = new byte[7];
-        chassisId[0] = 4;
-        // set MAC here
-        lldp.getChassisId().setValue(chassisId);
-
-        lldp.setPortId(new LLDPTLV().setType((byte) 2).setLength((short) 3));
-        byte[] portId = new byte[3];
-        portId[0] = 2;
-        // set port here
-        lldp.getPortId().setValue(portId);
-
+        ethernet.setPayload(lldp);
+        byte[] chassisId = new byte[] {4, 0, 0, 0, 0, 0, 0}; // filled in later
+        byte[] portId = new byte[] {2, 0, 0}; // filled in later
+        lldp.setChassisId(new LLDPTLV().setType((byte) 1).setLength((short) 7).setValue(chassisId));
+        lldp.setPortId(new LLDPTLV().setType((byte) 2).setLength((short) 3).setValue(portId));
         lldp.setTtl(new LLDPTLV().setType((byte) 3).setLength((short) 2).setValue(new byte[] {0, 0x78}));
 
-        LLDPTLV dpidTLV = new LLDPTLV().setType((byte) 0x127).setLength((short) 12);
-        byte[] dpidTLVValue = new byte[12];
         // OpenFlow OUI - 00-26-E1
-        dpidTLVValue[0] = 0x0;
-        dpidTLVValue[1] = 0x26;
-        dpidTLVValue[2] = (byte) 0xe1;
-        dpidTLVValue[3] = 0x0;
-        dpidTLV.setValue(dpidTLVValue);
+        byte[] dpidTLVValue = new byte[] {0x0, 0x26, (byte) 0xe1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        LLDPTLV dpidTLV = new LLDPTLV().setType((byte) 0x127).setLength((short) 12).setValue(dpidTLVValue);
         lldp.setOptionalTLVList(new ArrayList<LLDPTLV>());
         lldp.getOptionalTLVList().add(dpidTLV);
-        
+
         Map<Long, IOFSwitch> switches = beaconProvider.getSwitches();
         byte[] dpidArray = new byte[8];
         ByteBuffer dpidBB = ByteBuffer.wrap(dpidArray);
@@ -85,7 +79,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         for (Entry<Long, IOFSwitch> entry : switches.entrySet()) {
             Long dpid = entry.getKey();
             IOFSwitch sw = entry.getValue();
-            dpidBB.putLong(sw.getDatapathId());
+            dpidBB.putLong(dpid);
 
             // set the ethernet source mac to last 6 bytes of dpid
             System.arraycopy(dpidArray, 2, ethernet.getSourceMACAddress(), 0, 6);
@@ -97,7 +91,28 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 // set the portId to the outgoing port
                 portBB.putShort(port.getPortNumber());
 
-                // serialize and wrap in a packet out here
+                // serialize and wrap in a packet out
+                byte[] data = ethernet.serialize();
+                OFPacketOut po = new OFPacketOut();
+                po.setBufferId(OFPacketOut.BUFFER_ID_NONE);
+                po.setInPort(OFPort.OFPP_NONE);
+
+                // set actions
+                List<OFAction> actions = new ArrayList<OFAction>();
+                actions.add(new OFActionOutput(port.getPortNumber(), (short) 0));
+                po.setActions(actions);
+                po.setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
+
+                // set data
+                po.setLengthU(OFPacketOut.MINIMUM_LENGTH + po.getActionsLength() + data.length);
+                po.setPacketData(data);
+
+                // send
+                try {
+                    sw.getOutputStream().write(po);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 // rewind for next pass
                 portBB.position(1);

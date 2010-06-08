@@ -138,7 +138,7 @@ public class LearningSwitch implements IOFMessageListener {
         if (outPort == null || pi.getBufferId() == 0xffffffff) {
             OFPacketOut po = new OFPacketOut();
             po.setBufferId(bufferId);
-            po.setInPort(pi.getInPort());
+            po.setInPort(OFPort.OFPP_NONE);
 
             // set actions
             OFActionOutput action = new OFActionOutput();
