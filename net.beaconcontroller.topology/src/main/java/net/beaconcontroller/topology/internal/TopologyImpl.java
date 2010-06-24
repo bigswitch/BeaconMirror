@@ -9,15 +9,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Map.Entry;
 
-import org.openflow.protocol.OFMessage;
-import org.openflow.protocol.OFPacketIn;
-import org.openflow.protocol.OFPacketOut;
-import org.openflow.protocol.OFPhysicalPort;
-import org.openflow.protocol.OFPort;
-import org.openflow.protocol.OFType;
-import org.openflow.protocol.action.OFAction;
-import org.openflow.protocol.action.OFActionOutput;
-
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
@@ -27,11 +18,24 @@ import net.beaconcontroller.packet.LLDP;
 import net.beaconcontroller.packet.LLDPTLV;
 import net.beaconcontroller.topology.ITopology;
 
+import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFPacketIn;
+import org.openflow.protocol.OFPacketOut;
+import org.openflow.protocol.OFPhysicalPort;
+import org.openflow.protocol.OFPort;
+import org.openflow.protocol.OFType;
+import org.openflow.protocol.action.OFAction;
+import org.openflow.protocol.action.OFActionOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author David Erickson (derickso@stanford.edu)
  */
 public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITopology {
+    protected static Logger logger = LoggerFactory.getLogger(TopologyImpl.class);
+
     protected IBeaconProvider beaconProvider;
     protected Timer timer;
 
@@ -88,6 +92,9 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             // set the optional tlv to the full dpid
             System.arraycopy(dpidArray, 0, dpidTLVValue, 4, 8);
             for (OFPhysicalPort port : sw.getFeaturesReply().getPorts()) {
+                if (port.getPortNumber() == OFPort.OFPP_LOCAL.getValue())
+                    continue;
+
                 // set the portId to the outgoing port
                 portBB.putShort(port.getPortNumber());
 
@@ -131,6 +138,44 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     @Override
     public Command receive(IOFSwitch sw, OFMessage msg) {
         OFPacketIn pi = (OFPacketIn) msg;
+        Ethernet eth = new Ethernet();
+        eth.deserialize(pi.getPacketData(), 0, pi.getPacketData().length);
+
+        if (!(eth.getPayload() instanceof LLDP))
+            return Command.CONTINUE;
+
+        // received by switch sw
+        // received on port pi.getInPort()
+        LLDP lldp = (LLDP) eth.getPayload();
+        ByteBuffer portBB = ByteBuffer.wrap(lldp.getPortId().getValue());
+        portBB.position(1);
+        short remotePort = portBB.getShort();
+        long remoteDpid = 0;
+        boolean remoteDpidSet = false;
+
+        for (LLDPTLV lldptlv : lldp.getOptionalTLVList()) {
+            if (lldptlv.getType() == 0x127 && lldptlv.getLength() == 12 &&
+                    lldptlv.getValue()[0] == 0x0 && lldptlv.getValue()[1] == 0x26 &&
+                    lldptlv.getValue()[2] == 0xe1 && lldptlv.getValue()[3] == 0x0) {
+                ByteBuffer dpidBB = ByteBuffer.wrap(lldptlv.getValue());
+                remoteDpid = dpidBB.getLong(4);
+                remoteDpidSet = true;
+                break;
+            }
+        }
+
+        if (!remoteDpidSet) {
+            logger.error("Failed to determine remote switch DPID from received LLDP");
+            return Command.STOP;
+        }
+
+        IOFSwitch remoteSwitch = beaconProvider.getSwitches().get(remoteDpid);
+
+        if (remoteSwitch == null) {
+            logger.error("Failed to locate remote switch with DPID: {}", remoteDpid);
+            return Command.STOP;
+        }
+
         return Command.STOP;
     }
 
