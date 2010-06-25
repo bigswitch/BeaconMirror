@@ -65,7 +65,7 @@ public class OFSwitchImpl implements IOFSwitch {
     }
 
     @Override
-    public long getDatapathId() {
+    public long getId() {
         if (this.featuresReply == null)
             throw new RuntimeException("Features reply has not yet been set");
         return this.featuresReply.getDatapathId();

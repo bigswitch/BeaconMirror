@@ -368,7 +368,7 @@ public class Controller implements IBeaconProvider, SelectListener {
      * @param sw the new switch
      */
     protected void addSwitch(IOFSwitch sw) {
-        this.switches.put(sw.getDatapathId(), sw);
+        this.switches.put(sw.getId(), sw);
         for (IOFSwitchListener listener : this.switchListeners) {
             try {
                 listener.addedSwitch(sw);
@@ -383,7 +383,7 @@ public class Controller implements IBeaconProvider, SelectListener {
      * @param sw the switch that has disconnected
      */
     protected void removeSwitch(IOFSwitch sw) {
-        this.switches.remove(sw.getDatapathId());
+        this.switches.remove(sw.getId());
         for (IOFSwitchListener listener : this.switchListeners) {
             try {
                 listener.removedSwitch(sw);

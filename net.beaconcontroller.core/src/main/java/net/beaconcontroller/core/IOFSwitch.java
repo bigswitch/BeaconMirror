@@ -63,7 +63,7 @@ public interface IOFSwitch {
      * Get the datapathId of the switch
      * @return
      */
-    public long getDatapathId();
+    public long getId();
 
     /**
      * Retrieves attributes of this switch
