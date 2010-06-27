@@ -3,7 +3,7 @@ package net.beaconcontroller.routing;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Route implements Cloneable {
+public class Route implements Cloneable, Comparable<Route> {
     protected RouteId id;
     protected List<Link> path;
 
@@ -47,9 +47,6 @@ public class Route implements Cloneable {
         this.path = path;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 5791;
@@ -59,9 +56,6 @@ public class Route implements Cloneable {
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -84,11 +78,23 @@ public class Route implements Cloneable {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "Route [id=" + id + ", path=" + path + "]";
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Route clone = (Route) super.clone();
+        clone.setId((RouteId) this.id.clone());
+        return clone;
+    }
+
+    /**
+     * Compares the path lengths between Routes.
+     */
+    @Override
+    public int compareTo(Route o) {
+        return ((Integer)path.size()).compareTo(o.path.size());
     }
 }

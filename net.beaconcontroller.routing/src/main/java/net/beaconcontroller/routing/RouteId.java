@@ -5,7 +5,7 @@ package net.beaconcontroller.routing;
  *
  * @author David Erickson (derickso@stanford.edu)
  */
-public class RouteId {
+public class RouteId implements Cloneable {
     protected Long src;
     protected Long dst;
 
@@ -65,5 +65,10 @@ public class RouteId {
     @Override
     public String toString() {
         return "RouteId [dst=" + dst + ", src=" + src + "]";
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
