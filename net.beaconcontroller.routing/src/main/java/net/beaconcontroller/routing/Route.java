@@ -21,7 +21,7 @@ public class Route implements Cloneable, Comparable<Route> {
 
     /**
      * Concise way to instantiate a route.  The format of objects must be:
-     *  (Short outPort, Short inPort, Long dstDpid)*
+     *  (Short/Integer outPort, Short/Integer inPort, Long dstDpid)*
      * @param srcDpid
      * @param objects
      */
@@ -30,9 +30,20 @@ public class Route implements Cloneable, Comparable<Route> {
         this.path = new ArrayList<Link>();
         if (routeElements.length % 3 > 0)
             throw new RuntimeException("routeElements must be a multiple of 3");
+        Short outPort, inPort;
+
         for (int i = 0; i < routeElements.length; i += 3) {
-            this.path.add(new Link((Short) routeElements[i],
-                    (Short) routeElements[i + 1], (Long) routeElements[i + 2]));
+            if (routeElements[i] instanceof Short)
+                outPort = (Short) routeElements[i];
+            else
+                outPort = ((Integer)routeElements[i]).shortValue();
+
+            if (routeElements[i+1] instanceof Short)
+                inPort = (Short) routeElements[i+1];
+            else
+                inPort = ((Integer)routeElements[i+1]).shortValue();
+
+            this.path.add(new Link(outPort, inPort, (Long) routeElements[i + 2]));
         }
         this.id = new RouteId(srcDpid, (this.path.size() == 0) ? srcDpid
                 : this.path.get(this.path.size() - 1).dst);
@@ -102,10 +113,12 @@ public class Route implements Cloneable, Comparable<Route> {
         return "Route [id=" + id + ", path=" + path + "]";
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Object clone() throws CloneNotSupportedException {
         Route clone = (Route) super.clone();
         clone.setId((RouteId) this.id.clone());
+        clone.path = (List<Link>) ((ArrayList<Link>)this.path).clone();
         return clone;
     }
 

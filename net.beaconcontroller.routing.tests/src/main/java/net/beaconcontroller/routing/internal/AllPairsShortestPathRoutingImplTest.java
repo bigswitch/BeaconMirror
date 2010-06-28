@@ -18,7 +18,36 @@ public class AllPairsShortestPathRoutingImplTest extends BeaconTestCase {
         IRouting routing = getRouting();
         TestCase.assertNull(routing.getRoute(1L, 2L));
 
-        routing.update(1L, (short)1, 2L, (short)1, true);
-        TestCase.assertEquals(new Route(1L, new Integer(1).shortValue(), new Integer(1).shortValue(), 2L), routing.getRoute(1L, 2L));
+        routing.update(1L, 2, 2L, 1, true);
+        // [1]2-1[2]
+        TestCase.assertEquals(new Route(1L, 2, 1, 2L
+                ), routing.getRoute(1L, 2L));
+
+        routing.update(2L, 2, 3L, 1, true);
+        // [1]2-1[2] [2]2-1[3]
+        TestCase.assertEquals(new Route(1L, 
+                2, 1, 2L,
+                2, 1, 3L
+                ), routing.getRoute(1L, 3L));
+
+        routing.update(1L, 3, 3L, 4, true);
+        // [1]2-1[2] [2]2-1[3]
+        // [1]3     -     4[3]
+        TestCase.assertEquals(new Route(1L, 
+                3, 4, 3L
+                ), routing.getRoute(1L, 3L));
+
+        routing.update(1L, 3, 3L, 4, false);
+        // [1]2-1[2] [2]2-1[3]
+        TestCase.assertEquals(new Route(1L, 
+                2, 1, 2L,
+                2, 1, 3L
+                ), routing.getRoute(1L, 3L));
+
+        routing.update(2L, 2, 3L, 1, false);
+        // [1]2-1[2]
+        TestCase.assertEquals(new Route(1L,
+                2, 1, 2L
+                ), routing.getRoute(1L, 2L));
     }
 }

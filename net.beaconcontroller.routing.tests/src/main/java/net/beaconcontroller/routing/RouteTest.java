@@ -21,6 +21,12 @@ public class RouteTest extends BeaconTestCase {
         r2 = (Route) r1.clone();
         TestCase.assertEquals(r1, r2);
 
+        Link temp = r2.getPath().remove(0);
+        TestCase.assertNotSame(r1, r2);
+
+        r2.getPath().add(0, temp);
+        TestCase.assertEquals(r1, r2);
+
         r2.getPath().get(0).setInPort((short) 5);
         TestCase.assertNotSame(r1, r2);
     }

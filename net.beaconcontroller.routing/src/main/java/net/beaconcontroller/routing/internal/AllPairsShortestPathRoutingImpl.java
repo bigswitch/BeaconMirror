@@ -75,12 +75,18 @@ public class AllPairsShortestPathRoutingImpl implements IRouting, TopologyAware 
     /* (non-Javadoc)
      * @see net.beaconcontroller.routing.internal.IRouting#update(net.beaconcontroller.core.IOFSwitch, short, net.beaconcontroller.core.IOFSwitch, short, boolean)
      */
-    public void update(Long srcId, short srcPort, Long dstId,
-            short dstPort, boolean added) {
+    public void update(Long srcId, Short srcPort, Long dstId,
+            Short dstPort, boolean added) {
         Route route = new Route(srcId, dstId);
         route.getPath().add(new Link(srcPort, dstPort, dstId));
         cleanup(route, added);
         fixup(route, added);
+    }
+
+    @Override
+    public void update(Long srcId, Integer srcPort, Long dstId,
+            Integer dstPort, boolean added) {
+        update(srcId, srcPort.shortValue(), dstId, dstPort.shortValue(), added);
     }
 
     protected void cleanup(Route route, boolean added) {
@@ -105,28 +111,6 @@ public class AllPairsShortestPathRoutingImpl implements IRouting, TopologyAware 
                 toClean.addAll(leftLocal.get(r));
             if (rightLocal.containsKey(r))
                 toClean.addAll(rightLocal.get(r));
-
-// Code from the journal version of the algorithm
-//            Set<Route> prefixPostfixRoutes = new HashSet<Route>();
-//            if (leftLocal.containsKey(r))
-//                prefixPostfixRoutes.addAll(leftLocal.get(r));
-//            if (rightLocal.containsKey(r))
-//                prefixPostfixRoutes.addAll(rightLocal.get(r));
-//
-//            for (Route r2 : prefixPostfixRoutes) {
-//                toClean.add(r2);
-//                Route leftsubPath = subPath(r2, true);
-//                Route rightsubPath = subPath(r2, false);
-//                removeFromLocal(r2);
-//                remove(leftLocal, r2, rightsubPath);
-//                remove(rightLocal, r2, leftsubPath);
-//
-//                if (r2.equals(shortest.get(r2.getId()))) {
-//                    shortest.remove(r2.getId());
-//                    remove(leftShortest, r2, rightsubPath);
-//                    remove(rightShortest, r2, leftsubPath);
-//                }
-//            }
         }
     }
 
