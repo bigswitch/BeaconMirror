@@ -10,3 +10,4 @@ Import-Package: net.beaconcontroller.core,
  org.openflow.protocol,
  org.openflow.protocol.action,
  org.slf4j;version="1.0.0"
+Export-Package: net.beaconcontroller.topology

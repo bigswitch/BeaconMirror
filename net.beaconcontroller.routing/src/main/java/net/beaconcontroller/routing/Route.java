@@ -20,6 +20,25 @@ public class Route implements Cloneable, Comparable<Route> {
     }
 
     /**
+     * Concise way to instantiate a route.  The format of objects must be:
+     *  (Short outPort, Short inPort, Long dstDpid)*
+     * @param srcDpid
+     * @param objects
+     */
+    public Route(Long srcDpid, Object... routeElements) {
+        super();
+        this.path = new ArrayList<Link>();
+        if (routeElements.length % 3 > 0)
+            throw new RuntimeException("routeElements must be a multiple of 3");
+        for (int i = 0; i < routeElements.length; i += 3) {
+            this.path.add(new Link((Short) routeElements[i],
+                    (Short) routeElements[i + 1], (Long) routeElements[i + 2]));
+        }
+        this.id = new RouteId(srcDpid, (this.path.size() == 0) ? srcDpid
+                : this.path.get(this.path.size() - 1).dst);
+    }
+
+    /**
      * @return the id
      */
     public RouteId getId() {

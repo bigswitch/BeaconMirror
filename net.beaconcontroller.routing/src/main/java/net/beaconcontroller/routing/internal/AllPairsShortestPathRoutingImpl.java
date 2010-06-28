@@ -5,27 +5,27 @@ package net.beaconcontroller.routing.internal;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Set;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.routing.IRouting;
 import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
 import net.beaconcontroller.routing.RouteId;
+import net.beaconcontroller.topology.TopologyAware;
 
 /**
  * Implementation of the APSP algorithm by Demetrescu and Italiano.
- * Code also based on an implementation in NOX, see http://noxrepo.org
  *
  * @author David Erickson (derickso@stanford.edu)
  */
-public class AllPairsShortestPathRoutingImpl {
+public class AllPairsShortestPathRoutingImpl implements IRouting, TopologyAware {
     public IBeaconProvider beaconProvider;
 
     protected Map<RouteId, Route> shortest;
@@ -35,16 +35,50 @@ public class AllPairsShortestPathRoutingImpl {
     protected Map<Route, List<Route>> rightLocal;
     protected Map<Route, List<Route>> rightShortest;
 
+    public AllPairsShortestPathRoutingImpl() {
+        shortest = new HashMap<RouteId, Route>();
+        localRoutes = new HashMap<RouteId, List<Route>>();
+        leftLocal = new HashMap<Route, List<Route>>();
+        leftShortest = new HashMap<Route, List<Route>>();
+        rightLocal = new HashMap<Route, List<Route>>();
+        rightShortest = new HashMap<Route, List<Route>>();
+    }
+
     public void startUp() {
     }
 
     public void shutDown() {
     }
 
-    public void update(IOFSwitch srcSwitch, Short srcPort, IOFSwitch dstSwitch,
-            Short dstPort, boolean added) {
-        Route route = new Route(srcSwitch.getId(), dstSwitch.getId());
-        route.getPath().add(new Link(srcPort, dstPort, dstSwitch.getId()));
+    @Override
+    public void linkAdded(IOFSwitch srcSwitch, short srcPort,
+            IOFSwitch dstSwitch, short dstPort) {
+        update(srcSwitch.getId(), srcPort, dstSwitch.getId(), dstPort, true);
+    }
+
+    @Override
+    public void linkRemoved(IOFSwitch srcSwitch, short srcPort,
+            IOFSwitch dstSwitch, short dstPort) {
+        update(srcSwitch.getId(), srcPort, dstSwitch.getId(), dstPort, false);
+    }
+
+    @Override
+    public Route getRoute(IOFSwitch src, IOFSwitch dst) {
+        return shortest.get(new RouteId(src.getId(), dst.getId()));
+    }
+
+    @Override
+    public Route getRoute(Long srcDpid, Long dstDpid) {
+        return shortest.get(new RouteId(srcDpid, dstDpid));
+    }
+
+    /* (non-Javadoc)
+     * @see net.beaconcontroller.routing.internal.IRouting#update(net.beaconcontroller.core.IOFSwitch, short, net.beaconcontroller.core.IOFSwitch, short, boolean)
+     */
+    public void update(Long srcId, short srcPort, Long dstId,
+            short dstPort, boolean added) {
+        Route route = new Route(srcId, dstId);
+        route.getPath().add(new Link(srcPort, dstPort, dstId));
         cleanup(route, added);
         fixup(route, added);
     }
