@@ -3,8 +3,11 @@ package net.beaconcontroller.topology.internal;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Map.Entry;
@@ -16,13 +19,17 @@ import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.LLDP;
 import net.beaconcontroller.packet.LLDPTLV;
+import net.beaconcontroller.routing.IRouting;
 import net.beaconcontroller.topology.ITopology;
+import net.beaconcontroller.topology.IdPortTuple;
+import net.beaconcontroller.topology.LinkTuple;
 
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPort;
+import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
@@ -37,11 +44,19 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     protected static Logger logger = LoggerFactory.getLogger(TopologyImpl.class);
 
     protected IBeaconProvider beaconProvider;
+    protected Map<LinkTuple, Long> links;
+    protected Map<IdPortTuple, Set<LinkTuple>> portLinks;
+    protected IRouting routing;
+    protected Map<Long, Set<LinkTuple>> switchLinks;
     protected Timer timer;
 
     protected void startUp() {
         beaconProvider.addOFMessageListener(OFType.PACKET_IN, this);
+        beaconProvider.addOFMessageListener(OFType.PORT_STATUS, this);
         beaconProvider.addOFSwitchListener(this);
+        links = new HashMap<LinkTuple, Long>();
+        portLinks = new HashMap<IdPortTuple, Set<LinkTuple>>();
+        switchLinks = new HashMap<Long, Set<LinkTuple>>();
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -54,6 +69,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         timer.cancel();
         beaconProvider.removeOFSwitchListener(this);
         beaconProvider.removeOFMessageListener(OFType.PACKET_IN, this);
+        beaconProvider.removeOFMessageListener(OFType.PORT_STATUS, this);
     }
 
     protected void sendLLDPs() {
@@ -137,22 +153,27 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
     @Override
     public Command receive(IOFSwitch sw, OFMessage msg) {
-        OFPacketIn pi = (OFPacketIn) msg;
+        if (msg instanceof OFPacketIn)
+            return handlePacketIn(sw, (OFPacketIn) msg);
+        else
+            return handlePortStatus(sw, (OFPortStatus)msg);
+    }
+
+    protected Command handlePacketIn(IOFSwitch sw, OFPacketIn pi) {
         Ethernet eth = new Ethernet();
         eth.deserialize(pi.getPacketData(), 0, pi.getPacketData().length);
 
         if (!(eth.getPayload() instanceof LLDP))
             return Command.CONTINUE;
 
-        // received by switch sw
-        // received on port pi.getInPort()
         LLDP lldp = (LLDP) eth.getPayload();
         ByteBuffer portBB = ByteBuffer.wrap(lldp.getPortId().getValue());
         portBB.position(1);
-        short remotePort = portBB.getShort();
-        long remoteDpid = 0;
+        Short remotePort = portBB.getShort();
+        Long remoteDpid = 0L;
         boolean remoteDpidSet = false;
 
+        // Verify this LLDP packet matches what we're looking for
         for (LLDPTLV lldptlv : lldp.getOptionalTLVList()) {
             if (lldptlv.getType() == 0x127 && lldptlv.getLength() == 12 &&
                     lldptlv.getValue()[0] == 0x0 && lldptlv.getValue()[1] == 0x26 &&
@@ -176,15 +197,55 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             return Command.STOP;
         }
 
+        // Store the time of update to this link, and push it out to routing
+        // TODO Locking!
+        LinkTuple lt = new LinkTuple(sw.getId(), pi.getInPort(), remoteDpid, remotePort);
+        if (links.put(lt, System.currentTimeMillis()) == null) {
+            // index it by switch
+            if (!switchLinks.containsKey(lt.getSrcId()))
+                switchLinks.put(lt.getSrcId(), new HashSet<LinkTuple>());
+            switchLinks.get(lt.getSrcId()).add(lt);
+
+            // index both ends by switch:port
+            IdPortTuple id = new IdPortTuple(lt.getSrcId(), lt.getSrcPort());
+            if (!portLinks.containsKey(id))
+                portLinks.put(id, new HashSet<LinkTuple>());
+            portLinks.get(id).add(lt);
+
+            id = new IdPortTuple(lt.getDstId(), lt.getDstPort());
+            if (!portLinks.containsKey(id))
+                portLinks.put(id, new HashSet<LinkTuple>());
+            portLinks.get(id).add(lt);
+
+            routing.update(lt.getSrcId(), lt.getSrcPort(), lt.getDstId(),
+                    lt.getDstPort(), true);
+        }
+
+
+        // Consume this message
         return Command.STOP;
+    }
+
+    protected Command handlePortStatus(IOFSwitch sw, OFPortStatus ps) {
+        // nuke links if the port is removed
+        return Command.CONTINUE;
     }
 
     @Override
     public void addedSwitch(IOFSwitch sw) {
+        // no-op
     }
 
     @Override
     public void removedSwitch(IOFSwitch sw) {
+        // nuke links connected to this switch
+        // TODO locking
+        if (switchLinks.containsKey(sw.getId())) {
+            for (LinkTuple lt : switchLinks.get(sw.getId())) {
+                // todo remove the switchPort mappings
+                // send the update to routing
+            }
+        }
     }
 
     /**
@@ -192,5 +253,12 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      */
     public void setBeaconProvider(IBeaconProvider beaconProvider) {
         this.beaconProvider = beaconProvider;
+    }
+
+    /**
+     * @param routing the routing to set
+     */
+    public void setRouting(IRouting routing) {
+        this.routing = routing;
     }
 }
