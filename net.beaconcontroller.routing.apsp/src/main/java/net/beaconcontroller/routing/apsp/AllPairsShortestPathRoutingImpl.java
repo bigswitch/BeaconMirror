@@ -1,7 +1,7 @@
 /**
  *
  */
-package net.beaconcontroller.routing.internal;
+package net.beaconcontroller.routing.apsp;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -73,7 +73,7 @@ public class AllPairsShortestPathRoutingImpl implements IRouting, TopologyAware 
     }
 
     /* (non-Javadoc)
-     * @see net.beaconcontroller.routing.internal.IRouting#update(net.beaconcontroller.core.IOFSwitch, short, net.beaconcontroller.core.IOFSwitch, short, boolean)
+     * @see net.beaconcontroller.routing.apsp.IRouting#update(net.beaconcontroller.core.IOFSwitch, short, net.beaconcontroller.core.IOFSwitch, short, boolean)
      */
     public void update(Long srcId, Short srcPort, Long dstId,
             Short dstPort, boolean added) {

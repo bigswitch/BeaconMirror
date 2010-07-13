@@ -1,4 +1,4 @@
-package net.beaconcontroller.routing.internal;
+package net.beaconcontroller.routing.apsp;
 
 import junit.framework.TestCase;
 import net.beaconcontroller.routing.IRouting;

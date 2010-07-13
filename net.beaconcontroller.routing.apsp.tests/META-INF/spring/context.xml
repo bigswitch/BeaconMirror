@@ -4,6 +4,12 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
   http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.2.xsd">
 
+  <!-- Overwrite this bean to use our own beaconProvider for testing -->
+  <bean id="routing" class="net.beaconcontroller.routing.apsp.AllPairsShortestPathRoutingImpl"
+    init-method="startUp" destroy-method="shutDown">
+    <property name="beaconProvider" ref="mockBeaconProvider"/>
+  </bean>
+
   <bean id="mockBeaconProvider" class="net.beaconcontroller.test.MockBeaconProvider">
   </bean>
 

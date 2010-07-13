@@ -1,45 +1,44 @@
 package net.beaconcontroller.topology;
 
 public class LinkTuple {
-    protected Long srcId;
-    protected Short srcPort;
-    protected Long dstId;
-    protected Short dstPort;
+    protected IdPortTuple src;
+    protected IdPortTuple dst;
 
-    public LinkTuple(Long srcId, Short srcPort, Long dstId, Short dstPort) {
-        super();
-        this.srcId = srcId;
-        this.srcPort = srcPort;
-        this.dstId = dstId;
-        this.dstPort = dstPort;
+    /**
+     * @param src
+     * @param dst
+     */
+    public LinkTuple(IdPortTuple src, IdPortTuple dst) {
+        this.src = src;
+        this.dst = dst;
     }
 
     /**
-     * @return the srcId
+     * @return the src
      */
-    public Long getSrcId() {
-        return srcId;
+    public IdPortTuple getSrc() {
+        return src;
     }
 
     /**
-     * @return the srcPort
+     * @param src the src to set
      */
-    public Short getSrcPort() {
-        return srcPort;
+    public void setSrc(IdPortTuple src) {
+        this.src = src;
     }
 
     /**
-     * @return the dstId
+     * @return the dst
      */
-    public Long getDstId() {
-        return dstId;
+    public IdPortTuple getDst() {
+        return dst;
     }
 
     /**
-     * @return the dstPort
+     * @param dst the dst to set
      */
-    public Short getDstPort() {
-        return dstPort;
+    public void setDst(IdPortTuple dst) {
+        this.dst = dst;
     }
 
     /* (non-Javadoc)
@@ -49,10 +48,8 @@ public class LinkTuple {
     public int hashCode() {
         final int prime = 2221;
         int result = 1;
-        result = prime * result + ((dstId == null) ? 0 : dstId.hashCode());
-        result = prime * result + ((dstPort == null) ? 0 : dstPort.hashCode());
-        result = prime * result + ((srcId == null) ? 0 : srcId.hashCode());
-        result = prime * result + ((srcPort == null) ? 0 : srcPort.hashCode());
+        result = prime * result + ((dst == null) ? 0 : dst.hashCode());
+        result = prime * result + ((src == null) ? 0 : src.hashCode());
         return result;
     }
 
@@ -68,25 +65,15 @@ public class LinkTuple {
         if (!(obj instanceof LinkTuple))
             return false;
         LinkTuple other = (LinkTuple) obj;
-        if (dstId == null) {
-            if (other.dstId != null)
+        if (dst == null) {
+            if (other.dst != null)
                 return false;
-        } else if (!dstId.equals(other.dstId))
+        } else if (!dst.equals(other.dst))
             return false;
-        if (dstPort == null) {
-            if (other.dstPort != null)
+        if (src == null) {
+            if (other.src != null)
                 return false;
-        } else if (!dstPort.equals(other.dstPort))
-            return false;
-        if (srcId == null) {
-            if (other.srcId != null)
-                return false;
-        } else if (!srcId.equals(other.srcId))
-            return false;
-        if (srcPort == null) {
-            if (other.srcPort != null)
-                return false;
-        } else if (!srcPort.equals(other.srcPort))
+        } else if (!src.equals(other.src))
             return false;
         return true;
     }
@@ -96,7 +83,6 @@ public class LinkTuple {
      */
     @Override
     public String toString() {
-        return "LinkTuple [dstId=" + dstId + ", dstPort=" + dstPort
-                + ", srcId=" + srcId + ", srcPort=" + srcPort + "]";
+        return "LinkTuple [src=" + src + ", dst=" + dst + "]";
     }
 }

@@ -44,9 +44,21 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     protected static Logger logger = LoggerFactory.getLogger(TopologyImpl.class);
 
     protected IBeaconProvider beaconProvider;
+
+    /**
+     * Map from link to the most recent time it was verified functioning
+     */
     protected Map<LinkTuple, Long> links;
+
+    /**
+     * Map from a id:port to the set of links containing it as an endpoint
+     */
     protected Map<IdPortTuple, Set<LinkTuple>> portLinks;
     protected IRouting routing;
+
+    /**
+     * Map from switch id to a set of all links with it as an endpoint
+     */
     protected Map<Long, Set<LinkTuple>> switchLinks;
     protected Timer timer;
 
@@ -199,28 +211,25 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
         // Store the time of update to this link, and push it out to routing
         // TODO Locking!
-        LinkTuple lt = new LinkTuple(sw.getId(), pi.getInPort(), remoteDpid, remotePort);
+        LinkTuple lt = new LinkTuple(new IdPortTuple(sw.getId(), pi.getInPort()),
+                new IdPortTuple(remoteDpid, remotePort));
         if (links.put(lt, System.currentTimeMillis()) == null) {
             // index it by switch
-            if (!switchLinks.containsKey(lt.getSrcId()))
-                switchLinks.put(lt.getSrcId(), new HashSet<LinkTuple>());
-            switchLinks.get(lt.getSrcId()).add(lt);
+            if (!switchLinks.containsKey(lt.getSrc().getId()))
+                switchLinks.put(lt.getSrc().getId(), new HashSet<LinkTuple>());
+            switchLinks.get(lt.getSrc().getId()).add(lt);
 
             // index both ends by switch:port
-            IdPortTuple id = new IdPortTuple(lt.getSrcId(), lt.getSrcPort());
-            if (!portLinks.containsKey(id))
-                portLinks.put(id, new HashSet<LinkTuple>());
-            portLinks.get(id).add(lt);
+            if (!portLinks.containsKey(lt.getSrc()))
+                portLinks.put(lt.getSrc(), new HashSet<LinkTuple>());
+            portLinks.get(lt.getSrc()).add(lt);
 
-            id = new IdPortTuple(lt.getDstId(), lt.getDstPort());
-            if (!portLinks.containsKey(id))
-                portLinks.put(id, new HashSet<LinkTuple>());
-            portLinks.get(id).add(lt);
+            if (!portLinks.containsKey(lt.getDst()))
+                portLinks.put(lt.getDst(), new HashSet<LinkTuple>());
+            portLinks.get(lt.getDst()).add(lt);
 
-            routing.update(lt.getSrcId(), lt.getSrcPort(), lt.getDstId(),
-                    lt.getDstPort(), true);
+            routing.update(sw.getId(), pi.getInPort(), remoteDpid, remotePort, true);
         }
-
 
         // Consume this message
         return Command.STOP;
