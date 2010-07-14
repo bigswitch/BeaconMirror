@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Invariants:
+ *  -portLinks and switchLinks will not contain empty Sets outside of critical sections
+ *  -portLinks contains LinkTuples where one of the src or dst IdPortTuple matches the map key
+ *  -switchLinks contains LinkTuples where one of the src or dst IdPortTuple's id matches the switch id
  *
  * @author David Erickson (derickso@stanford.edu)
  */
@@ -52,6 +57,9 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      * Map from link to the most recent time it was verified functioning
      */
     protected Map<LinkTuple, Long> links;
+    protected Timer lldpSendTimer;
+    protected Long lldpFrequency = 15L * 1000; // sending frequency
+    protected Long lldpTimeout = 35L * 1000; // timeout
 
     /**
      * Map from a id:port to the set of links containing it as an endpoint
@@ -63,7 +71,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      * Map from switch id to a set of all links with it as an endpoint
      */
     protected Map<Long, Set<LinkTuple>> switchLinks;
-    protected Timer timer;
+    protected Timer timeoutLinksTimer;
 
     protected void startUp() {
         beaconProvider.addOFMessageListener(OFType.PACKET_IN, this);
@@ -72,17 +80,24 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         links = new HashMap<LinkTuple, Long>();
         portLinks = new HashMap<IdPortTuple, Set<LinkTuple>>();
         switchLinks = new HashMap<Long, Set<LinkTuple>>();
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+
+        lldpSendTimer = new Timer();
+        lldpSendTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 sendLLDPs();
-            }}, 1000, 60*1000);
-        // TODO expiration timer
+            }}, 1000, lldpFrequency);
+
+        timeoutLinksTimer = new Timer();
+        timeoutLinksTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                timeoutLinks();
+            }}, 1000, lldpTimeout);
     }
 
     protected void shutDown() {
-        timer.cancel();
+        lldpSendTimer.cancel();
         beaconProvider.removeOFSwitchListener(this);
         beaconProvider.removeOFMessageListener(OFType.PACKET_IN, this);
         beaconProvider.removeOFMessageListener(OFType.PORT_STATUS, this);
@@ -217,6 +232,13 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         // TODO Locking!
         LinkTuple lt = new LinkTuple(new IdPortTuple(sw.getId(), pi.getInPort()),
                 new IdPortTuple(remoteDpid, remotePort));
+        addOrUpdateLink(lt);
+
+        // Consume this message
+        return Command.STOP;
+    }
+
+    protected void addOrUpdateLink(LinkTuple lt) {
         if (links.put(lt, System.currentTimeMillis()) == null) {
             // index it by switch source
             if (!switchLinks.containsKey(lt.getSrc().getId()))
@@ -237,11 +259,36 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 portLinks.put(lt.getDst(), new HashSet<LinkTuple>());
             portLinks.get(lt.getDst()).add(lt);
 
-            routing.update(sw.getId(), pi.getInPort(), remoteDpid, remotePort, true);
+            if (routing != null) {
+                routing.update(lt.getSrc().getId(), lt.getSrc().getPort(),
+                        lt.getDst().getId(), lt.getDst().getPort(), true);
+            }
         }
+    }
 
-        // Consume this message
-        return Command.STOP;
+    protected void deleteLink(LinkTuple lt) {
+        this.switchLinks.get(lt.getSrc().getId()).remove(lt);
+        this.switchLinks.get(lt.getDst().getId()).remove(lt);
+        if (this.switchLinks.containsKey(lt.getSrc().getId()) &&
+                this.switchLinks.get(lt.getSrc().getId()).isEmpty())
+            this.switchLinks.remove(lt.getSrc().getId());
+        if (this.switchLinks.containsKey(lt.getDst().getId()) &&
+                this.switchLinks.get(lt.getDst().getId()).isEmpty())
+            this.switchLinks.remove(lt.getDst().getId());
+
+        this.portLinks.get(lt.getSrc()).remove(lt);
+        this.portLinks.get(lt.getDst()).remove(lt);
+        if (this.portLinks.get(lt.getSrc()).isEmpty())
+            this.portLinks.remove(lt.getSrc());
+        if (this.portLinks.get(lt.getDst()).isEmpty())
+            this.portLinks.remove(lt.getDst());
+
+        this.links.remove(lt);
+
+        if (routing != null) {
+            routing.update(lt.getSrc().getId(), lt.getSrc().getPort(),
+                    lt.getDst().getId(), lt.getDst().getPort(), false);
+        }
     }
 
     protected Command handlePortStatus(IOFSwitch sw, OFPortStatus ps) {
@@ -260,14 +307,23 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                     // cleanup id:port->links map
                     // check src
                     if (!lt.getSrc().equals(tuple))
-                        if (portLinks.get(lt.getSrc()) != null)
+                        if (portLinks.get(lt.getSrc()) != null) {
                             portLinks.get(lt.getSrc()).remove(lt);
+                            if (portLinks.get(lt.getSrc()).isEmpty())
+                                portLinks.remove(lt.getSrc());
+                        }
                     else
-                        if (portLinks.get(lt.getDst()) != null)
+                        if (portLinks.get(lt.getDst()) != null) {
                             portLinks.get(lt.getDst()).remove(lt);
+                            if (portLinks.get(lt.getDst()).isEmpty())
+                                portLinks.remove(lt.getDst());
+                        }
 
                     // cleanup swid->links map
                     this.switchLinks.get(sw.getId()).remove(lt);
+                    if (this.switchLinks.get(sw.getId()).isEmpty())
+                        this.switchLinks.remove(sw.getId());
+
                     // cleanup link->timeout map
                     this.links.remove(lt);
                     
@@ -298,18 +354,34 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             for (LinkTuple lt : switchLinks.get(sw.getId())) {
                 // cleanup id:port->links map
                 // check src
-                if (lt.getSrc().getId().equals(sw.getId()))
+                if (lt.getSrc().getId().equals(sw.getId())) {
                     portLinks.remove(lt.getSrc());
-                else
-                    if (portLinks.get(lt.getSrc()) != null)
+                } else {
+                    if (portLinks.get(lt.getSrc()) != null) {
                         portLinks.get(lt.getSrc()).remove(lt);
+                        if (portLinks.get(lt.getSrc()).isEmpty())
+                            portLinks.remove(lt.getSrc());
+                    }
+
+                    this.switchLinks.get(lt.getSrc().getId()).remove(lt);
+                    if (this.switchLinks.get(lt.getSrc().getId()).isEmpty())
+                        this.switchLinks.remove(lt.getSrc().getId());
+                }
 
                 // check dst
-                if (lt.getDst().getId().equals(sw.getId()))
+                if (lt.getDst().getId().equals(sw.getId())) {
                     portLinks.remove(lt.getDst());
-                else
-                    if (portLinks.get(lt.getDst()) != null)
+                } else {
+                    if (portLinks.get(lt.getDst()) != null) {
                         portLinks.get(lt.getDst()).remove(lt);
+                        if (portLinks.get(lt.getDst()).isEmpty())
+                            portLinks.remove(lt.getDst());
+                    }
+
+                    this.switchLinks.get(lt.getDst().getId()).remove(lt);
+                    if (this.switchLinks.get(lt.getDst().getId()).isEmpty())
+                        this.switchLinks.remove(lt.getDst().getId());
+                }
 
                 // cleanup link->timeout map
                 this.links.remove(lt);
@@ -321,6 +393,24 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 routing.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
                         .getDst().getId(), lt.getDst().getPort(), false);
         eraseList.clear();
+    }
+
+    protected void timeoutLinks() {
+        // TODO locking
+        List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
+        Iterator<Entry<LinkTuple, Long>> it = this.links.entrySet().iterator();
+        Long curTime = System.currentTimeMillis();
+
+        while (it.hasNext()) {
+            Entry<LinkTuple, Long> entry = it.next();
+            if (entry.getValue() + this.lldpTimeout < curTime) {
+                eraseList.add(entry.getKey());
+            }
+        }
+
+        for (LinkTuple lt : eraseList) {
+            deleteLink(lt);
+        }
     }
 
     /**
