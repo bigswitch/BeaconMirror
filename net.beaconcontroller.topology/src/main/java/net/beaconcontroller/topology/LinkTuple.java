@@ -13,6 +13,23 @@ public class LinkTuple {
         this.dst = dst;
     }
 
+    public LinkTuple(Long srcId, Short srcPort, Long dstId, Short dstPort) {
+        this.src = new IdPortTuple(srcId, srcPort);
+        this.dst = new IdPortTuple(dstId, dstPort);
+    }
+
+    /**
+     * Convenience constructor, ports are cast to shorts
+     * @param srcId
+     * @param srcPort
+     * @param dstId
+     * @param dstPort
+     */
+    public LinkTuple(Long srcId, Integer srcPort, Long dstId, Integer dstPort) {
+        this.src = new IdPortTuple(srcId, srcPort);
+        this.dst = new IdPortTuple(dstId, dstPort);
+    }
+
     /**
      * @return the src
      */

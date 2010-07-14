@@ -18,6 +18,17 @@ public class IdPortTuple {
     }
 
     /**
+     * Convenience constructor, port is immediately cast to a short
+     * @param id
+     * @param port
+     */
+    public IdPortTuple(Long id, Integer port) {
+        super();
+        this.id = id;
+        this.port = port.shortValue();
+    }
+
+    /**
      * @return the id
      */
     public Long getId() {
