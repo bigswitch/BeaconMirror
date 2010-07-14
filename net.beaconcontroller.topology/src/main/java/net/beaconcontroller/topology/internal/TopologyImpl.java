@@ -31,6 +31,9 @@ import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFType;
+import org.openflow.protocol.OFPhysicalPort.OFPortConfig;
+import org.openflow.protocol.OFPhysicalPort.OFPortState;
+import org.openflow.protocol.OFPortStatus.OFPortReason;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.slf4j.Logger;
@@ -75,6 +78,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             public void run() {
                 sendLLDPs();
             }}, 1000, 60*1000);
+        // TODO expiration timer
     }
 
     protected void shutDown() {
@@ -214,10 +218,15 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         LinkTuple lt = new LinkTuple(new IdPortTuple(sw.getId(), pi.getInPort()),
                 new IdPortTuple(remoteDpid, remotePort));
         if (links.put(lt, System.currentTimeMillis()) == null) {
-            // index it by switch
+            // index it by switch source
             if (!switchLinks.containsKey(lt.getSrc().getId()))
                 switchLinks.put(lt.getSrc().getId(), new HashSet<LinkTuple>());
             switchLinks.get(lt.getSrc().getId()).add(lt);
+
+            // index it by switch dest
+            if (!switchLinks.containsKey(lt.getDst().getId()))
+                switchLinks.put(lt.getDst().getId(), new HashSet<LinkTuple>());
+            switchLinks.get(lt.getDst().getId()).add(lt);
 
             // index both ends by switch:port
             if (!portLinks.containsKey(lt.getSrc()))
@@ -236,7 +245,40 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     }
 
     protected Command handlePortStatus(IOFSwitch sw, OFPortStatus ps) {
-        // nuke links if the port is removed
+        // if ps is a delete, or a modify where the port is down or configured down
+        if ((byte)OFPortReason.OFPPR_DELETE.ordinal() == ps.getReason() ||
+            ((byte)OFPortReason.OFPPR_MODIFY.ordinal() == ps.getReason() &&
+                        (((OFPortConfig.OFPPC_PORT_DOWN.getValue() & ps.getDesc().getConfig()) > 0) ||
+                                ((OFPortState.OFPPS_LINK_DOWN.getValue() & ps.getDesc().getState()) > 0)))) {
+            IdPortTuple tuple = new IdPortTuple(sw.getId(), ps.getDesc().getPortNumber());
+
+            // TODO lock here
+            List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
+            if (this.portLinks.containsKey(tuple)) {
+                eraseList.addAll(this.portLinks.get(tuple));
+                for (LinkTuple lt : this.portLinks.get(tuple)) {
+                    // cleanup id:port->links map
+                    // check src
+                    if (!lt.getSrc().equals(tuple))
+                        if (portLinks.get(lt.getSrc()) != null)
+                            portLinks.get(lt.getSrc()).remove(lt);
+                    else
+                        if (portLinks.get(lt.getDst()) != null)
+                            portLinks.get(lt.getDst()).remove(lt);
+
+                    // cleanup swid->links map
+                    this.switchLinks.get(sw.getId()).remove(lt);
+                    // cleanup link->timeout map
+                    this.links.remove(lt);
+                    
+                }
+            }
+            for (LinkTuple lt : eraseList)
+                if (routing != null)
+                    routing.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
+                            .getDst().getId(), lt.getDst().getPort(), false);
+            eraseList.clear();
+        }
         return Command.CONTINUE;
     }
 
@@ -247,14 +289,38 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
     @Override
     public void removedSwitch(IOFSwitch sw) {
-        // nuke links connected to this switch
         // TODO locking
+        List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
         if (switchLinks.containsKey(sw.getId())) {
+            // add all tuples with an endpoint on this switch to erase list
+            eraseList.addAll(switchLinks.get(sw.getId()));
+
             for (LinkTuple lt : switchLinks.get(sw.getId())) {
-                // todo remove the switchPort mappings
-                // send the update to routing
+                // cleanup id:port->links map
+                // check src
+                if (lt.getSrc().getId().equals(sw.getId()))
+                    portLinks.remove(lt.getSrc());
+                else
+                    if (portLinks.get(lt.getSrc()) != null)
+                        portLinks.get(lt.getSrc()).remove(lt);
+
+                // check dst
+                if (lt.getDst().getId().equals(sw.getId()))
+                    portLinks.remove(lt.getDst());
+                else
+                    if (portLinks.get(lt.getDst()) != null)
+                        portLinks.get(lt.getDst()).remove(lt);
+
+                // cleanup link->timeout map
+                this.links.remove(lt);
             }
+            switchLinks.remove(sw.getId());
         }
+        for (LinkTuple lt : eraseList)
+            if (routing != null)
+                routing.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
+                        .getDst().getId(), lt.getDst().getPort(), false);
+        eraseList.clear();
     }
 
     /**
