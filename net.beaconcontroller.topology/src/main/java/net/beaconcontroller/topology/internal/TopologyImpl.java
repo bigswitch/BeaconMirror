@@ -20,7 +20,7 @@ import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.LLDP;
 import net.beaconcontroller.packet.LLDPTLV;
-import net.beaconcontroller.routing.IRouting;
+import net.beaconcontroller.routing.IRoutingEngine;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.IdPortTuple;
 import net.beaconcontroller.topology.LinkTuple;
@@ -65,7 +65,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      * Map from a id:port to the set of links containing it as an endpoint
      */
     protected Map<IdPortTuple, Set<LinkTuple>> portLinks;
-    protected IRouting routing;
+    protected IRoutingEngine routingEngine;
 
     /**
      * Map from switch id to a set of all links with it as an endpoint
@@ -228,7 +228,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             return Command.STOP;
         }
 
-        // Store the time of update to this link, and push it out to routing
+        // Store the time of update to this link, and push it out to routingEngine
         // TODO Locking!
         LinkTuple lt = new LinkTuple(new IdPortTuple(sw.getId(), pi.getInPort()),
                 new IdPortTuple(remoteDpid, remotePort));
@@ -259,8 +259,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 portLinks.put(lt.getDst(), new HashSet<LinkTuple>());
             portLinks.get(lt.getDst()).add(lt);
 
-            if (routing != null) {
-                routing.update(lt.getSrc().getId(), lt.getSrc().getPort(),
+            if (routingEngine != null) {
+                routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(),
                         lt.getDst().getId(), lt.getDst().getPort(), true);
             }
         }
@@ -285,8 +285,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
         this.links.remove(lt);
 
-        if (routing != null) {
-            routing.update(lt.getSrc().getId(), lt.getSrc().getPort(),
+        if (routingEngine != null) {
+            routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(),
                     lt.getDst().getId(), lt.getDst().getPort(), false);
         }
     }
@@ -330,8 +330,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 }
             }
             for (LinkTuple lt : eraseList)
-                if (routing != null)
-                    routing.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
+                if (routingEngine != null)
+                    routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
                             .getDst().getId(), lt.getDst().getPort(), false);
             eraseList.clear();
         }
@@ -389,8 +389,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             switchLinks.remove(sw.getId());
         }
         for (LinkTuple lt : eraseList)
-            if (routing != null)
-                routing.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
+            if (routingEngine != null)
+                routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
                         .getDst().getId(), lt.getDst().getPort(), false);
         eraseList.clear();
     }
@@ -421,9 +421,9 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     }
 
     /**
-     * @param routing the routing to set
+     * @param routingEngine the routingEngine to set
      */
-    public void setRouting(IRouting routing) {
-        this.routing = routing;
+    public void setRouting(IRoutingEngine routingEngine) {
+        this.routingEngine = routingEngine;
     }
 }

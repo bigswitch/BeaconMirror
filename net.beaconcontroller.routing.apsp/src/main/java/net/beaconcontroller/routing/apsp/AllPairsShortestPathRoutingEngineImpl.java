@@ -14,7 +14,7 @@ import java.util.Queue;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFSwitch;
-import net.beaconcontroller.routing.IRouting;
+import net.beaconcontroller.routing.IRoutingEngine;
 import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
 import net.beaconcontroller.routing.RouteId;
@@ -25,7 +25,7 @@ import net.beaconcontroller.topology.TopologyAware;
  *
  * @author David Erickson (derickso@stanford.edu)
  */
-public class AllPairsShortestPathRoutingImpl implements IRouting, TopologyAware {
+public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, TopologyAware {
     public IBeaconProvider beaconProvider;
 
     protected Map<RouteId, Route> shortest;
@@ -35,7 +35,7 @@ public class AllPairsShortestPathRoutingImpl implements IRouting, TopologyAware 
     protected Map<Route, List<Route>> rightLocal;
     protected Map<Route, List<Route>> rightShortest;
 
-    public AllPairsShortestPathRoutingImpl() {
+    public AllPairsShortestPathRoutingEngineImpl() {
         shortest = new HashMap<RouteId, Route>();
         localRoutes = new HashMap<RouteId, List<Route>>();
         leftLocal = new HashMap<Route, List<Route>>();
