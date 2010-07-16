@@ -1,6 +1,7 @@
 package net.beaconcontroller.test;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,7 +10,9 @@ import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFSwitchListener;
+import net.beaconcontroller.core.IOFMessageListener.Command;
 
+import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFType;
 
 /**
@@ -62,5 +65,16 @@ public class MockBeaconProvider implements IBeaconProvider {
 
     @Override
     public void removeOFSwitchListener(IOFSwitchListener listener) {
+    }
+
+    public void dispatchMessage(IOFSwitch sw, OFMessage msg) {
+        List<IOFMessageListener> listeners = this.listeners.get(msg.getType());
+        if (listeners != null) {
+            Command result = Command.CONTINUE;
+            Iterator<IOFMessageListener> it = listeners.iterator();
+            while (it.hasNext() && !Command.STOP.equals(result)) {
+                result = it.next().receive(sw, msg);
+            }
+        }
     }
 }

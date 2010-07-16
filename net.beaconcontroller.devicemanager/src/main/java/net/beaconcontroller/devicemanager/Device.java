@@ -2,12 +2,10 @@ package net.beaconcontroller.devicemanager;
 
 import java.util.Arrays;
 
-import net.beaconcontroller.core.IOFSwitch;
-
 public class Device {
     protected byte[] dataLayerAddress;
     protected Integer networkAddress;
-    protected IOFSwitch sw;
+    protected Long swId;
     protected Short swPort;
 
     /**
@@ -39,20 +37,6 @@ public class Device {
     }
 
     /**
-     * @return the sw
-     */
-    public IOFSwitch getSw() {
-        return sw;
-    }
-
-    /**
-     * @param sw the sw to set
-     */
-    public void setSw(IOFSwitch sw) {
-        this.sw = sw;
-    }
-
-    /**
      * @return the swPort
      */
     public Short getSwPort() {
@@ -66,6 +50,20 @@ public class Device {
         this.swPort = swPort;
     }
 
+    /**
+     * @return the swId
+     */
+    public Long getSwId() {
+        return swId;
+    }
+
+    /**
+     * @param swId the swId to set
+     */
+    public void setSwId(Long swId) {
+        this.swId = swId;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -76,7 +74,7 @@ public class Device {
         result = prime * result + Arrays.hashCode(dataLayerAddress);
         result = prime * result
                 + ((networkAddress == null) ? 0 : networkAddress.hashCode());
-        result = prime * result + ((sw == null) ? 0 : sw.hashCode());
+        result = prime * result + ((swId == null) ? 0 : swId.hashCode());
         result = prime * result + ((swPort == null) ? 0 : swPort.hashCode());
         return result;
     }
@@ -100,10 +98,10 @@ public class Device {
                 return false;
         } else if (!networkAddress.equals(other.networkAddress))
             return false;
-        if (sw == null) {
-            if (other.sw != null)
+        if (swId == null) {
+            if (other.swId != null)
                 return false;
-        } else if (!sw.equals(other.sw))
+        } else if (!swId.equals(other.swId))
             return false;
         if (swPort == null) {
             if (other.swPort != null)
@@ -119,7 +117,7 @@ public class Device {
     @Override
     public String toString() {
         return "Device [dataLayerAddress=" + Arrays.toString(dataLayerAddress)
-                + ", networkAddress=" + networkAddress + ", sw=" + sw
+                + ", networkAddress=" + networkAddress + ", swId=" + swId
                 + ", swPort=" + swPort + "]";
     }
 }

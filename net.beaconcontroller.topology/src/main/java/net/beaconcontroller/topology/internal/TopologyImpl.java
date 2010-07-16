@@ -426,4 +426,13 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     public void setRouting(IRoutingEngine routingEngine) {
         this.routingEngine = routingEngine;
     }
+
+    @Override
+    public boolean isInternal(IdPortTuple idPort) {
+        // TODO locking
+        if (this.portLinks.containsKey(idPort)) {
+            return true;
+        }
+        return false;
+    }
 }
