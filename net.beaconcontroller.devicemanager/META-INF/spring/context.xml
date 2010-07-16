@@ -4,4 +4,10 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
   http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.2.xsd">
 
+  <bean id="deviceManager"
+    class="net.beaconcontroller.devicemanager.internal.DeviceManagerImpl"
+    init-method="startUp" destroy-method="shutDown">
+    <property name="beaconProvider" ref="beaconProvider"/>
+    <property name="topology" ref="topology"/>
+  </bean>
 </beans>

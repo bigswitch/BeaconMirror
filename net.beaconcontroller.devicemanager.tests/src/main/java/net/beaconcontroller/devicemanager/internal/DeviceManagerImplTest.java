@@ -3,6 +3,7 @@ package net.beaconcontroller.devicemanager.internal;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
 
 import java.util.Arrays;
@@ -16,6 +17,8 @@ import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.packet.UDP;
 import net.beaconcontroller.test.BeaconTestCase;
 import net.beaconcontroller.test.MockBeaconProvider;
+import net.beaconcontroller.topology.ITopology;
+import net.beaconcontroller.topology.IdPortTuple;
 
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPacketIn.OFPacketInReason;
@@ -68,10 +71,9 @@ public class DeviceManagerImplTest extends BeaconTestCase {
 
     public void testDeviceDiscover() throws Exception {
         DeviceManagerImpl deviceManager = getDeviceManager();
-        // TODO need to mockup topology and inject it
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();
         byte[] dataLayerSource = ((Ethernet)this.testPacket).getSourceMACAddress();
-        
+
         // build our expected Device
         Device device = new Device();
         device.setDataLayerAddress(dataLayerSource);
@@ -80,15 +82,37 @@ public class DeviceManagerImplTest extends BeaconTestCase {
 
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
-        expect(mockSwitch.getId()).andReturn(1L);
+        expect(mockSwitch.getId()).andReturn(1L).atLeastOnce();
+        ITopology mockTopology = createMock(ITopology.class);
+        expect(mockTopology.isInternal(new IdPortTuple(1L, 1))).andReturn(false);
+        deviceManager.setTopology(mockTopology);
 
         // Start recording the replay on the mocks
-        replay(mockSwitch);
+        replay(mockSwitch, mockTopology);
         // Get the listener and trigger the packet in
         mockBeaconProvider.dispatchMessage(mockSwitch, this.packetIn);
 
         // Verify the replay matched our expectations
-        verify(mockSwitch);
+        verify(mockSwitch, mockTopology);
+
+        // Verify the device
+        assertEquals(device, deviceManager.getDeviceByDataLayerAddress(Arrays.hashCode(dataLayerSource)));
+
+        // move the port on this device
+        device.setSwId(2L);
+        device.setSwPort((short)2);
+
+        reset(mockSwitch, mockTopology);
+        expect(mockSwitch.getId()).andReturn(2L).atLeastOnce();
+        expect(mockTopology.isInternal(new IdPortTuple(2L, 2))).andReturn(false);
+
+        // Start recording the replay on the mocks
+        replay(mockSwitch, mockTopology);
+        // Get the listener and trigger the packet in
+        mockBeaconProvider.dispatchMessage(mockSwitch, this.packetIn.setInPort((short)2));
+
+        // Verify the replay matched our expectations
+        verify(mockSwitch, mockTopology);
 
         // Verify the device
         assertEquals(device, deviceManager.getDeviceByDataLayerAddress(Arrays.hashCode(dataLayerSource)));

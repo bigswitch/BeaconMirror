@@ -8,4 +8,8 @@
   <osgi:reference id="beaconProvider" cardinality="0..1"
     interface="net.beaconcontroller.core.IBeaconProvider">
   </osgi:reference>
+
+  <osgi:reference id="topology" cardinality="0..1"
+    interface="net.beaconcontroller.topology.ITopology">
+  </osgi:reference>
 </beans>
