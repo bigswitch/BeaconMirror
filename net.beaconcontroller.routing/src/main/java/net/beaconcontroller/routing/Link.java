@@ -31,7 +31,7 @@ public class Link {
     }
 
     /**
-     * @return the outPort
+     * @return the port number of the switch this link begins on
      */
     public Short getOutPort() {
         return outPort;
@@ -45,7 +45,7 @@ public class Link {
     }
 
     /**
-     * @return the dst
+     * @return the switch id of the destination switch on this link
      */
     public Long getDst() {
         return dst;
@@ -59,7 +59,7 @@ public class Link {
     }
 
     /**
-     * @return the inPort
+     * @return the port number of the destination switch on this link
      */
     public Short getInPort() {
         return inPort;

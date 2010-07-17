@@ -13,3 +13,4 @@ Import-Package: net.beaconcontroller.core,
  org.openflow.protocol.factory,
  org.openflow.util,
  org.slf4j
+Export-Package: net.beaconcontroller.devicemanager

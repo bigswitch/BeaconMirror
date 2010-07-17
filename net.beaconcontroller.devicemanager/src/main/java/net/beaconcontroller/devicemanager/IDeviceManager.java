@@ -8,4 +8,11 @@ public interface IDeviceManager {
      * @return
      */
     public Device getDeviceByDataLayerAddress(Integer hashCode);
+
+    /**
+     * Returns a device for the given data layer address
+     * @param address
+     * @return
+     */
+    public Device getDeviceByDataLayerAddress(byte[] address);
 }

@@ -103,4 +103,9 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
     public Device getDeviceByDataLayerAddress(Integer hashCode) {
         return this.dataLayerAddressDeviceMap.get(hashCode);
     }
+
+    @Override
+    public Device getDeviceByDataLayerAddress(byte[] address) {
+        return this.getDeviceByDataLayerAddress(Arrays.hashCode(address));
+    }
 }
