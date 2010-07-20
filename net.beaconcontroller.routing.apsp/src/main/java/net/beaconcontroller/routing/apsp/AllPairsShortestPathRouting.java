@@ -2,7 +2,6 @@ package net.beaconcontroller.routing.apsp;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,10 +18,13 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
+import org.openflow.protocol.OFPacketOut;
+import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.protocol.factory.OFMessageFactory;
+import org.openflow.util.U16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,21 +59,24 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
         match.loadFromPacket(pi.getPacketData(), pi.getInPort());
 
         // Check if we have the location of the destination
-        Device dstDevice = deviceManager.getDeviceByDataLayerAddress(Arrays
-                .hashCode(match.getDataLayerDestination()));
+        Device dstDevice = deviceManager.getDeviceByDataLayerAddress(match.getDataLayerDestination());
 
         if (dstDevice != null) {
             // does a route exist?
             Route route = routingEngine.getRoute(sw.getId(), dstDevice.getSwId());
             if (route != null) {
-                //route.getPath().get(0).get
+                // set the route
+                pushRoute(sw.getInputStream().getMessageFactory(), match, route, dstDevice);
+                // send the packet down the route
+                pushPacket(sw.getInputStream().getMessageFactory(), sw, match, pi);
+                return Command.STOP;
             }
         }
 
         return Command.CONTINUE;
     }
 
-    public void pushRoute(OFMessageFactory factory, OFMatch match, Route route) {
+    public void pushRoute(OFMessageFactory factory, OFMatch match, Route route, Device dstDevice) {
         OFFlowMod fm = (OFFlowMod) factory.getMessage(OFType.FLOW_MOD);
         OFActionOutput action = new OFActionOutput();
         List<OFAction> actions = new ArrayList<OFAction>();
@@ -84,21 +89,56 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
 
         for (Iterator<Link> it = route.getPath().iterator(); it.hasNext();) {
             Link link = it.next();
-            fm.getMatch().setInputPort(link.getOutPort());
-            ((OFActionOutput)fm.getActions().get(0)).setPort(link.getInPort());
+            ((OFActionOutput)fm.getActions().get(0)).setPort(link.getOutPort());
             try {
                 sw.getOutputStream().write(fm);
             } catch (IOException e) {
                 log.error("Failure writing flow mod", e);
             }
-            if (it.hasNext()) {
-                try {
-                    fm = fm.clone();
-                } catch (CloneNotSupportedException e) {
-                    log.error("Failure cloning flow mod", e);
-                }
-                sw = beaconProvider.getSwitches().get(link.getDst());
+            try {
+                fm = fm.clone();
+            } catch (CloneNotSupportedException e) {
+                log.error("Failure cloning flow mod", e);
             }
+            fm.getMatch().setInputPort(link.getInPort());
+            sw = beaconProvider.getSwitches().get(link.getDst());
+        }
+
+        // write the flow mod to get the packet out to the device
+        ((OFActionOutput)fm.getActions().get(0)).setPort(dstDevice.getSwPort());
+        try {
+            sw.getOutputStream().write(fm);
+        } catch (IOException e) {
+            log.error("Failure writing flow mod", e);
+        }
+    }
+
+    public void pushPacket(OFMessageFactory factory, IOFSwitch sw, OFMatch match, OFPacketIn pi) {
+        OFPacketOut po = (OFPacketOut) factory.getMessage(OFType.PACKET_OUT);
+        po.setBufferId(pi.getBufferId());
+        po.setInPort(pi.getInPort());
+
+        // set actions
+        List<OFAction> actions = new ArrayList<OFAction>();
+        actions.add(new OFActionOutput(OFPort.OFPP_TABLE.getValue(), (short) 0));
+        po.setActions(actions)
+            .setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
+
+        // set data if needed
+        if (pi.getBufferId() == 0xffffffff) {
+            byte[] packetData = pi.getPacketData();
+            po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH
+                    + po.getActionsLength() + packetData.length));
+            po.setPacketData(packetData);
+        } else {
+            po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH
+                    + po.getActionsLength()));
+        }
+
+        try {
+            sw.getOutputStream().write(po);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -114,5 +154,12 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
      */
     public void setRoutingEngine(IRoutingEngine routingEngine) {
         this.routingEngine = routingEngine;
+    }
+
+    /**
+     * @param deviceManager the deviceManager to set
+     */
+    public void setDeviceManager(IDeviceManager deviceManager) {
+        this.deviceManager = deviceManager;
     }
 }

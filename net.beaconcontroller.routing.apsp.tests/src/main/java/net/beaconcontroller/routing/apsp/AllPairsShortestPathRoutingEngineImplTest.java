@@ -9,7 +9,7 @@ import net.beaconcontroller.test.BeaconTestCase;
  *
  * @author David Erickson (derickso@stanford.edu)
  */
-public class AllPairsShortestPathRoutingImplTest extends BeaconTestCase {
+public class AllPairsShortestPathRoutingEngineImplTest extends BeaconTestCase {
     protected IRoutingEngine getRouting() {
         return (IRoutingEngine) getApplicationContext().getBean("routingEngine");
     }

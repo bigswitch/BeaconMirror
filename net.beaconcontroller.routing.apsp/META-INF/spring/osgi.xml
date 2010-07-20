@@ -10,4 +10,8 @@
   <osgi:reference id="beaconProvider" cardinality="1..1"
     interface="net.beaconcontroller.core.IBeaconProvider">
   </osgi:reference>
+
+  <osgi:reference id="deviceManager" cardinality="1..1"
+    interface="net.beaconcontroller.devicemanager.IDeviceManager">
+  </osgi:reference>
 </beans>

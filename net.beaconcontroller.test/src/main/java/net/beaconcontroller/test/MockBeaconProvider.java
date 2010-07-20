@@ -21,6 +21,7 @@ import org.openflow.protocol.OFType;
  */
 public class MockBeaconProvider implements IBeaconProvider {
     protected Map<OFType, List<IOFMessageListener>> listeners;
+    protected Map<Long, IOFSwitch> switches;
 
     /**
      * 
@@ -56,7 +57,11 @@ public class MockBeaconProvider implements IBeaconProvider {
 
     @Override
     public Map<Long, IOFSwitch> getSwitches() {
-        return null;
+        return this.switches;
+    }
+
+    public void setSwitches(Map<Long, IOFSwitch> switches) {
+        this.switches = switches;
     }
 
     @Override
