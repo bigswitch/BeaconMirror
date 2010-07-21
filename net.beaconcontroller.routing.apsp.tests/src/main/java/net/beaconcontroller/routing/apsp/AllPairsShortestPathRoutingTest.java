@@ -116,6 +116,7 @@ public class AllPairsShortestPathRoutingTest extends BeaconTestCase {
         fm1.setIdleTimeout((short)5)
             .setMatch(match)
             .setActions(actions)
+            .setBufferId(-1)
             .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
 
         OFFlowMod fm2 = fm1.clone();

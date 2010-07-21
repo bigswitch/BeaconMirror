@@ -90,7 +90,7 @@ public class LearningSwitchTest extends BeaconTestCase {
             .setActions(Arrays.asList(new OFAction[] {new OFActionOutput().setPort(OFPort.OFPP_FLOOD.getValue())}))
             .setActionsLength((short) OFActionOutput.MINIMUM_LENGTH)
             .setBufferId(-1)
-            .setInPort(OFPort.OFPP_NONE)
+            .setInPort((short)1)
             .setPacketData(this.testPacketSerialized);
         po.setLengthU(OFPacketOut.MINIMUM_LENGTH + po.getActionsLengthU()
                 + this.testPacketSerialized.length);
