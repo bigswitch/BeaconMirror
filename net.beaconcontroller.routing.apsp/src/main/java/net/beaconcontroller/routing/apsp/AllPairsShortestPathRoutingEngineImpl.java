@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.routing.IRoutingEngine;
@@ -26,6 +29,8 @@ import net.beaconcontroller.topology.TopologyAware;
  * @author David Erickson (derickso@stanford.edu)
  */
 public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, TopologyAware {
+    protected static Logger log = LoggerFactory.getLogger(AllPairsShortestPathRoutingEngineImpl.class);
+
     public IBeaconProvider beaconProvider;
 
     protected Map<RouteId, Route> shortest;
@@ -79,6 +84,7 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
             Short dstPort, boolean added) {
         Route route = new Route(srcId, dstId);
         route.getPath().add(new Link(srcPort, dstPort, dstId));
+        log.debug("Route {} added: {}", route, added);
         cleanup(route, added);
         fixup(route, added);
     }
