@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OSGIToSLF4JLoggingBridge {
-    private static Logger logger = LoggerFactory.getLogger(OSGIToSLF4JLoggingBridge.class);
+    private static Logger log = LoggerFactory.getLogger(OSGIToSLF4JLoggingBridge.class);
     protected BeaconBundleListener bundleListener;
     protected BeaconFrameworkListener frameworkListener;
     protected LogListener logListener;
@@ -24,13 +24,13 @@ public class OSGIToSLF4JLoggingBridge {
     
 
     public void startUp(BundleContext context) throws Exception {
-        logger.trace("StartUp");
+        log.trace("StartUp");
         context.addBundleListener(this.bundleListener);
         context.addFrameworkListener(this.frameworkListener);
     }
 
     public void shutDown(BundleContext context) throws Exception {
-        logger.trace("ShutDown");
+        log.trace("ShutDown");
         context.removeBundleListener(this.bundleListener);
         context.removeFrameworkListener(this.frameworkListener);
     }

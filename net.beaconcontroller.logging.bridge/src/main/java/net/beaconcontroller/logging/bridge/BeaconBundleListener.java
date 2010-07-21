@@ -10,39 +10,39 @@ import org.slf4j.LoggerFactory;
  * @author David Erickson (derickso@stanford.edu)
  */
 public class BeaconBundleListener implements BundleListener {
-    private static Logger logger = LoggerFactory.getLogger(BeaconBundleListener.class);
+    private static Logger log = LoggerFactory.getLogger(BeaconBundleListener.class);
 
     public void bundleChanged(BundleEvent event) {
         switch (event.getType()) {
             case BundleEvent.INSTALLED:
-                logger.info("Installed: {}", event.getBundle().getSymbolicName());
+                log.info("Installed: {}", event.getBundle().getSymbolicName());
                 break;
             case BundleEvent.LAZY_ACTIVATION:
-                logger.info("Lazy Activation: {}", event.getBundle().getSymbolicName());
+                log.info("Lazy Activation: {}", event.getBundle().getSymbolicName());
                 break;
             case BundleEvent.RESOLVED:
-                logger.info("Resolved: {}", event.getBundle().getSymbolicName());
+                log.info("Resolved: {}", event.getBundle().getSymbolicName());
                 break;
             case BundleEvent.STARTED:
-                logger.info("Started: {}", event.getBundle().getSymbolicName());
+                log.info("Started: {}", event.getBundle().getSymbolicName());
                 break;
             case BundleEvent.STARTING:
-                logger.info("Starting: {}", event.getBundle().getSymbolicName());
+                log.info("Starting: {}", event.getBundle().getSymbolicName());
                 break;
             case BundleEvent.STOPPED:
-                logger.info("Stopped: {}", event.getBundle().getSymbolicName());
+                log.info("Stopped: {}", event.getBundle().getSymbolicName());
                 break;
             case BundleEvent.STOPPING:
-                logger.info("Stopping: {}", event.getBundle().getSymbolicName());
+                log.info("Stopping: {}", event.getBundle().getSymbolicName());
                 break;
             case BundleEvent.UNINSTALLED:
-                logger.info("Uninstalled: {}", event.getBundle().getSymbolicName());
+                log.info("Uninstalled: {}", event.getBundle().getSymbolicName());
                 break;
             case BundleEvent.UNRESOLVED:
-                logger.info("Unresolved: {}", event.getBundle().getSymbolicName());
+                log.info("Unresolved: {}", event.getBundle().getSymbolicName());
                 break;
             case BundleEvent.UPDATED:
-                logger.info("Updated: {}", event.getBundle().getSymbolicName());
+                log.info("Updated: {}", event.getBundle().getSymbolicName());
                 break;
         }
     }

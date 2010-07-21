@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @author David Erickson (derickso@stanford.edu) - 04/04/10
  */
 public class LearningSwitch implements IOFMessageListener {
-    protected static Logger logger = LoggerFactory.getLogger(LearningSwitch.class);
+    protected static Logger log = LoggerFactory.getLogger(LearningSwitch.class);
     protected IBeaconProvider beaconProvider;
     protected Map<IOFSwitch, Map<Integer, Short>> macTables =
         new HashMap<IOFSwitch, Map<Integer, Short>>();
@@ -43,12 +43,12 @@ public class LearningSwitch implements IOFMessageListener {
     }
 
     public void startUp() {
-        logger.trace("Starting");
+        log.trace("Starting");
         beaconProvider.addOFMessageListener(OFType.PACKET_IN, this);
     }
 
     public void shutDown() {
-        logger.trace("Stopping");
+        log.trace("Stopping");
         beaconProvider.removeOFMessageListener(OFType.PACKET_IN, this);
     }
 

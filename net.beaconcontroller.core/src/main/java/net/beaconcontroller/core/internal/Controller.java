@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class Controller implements IBeaconProvider, SelectListener {
-    protected static Logger logger = LoggerFactory.getLogger(Controller.class);
+    protected static Logger log = LoggerFactory.getLogger(Controller.class);
 
     protected Map<String,String> callbackOrdering;
     protected ExecutorService es;
@@ -77,7 +77,7 @@ public class Controller implements IBeaconProvider, SelectListener {
     protected void handleListenEvent(SelectionKey key, ServerSocketChannel ssc)
             throws IOException {
         SocketChannel sock = listenSock.accept();
-        logger.info("Switch connected from {}", sock.toString());
+        log.info("Switch connected from {}", sock.toString());
         sock.configureBlocking(false);
         IOFSwitch sw = new OFSwitchImpl();
         // hash this switch into a thread
@@ -105,7 +105,7 @@ public class Controller implements IBeaconProvider, SelectListener {
             if (key.isReadable()) {
                 List<OFMessage> msgs = in.read();
                 if (msgs == null) {
-                    logger.info("Switch disconnected from {}",
+                    log.info("Switch disconnected from {}",
                             sw.getSocketChannel().socket().toString());
                     key.cancel();
                     // only remove if we have a features reply (DPID)
@@ -131,7 +131,7 @@ public class Controller implements IBeaconProvider, SelectListener {
                 key.interestOps(SelectionKey.OP_READ);
         } catch (IOException e) {
             // if we have an exception, disconnect the switch
-            logger.info("Switch disconnected from {}",
+            log.info("Switch disconnected from {}",
                     sw.getSocketChannel().socket().toString());
             key.cancel();
             // only remove if we have a features reply (DPID)
@@ -156,7 +156,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         for (OFMessage m : msgs) {
             switch (m.getType()) {
                 case HELLO:
-                    logger.debug("HELLO from {}", sw);
+                    log.debug("HELLO from {}", sw);
                     break;
                 case ECHO_REQUEST:
                     OFMessageInStream in = sw.getInputStream();
@@ -168,14 +168,14 @@ public class Controller implements IBeaconProvider, SelectListener {
                     out.write(reply);
                     break;
                 case FEATURES_REPLY:
-                    logger.debug("Features Reply from {}", sw);
+                    log.debug("Features Reply from {}", sw);
                     sw.setFeaturesReply((OFFeaturesReply) m);
                     addSwitch(sw);
                     break;
                 default:
                     // Don't pass along messages until we have the features reply
                     if (sw.getFeaturesReply() == null) {
-                        logger.warn("Message type {} received from switch " +
+                        log.warn("Message type {} received from switch " +
                             "{} before receiving a features reply.", m.getType(), sw);
                         break;
                     }
@@ -188,14 +188,14 @@ public class Controller implements IBeaconProvider, SelectListener {
                                     break;
                                 }
                             } catch (Exception e) {
-                                logger.error("Failure calling listener ["+
+                                log.error("Failure calling listener ["+
                                         listener.toString()+
                                         "] with message ["+m.toString()+
                                         "]", e);
                             }
                         }
                     } else {
-                        logger.error("Unhandled OF Message: {} from {}", m, sw.getSocketChannel().socket().getInetAddress());
+                        log.error("Unhandled OF Message: {} from {}", m, sw.getSocketChannel().socket().getInetAddress());
                     }
                     break;
             }
@@ -296,7 +296,7 @@ public class Controller implements IBeaconProvider, SelectListener {
                 }
             }}
         );
-        logger.info("Beacon Core Started");
+        log.info("Beacon Core Started");
     }
 
     public void shutDown() throws IOException {
@@ -318,7 +318,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         }
 
         es.shutdown();
-        logger.info("Beacon Core Shutdown");
+        log.info("Beacon Core Shutdown");
     }
 
     /**
@@ -369,7 +369,7 @@ public class Controller implements IBeaconProvider, SelectListener {
             try {
                 listener.addedSwitch(sw);
             } catch (Exception e) {
-                logger.error("Error calling switch listener", e);
+                log.error("Error calling switch listener", e);
             }
         }
     }
@@ -384,7 +384,7 @@ public class Controller implements IBeaconProvider, SelectListener {
             try {
                 listener.removedSwitch(sw);
             } catch (Exception e) {
-                logger.error("Error calling switch listener", e);
+                log.error("Error calling switch listener", e);
             }
         }
     }

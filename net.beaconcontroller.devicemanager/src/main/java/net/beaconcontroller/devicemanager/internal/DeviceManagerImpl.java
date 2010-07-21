@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
-    protected static Logger logger = LoggerFactory.getLogger(DeviceManagerImpl.class);
+    protected static Logger log = LoggerFactory.getLogger(DeviceManagerImpl.class);
 
     protected IBeaconProvider beaconProvider;
     protected Map<Integer, Device> dataLayerAddressDeviceMap;
@@ -64,11 +64,11 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
         if (!topology.isInternal(ipt)) {
             if (device != null) {
                 if (sw.getId() != device.getSwId().longValue()) {
-                    logger.debug("Device {} moved to switch id {}", device, sw.getId());
+                    log.debug("Device {} moved to switch id {}", device, sw.getId());
                     device.setSwId(sw.getId());
                 }
                 if (pi.getInPort() != device.getSwPort().shortValue()) {
-                    logger.debug("Device {} moved to port {}", device, pi.getInPort());
+                    log.debug("Device {} moved to port {}", device, pi.getInPort());
                     device.setSwPort(pi.getInPort());
                 }
             } else {
@@ -77,7 +77,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
                 device.setSwId(sw.getId());
                 device.setSwPort(pi.getInPort());
                 this.dataLayerAddressDeviceMap.put(dlAddrHash, device);
-                logger.debug("New Device: {}", device);
+                log.debug("New Device: {}", device);
             }
         }
 

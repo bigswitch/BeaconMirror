@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author David Erickson (derickso@stanford.edu)
  */
 public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITopology {
-    protected static Logger logger = LoggerFactory.getLogger(TopologyImpl.class);
+    protected static Logger log = LoggerFactory.getLogger(TopologyImpl.class);
 
     protected IBeaconProvider beaconProvider;
 
@@ -217,14 +217,14 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         }
 
         if (!remoteDpidSet) {
-            logger.error("Failed to determine remote switch DPID from received LLDP");
+            log.error("Failed to determine remote switch DPID from received LLDP");
             return Command.STOP;
         }
 
         IOFSwitch remoteSwitch = beaconProvider.getSwitches().get(remoteDpid);
 
         if (remoteSwitch == null) {
-            logger.error("Failed to locate remote switch with DPID: {}", remoteDpid);
+            log.error("Failed to locate remote switch with DPID: {}", remoteDpid);
             return Command.STOP;
         }
 
