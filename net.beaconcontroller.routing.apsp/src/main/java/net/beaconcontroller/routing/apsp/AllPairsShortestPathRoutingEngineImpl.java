@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,8 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
     protected Map<Route, List<Route>> rightLocal;
     protected Map<Route, List<Route>> rightShortest;
 
+    protected ReentrantReadWriteLock lock;
+
     public AllPairsShortestPathRoutingEngineImpl() {
         shortest = new HashMap<RouteId, Route>();
         localRoutes = new HashMap<RouteId, List<Route>>();
@@ -47,6 +50,8 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
         leftShortest = new HashMap<Route, List<Route>>();
         rightLocal = new HashMap<Route, List<Route>>();
         rightShortest = new HashMap<Route, List<Route>>();
+
+        lock = new ReentrantReadWriteLock();
     }
 
     public void startUp() {
@@ -69,24 +74,30 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
 
     @Override
     public Route getRoute(IOFSwitch src, IOFSwitch dst) {
-        return shortest.get(new RouteId(src.getId(), dst.getId()));
+        lock.readLock().lock();
+        Route result = shortest.get(new RouteId(src.getId(), dst.getId()));
+        lock.readLock().unlock();
+        return result;
     }
 
     @Override
     public Route getRoute(Long srcDpid, Long dstDpid) {
-        return shortest.get(new RouteId(srcDpid, dstDpid));
+        lock.readLock().lock();
+        Route result = shortest.get(new RouteId(srcDpid, dstDpid));
+        lock.readLock().unlock();
+        return result;
     }
 
-    /* (non-Javadoc)
-     * @see net.beaconcontroller.routing.apsp.IRouting#update(net.beaconcontroller.core.IOFSwitch, short, net.beaconcontroller.core.IOFSwitch, short, boolean)
-     */
+    @Override
     public void update(Long srcId, Short srcPort, Long dstId,
             Short dstPort, boolean added) {
         Route route = new Route(srcId, dstId);
         route.getPath().add(new Link(srcPort, dstPort, dstId));
-        log.debug("Route {} added: {}", route, added);
+        lock.writeLock().lock();
         cleanup(route, added);
         fixup(route, added);
+        lock.writeLock().unlock();
+        log.debug("Route {} added: {}", route, added);
     }
 
     @Override
