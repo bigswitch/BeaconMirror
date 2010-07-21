@@ -2,7 +2,6 @@ package net.beaconcontroller.routing.apsp;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import net.beaconcontroller.core.IBeaconProvider;
@@ -70,9 +69,12 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
                 // set the route
                 log.debug("Pushing route {}", route);
                 OFMessageInStream in = sw.getInputStream();
-                pushRoute(in.getMessageFactory(), match, route, dstDevice);
-                // send the packet down the route
-                pushPacket(in.getMessageFactory(), sw, match, pi);
+                pushRoute(in.getMessageFactory(), match, route, dstDevice, pi.getBufferId());
+
+                // send the packet if its not buffered
+                if (pi.getBufferId() == 0xffffffff) {
+                    pushPacket(in.getMessageFactory(), sw, match, pi);
+                }
                 return Command.STOP;
             }
         }
@@ -80,21 +82,30 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
         return Command.CONTINUE;
     }
 
-    public void pushRoute(OFMessageFactory factory, OFMatch match, Route route, Device dstDevice) {
+    /**
+     * Push routes from back to front
+     * @param factory
+     * @param match
+     * @param route
+     * @param dstDevice
+     */
+    public void pushRoute(OFMessageFactory factory, OFMatch match, Route route, Device dstDevice, int bufferId) {
         OFFlowMod fm = (OFFlowMod) factory.getMessage(OFType.FLOW_MOD);
         OFActionOutput action = new OFActionOutput();
         List<OFAction> actions = new ArrayList<OFAction>();
         actions.add(action);
         fm.setIdleTimeout((short)5)
-            .setMatch(match)
+            .setBufferId(0xffffffff)
+            .setMatch(match.clone())
             .setActions(actions)
             .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
-        IOFSwitch sw = beaconProvider.getSwitches().get(route.getId().getSrc());
+        IOFSwitch sw = beaconProvider.getSwitches().get(route.getId().getDst());
         OFMessageSafeOutStream out = sw.getOutputStream(); // to prevent NoClassDefFoundError
+        ((OFActionOutput)fm.getActions().get(0)).setPort(dstDevice.getSwPort());
 
-        for (Iterator<Link> it = route.getPath().iterator(); it.hasNext();) {
-            Link link = it.next();
-            ((OFActionOutput)fm.getActions().get(0)).setPort(link.getOutPort());
+        for (int i = route.getPath().size() - 1; i >= 0; --i) {
+            Link link = route.getPath().get(i);
+            fm.getMatch().setInputPort(link.getInPort());
             try {
                 out.write(fm);
             } catch (IOException e) {
@@ -105,13 +116,20 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
             } catch (CloneNotSupportedException e) {
                 log.error("Failure cloning flow mod", e);
             }
-            fm.getMatch().setInputPort(link.getInPort());
-            sw = beaconProvider.getSwitches().get(link.getDst());
+
+            // setup for the next loop iteration
+            ((OFActionOutput)fm.getActions().get(0)).setPort(link.getOutPort());
+            if (i > 0) {
+                sw = beaconProvider.getSwitches().get(route.getPath().get(i-1).getDst());
+            } else {
+                sw = beaconProvider.getSwitches().get(route.getId().getSrc());
+            }
             out = sw.getOutputStream();
         }
+        // set the original match for the first switch, and buffer id
+        fm.setMatch(match)
+            .setBufferId(bufferId);
 
-        // write the flow mod to get the packet out to the device
-        ((OFActionOutput)fm.getActions().get(0)).setPort(dstDevice.getSwPort());
         try {
             out.write(fm);
         } catch (IOException e) {
@@ -130,21 +148,15 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
         po.setActions(actions)
             .setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
 
-        // set data if needed
-        if (pi.getBufferId() == 0xffffffff) {
-            byte[] packetData = pi.getPacketData();
-            po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH
-                    + po.getActionsLength() + packetData.length));
-            po.setPacketData(packetData);
-        } else {
-            po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH
-                    + po.getActionsLength()));
-        }
+        byte[] packetData = pi.getPacketData();
+        po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH
+                + po.getActionsLength() + packetData.length));
+        po.setPacketData(packetData);
 
         try {
             sw.getOutputStream().write(po);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failure writing packet out", e);
         }
     }
 
