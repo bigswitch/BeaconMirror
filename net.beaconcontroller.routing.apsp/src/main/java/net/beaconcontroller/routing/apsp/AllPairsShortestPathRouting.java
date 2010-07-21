@@ -66,9 +66,11 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
             Route route = routingEngine.getRoute(sw.getId(), dstDevice.getSwId());
             if (route != null) {
                 // set the route
-                pushRoute(sw.getInputStream().getMessageFactory(), match, route, dstDevice);
+                log.debug("Pushing route {}", route);
+                OFMessageInStream in = sw.getInputStream();
+                pushRoute(in.getMessageFactory(), match, route, dstDevice);
                 // send the packet down the route
-                pushPacket(sw.getInputStream().getMessageFactory(), sw, match, pi);
+                pushPacket(in.getMessageFactory(), sw, match, pi);
                 return Command.STOP;
             }
         }
@@ -86,12 +88,13 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
             .setActions(actions)
             .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
         IOFSwitch sw = beaconProvider.getSwitches().get(route.getId().getSrc());
+        OFMessageSafeOutStream out = sw.getOutputStream(); // to prevent NoClassDefFoundError
 
         for (Iterator<Link> it = route.getPath().iterator(); it.hasNext();) {
             Link link = it.next();
             ((OFActionOutput)fm.getActions().get(0)).setPort(link.getOutPort());
             try {
-                sw.getOutputStream().write(fm);
+                out.write(fm);
             } catch (IOException e) {
                 log.error("Failure writing flow mod", e);
             }
@@ -102,12 +105,13 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
             }
             fm.getMatch().setInputPort(link.getInPort());
             sw = beaconProvider.getSwitches().get(link.getDst());
+            out = sw.getOutputStream();
         }
 
         // write the flow mod to get the packet out to the device
         ((OFActionOutput)fm.getActions().get(0)).setPort(dstDevice.getSwPort());
         try {
-            sw.getOutputStream().write(fm);
+            out.write(fm);
         } catch (IOException e) {
             log.error("Failure writing flow mod", e);
         }
