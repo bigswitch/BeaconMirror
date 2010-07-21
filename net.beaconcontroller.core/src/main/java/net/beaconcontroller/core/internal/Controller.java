@@ -195,11 +195,7 @@ public class Controller implements IBeaconProvider, SelectListener {
                             }
                         }
                     } else {
-                        System.err.println("Unhandled OF message: "
-                                + m.getType()
-                                + " from "
-                                + sw.getSocketChannel().socket()
-                                        .getInetAddress());
+                        logger.error("Unhandled OF Message: {} from {}", m, sw.getSocketChannel().socket().getInetAddress());
                     }
                     break;
             }
