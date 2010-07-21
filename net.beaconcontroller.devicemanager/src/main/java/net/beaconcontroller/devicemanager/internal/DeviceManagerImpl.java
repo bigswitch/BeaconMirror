@@ -4,8 +4,8 @@
 package net.beaconcontroller.devicemanager.internal;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
@@ -37,7 +37,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
      * 
      */
     public DeviceManagerImpl() {
-        this.dataLayerAddressDeviceMap = new HashMap<Integer, Device>();
+        this.dataLayerAddressDeviceMap = new ConcurrentHashMap<Integer, Device>();
     }
 
     public void startUp() {
@@ -76,7 +76,6 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
                 device.setDataLayerAddress(match.getDataLayerSource());
                 device.setSwId(sw.getId());
                 device.setSwPort(pi.getInPort());
-                // TODO locking
                 this.dataLayerAddressDeviceMap.put(dlAddrHash, device);
                 logger.debug("New Device: {}", device);
             }
