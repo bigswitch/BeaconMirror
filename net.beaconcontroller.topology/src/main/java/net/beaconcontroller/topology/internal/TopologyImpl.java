@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
@@ -60,6 +61,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     protected Timer lldpSendTimer;
     protected Long lldpFrequency = 15L * 1000; // sending frequency
     protected Long lldpTimeout = 35L * 1000; // timeout
+    protected ReentrantReadWriteLock lock;
 
     /**
      * Map from a id:port to the set of links containing it as an endpoint
@@ -72,6 +74,10 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      */
     protected Map<Long, Set<LinkTuple>> switchLinks;
     protected Timer timeoutLinksTimer;
+
+    public TopologyImpl() {
+        this.lock = new ReentrantReadWriteLock();
+    }
 
     protected void startUp() {
         beaconProvider.addOFMessageListener(OFType.PACKET_IN, this);
@@ -229,7 +235,6 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         }
 
         // Store the time of update to this link, and push it out to routingEngine
-        // TODO Locking!
         LinkTuple lt = new LinkTuple(new IdPortTuple(sw.getId(), pi.getInPort()),
                 new IdPortTuple(remoteDpid, remotePort));
         addOrUpdateLink(lt);
@@ -239,6 +244,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     }
 
     protected void addOrUpdateLink(LinkTuple lt) {
+        lock.writeLock().lock();
         if (links.put(lt, System.currentTimeMillis()) == null) {
             // index it by switch source
             if (!switchLinks.containsKey(lt.getSrc().getId()))
@@ -264,9 +270,11 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                         lt.getDst().getId(), lt.getDst().getPort(), true);
             }
         }
+        lock.writeLock().unlock();
     }
 
     protected void deleteLink(LinkTuple lt) {
+        lock.writeLock().lock();
         this.switchLinks.get(lt.getSrc().getId()).remove(lt);
         this.switchLinks.get(lt.getDst().getId()).remove(lt);
         if (this.switchLinks.containsKey(lt.getSrc().getId()) &&
@@ -284,6 +292,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             this.portLinks.remove(lt.getDst());
 
         this.links.remove(lt);
+        lock.writeLock().unlock();
 
         if (routingEngine != null) {
             routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(),
@@ -299,8 +308,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                                 ((OFPortState.OFPPS_LINK_DOWN.getValue() & ps.getDesc().getState()) > 0)))) {
             IdPortTuple tuple = new IdPortTuple(sw.getId(), ps.getDesc().getPortNumber());
 
-            // TODO lock here
             List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
+            lock.writeLock().lock();
             if (this.portLinks.containsKey(tuple)) {
                 eraseList.addAll(this.portLinks.get(tuple));
                 for (LinkTuple lt : this.portLinks.get(tuple)) {
@@ -329,6 +338,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                     
                 }
             }
+            lock.writeLock().unlock();
+
             for (LinkTuple lt : eraseList)
                 if (routingEngine != null)
                     routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
@@ -345,8 +356,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
     @Override
     public void removedSwitch(IOFSwitch sw) {
-        // TODO locking
         List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
+        lock.writeLock().lock();
         if (switchLinks.containsKey(sw.getId())) {
             // add all tuples with an endpoint on this switch to erase list
             eraseList.addAll(switchLinks.get(sw.getId()));
@@ -388,6 +399,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             }
             switchLinks.remove(sw.getId());
         }
+        lock.writeLock().unlock();
+
         for (LinkTuple lt : eraseList)
             if (routingEngine != null)
                 routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
@@ -396,11 +409,12 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     }
 
     protected void timeoutLinks() {
-        // TODO locking
         List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
-        Iterator<Entry<LinkTuple, Long>> it = this.links.entrySet().iterator();
         Long curTime = System.currentTimeMillis();
 
+        // reentrant required here because deleteLink also write locks
+        lock.writeLock().lock();
+        Iterator<Entry<LinkTuple, Long>> it = this.links.entrySet().iterator();
         while (it.hasNext()) {
             Entry<LinkTuple, Long> entry = it.next();
             if (entry.getValue() + this.lldpTimeout < curTime) {
@@ -411,6 +425,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         for (LinkTuple lt : eraseList) {
             deleteLink(lt);
         }
+        lock.writeLock().unlock();
     }
 
     /**
@@ -429,11 +444,10 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
     @Override
     public boolean isInternal(IdPortTuple idPort) {
-        // TODO locking
-        if (this.portLinks.containsKey(idPort)) {
-            return true;
-        }
-        return false;
+        lock.readLock().lock();
+        boolean result = this.portLinks.containsKey(idPort);
+        lock.readLock().unlock();
+        return result;
     }
 
     /**
