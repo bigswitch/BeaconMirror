@@ -8,12 +8,14 @@ import java.util.List;
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.core.io.OFMessageSafeOutStream;
 import net.beaconcontroller.devicemanager.Device;
 import net.beaconcontroller.devicemanager.IDeviceManager;
 import net.beaconcontroller.routing.IRoutingEngine;
 import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
 
+import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
