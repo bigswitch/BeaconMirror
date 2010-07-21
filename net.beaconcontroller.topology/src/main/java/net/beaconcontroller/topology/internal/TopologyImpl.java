@@ -119,7 +119,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
         // OpenFlow OUI - 00-26-E1
         byte[] dpidTLVValue = new byte[] {0x0, 0x26, (byte) 0xe1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        LLDPTLV dpidTLV = new LLDPTLV().setType((byte) 0x127).setLength((short) 12).setValue(dpidTLVValue);
+        LLDPTLV dpidTLV = new LLDPTLV().setType((byte) 127).setLength((short) 12).setValue(dpidTLVValue);
         lldp.setOptionalTLVList(new ArrayList<LLDPTLV>());
         lldp.getOptionalTLVList().add(dpidTLV);
 
@@ -206,9 +206,9 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
         // Verify this LLDP packet matches what we're looking for
         for (LLDPTLV lldptlv : lldp.getOptionalTLVList()) {
-            if (lldptlv.getType() == 0x127 && lldptlv.getLength() == 12 &&
+            if (lldptlv.getType() == 127 && lldptlv.getLength() == 12 &&
                     lldptlv.getValue()[0] == 0x0 && lldptlv.getValue()[1] == 0x26 &&
-                    lldptlv.getValue()[2] == 0xe1 && lldptlv.getValue()[3] == 0x0) {
+                    lldptlv.getValue()[2] == (byte)0xe1 && lldptlv.getValue()[3] == 0x0) {
                 ByteBuffer dpidBB = ByteBuffer.wrap(lldptlv.getValue());
                 remoteDpid = dpidBB.getLong(4);
                 remoteDpidSet = true;
@@ -434,5 +434,12 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param routingEngine the routingEngine to set
+     */
+    public void setRoutingEngine(IRoutingEngine routingEngine) {
+        this.routingEngine = routingEngine;
     }
 }
