@@ -53,7 +53,7 @@ public class LearningSwitch implements IOFMessageListener {
     }
 
     public String getName() {
-        return LearningSwitch.class.getPackage().getName();
+        return "switch";
     }
 
     /**

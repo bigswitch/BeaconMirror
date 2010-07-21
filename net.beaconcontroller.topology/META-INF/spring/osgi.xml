@@ -7,7 +7,17 @@
     http://www.springframework.org/schema/osgi
     http://www.springframework.org/schema/osgi/spring-osgi-1.2.xsd">
 
+  <!-- Exports -->
+  <osgi:service id="ITopology" ref="topology"
+    interface="net.beaconcontroller.topology.ITopology">
+  </osgi:service>
+
+  <!-- Imports -->
   <osgi:reference id="beaconProvider" cardinality="1..1"
     interface="net.beaconcontroller.core.IBeaconProvider">
+  </osgi:reference>
+
+  <osgi:reference id="routingEngine" cardinality="0..1"
+    interface="net.beaconcontroller.routing.IRoutingEngine">
   </osgi:reference>
 </beans>

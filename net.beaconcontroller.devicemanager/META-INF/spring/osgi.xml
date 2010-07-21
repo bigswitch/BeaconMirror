@@ -4,6 +4,12 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.2.xsd">
 
+  <!-- Exports -->
+  <osgi:service id="IDeviceManager" ref="deviceManager"
+    interface="net.beaconcontroller.devicemanager.IDeviceManager">
+  </osgi:service>
+
+  <!-- Imports -->
   <osgi:reference id="beaconProvider" cardinality="1..1"
     interface="net.beaconcontroller.core.IBeaconProvider">
   </osgi:reference>
