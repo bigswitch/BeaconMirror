@@ -32,37 +32,63 @@
    <plugins>
       <plugin id="ch.qos.logback.classic"/>
       <plugin id="ch.qos.logback.core"/>
-      <plugin id="com.springsource.org.apache.commons.cli"/>
+      <plugin id="com.springsource.net.sf.cglib"/>
+      <plugin id="com.springsource.org.aopalliance"/>
       <plugin id="jcl.over.slf4j"/>
       <plugin id="net.beaconcontroller.core"/>
+      <plugin id="net.beaconcontroller.devicemanager"/>
       <plugin id="net.beaconcontroller.hub"/>
       <plugin id="net.beaconcontroller.learningswitch"/>
       <plugin id="net.beaconcontroller.logging.bridge"/>
       <plugin id="net.beaconcontroller.logging.config" fragment="true"/>
+      <plugin id="net.beaconcontroller.packet"/>
+      <plugin id="net.beaconcontroller.routing"/>
+      <plugin id="net.beaconcontroller.routing.apsp"/>
+      <plugin id="net.beaconcontroller.topology"/>
       <plugin id="org.eclipse.equinox.ds"/>
       <plugin id="org.eclipse.equinox.log"/>
       <plugin id="org.eclipse.equinox.util"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.openflow"/>
+      <plugin id="org.springframework.aop"/>
+      <plugin id="org.springframework.beans"/>
+      <plugin id="org.springframework.context"/>
+      <plugin id="org.springframework.core"/>
+      <plugin id="org.springframework.osgi.core"/>
+      <plugin id="org.springframework.osgi.extender"/>
+      <plugin id="org.springframework.osgi.io"/>
       <plugin id="slf4j.api"/>
    </plugins>
 
    <configurations>
       <plugin id="ch.qos.logback.classic" autoStart="true" startLevel="0" />
       <plugin id="ch.qos.logback.core" autoStart="true" startLevel="0" />
-      <plugin id="com.springsource.org.apache.commons.cli" autoStart="true" startLevel="0" />
+      <plugin id="com.springsource.net.sf.cglib" autoStart="true" startLevel="0" />
+      <plugin id="com.springsource.org.aopalliance" autoStart="true" startLevel="0" />
       <plugin id="jcl.over.slf4j" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.core" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.devicemanager" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.hub" autoStart="false" startLevel="0" />
       <plugin id="net.beaconcontroller.learningswitch" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.logging.bridge" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.packet" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.routing" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.routing.apsp" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.topology" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.log" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.util" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
       <plugin id="org.eclipse.osgi.services" autoStart="true" startLevel="0" />
       <plugin id="org.openflow" autoStart="true" startLevel="0" />
+      <plugin id="org.springframework.aop" autoStart="true" startLevel="0" />
+      <plugin id="org.springframework.beans" autoStart="true" startLevel="0" />
+      <plugin id="org.springframework.context" autoStart="true" startLevel="0" />
+      <plugin id="org.springframework.core" autoStart="true" startLevel="0" />
+      <plugin id="org.springframework.osgi.core" autoStart="true" startLevel="0" />
+      <plugin id="org.springframework.osgi.extender" autoStart="true" startLevel="0" />
+      <plugin id="org.springframework.osgi.io" autoStart="true" startLevel="0" />
       <plugin id="slf4j.api" autoStart="true" startLevel="0" />
    </configurations>
 
