@@ -110,8 +110,11 @@ public class LLDP extends BasePacket {
         ByteBuffer bb = ByteBuffer.wrap(data, offset, length);
         LLDPTLV tlv;
         do {
-            tlv = new LLDPTLV();
-            tlv.deserialize(bb);
+            tlv = new LLDPTLV().deserialize(bb);
+
+            // if there was a failure to deserialize stop processing TLVs
+            if (tlv == null)
+                break;
             switch (tlv.getType()) {
                 case 0x0:
                     // can throw this one away, its just an end delimiter

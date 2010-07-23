@@ -73,6 +73,10 @@ public class LLDPTLV {
         this.length = (short) (sscratch & 0x1ff);
         if (this.length > 0) {
             this.value = new byte[this.length];
+
+            // if there is an underrun just toss the TLV
+            if (bb.remaining() < this.length)
+                return null;
             bb.get(this.value);
         }
         return this;
