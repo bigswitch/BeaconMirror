@@ -7,6 +7,11 @@
   http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.2.xsd
   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
+  <bean class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
+    <property name="ignoreResourceNotFound" value="true" />
+    <property name="locations" value="file:test.properties" />
+  </bean>
+
   <bean id="controller" class="net.beaconcontroller.core.internal.Controller"
     init-method="startUp" destroy-method="shutDown">
     <property name="callbackOrdering" ref="callbackOrdering"/>
