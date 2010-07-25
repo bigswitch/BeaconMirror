@@ -4,7 +4,7 @@ Bundle-Name: net.beaconcontroller.devicemanager.tests
 Bundle-SymbolicName: net.beaconcontroller.devicemanager.tests
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: net.beaconcontroller
-Fragment-Host: net.beaconcontroller.devicemanager;bundle-version="0.1.0.qualifier"
+Fragment-Host: net.beaconcontroller.devicemanager
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: junit.framework,
  net.beaconcontroller.core,

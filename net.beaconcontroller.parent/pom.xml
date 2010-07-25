@@ -9,12 +9,14 @@
   <properties>
     <beacon.version>0.1.0-SNAPSHOT</beacon.version>
     <openflow.version>0.1.0</openflow.version>
-    <tycho.version>0.9.0-SNAPSHOT</tycho.version>
+    <tycho.version>0.9.0</tycho.version>
   </properties>
   <modules>
     <module>../target-platform</module>
     <module>../net.beaconcontroller.core</module>
     <module>../net.beaconcontroller.core.tests</module>
+    <module>../net.beaconcontroller.devicemanager</module>
+    <module>../net.beaconcontroller.devicemanager.tests</module>
     <module>../net.beaconcontroller.hub</module>
     <module>../net.beaconcontroller.hub.tests</module>
     <module>../net.beaconcontroller.learningswitch</module>
@@ -23,7 +25,13 @@
     <module>../net.beaconcontroller.logging.config</module>
     <module>../net.beaconcontroller.packet</module>
     <module>../net.beaconcontroller.product</module>
+    <module>../net.beaconcontroller.routing</module>
+    <module>../net.beaconcontroller.routing.apsp</module>
+    <module>../net.beaconcontroller.routing.apsp.tests</module>
+    <module>../net.beaconcontroller.routing.tests</module>
     <module>../net.beaconcontroller.test</module>
+    <module>../net.beaconcontroller.topology</module>
+    <module>../net.beaconcontroller.topology.tests</module>
   </modules>
   <pluginRepositories>
     <pluginRepository>

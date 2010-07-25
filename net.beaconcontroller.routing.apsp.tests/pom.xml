@@ -9,7 +9,7 @@
     <relativePath>../net.beaconcontroller.parent</relativePath>
   </parent>
   <groupId>net.beaconcontroller</groupId>
-  <artifactId>net.beaconcontroller.routing.tests</artifactId>
+  <artifactId>net.beaconcontroller.routing.apsp.tests</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 

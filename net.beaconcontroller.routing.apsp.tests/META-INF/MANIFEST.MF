@@ -4,7 +4,7 @@ Bundle-Name: net.beaconcontroller.routing.apsp.tests
 Bundle-SymbolicName: net.beaconcontroller.routing.apsp.tests
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: net.beaconcontroller
-Fragment-Host: net.beaconcontroller.routing.apsp;bundle-version="0.1.0.qualifier"
+Fragment-Host: net.beaconcontroller.routing.apsp
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: junit.framework,
  net.beaconcontroller.core,
