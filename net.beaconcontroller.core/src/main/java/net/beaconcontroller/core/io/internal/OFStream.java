@@ -18,7 +18,7 @@ import org.openflow.protocol.factory.OFMessageFactory;
  * This class is a thread-safe implementation of OFMessageAsyncStream, but only
  * for the OutStream portion. The write functions now trigger the select stream
  * to send the messages after being queued.
- * @author derickso
+ * @author David Erickson (derickso@stanford.edu)
  *
  */
 public class OFStream extends OFMessageAsyncStream implements OFMessageSafeOutStream {

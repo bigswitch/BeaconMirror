@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author derickso
+ * @author David Erickson (derickso@stanford.edu)
  *
  */
 public class LLDP extends BasePacket {

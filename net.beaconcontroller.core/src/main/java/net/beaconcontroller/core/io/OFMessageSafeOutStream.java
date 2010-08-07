@@ -7,7 +7,7 @@ import org.openflow.io.OFMessageOutStream;
 
 /**
  * This is a thread-safe implementation of the OFMessageOutStream
- * @author derickso
+ * @author David Erickson (derickso@stanford.edu)
  *
  */
 public interface OFMessageSafeOutStream extends OFMessageOutStream {

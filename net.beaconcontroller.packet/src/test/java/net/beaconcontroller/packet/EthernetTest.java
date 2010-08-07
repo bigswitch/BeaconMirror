@@ -8,7 +8,7 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 /**
- * @author derickso
+ * @author David Erickson (derickso@stanford.edu)
  *
  */
 public class EthernetTest extends TestCase {

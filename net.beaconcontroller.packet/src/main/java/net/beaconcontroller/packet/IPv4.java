@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author derickso
+ * @author David Erickson (derickso@stanford.edu)
  *
  */
 public class IPv4 extends BasePacket {

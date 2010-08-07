@@ -4,7 +4,7 @@
 package net.beaconcontroller.topology;
 
 /**
- * @author derickso
+ * @author David Erickson (derickso@stanford.edu)
  *
  */
 public class IdPortTuple {
