@@ -3,7 +3,7 @@
 <booleanAttribute key="append.args" value="true"/>
 <stringAttribute key="application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
 <booleanAttribute key="askclear" value="false"/>
-<booleanAttribute key="automaticAdd" value="true"/>
+<booleanAttribute key="automaticAdd" value="false"/>
 <booleanAttribute key="automaticValidate" value="false"/>
 <stringAttribute key="bootstrap" value=""/>
 <stringAttribute key="checked" value="[NONE]"/>
@@ -13,8 +13,7 @@
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/pde-junit"/>
 <booleanAttribute key="default" value="false"/>
 <booleanAttribute key="default_auto_start" value="true"/>
-<stringAttribute key="deselected_workspace_plugins" value="net.beaconcontroller.routing.apsp,net.beaconcontroller.hub,net.beaconcontroller.topology.tests,net.beaconcontroller.core.tests,net.beaconcontroller.routing.tests,net.beaconcontroller.learningswitch.tests,net.beaconcontroller.learningswitch,net.beaconcontroller.hub.tests,net.beaconcontroller.routing.apsp.tests"/>
-<booleanAttribute key="includeOptional" value="true"/>
+<booleanAttribute key="includeOptional" value="false"/>
 <stringAttribute key="location" value="${workspace_loc}/../junit-workspace"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/net.beaconcontroller.devicemanager.tests"/>
@@ -34,12 +33,13 @@
 <stringAttribute key="pde.version" value="3.3"/>
 <stringAttribute key="product" value="org.eclipse.equinox.p2.director.app.product"/>
 <booleanAttribute key="run_in_ui_thread" value="true"/>
-<stringAttribute key="selected_target_plugins" value="ch.qos.logback.core*0.9.20@default:default,org.eclipse.equinox.preferences*3.2.301.R35x_v20091117@default:default,ch.qos.logback.core*0.9.20@default:default,org.easymock@default:default,slf4j.api*1.5.11@default:default,com.springsource.org.apache.commons.cli*1.2.0@default:default,org.springframework.core@default:default,org.springframework.aop@default:default,org.eclipse.equinox.log@default:default,org.springframework.context@default:default,org.springframework.osgi.extender@default:default,org.eclipse.equinox.preferences*3.2.301.R35x_v20091117@default:default,org.eclipse.equinox.util*1.0.100.v20090520-1800@default:default,org.springframework.osgi.core@default:default,slf4j.api*1.5.11@default:default,org.eclipse.equinox.registry*3.4.100.v20090520-1800@default:default,org.eclipse.equinox.app*1.2.1.R35x_v20091203@default:default,ch.qos.logback.classic*0.9.20@default:default,org.eclipse.osgi*3.5.2.R35x_v20100126@-1:true,org.eclipse.equinox.ds*1.1.1.R35x_v20090806@default:true,org.eclipse.core.jobs@default:default,org.springframework.osgi.io@default:default,com.springsource.net.sf.cglib@default:default,com.springsource.org.aopalliance@default:default,org.springframework.beans@default:default,org.eclipse.osgi.services*3.2.0.v20090520-1800@default:default,org.eclipse.osgi.services*3.2.0.v20090520-1800@default:default,org.eclipse.equinox.ds*1.1.1.R35x_v20090806@default:true,ch.qos.logback.classic*0.9.20@default:default,jcl.over.slf4j@default:default,org.eclipse.equinox.common*3.5.1.R35x_v20090807-1100@2:true,org.eclipse.equinox.app*1.2.1.R35x_v20091203@default:default,org.eclipse.osgi*3.5.2.R35x_v20100126@-1:true,org.eclipse.equinox.registry*3.4.100.v20090520-1800@default:default,org.eclipse.equinox.util*1.0.100.v20090520-1800@default:default,org.eclipse.core.runtime@default:true,org.eclipse.equinox.common*3.5.1.R35x_v20090807-1100@2:true,com.springsource.org.apache.commons.cli*1.2.0@default:default,org.eclipse.core.contenttype@default:default"/>
-<stringAttribute key="selected_workspace_plugins" value="net.beaconcontroller.routing@default:default,org.openflow@default:default,net.beaconcontroller.packet@default:default,net.beaconcontroller.logging.config@default:false,net.beaconcontroller.devicemanager.tests@default:false,net.beaconcontroller.topology@default:default,net.beaconcontroller.devicemanager@default:default,net.beaconcontroller.test@default:default,net.beaconcontroller.logging.bridge@default:default,net.beaconcontroller.core@default:false"/>
+<stringAttribute key="selected_target_plugins" value="org.junit*3.8.2.v20090203-1005@default:default,org.eclipse.equinox.app@default:default,org.eclipse.core.jobs@default:default,com.springsource.org.apache.commons.cli@default:default,org.eclipse.equinox.ds@default:true,org.eclipse.equinox.util@default:default,jcl.over.slf4j@default:default,org.springframework.beans@default:default,org.eclipse.equinox.common@2:true,org.eclipse.jdt.junit.runtime@default:default,slf4j.api@default:default,org.easymock@default:default,org.eclipse.pde.junit.runtime@default:default,com.springsource.net.sf.cglib@default:default,org.springframework.osgi.io@default:default,org.springframework.aop@default:default,org.eclipse.osgi@-1:true,org.eclipse.core.contenttype@default:default,org.springframework.core@default:default,org.eclipse.osgi.services@default:default,com.springsource.org.aopalliance@default:default,org.eclipse.equinox.log@default:default,ch.qos.logback.classic@default:default,org.springframework.context@default:default,ch.qos.logback.core@default:default,org.springframework.osgi.extender@default:default,org.springframework.osgi.core@default:default,org.eclipse.core.runtime@default:true,org.eclipse.equinox.registry@default:default,org.eclipse.equinox.preferences@default:default"/>
+<stringAttribute key="selected_workspace_plugins" value="net.beaconcontroller.devicemanager.tests@default:false,net.beaconcontroller.routing@default:default,net.beaconcontroller.logging.config@default:false,net.beaconcontroller.test@default:default,net.beaconcontroller.topology@default:default,net.beaconcontroller.devicemanager@default:default,org.openflow@default:default,net.beaconcontroller.logging.bridge@default:default,net.beaconcontroller.packet@default:default,net.beaconcontroller.core@default:false"/>
 <booleanAttribute key="show_selected_only" value="false"/>
 <stringAttribute key="templateConfig" value="${target_home}/configuration/config.ini"/>
 <stringAttribute key="timestamp" value="1279320621656"/>
 <booleanAttribute key="tracing" value="false"/>
+<booleanAttribute key="useCustomFeatures" value="false"/>
 <booleanAttribute key="useDefaultConfig" value="true"/>
 <booleanAttribute key="useDefaultConfigArea" value="false"/>
 <booleanAttribute key="useProduct" value="false"/>

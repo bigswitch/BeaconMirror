@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.5"?>
+<?pde version="3.6"?>
 
 <target name="Beacon Main Target">
 <locations>
-<location includeAllPlatforms="false" includeMode="slicer" type="InstallableUnit">
-<unit id="org.eclipse.equinox.sdk.feature.group" version="3.5.2.r352_v20100209-7G7MAD7lQiEeG_QL5AOoAHLYaYBg"/>
-<repository location="http://download.eclipse.org/releases/galileo"/>
-</location>
 <location path="${resource_loc:/Beacon Libraries}" type="Profile"/>
+<location includeAllPlatforms="false" includeMode="planner" type="InstallableUnit">
+<unit id="org.eclipse.equinox.sdk.feature.group" version="3.6.0.v20100601-7H7R-7v8rtGVR34XkO3kfH3DUO07"/>
+<unit id="org.eclipse.pde.junit.runtime.standalone.feature.group" version="1.0.0.v20100610"/>
+<repository location="http://yuba.stanford.edu:8081/nexus/content/repositories/nx-helios/"/>
+</location>
 </locations>
 </target>
