@@ -1,4 +1,4 @@
-package net.beaconcontroller.test;
+package net.beaconcontroller.core.test;
 
 import java.util.ArrayList;
 import java.util.Iterator;

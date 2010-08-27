@@ -13,6 +13,7 @@ import java.util.Map;
 
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.io.OFMessageSafeOutStream;
+import net.beaconcontroller.core.test.MockBeaconProvider;
 import net.beaconcontroller.devicemanager.Device;
 import net.beaconcontroller.devicemanager.IDeviceManager;
 import net.beaconcontroller.packet.Data;
@@ -24,7 +25,6 @@ import net.beaconcontroller.routing.IRoutingEngine;
 import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
 import net.beaconcontroller.test.BeaconTestCase;
-import net.beaconcontroller.test.MockBeaconProvider;
 
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFlowMod;

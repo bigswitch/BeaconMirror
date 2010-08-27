@@ -10,13 +10,13 @@ import java.util.Arrays;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.io.OFMessageSafeOutStream;
+import net.beaconcontroller.core.test.MockBeaconProvider;
 import net.beaconcontroller.packet.Data;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPacket;
 import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.packet.UDP;
 import net.beaconcontroller.test.BeaconTestCase;
-import net.beaconcontroller.test.MockBeaconProvider;
 
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFlowMod;

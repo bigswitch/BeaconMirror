@@ -14,4 +14,5 @@ Import-Package: org.openflow.example,
  org.slf4j;version="[1.5.0,2.0.0)",
  org.springframework.beans.factory.config
 Export-Package: net.beaconcontroller.core,
- net.beaconcontroller.core.io
+ net.beaconcontroller.core.io,
+ net.beaconcontroller.core.test

@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: junit.framework,
  net.beaconcontroller.core,
  net.beaconcontroller.core.io,
+ net.beaconcontroller.core.test,
  net.beaconcontroller.packet,
  net.beaconcontroller.test,
  org.easymock;version="2.5.2",

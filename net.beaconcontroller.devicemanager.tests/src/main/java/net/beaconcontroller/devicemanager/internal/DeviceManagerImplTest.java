@@ -9,6 +9,7 @@ import static org.easymock.EasyMock.verify;
 import java.util.Arrays;
 
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.core.test.MockBeaconProvider;
 import net.beaconcontroller.devicemanager.Device;
 import net.beaconcontroller.packet.Data;
 import net.beaconcontroller.packet.Ethernet;
@@ -16,7 +17,6 @@ import net.beaconcontroller.packet.IPacket;
 import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.packet.UDP;
 import net.beaconcontroller.test.BeaconTestCase;
-import net.beaconcontroller.test.MockBeaconProvider;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.IdPortTuple;
 
