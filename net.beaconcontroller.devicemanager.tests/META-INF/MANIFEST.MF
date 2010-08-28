@@ -15,7 +15,9 @@ Import-Package: junit.framework,
  net.beaconcontroller.test,
  net.beaconcontroller.topology,
  org.easymock;version="2.5.2",
- org.springframework.beans;version="[2.5.6,3.0.0)",
- org.springframework.beans.factory;version="[2.5.6,3.0.0)",
- org.springframework.context;version="[2.5.6,3.0.0)",
- org.springframework.core;version="[2.5.6,3.0.0)"
+ org.springframework.asm;version="3.0.0",
+ org.springframework.beans;version="3.0.0",
+ org.springframework.beans.factory;version="3.0.0",
+ org.springframework.context;version="3.0.0",
+ org.springframework.core;version="3.0.0",
+ org.springframework.expression;version="3.0.0"
