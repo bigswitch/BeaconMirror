@@ -28,6 +28,7 @@ public class MockBeaconProvider implements IBeaconProvider {
      */
     public MockBeaconProvider() {
         listeners = new ConcurrentHashMap<OFType, List<IOFMessageListener>>();
+        switches = new ConcurrentHashMap<Long, IOFSwitch>();
     }
 
     public void addOFMessageListener(OFType type, IOFMessageListener listener) {
