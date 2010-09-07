@@ -1,5 +1,7 @@
 package net.beaconcontroller.topology;
 
+import java.nio.ByteBuffer;
+
 public class LinkTuple {
     protected IdPortTuple src;
     protected IdPortTuple dst;
@@ -101,5 +103,22 @@ public class LinkTuple {
     @Override
     public String toString() {
         return "LinkTuple [src=" + src + ", dst=" + dst + "]";
+    }
+
+    public byte[] toBytes() {
+        byte[] ret = new byte[20];
+        ByteBuffer bb = ByteBuffer.wrap(ret);
+        bb.put(src.toBytes());
+        bb.put(dst.toBytes());
+        return ret;
+    }
+
+    public static LinkTuple fromBytes(byte[] data) {
+        ByteBuffer bb = ByteBuffer.wrap(data);
+        long srcId = bb.getLong();
+        short srcPort = bb.getShort();
+        long dstId = bb.getLong();
+        short dstPort = bb.getShort();
+        return new LinkTuple(srcId, srcPort, dstId, dstPort);
     }
 }

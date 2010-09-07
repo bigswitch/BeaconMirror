@@ -3,6 +3,8 @@
  */
 package net.beaconcontroller.topology;
 
+import java.nio.ByteBuffer;
+
 /**
  * @author David Erickson (derickso@stanford.edu)
  *
@@ -85,5 +87,20 @@ public class IdPortTuple {
     @Override
     public String toString() {
         return "IdPortTuple [id=" + id + ", port=" + port + "]";
+    }
+
+    public byte[] toBytes() {
+        byte[] ret = new byte[10];
+        ByteBuffer bb = ByteBuffer.wrap(ret);
+        bb.putLong(id);
+        bb.putShort(port);
+        return ret;
+    }
+
+    public static IdPortTuple fromBytes(byte[] data) {
+        ByteBuffer bb = ByteBuffer.wrap(data);
+        long id = bb.getLong();
+        short port = bb.getShort();
+        return new IdPortTuple(id, port);
     }
 }
