@@ -2,10 +2,10 @@
 <?metadataRepository version='1.1.0'?>
 <repository name='file:/home/derickso/git/beacon/libs/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
   <properties size='2'>
-    <property name='p2.timestamp' value='1284495664150'/>
+    <property name='p2.timestamp' value='1284500997428'/>
     <property name='p2.compressed' value='false'/>
   </properties>
-  <units size='29'>
+  <units size='32'>
     <unit id='org.springframework.context' version='3.0.4.RELEASE' singleton='false'>
       <update id='org.springframework.context' range='[0.0.0,3.0.4.RELEASE)' severity='0'/>
       <properties size='2'>
@@ -467,35 +467,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.mortbay.jetty.jsp-2.1-jetty' version='6.1.25' singleton='false'>
-      <update id='org.mortbay.jetty.jsp-2.1-jetty' range='[0.0.0,6.1.25)' severity='0'/>
-      <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='Glassfish Jasper'/>
-        <property name='org.eclipse.equinox.p2.description' value='JSP2.1 Jasper implementation from Glassfish'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Mort Bay Consulting'/>
-        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.mortbay.com'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.mortbay.jetty.jsp-2.1-jetty' version='6.1.25'/>
-        <provided namespace='osgi.bundle' name='org.mortbay.jetty.jsp-2.1-jetty' version='6.1.25'/>
-        <provided namespace='java.package' name='com.sun.org.apache.commons.logging.impl' version='6.1.25'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='1'>
-        <required namespace='java.package' name='org.mortbay.log' range='6.1.0'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.mortbay.jetty.jsp-2.1-jetty' version='6.1.25'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Manifest-Version: 1.0&#xA;Bundle-DocURL: http://www.mortbay.com&#xA;implementation-version: 6.1.25&#xA;Ignore-Package: com.sun.org.apache.commons.logging,com.sun.org.apache.commons.logging.impl&#xA;Created-By: 1.6.0_20 (Sun Microsystems Inc.)&#xA;Built-By: gregw&#xA;Bundle-Vendor: Mort Bay Consulting&#xA;url: http://www.eclipse.org/jetty/jetty-parent/project/modules/jsp-2.1-jetty&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.5&#xA;Bundle-Description: JSP2.1 Jasper implementation from Glassfish&#xA;Import-Package: org.mortbay.log;version=&quot;6.1&quot;&#xA;Archiver-Version: Plexus Archiver&#xA;Bundle-Name: Glassfish Jasper&#xA;Bundle-License: https://glassfish.dev.java.net/public/CDDLv1.0.html&#xA;mode: development&#xA;Export-Package: com.sun.org.apache.commons.logging.impl;uses:=&quot;org.mortbay.log&quot;;version=&quot;6.1.25&quot;&#xA;Bundle-Version: 6.1.25&#xA;Bundle-ManifestVersion: 2&#xA;Bnd-LastModified: 1280150699966&#xA;package: org.mortbay&#xA;Build-Jdk: 1.6.0_20&#xA;Tool: Bnd-0.0.311&#xA;Bundle-SymbolicName: org.mortbay.jetty.jsp-2.1-jetty&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
     <unit id='org.springframework.osgi.core' version='1.2.1' singleton='false'>
       <update id='org.springframework.osgi.core' range='[0.0.0,1.2.1)' severity='0'/>
       <properties size='4'>
@@ -661,6 +632,39 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-Name: Logback Classic Module&#xA;Import-Package: ch.qos.logback.classic;version=&quot;0.9&quot;,ch.qos.logback.classic.boolex;version=&quot;0.9&quot;,ch.qos.logback.classic.db;version=&quot;0.9&quot;,ch.qos.logback.classic.db.names;version=&quot;0.9&quot;,ch.qos.logback.classic.encoder;version=&quot;0.9&quot;,ch.qos.logback.classic.filter;version=&quot;0.9&quot;,ch.qos.logback.classic.helpers;version=&quot;0.9&quot;,ch.qos.logback.classic.html;version=&quot;0.9&quot;,ch.qos.logback.classic.jmx;version=&quot;0.9&quot;,ch.qos.logback.classic.joran;version=&quot;0.9&quot;,ch.qos.logback.classic.joran.action;version=&quot;0.9&quot;,ch.qos.logback.classic.log4j;version=&quot;0.9&quot;,ch.qos.logback.classic.net;version=&quot;0.9&quot;,ch.qos.logback.classic.pattern;version=&quot;0.9&quot;,ch.qos.logback.classic.selector;version=&quot;0.9&quot;,ch.qos.logback.classic.selector.servlet;version=&quot;0.9&quot;,ch.qos.logback.classic.sift;version=&quot;0.9&quot;,ch.qos.logback.classic.spi;version=&quot;0.9&quot;,ch.qos.logback.classic.turbo;version=&quot;0.9&quot;,ch.qos.logback.classic.util;version=&quot;0.9&quot;,ch.qos.logback.core;version=&quot;0.9&quot;,ch.qos.logback.core.boolex;version=&quot;0.9&quot;,ch.qos.logback.core.db;version=&quot;0.9&quot;,ch.qos.logback.core.encoder;version=&quot;0.9&quot;,ch.qos.logback.core.filter;version=&quot;0.9&quot;,ch.qos.logback.core.helpers;version=&quot;0.9&quot;,ch.qos.logback.core.html;version=&quot;0.9&quot;,ch.qos.logback.core.joran;version=&quot;0.9&quot;,ch.qos.logback.core.joran.action;version=&quot;0.9&quot;,ch.qos.logback.core.joran.conditional;version=&quot;0.9&quot;,ch.qos.logback.core.joran.event;version=&quot;0.9&quot;,ch.qos.logback.core.joran.spi;version=&quot;0.9&quot;,ch.qos.logback.core.net;version=&quot;0.9&quot;,ch.qos.logback.core.pattern;version=&quot;0.9&quot;,ch.qos.logback.core.rolling;version=&quot;0.9&quot;,ch.qos.logback.core.rolling.helper;version=&quot;0.9&quot;,ch.qos.logback.core.sift;version=&quot;0.9&quot;,ch.qos.logback.core.spi;version=&quot;0.9&quot;,ch.qos.logback.core.status;version=&quot;0.9&quot;,ch.qos.logback.core.util;version=&quot;0.9&quot;,javax.jms;resolution:=optional,javax.management;resolution:=optional,javax.naming;resolution:=optional,javax.servlet;resolution:=optional,javax.servlet.http;resolution:=optional,org.slf4j;version=&quot;1.5&quot;,org.slf4j.helpers;version=&quot;1.5&quot;,org.slf4j.impl;version=&quot;1.5&quot;,org.slf4j.spi;version=&quot;1.5&quot;,org.xml.sax;resolution:=optional,sun.reflect;resolution:=optional&#xA;Bnd-LastModified: 1270158362470&#xA;Build-Jdk: 1.6.0_16&#xA;Export-Package: ch.qos.logback.classic.turbo;uses:=&quot;ch.qos.logback.core.spi,ch.qos.logback.classic,org.slf4j,ch.qos.logback.core.status,ch.qos.logback.core,ch.qos.logback.core.joran.spi,ch.qos.logback.classic.joran&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.db.names;version=&quot;0.9.20&quot;,ch.qos.logback.classic.util;uses:=&quot;ch.qos.logback.core.status,ch.qos.logback.classic,ch.qos.logback.core,ch.qos.logback.core.joran.spi,ch.qos.logback.core.util,ch.qos.logback.classic.joran,ch.qos.logback.classic.selector,ch.qos.logback.core.filter,ch.qos.logback.classic.boolex,ch.qos.logback.classic.encoder,javax.naming,ch.qos.logback.classic.spi,org.slf4j.spi&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.jmx;uses:=&quot;ch.qos.logback.core.spi,ch.qos.logback.core.status,ch.qos.logback.classic.util,ch.qos.logback.classic,ch.qos.logback.core,javax.management,ch.qos.logback.core.joran.spi,ch.qos.logback.classic.joran,ch.qos.logback.core.util,ch.qos.logback.classic.spi&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.joran.action;uses:=&quot;ch.qos.logback.classic.turbo,ch.qos.logback.classic,ch.qos.logback.core,ch.qos.logback.core.joran.spi,ch.qos.logback.core.joran.action,ch.qos.logback.core.util,org.xml.sax,ch.qos.logback.classic.net,ch.qos.logback.classic.boolex,ch.qos.logback.classic.util,javax.naming,ch.qos.logback.classic.jmx,javax.management&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.html;uses:=&quot;ch.qos.logback.core.html,ch.qos.logback.core,ch.qos.logback.core.helpers,ch.qos.logback.classic.spi,ch.qos.logback.classic,ch.qos.logback.core.pattern,ch.qos.logback.classic.pattern&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic;uses:=&quot;ch.qos.logback.core.status,ch.qos.logback.core,ch.qos.logback.core.encoder,ch.qos.logback.classic.encoder,org.slf4j,org.slf4j.spi,ch.qos.logback.core.spi,ch.qos.logback.classic.spi,ch.qos.logback.classic.turbo,ch.qos.logback.classic.joran.action,ch.qos.logback.core.pattern,ch.qos.logback.classic.pattern,javax.servlet.http&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.selector;uses:=&quot;ch.qos.logback.core.status,javax.naming,ch.qos.logback.classic.util,ch.qos.logback.classic,ch.qos.logback.core,ch.qos.logback.core.joran.spi,ch.qos.logback.core.util,ch.qos.logback.classic.joran&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.helpers;uses:=&quot;javax.servlet,org.slf4j,javax.servlet.http&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.boolex;uses:=&quot;ch.qos.logback.classic,ch.qos.logback.core,ch.qos.logback.core.boolex,org.slf4j,ch.qos.logback.classic.spi&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.pattern;uses:=&quot;ch.qos.logback.core.status,ch.qos.logback.core,ch.qos.logback.core.boolex,ch.qos.logback.classic.spi,ch.qos.logback.classic,ch.qos.logback.core.pattern,org.slf4j,ch.qos.logback.classic.util,ch.qos.logback.core.net&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.filter;uses:=&quot;ch.qos.logback.core.spi,ch.qos.logback.core.filter,ch.qos.logback.classic,ch.qos.logback.classic.spi&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.encoder;uses:=&quot;ch.qos.logback.classic,ch.qos.logback.core.pattern,ch.qos.logback.core&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.joran;uses:=&quot;ch.qos.logback.core.joran.conditional,ch.qos.logback.classic.util,ch.qos.logback.classic.sift,ch.qos.logback.classic.joran.action,ch.qos.logback.core.joran,ch.qos.logback.core.joran.spi,ch.qos.logback.core.joran.action,ch.qos.logback.classic.spi&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.net;uses:=&quot;ch.qos.logback.core.spi,javax.naming,javax.jms,ch.qos.logback.core.net,ch.qos.logback.classic.spi,ch.qos.logback.classic.util,ch.qos.logback.classic,org.slf4j,ch.qos.logback.core.helpers,ch.qos.logback.core.pattern,ch.qos.logback.core,ch.qos.logback.core.boolex,ch.qos.logback.classic.boolex,ch.qos.logback.core.joran.spi,ch.qos.logback.classic.joran,ch.qos.logback.classic.pattern&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.db;uses:=&quot;ch.qos.logback.classic.db.names,ch.qos.logback.core.db,ch.qos.logback.classic,ch.qos.logback.classic.spi&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.log4j;uses:=&quot;ch.qos.logback.core.helpers,ch.qos.logback.classic,ch.qos.logback.core,ch.qos.logback.classic.spi&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.selector.servlet;uses:=&quot;javax.servlet,javax.naming,ch.qos.logback.classic.util,ch.qos.logback.classic,ch.qos.logback.classic.selector,org.slf4j&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.sift;uses:=&quot;ch.qos.logback.core.joran.event,ch.qos.logback.core.sift,ch.qos.logback.classic.spi,ch.qos.logback.core.spi,ch.qos.logback.classic.util,ch.qos.logback.classic,ch.qos.logback.classic.selector,org.slf4j,ch.qos.logback.core.util,ch.qos.logback.core.joran.spi,ch.qos.logback.core.joran.action,org.xml.sax,ch.qos.logback.core&quot;;version=&quot;0.9.20&quot;,ch.qos.logback.classic.spi;uses:=&quot;ch.qos.logback.core,ch.qos.logback.core.spi,ch.qos.logback.classic,org.slf4j,org.slf4j.spi,ch.qos.logback.classic.util,org.slf4j.helpers,sun.reflect,ch.qos.logback.classic.turbo&quot;;version=&quot;0.9.20&quot;,org.slf4j.impl;uses:=&quot;org.slf4j.spi,ch.qos.logback.classic.util,org.slf4j.helpers,ch.qos.logback.classic,ch.qos.logback.core,ch.qos.logback.classic.selector,ch.qos.logback.core.joran.spi,org.slf4j,ch.qos.logback.core.util&quot;;version=&quot;1.5.11&quot;&#xA;Created-By: 1.6.0_16 (Sun Microsystems Inc.)&#xA;Bundle-DocURL: http://www.qos.ch&#xA;Bundle-Description: Logback: the reliable, generic, fast and flexible logging library for Java.&#xA;Bundle-Vendor: QOS.ch&#xA;Bundle-ManifestVersion: 2&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 0.9.20&#xA;Archiver-Version: Plexus Archiver&#xA;Bundle-License: http://www.eclipse.org/legal/epl-v10.html, http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html&#xA;Tool: Bnd-0.0.357&#xA;Built-By: ceki&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.5&#xA;Originally-Created-By: 1.6.0_16 (Sun Microsystems Inc.)&#xA;Bundle-SymbolicName: ch.qos.logback.classic&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.osgi.commons-el.osgi' version='1.0.0.SNAPSHOT' singleton='false'>
+      <update id='org.springframework.osgi.commons-el.osgi' range='[0.0.0,1.0.0.SNAPSHOT)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='commons-el.osgi'/>
+        <property name='org.eclipse.equinox.p2.description' value='Commons EL (OSGi version)'/>
+      </properties>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.commons-el.osgi' version='1.0.0.SNAPSHOT'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.commons-el.osgi' version='1.0.0.SNAPSHOT'/>
+        <provided namespace='java.package' name='org.apache.commons.el.parser' version='1.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.el' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='6'>
+        <required namespace='java.package' name='javax.servlet' range='2.4.0'/>
+        <required namespace='java.package' name='javax.servlet.http' range='2.4.0'/>
+        <required namespace='java.package' name='javax.servlet.jsp' range='2.0.0'/>
+        <required namespace='java.package' name='javax.servlet.jsp.el' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.el' range='1.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.el.parser' range='1.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.commons-el.osgi' version='1.0.0.SNAPSHOT'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Implementation-Vendor: Spring Dynamic Modules Framework&#xA;Specification-Vendor: Apache Software Foundation&#xA;Implementation-Version: 1.0&#xA;Ant-Version: Apache Ant 1.5.2&#xA;Built-By: bamboo&#xA;Build-Jdk: 1.5.0_13&#xA;Extension-Name: org.apache.commons.el&#xA;Import-Package: javax.servlet;version=&quot;2.4&quot;,javax.servlet.http;version=&quot;2.4&quot;,javax.servlet.jsp;version=&quot;2.0&quot;,javax.servlet.jsp.el;version=&quot;2.0&quot;,org.apache.commons.el;version=&quot;1.0&quot;,org.apache.commons.el.parser;version=&quot;1.0&quot;&#xA;Bundle-ManifestVersion: 2&#xA;Originally-Created-By: 1.4.0-b92 (Sun Microsystems Inc.)&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Embed-Dependency: *;scope=provided;type=!pom;inline=true&#xA;Private-Package: !*&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Description: Commons EL (OSGi version)&#xA;Bundle-Name: commons-el.osgi&#xA;Created-By: Apache Maven Bundle Plugin&#xA;Tool: Bnd-0.0.227&#xA;Bundle-Version: 1.0.0.SNAPSHOT&#xA;Bundle-SymbolicName: org.springframework.osgi.commons-el.osgi&#xA;Specification-Title: Jakarta Commons EL&#xA;Manifest-Version: 1.0&#xA;Specification-Version: 2.0&#xA;Export-Package: org.apache.commons.el.parser;uses:=&quot;org.apache.commons.el&quot;;version=&quot;1.0&quot;,org.apache.commons.el;uses:=&quot;javax.servlet.http,org.apache.commons.el.parser,javax.servlet.jsp.el,javax.servlet.jsp,javax.servlet&quot;;version=&quot;1.0&quot;&#xA;Bnd-LastModified: 1223002592009&#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -1101,6 +1105,47 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.mortbay.jetty.jsp-api-2.1' version='2.1.0' singleton='false'>
+      <update id='org.mortbay.jetty.jsp-api-2.1' range='[0.0.0,2.1.0)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Glassfish Jasper API'/>
+        <property name='org.eclipse.equinox.p2.description' value='JSP2.1 API'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Mort Bay Consulting'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.mortbay.com'/>
+      </properties>
+      <provides size='12'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.mortbay.jetty.jsp-api-2.1' version='2.1.0'/>
+        <provided namespace='osgi.bundle' name='org.mortbay.jetty.jsp-api-2.1' version='2.1.0'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.jstl.tlv' version='2.1.0'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.jstl.core' version='2.1.0'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.jstl.fmt' version='2.1.0'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.tagext' version='2.1.0'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.el' version='2.1.0'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.resources' version='2.1.0'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.jstl.sql' version='2.1.0'/>
+        <provided namespace='java.package' name='javax.servlet.jsp' version='2.1.0'/>
+        <provided namespace='java.package' name='javax.el' version='2.1.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='5'>
+        <required namespace='java.package' name='javax.servlet' range='2.5.0'/>
+        <required namespace='java.package' name='javax.servlet.http' range='2.5.0'/>
+        <required namespace='java.package' name='javax.xml.parsers' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax.helpers' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.mortbay.jetty.jsp-api-2.1' version='2.1.0'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            implementation-version: 6.1.14&#xA;Created-By: 1.5.0_16 (Apple Inc.)&#xA;Manifest-Version: 1.0&#xA;Archiver-Version: Plexus Archiver&#xA;Built-By: jesse&#xA;Bundle-DocURL: http://www.mortbay.com&#xA;Bundle-Description: JSP2.1 API&#xA;Bnd-LastModified: 1226621387547&#xA;Originally-Created-By: 1.5.0_16 (Apple Inc.)&#xA;package: org.mortbay&#xA;Specification-Version: 2.1&#xA;Export-Package: javax.servlet.jsp.jstl.tlv;uses:=&quot;org.xml.sax,javax.servlet.jsp.tagext,javax.xml.parsers,org.xml.sax.helpers&quot;;version=&quot;2.1&quot;,javax.servlet.jsp.jstl.core;uses:=&quot;javax.servlet.http,javax.servlet,javax.servlet.jsp.tagext,javax.servlet.jsp,javax.el&quot;;version=&quot;2.1&quot;,javax.servlet.jsp.jstl.fmt;uses:=&quot;javax.servlet.http,javax.servlet.jsp.jstl.core,javax.servlet,javax.servlet.jsp&quot;;version=&quot;2.1&quot;,javax.servlet.jsp.tagext;uses:=&quot;javax.servlet.jsp&quot;;version=&quot;2.1&quot;,javax.servlet.jsp.el;uses:=&quot;javax.servlet.http,javax.servlet,javax.servlet.jsp,javax.el&quot;;version=&quot;2.1&quot;,javax.servlet.jsp.resources;version=&quot;2.1&quot;,javax.servlet.jsp.jstl.sql;version=&quot;2.1&quot;,javax.servlet.jsp;uses:=&quot;javax.servlet.http,javax.servlet,javax.servlet.jsp.tagext,javax.servlet.jsp.el,javax.el&quot;;version=&quot;2.1&quot;,javax.el;version=&quot;2.1&quot;&#xA;Tool: Bnd-0.0.238&#xA;Implementation-Vendor: JCP&#xA;Ignore-Package: javax.servlet.jsp.jstl.tlv,javax.servlet.jsp.jstl.core,javax.servlet.jsp.jstl.fmt,javax.servlet.jsp.tagext,javax.servlet.jsp.el,javax.servlet.jsp.resources,javax.servlet.jsp.jstl.sql,javax.servlet.jsp,javax.el&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.5&#xA;mode: development&#xA;Bundle-Name: Glassfish Jasper API&#xA;Bundle-Vendor: Mort Bay Consulting&#xA;Bundle-SymbolicName: org.mortbay.jetty.jsp-api-2.1&#xA;url: http://jetty.mortbay.org/project/modules/jsp-api-2.1&#xA;Import-Package: javax.servlet;version=&quot;2.5&quot;,javax.servlet.http;version=&quot;2.5&quot;,javax.xml.parsers,org.xml.sax,org.xml.sax.helpers&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Build-Jdk: 1.5.0_16&#xA;Bundle-Version: 2.1&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.springframework.asm' version='3.0.4.RELEASE' singleton='false'>
       <update id='org.springframework.asm' range='[0.0.0,3.0.4.RELEASE)' severity='0'/>
       <properties size='2'>
@@ -1161,34 +1206,33 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.springframework.osgi.jetty.start.osgi' version='1.0.0' singleton='false'>
-      <update id='org.springframework.osgi.jetty.start.osgi' range='[0.0.0,1.0.0)' severity='0'/>
+    <unit id='com.springsource.org.apache.commons.logging' version='1.1.1' singleton='false'>
+      <update id='com.springsource.org.apache.commons.logging' range='[0.0.0,1.1.1)' severity='0'/>
       <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='jetty.start.osgi'/>
-        <property name='org.eclipse.equinox.p2.description' value='Jetty OSGi Activator'/>
+        <property name='org.eclipse.equinox.p2.name' value='Apache Commons Logging'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
       </properties>
-      <provides size='3'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.jetty.start.osgi' version='1.0.0'/>
-        <provided namespace='osgi.bundle' name='org.springframework.osgi.jetty.start.osgi' version='1.0.0'/>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='com.springsource.org.apache.commons.logging' version='1.1.1'/>
+        <provided namespace='osgi.bundle' name='com.springsource.org.apache.commons.logging' version='1.1.1'/>
+        <provided namespace='java.package' name='org.apache.commons.logging' version='1.1.1'/>
+        <provided namespace='java.package' name='org.apache.commons.logging.impl' version='1.1.1'/>
         <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
       </provides>
-      <requires size='7'>
-        <required namespace='java.package' name='org.mortbay.component' range='0.0.0'/>
-        <required namespace='java.package' name='org.mortbay.jetty' range='6.1.9'/>
-        <required namespace='java.package' name='org.mortbay.jetty.handler' range='0.0.0'/>
-        <required namespace='java.package' name='org.mortbay.log' range='0.0.0'/>
-        <required namespace='java.package' name='org.mortbay.util' range='0.0.0'/>
-        <required namespace='java.package' name='org.mortbay.xml' range='6.1.9'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+      <requires size='4'>
+        <required namespace='java.package' name='javax.servlet' range='[2.1.0,3.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.apache.avalon.framework.logger' range='[4.1.3,4.1.3]' optional='true'/>
+        <required namespace='java.package' name='org.apache.log' range='[1.0.1,1.0.1]' optional='true'/>
+        <required namespace='java.package' name='org.apache.log4j' range='[1.2.15,2.0.0)' optional='true'/>
       </requires>
       <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.springframework.osgi.jetty.start.osgi' version='1.0.0'/>
+        <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.logging' version='1.1.1'/>
       </artifacts>
       <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Created-By: Apache Maven Bundle Plugin&#xA;Manifest-Version: 1.0&#xA;Build-Jdk: 1.5.0_15&#xA;Bundle-Activator: org.springframework.osgi.web.jetty.internal.Activator&#xA;Bundle-SymbolicName: org.springframework.osgi.jetty.start.osgi&#xA;Import-Package: org.mortbay.component,org.mortbay.jetty;version=&quot;6.1.9&quot;,org.mortbay.jetty.handler,org.mortbay.log,org.mortbay.util,org.mortbay.xml;version=&quot;6.1.9&quot;,org.osgi.framework;version=&quot;1.3&quot;&#xA;Implementation-Version: 1.0.0&#xA;Tool: Bnd-0.0.227&#xA;Embed-Dependency: start;scope=provided;inline=true&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Description: Jetty OSGi Activator&#xA;Built-By: costin&#xA;Bundle-Version: 1.0.0&#xA;Private-Package: etc,org.springframework.osgi.web.jetty.internal&#xA;Bnd-LastModified: 1214998034875&#xA;Jetty-Version: 6.1.9&#xA;Bundle-Name: jetty.start.osgi&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Implementation-Vendor: Spring Dynamic Modules Framework&#xA;
+            Manifest-Version: 1.0&#xA;Implementation-Title: Jakarta Commons Logging&#xA;Implementation-Vendor: Apache Software Foundation&#xA;Created-By: Apache Maven&#xA;Implementation-Version: 1.1.1&#xA;Built-By: dlg01&#xA;X-Compile-Target-JDK: 1.2&#xA;Bundle-Vendor: SpringSource&#xA;Import-Package: javax.servlet;version=&quot;[2.1.0, 3.0.0)&quot;;resolution:=optional,org.apache.avalon.framework.logger;version=&quot;[4.1.3, 4.1.3]&quot;;resolution:=optional,org.apache.log;version=&quot;[1.0.1, 1.0.1]&quot;;resolution:=optional,org.apache.log4j;version=&quot;[1.2.15, 2.0.0)&quot;;resolution:=optional&#xA;Specification-Version: 1.0&#xA;Specification-Title: Jakarta Commons Logging&#xA;Archiver-Version: Plexus Archiver&#xA;Bundle-Name: Apache Commons Logging&#xA;Implementation-Vendor-Id: org.apache&#xA;Export-Package: org.apache.commons.logging;version=&quot;1.1.1&quot;,org.apache.commons.logging.impl;version=&quot;1.1.1&quot;;uses:=&quot;javax.servlet,org.apache.avalon.framework.logger,org.apache.commons.logging,org.apache.log,org.apache.log4j&quot;&#xA;Bundle-Version: 1.1.1&#xA;X-Compile-Source-JDK: 1.2&#xA;Bundle-ManifestVersion: 2&#xA;Extension-Name: org.apache.commons.logging&#xA;Specification-Vendor: Apache Software Foundation&#xA;Build-Jdk: 1.4.2_16&#xA;Bundle-SymbolicName: com.springsource.org.apache.commons.logging&#xA;Bundle-Classpath: .&#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -1236,33 +1280,34 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='com.springsource.org.apache.commons.logging' version='1.1.1' singleton='false'>
-      <update id='com.springsource.org.apache.commons.logging' range='[0.0.0,1.1.1)' severity='0'/>
+    <unit id='org.springframework.osgi.jetty.start.osgi' version='1.0.0' singleton='false'>
+      <update id='org.springframework.osgi.jetty.start.osgi' range='[0.0.0,1.0.0)' severity='0'/>
       <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='Apache Commons Logging'/>
-        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+        <property name='org.eclipse.equinox.p2.name' value='jetty.start.osgi'/>
+        <property name='org.eclipse.equinox.p2.description' value='Jetty OSGi Activator'/>
       </properties>
-      <provides size='5'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='com.springsource.org.apache.commons.logging' version='1.1.1'/>
-        <provided namespace='osgi.bundle' name='com.springsource.org.apache.commons.logging' version='1.1.1'/>
-        <provided namespace='java.package' name='org.apache.commons.logging' version='1.1.1'/>
-        <provided namespace='java.package' name='org.apache.commons.logging.impl' version='1.1.1'/>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.jetty.start.osgi' version='1.0.0'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.jetty.start.osgi' version='1.0.0'/>
         <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
       </provides>
-      <requires size='4'>
-        <required namespace='java.package' name='javax.servlet' range='[2.1.0,3.0.0)' optional='true'/>
-        <required namespace='java.package' name='org.apache.avalon.framework.logger' range='[4.1.3,4.1.3]' optional='true'/>
-        <required namespace='java.package' name='org.apache.log' range='[1.0.1,1.0.1]' optional='true'/>
-        <required namespace='java.package' name='org.apache.log4j' range='[1.2.15,2.0.0)' optional='true'/>
+      <requires size='7'>
+        <required namespace='java.package' name='org.mortbay.component' range='0.0.0'/>
+        <required namespace='java.package' name='org.mortbay.jetty' range='6.1.9'/>
+        <required namespace='java.package' name='org.mortbay.jetty.handler' range='0.0.0'/>
+        <required namespace='java.package' name='org.mortbay.log' range='0.0.0'/>
+        <required namespace='java.package' name='org.mortbay.util' range='0.0.0'/>
+        <required namespace='java.package' name='org.mortbay.xml' range='6.1.9'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
       </requires>
       <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.logging' version='1.1.1'/>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.jetty.start.osgi' version='1.0.0'/>
       </artifacts>
       <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Manifest-Version: 1.0&#xA;Implementation-Title: Jakarta Commons Logging&#xA;Implementation-Vendor: Apache Software Foundation&#xA;Created-By: Apache Maven&#xA;Implementation-Version: 1.1.1&#xA;Built-By: dlg01&#xA;X-Compile-Target-JDK: 1.2&#xA;Bundle-Vendor: SpringSource&#xA;Import-Package: javax.servlet;version=&quot;[2.1.0, 3.0.0)&quot;;resolution:=optional,org.apache.avalon.framework.logger;version=&quot;[4.1.3, 4.1.3]&quot;;resolution:=optional,org.apache.log;version=&quot;[1.0.1, 1.0.1]&quot;;resolution:=optional,org.apache.log4j;version=&quot;[1.2.15, 2.0.0)&quot;;resolution:=optional&#xA;Specification-Version: 1.0&#xA;Specification-Title: Jakarta Commons Logging&#xA;Archiver-Version: Plexus Archiver&#xA;Bundle-Name: Apache Commons Logging&#xA;Implementation-Vendor-Id: org.apache&#xA;Export-Package: org.apache.commons.logging;version=&quot;1.1.1&quot;,org.apache.commons.logging.impl;version=&quot;1.1.1&quot;;uses:=&quot;javax.servlet,org.apache.avalon.framework.logger,org.apache.commons.logging,org.apache.log,org.apache.log4j&quot;&#xA;Bundle-Version: 1.1.1&#xA;X-Compile-Source-JDK: 1.2&#xA;Bundle-ManifestVersion: 2&#xA;Extension-Name: org.apache.commons.logging&#xA;Specification-Vendor: Apache Software Foundation&#xA;Build-Jdk: 1.4.2_16&#xA;Bundle-SymbolicName: com.springsource.org.apache.commons.logging&#xA;Bundle-Classpath: .&#xA;
+            Bundle-ManifestVersion: 2&#xA;Created-By: Apache Maven Bundle Plugin&#xA;Manifest-Version: 1.0&#xA;Build-Jdk: 1.5.0_15&#xA;Bundle-Activator: org.springframework.osgi.web.jetty.internal.Activator&#xA;Bundle-SymbolicName: org.springframework.osgi.jetty.start.osgi&#xA;Import-Package: org.mortbay.component,org.mortbay.jetty;version=&quot;6.1.9&quot;,org.mortbay.jetty.handler,org.mortbay.log,org.mortbay.util,org.mortbay.xml;version=&quot;6.1.9&quot;,org.osgi.framework;version=&quot;1.3&quot;&#xA;Implementation-Version: 1.0.0&#xA;Tool: Bnd-0.0.227&#xA;Embed-Dependency: start;scope=provided;inline=true&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Description: Jetty OSGi Activator&#xA;Built-By: costin&#xA;Bundle-Version: 1.0.0&#xA;Private-Package: etc,org.springframework.osgi.web.jetty.internal&#xA;Bnd-LastModified: 1214998034875&#xA;Jetty-Version: 6.1.9&#xA;Bundle-Name: jetty.start.osgi&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Implementation-Vendor: Spring Dynamic Modules Framework&#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -1291,6 +1336,185 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-ManifestVersion: 2&#xA;Fragment-Host: org.springframework.osgi.web.extender&#xA;Created-By: Apache Maven Bundle Plugin&#xA;Manifest-Version: 1.0&#xA;Build-Jdk: 1.5.0_15&#xA;Bundle-SymbolicName: org.springframework.osgi.jetty.web.extender.fragment.osgi&#xA;Import-Package: org.springframework.osgi.web.deployer.jetty&#xA;Implementation-Version: 1.0.1&#xA;Tool: Bnd-0.0.227&#xA;Embed-Dependency: *;scope=provided;type=!pom;inline=true&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Description: Jetty Spring-DM Web Fragment (OSGi version)&#xA;Built-By: costin&#xA;Bundle-Version: 1.0.1&#xA;Private-Package: !*&#xA;Bnd-LastModified: 1227518769859&#xA;Jetty-Version: 6.1.9&#xA;Bundle-Name: jetty.web.extender.fragment.osgi&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Implementation-Vendor: Spring Dynamic Modules Framework&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.osgi.jasper.osgi' version='6.0.16.SNAPSHOT' singleton='false'>
+      <update id='org.springframework.osgi.jasper.osgi' range='[0.0.0,6.0.16.SNAPSHOT)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='jasper.osgi'/>
+        <property name='org.eclipse.equinox.p2.description' value='Tomcat 6.x JSP Jasper (OSGi version)'/>
+      </properties>
+      <provides size='15'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.jasper.osgi' version='6.0.16.SNAPSHOT'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.jasper.osgi' version='6.0.16.SNAPSHOT'/>
+        <provided namespace='java.package' name='org.apache.jasper' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.el' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.tagplugins.jstl' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.runtime' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.resources' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.util' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.compiler.tagplugin' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.security' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.tagplugins.jstl.core' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.xmlparser' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.compiler' version='6.0.16'/>
+        <provided namespace='java.package' name='org.apache.jasper.servlet' version='6.0.16'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='37'>
+        <required namespace='java.package' name='javax.el' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.naming' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.servlet' range='2.5.0'/>
+        <required namespace='java.package' name='javax.servlet.http' range='2.5.0'/>
+        <required namespace='java.package' name='javax.servlet.jsp' range='2.1.0'/>
+        <required namespace='java.package' name='javax.servlet.jsp.el' range='2.1.0'/>
+        <required namespace='java.package' name='javax.servlet.jsp.resources' range='2.1.0'/>
+        <required namespace='java.package' name='javax.servlet.jsp.tagext' range='2.1.0'/>
+        <required namespace='java.package' name='javax.servlet.resources' range='2.5.0'/>
+        <required namespace='java.package' name='javax.xml.parsers' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.compiler' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.compiler.tagplugin' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.el' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.resources' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.runtime' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.security' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.servlet' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.tagplugins.jstl' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.tagplugins.jstl.core' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.util' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.xmlparser' range='6.0.16' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.taskdefs' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.types' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.util' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.eclipse.core.resources' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.eclipse.core.runtime' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.eclipse.jdt.core' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.eclipse.jdt.core.dom' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.eclipse.jdt.internal.compiler.apt.dispatch' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.eclipse.jdt.internal.core' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.eclipse.jdt.internal.core.builder' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.w3c.dom' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax.ext' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax.helpers' range='0.0.0' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.jasper.osgi' version='6.0.16.SNAPSHOT'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Implementation-Version: 6.0.16&#xA;Import-Package: javax.el;resolution:=optional,javax.naming;resolution:=optional,javax.servlet;version=&quot;2.5&quot;,javax.servlet.http;version=&quot;2.5&quot;,javax.servlet.jsp;version=&quot;2.1&quot;,javax.servlet.jsp.el;version=&quot;2.1&quot;,javax.servlet.jsp.resources;version=&quot;2.1&quot;,javax.servlet.jsp.tagext;version=&quot;2.1&quot;,javax.servlet.resources;version=&quot;2.5&quot;,javax.xml.parsers;resolution:=optional,org.apache.jasper;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.compiler;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.compiler.tagplugin;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.el;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.resources;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.runtime;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.security;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.servlet;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.tagplugins.jstl;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.tagplugins.jstl.core;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.util;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.jasper.xmlparser;resolution:=optional;version=&quot;6.0.16&quot;,org.apache.tools.ant;resolution:=optional,org.apache.tools.ant.taskdefs;resolution:=optional,org.apache.tools.ant.types;resolution:=optional,org.apache.tools.ant.util;resolution:=optional,org.eclipse.core.resources;resolution:=optional,org.eclipse.core.runtime;resolution:=optional,org.eclipse.jdt.core;resolution:=optional,org.eclipse.jdt.core.dom;resolution:=optional,org.eclipse.jdt.internal.compiler.apt.dispatch;resolution:=optional,org.eclipse.jdt.internal.core;resolution:=optional,org.eclipse.jdt.internal.core.builder;resolution:=optional,org.w3c.dom;resolution:=optional,org.xml.sax;resolution:=optional,org.xml.sax.ext;resolution:=optional,org.xml.sax.helpers;resolution:=optional&#xA;Built-By: costin&#xA;Bundle-Description: Tomcat 6.x JSP Jasper (OSGi version)&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Originally-Created-By: 1.5.0_06-b05 (Sun Microsystems Inc.)&#xA;Export-Package: org.apache.jasper;uses:=&quot;org.apache.juli.logging,org.apache.tools.ant,javax.servlet.jsp.tagext,javax.servlet,org.apache.tools.ant.util,org.apache.jasper.xmlparser,org.apache.jasper.compiler,org.apache.jasper.servlet&quot;;version=&quot;6.0.16&quot;,org.apache.jasper.el;uses:=&quot;javax.servlet.jsp.el,javax.el&quot;;version=&quot;6.0.16&quot;,org.apache.jasper.tagplugins.jstl;uses:=&quot;javax.servlet.http,javax.servlet,javax.servlet.jsp&quot;;version=&quot;6.0.16&quot;,org.apache.jasper.runtime;uses:=&quot;org.apache.juli.logging,javax.servlet.http,org.apache.jasper.el,javax.servlet.jsp.tagext,org.apache.jasper.util,javax.servlet.jsp.el,org.apache.el,javax.servlet.jsp,org.apache.jasper,javax.naming,javax.servlet,org.apache,org.apache.jasper.security,javax.el,org.apache.jasper.compiler&quot;;version=&quot;6.0.16&quot;,org.apache.jasper.resources;version=&quot;6.0.16&quot;,org.apache.jasper.util;version=&quot;6.0.16&quot;,org.apache.jasper.compiler.tagplugin;version=&quot;6.0.16&quot;,org.apache.jasper.security;uses:=&quot;org.apache.jasper,org.apache.juli.logging&quot;;version=&quot;6.0.16&quot;,org.apache.jasper.tagplugins.jstl.core;uses:=&quot;org.apache.jasper.tagplugins.jstl,org.apache.jasper.compiler.tagplugin&quot;;version=&quot;6.0.16&quot;,org.apache.jasper.xmlparser;uses:=&quot;org.apache.jasper,org.apache.juli.logging,org.xml.sax,javax.xml.parsers,org.w3c.dom,org.apache.jasper.compiler&quot;;version=&quot;6.0.16&quot;,org.apache.jasper.compiler;uses:=&quot;org.eclipse.jdt.internal.compiler.env,org.apache.tools.ant.types,org.apache.tools.ant.taskdefs,javax.servlet.jsp.tagext,org.eclipse.jdt.internal.compiler,org.apache.el.lang,javax.servlet,org.apache.jasper.runtime,org.eclipse.jdt.internal.compiler.problem,javax.xml.parsers,org.apache.jasper.compiler.tagplugin,org.apache.jasper.xmlparser,org.apache.jasper.el,org.apache.juli.logging,org.xml.sax,org.apache.tools.ant,org.eclipse.jdt.internal.compiler.classfmt,javax.servlet.jsp.el,org.apache.el,javax.servlet.jsp,org.apache.jasper,org.xml.sax.ext,org.xml.sax.helpers,org.eclipse.jdt.core.compiler,org.apache.jasper.security,javax.el,org.apache.jasper.servlet&quot;;version=&quot;6.0.16&quot;,org.apache.jasper.servlet;uses:=&quot;org.apache.juli.logging,javax.servlet.http,javax.servlet.jsp.tagext,org.apache.jasper,javax.servlet,org.apache,org.apache.jasper.runtime,org.apache.jasper.compiler&quot;;version=&quot;6.0.16&quot;&#xA;Bundle-Name: jasper.osgi&#xA;Bundle-Version: 6.0.16.SNAPSHOT&#xA;Ant-Version: Apache Ant 1.6.5&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Created-By: Apache Maven Bundle Plugin&#xA;Implementation-Vendor: Spring Dynamic Modules Framework&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Tool: Bnd-0.0.227&#xA;Bundle-SymbolicName: org.springframework.osgi.jasper.osgi&#xA;Private-Package: org.apache,org.apache.el,org.apache.el.lang,org.apache.el.parser,org.apache.el.util,org.apache.juli,org.apache.juli.logging,org.eclipse.jdt.core.compiler,org.eclipse.jdt.internal.compiler,org.eclipse.jdt.internal.compiler.ast,org.eclipse.jdt.internal.compiler.batch,org.eclipse.jdt.internal.compiler.classfmt,org.eclipse.jdt.internal.compiler.codegen,org.eclipse.jdt.internal.compiler.env,org.eclipse.jdt.internal.compiler.flow,org.eclipse.jdt.internal.compiler.impl,org.eclipse.jdt.internal.compiler.lookup,org.eclipse.jdt.internal.compiler.parser,org.eclipse.jdt.internal.compiler.parser.diagnose,org.eclipse.jdt.internal.compiler.problem,org.eclipse.jdt.internal.compiler.util,org.eclipse.jdt.internal.core.util&#xA;Embed-Dependency: *;scope=provided;type=!pom;inline=true&#xA;Build-Jdk: 1.5.0_15&#xA;Bnd-LastModified: 1214301495406&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.osgi.jstl.osgi' version='1.1.2.SNAPSHOT' singleton='false'>
+      <update id='org.springframework.osgi.jstl.osgi' range='[0.0.0,1.1.2.SNAPSHOT)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='jstl.osgi'/>
+        <property name='org.eclipse.equinox.p2.description' value='JSTL 1.1.x (OSGi version)'/>
+      </properties>
+      <provides size='30'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.jstl.osgi' version='1.1.2.SNAPSHOT'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.jstl.osgi' version='1.1.2.SNAPSHOT'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.common.core' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.rt.sql' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.el.xml' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.lang.jstl' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.functions' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.extra.spath' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard' version='1.1.2'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.jstl.tlv' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.lang.jstl.test.beans' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.el.core' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.common.fmt' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.el.sql' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.lang.jstl.test' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.resources' version='1.1.2'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.jstl.fmt' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.lang.jstl.parser' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.rt.xml' version='1.1.2'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.jstl.core' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.rt.fmt' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.common.xml' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.rt.core' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.lang.support' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.common.sql' version='1.1.2'/>
+        <provided namespace='java.package' name='javax.servlet.jsp.jstl.sql' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tlv' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tag.el.fmt' version='1.1.2'/>
+        <provided namespace='java.package' name='org.apache.taglibs.standard.tei' version='1.1.2'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='53'>
+        <required namespace='java.package' name='javax.naming' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.servlet' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.servlet.http' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.servlet.jsp' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.servlet.jsp.el' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.servlet.jsp.jstl.core' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='javax.servlet.jsp.jstl.fmt' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='javax.servlet.jsp.jstl.sql' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='javax.servlet.jsp.jstl.tlv' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='javax.servlet.jsp.tagext' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.sql' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.namespace' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.parsers' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.transform' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.transform.dom' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.transform.sax' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.transform.stream' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.xpath' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.bcel.classfile' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.bcel.generic' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.bcel.util' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.extra.spath' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.functions' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.lang.jstl' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.lang.jstl.parser' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.lang.jstl.test' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.lang.jstl.test.beans' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.lang.support' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.resources' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.common.core' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.common.fmt' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.common.sql' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.common.xml' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.el.core' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.el.fmt' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.el.sql' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.el.xml' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.rt.core' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.rt.fmt' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.rt.sql' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tag.rt.xml' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tei' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.taglibs.standard.tlv' range='1.1.2' optional='true'/>
+        <required namespace='java.package' name='org.apache.xerces.parsers' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.xml.serialize' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.w3c.dom' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.w3c.dom.events' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.w3c.dom.traversal' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.w3c.dom.xpath' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax.ext' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax.helpers' range='0.0.0' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.jstl.osgi' version='1.1.2.SNAPSHOT'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Specification-Version: 1.1&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Export-Package: org.apache.taglibs.standard.tag.common.core;uses:=&quot;javax.servlet.http,org.apache.taglibs.standard.resources,javax.servlet.jsp.tagext,javax.servlet.jsp.el,javax.servlet.jsp,javax.servlet.jsp.jstl.core,javax.servlet&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.sql;uses:=&quot;org.apache.taglibs.standard.tag.common.sql,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.xml;uses:=&quot;org.apache.taglibs.standard.tag.common.core,org.xml.sax,org.apache.taglibs.standard.tag.common.xml,javax.servlet.jsp.tagext,org.apache.taglibs.standard.tag.el.core,javax.servlet.jsp,javax.xml.transform&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl;uses:=&quot;javax.servlet.http,javax.servlet.jsp.tagext,org.apache.taglibs.standard.lang.jstl.parser,javax.servlet.jsp,javax.servlet,org.apache.taglibs.standard.lang.support&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.functions;uses:=&quot;org.apache.taglibs.standard.tag.common.core,org.apache.taglibs.standard.resources,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.extra.spath;uses:=&quot;org.apache.xalan.serialize,org.xml.sax,javax.servlet.jsp.tagext,org.xml.sax.helpers,javax.servlet.jsp,org.apache.xalan.templates&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.tlv;uses:=&quot;org.xml.sax,javax.servlet.jsp.tagext,javax.xml.parsers,org.xml.sax.helpers&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.test.beans;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.core;uses:=&quot;javax.servlet.jsp.jstl.core,org.apache.taglibs.standard.tag.common.core,javax.servlet.jsp.tagext,org.apache.taglibs.standard.lang.support,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.fmt;uses:=&quot;javax.servlet.http,org.apache.taglibs.standard.tag.common.core,javax.servlet.jsp.jstl.fmt,org.apache.taglibs.standard.resources,javax.servlet.jsp.tagext,javax.servlet.jsp,javax.servlet.jsp.jstl.core,javax.servlet&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.sql;uses:=&quot;javax.servlet.jsp.tagext,org.apache.taglibs.standard.lang.support,org.apache.taglibs.standard.tag.common.sql,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.test;uses:=&quot;javax.servlet.http,javax.servlet,org.apache.taglibs.standard.lang.jstl.test.beans,javax.servlet.jsp.tagext,javax.servlet.jsp.el,org.apache.taglibs.standard.lang.jstl,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.resources;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.fmt;uses:=&quot;org.apache.taglibs.standard.tag.common.fmt,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.parser;uses:=&quot;org.apache.taglibs.standard.lang.jstl&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.xml;uses:=&quot;org.xml.sax,org.apache.taglibs.standard.tag.common.xml,javax.servlet.jsp,javax.xml.transform&quot;;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.core;uses:=&quot;javax.servlet.http,javax.servlet,javax.servlet.jsp.tagext,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.fmt;uses:=&quot;javax.servlet.jsp.jstl.fmt,org.apache.taglibs.standard.tag.common.fmt,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.xml;uses:=&quot;javax.servlet.http,org.apache.taglibs.standard.tag.common.core,org.xml.sax,org.apache.taglibs.standard.resources,javax.servlet.jsp.tagext,org.w3c.dom,javax.servlet.jsp,javax.xml.transform,javax.xml.transform.dom,org.apache.xml.utils,org.w3c.dom.traversal,javax.xml.transform.sax,javax.servlet.jsp.jstl.core,javax.servlet,org.xml.sax.helpers,javax.xml.parsers,org.apache.xpath.objects,org.apache.xpath,javax.xml.transform.stream&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.core;uses:=&quot;javax.servlet.jsp.jstl.core,org.apache.taglibs.standard.tag.common.core,javax.servlet.jsp.tagext,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.support;uses:=&quot;javax.servlet.jsp.tagext,org.apache.taglibs.standard.lang.jstl,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.sql;uses:=&quot;org.apache.taglibs.standard.tag.common.core,org.apache.taglibs.standard.resources,javax.servlet.jsp.tagext,javax.servlet.jsp,javax.sql,javax.servlet.jsp.jstl.core,javax.naming,javax.servlet,javax.servlet.jsp.jstl.sql&quot;;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.sql;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tlv;uses:=&quot;org.xml.sax,org.apache.taglibs.standard.resources,javax.servlet.jsp.tagext,javax.xml.parsers,org.xml.sax.helpers,org.apache.taglibs.standard.lang.support,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.fmt;uses:=&quot;javax.servlet.jsp.jstl.fmt,javax.servlet.jsp.tagext,org.apache.taglibs.standard.lang.support,org.apache.taglibs.standard.tag.common.fmt,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tei;uses:=&quot;javax.servlet.jsp.tagext&quot;;version=&quot;1.1.2&quot;&#xA;Private-Package: java_cup.runtime,org.apache.xalan,org.apache.xalan.client,org.apache.xalan.extensions,org.apache.xalan.lib,org.apache.xalan.lib.sql,org.apache.xalan.processor,org.apache.xalan.res,org.apache.xalan.serialize,org.apache.xalan.templates,org.apache.xalan.trace,org.apache.xalan.transformer,org.apache.xalan.xslt,org.apache.xalan.xsltc,org.apache.xalan.xsltc.cmdline,org.apache.xalan.xsltc.cmdline.getopt,org.apache.xalan.xsltc.compiler,org.apache.xalan.xsltc.compiler.util,org.apache.xalan.xsltc.dom,org.apache.xalan.xsltc.runtime,org.apache.xalan.xsltc.runtime.output,org.apache.xalan.xsltc.trax,org.apache.xalan.xsltc.util,org.apache.xml.dtm,org.apache.xml.dtm.ref,org.apache.xml.dtm.ref.dom2dtm,org.apache.xml.dtm.ref.sax2dtm,org.apache.xml.res,org.apache.xml.serializer,org.apache.xml.serializer.utils,org.apache.xml.utils,org.apache.xml.utils.res,org.apache.xpath,org.apache.xpath.axes,org.apache.xpath.compiler,org.apache.xpath.domapi,org.apache.xpath.functions,org.apache.xpath.jaxp,org.apache.xpath.objects,org.apache.xpath.operations,org.apache.xpath.patterns,org.apache.xpath.res&#xA;Extension-Name: javax.servlet.jsp.jstl&#xA;Bundle-Name: jstl.osgi&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bnd-LastModified: 1223002606211&#xA;Bundle-Description: JSTL 1.1.x (OSGi version)&#xA;Embed-Dependency: *;scope=provided;type=!pom;inline=true&#xA;Import-Package: javax.naming;resolution:=optional,javax.servlet;resolution:=optional,javax.servlet.http;resolution:=optional,javax.servlet.jsp;resolution:=optional,javax.servlet.jsp.el;resolution:=optional,javax.servlet.jsp.jstl.core;resolution:=optional;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.fmt;resolution:=optional;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.sql;resolution:=optional;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.tlv;resolution:=optional;version=&quot;1.1.2&quot;,javax.servlet.jsp.tagext;resolution:=optional,javax.sql;resolution:=optional,javax.xml.namespace;resolution:=optional,javax.xml.parsers;resolution:=optional,javax.xml.transform;resolution:=optional,javax.xml.transform.dom;resolution:=optional,javax.xml.transform.sax;resolution:=optional,javax.xml.transform.stream;resolution:=optional,javax.xml.xpath;resolution:=optional,org.apache.bcel.classfile;resolution:=optional,org.apache.bcel.generic;resolution:=optional,org.apache.bcel.util;resolution:=optional,org.apache.taglibs.standard;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.extra.spath;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.functions;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.parser;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.test;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.test.beans;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.support;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.resources;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.core;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.fmt;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.sql;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.xml;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.core;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.fmt;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.sql;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.xml;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.core;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.fmt;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.sql;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.xml;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tei;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tlv;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.xerces.parsers;resolution:=optional,org.apache.xml.serialize;resolution:=optional,org.w3c.dom;resolution:=optional,org.w3c.dom.events;resolution:=optional,org.w3c.dom.traversal;resolution:=optional,org.w3c.dom.xpath;resolution:=optional,org.xml.sax;resolution:=optional,org.xml.sax.ext;resolution:=optional,org.xml.sax.helpers;resolution:=optional&#xA;Created-By: Apache Maven Bundle Plugin&#xA;Manifest-Version: 1.0&#xA;Tool: Bnd-0.0.227&#xA;Built-By: bamboo&#xA;Build-Jdk: 1.5.0_13&#xA;Specification-Title: JavaServer Pages Standard Tag Library (JSTL)&#xA;Bundle-Version: 1.1.2.SNAPSHOT&#xA;Implementation-Version: 1.1.2&#xA;Originally-Created-By: 1.4.2-38 (&quot;Apple Computer, Inc.&quot;)&#xA;Bundle-SymbolicName: org.springframework.osgi.jstl.osgi&#xA;Implementation-Vendor: Spring Dynamic Modules Framework&#xA;Ant-Version: Apache Ant 1.6.1&#xA;
           </instruction>
         </instructions>
       </touchpointData>
