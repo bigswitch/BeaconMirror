@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: net.beaconcontroller.jetty.config
+Bundle-SymbolicName: net.beaconcontroller.jetty.config
+Bundle-Version: 0.1.0.qualifier
+Fragment-Host: org.springframework.osgi.jetty.start.osgi;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
