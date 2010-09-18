@@ -2,7 +2,7 @@
 <?artifactRepository version='1.1.0'?>
 <repository name='file:/home/derickso/git/beacon/libs/ - artifacts' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1.0.0'>
   <properties size='2'>
-    <property name='p2.timestamp' value='1284500997422'/>
+    <property name='p2.timestamp' value='1284766147774'/>
     <property name='p2.compressed' value='false'/>
   </properties>
   <mappings size='3'>
@@ -10,7 +10,7 @@
     <rule filter='(&amp; (classifier=binary))' output='${repoUrl}/binary/${id}_${version}'/>
     <rule filter='(&amp; (classifier=org.eclipse.update.feature))' output='${repoUrl}/features/${id}_${version}.jar'/>
   </mappings>
-  <artifacts size='32'>
+  <artifacts size='35'>
     <artifact classifier='osgi.bundle' id='jul.to.slf4j' version='1.5.11'>
       <properties size='3'>
         <property name='artifact.size' value='4542'/>
@@ -23,6 +23,13 @@
         <property name='artifact.size' value='2040995'/>
         <property name='download.size' value='2040995'/>
         <property name='download.md5' value='77d0c7d3817f6d4655e96d12ef694d9a'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.context.support' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='100860'/>
+        <property name='download.size' value='100860'/>
+        <property name='download.md5' value='e1a24a01393146f75b0de040203088d9'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.junit' version='3.8.2.v20090203-1005'>
@@ -81,13 +88,6 @@
         <property name='download.md5' value='ce6b2f2d7c3a3627b5eb4f45ae1e8f25'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.mortbay.jetty.util' version='6.1.25'>
-      <properties size='3'>
-        <property name='artifact.size' value='177174'/>
-        <property name='download.size' value='177174'/>
-        <property name='download.md5' value='7a4e39052509fb5a65da2cd55494ae8a'/>
-      </properties>
-    </artifact>
     <artifact classifier='osgi.bundle' id='log4j.over.slf4j' version='1.5.11'>
       <properties size='3'>
         <property name='artifact.size' value='11620'/>
@@ -95,11 +95,18 @@
         <property name='download.md5' value='26dcb5a52b793a5e630fa57e5a9081fc'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='ch.qos.logback.core' version='0.9.20'>
+    <artifact classifier='osgi.bundle' id='org.mortbay.jetty.util' version='6.1.25'>
       <properties size='3'>
-        <property name='artifact.size' value='293495'/>
-        <property name='download.size' value='293495'/>
-        <property name='download.md5' value='ebc9cf92c11ce27274e65879ba791d7c'/>
+        <property name='artifact.size' value='177174'/>
+        <property name='download.size' value='177174'/>
+        <property name='download.md5' value='7a4e39052509fb5a65da2cd55494ae8a'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.web' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='394421'/>
+        <property name='download.size' value='394421'/>
+        <property name='download.md5' value='e805f29abcd2bab0176505a9a3215f9f'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.mortbay.jetty.server' version='6.1.25'>
@@ -107,6 +114,13 @@
         <property name='artifact.size' value='538581'/>
         <property name='download.size' value='538581'/>
         <property name='download.md5' value='bfe558d6774e672aa7c57ac8db607538'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='ch.qos.logback.core' version='0.9.20'>
+      <properties size='3'>
+        <property name='artifact.size' value='293495'/>
+        <property name='download.size' value='293495'/>
+        <property name='download.md5' value='ebc9cf92c11ce27274e65879ba791d7c'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='com.springsource.org.aopalliance' version='1.0.0'>
@@ -179,18 +193,18 @@
         <property name='download.md5' value='1144d5a146d92e7e2e7f288b1c4337b8'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.osgi.jetty.start.osgi' version='1.0.0'>
-      <properties size='3'>
-        <property name='artifact.size' value='11756'/>
-        <property name='download.size' value='11756'/>
-        <property name='download.md5' value='df672936639f9c31a4424aada8d9d63a'/>
-      </properties>
-    </artifact>
     <artifact classifier='osgi.bundle' id='org.springframework.asm' version='3.0.4.RELEASE'>
       <properties size='3'>
         <property name='artifact.size' value='53082'/>
         <property name='download.size' value='53082'/>
         <property name='download.md5' value='cb77839cc8427ba33b2c200528f3b351'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.osgi.jetty.start.osgi' version='1.0.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='11756'/>
+        <property name='download.size' value='11756'/>
+        <property name='download.md5' value='df672936639f9c31a4424aada8d9d63a'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.springframework.osgi.io' version='1.2.1'>
@@ -226,6 +240,13 @@
         <property name='artifact.size' value='182806'/>
         <property name='download.size' value='182806'/>
         <property name='download.md5' value='19c55e360768fffbb4ad25663a93d091'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.web.servlet' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='416967'/>
+        <property name='download.size' value='416967'/>
+        <property name='download.md5' value='37bc82f14134546d48930d5a625664d8'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.springframework.aop' version='3.0.4.RELEASE'>
