@@ -1,5 +1,6 @@
 package net.beaconcontroller.core;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openflow.protocol.OFType;
@@ -36,4 +37,10 @@ public interface IBeaconProvider {
    * @param listener
    */
   public void removeOFSwitchListener(IOFSwitchListener listener);
+
+  /**
+   * Return a non-modifiable list of all current listeners
+   * @return listeners
+   */
+  public Map<OFType, List<IOFMessageListener>> getListeners();
 }

@@ -1,6 +1,7 @@
 package net.beaconcontroller.core.internal;
 
 import java.nio.channels.SocketChannel;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -17,6 +18,7 @@ import org.openflow.util.HexString;
  */
 public class OFSwitchImpl implements IOFSwitch {
     protected ConcurrentMap<Object, Object> attributes;
+    protected Date connectedSince;
     protected OFFeaturesReply featuresReply;
     protected OFMessageInStream inStream;
     protected OFMessageSafeOutStream outStream;
@@ -24,6 +26,7 @@ public class OFSwitchImpl implements IOFSwitch {
 
     public OFSwitchImpl() {
         this.attributes = new ConcurrentHashMap<Object, Object>();
+        this.connectedSince = new Date();
     }
 
     public SocketChannel getSocketChannel() {
@@ -82,5 +85,10 @@ public class OFSwitchImpl implements IOFSwitch {
     @Override
     public ConcurrentMap<Object, Object> getAttributes() {
         return this.attributes;
+    }
+
+    @Override
+    public Date getConnectedSince() {
+        return connectedSince;
     }
 }

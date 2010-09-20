@@ -1,6 +1,7 @@
 package net.beaconcontroller.core;
 
 import java.nio.channels.SocketChannel;
+import java.util.Date;
 import java.util.concurrent.ConcurrentMap;
 
 import net.beaconcontroller.core.io.OFMessageSafeOutStream;
@@ -70,4 +71,10 @@ public interface IOFSwitch {
      * @return
      */
     public ConcurrentMap<Object, Object> getAttributes();
+
+    /**
+     * Retrieves the date the switch connected to this controller
+     * @return the date
+     */
+    public Date getConnectedSince();
 }

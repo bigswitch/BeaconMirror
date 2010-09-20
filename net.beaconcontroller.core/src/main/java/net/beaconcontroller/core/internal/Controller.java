@@ -9,6 +9,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -387,5 +388,10 @@ public class Controller implements IBeaconProvider, SelectListener {
                 log.error("Error calling switch listener", e);
             }
         }
+    }
+
+    @Override
+    public Map<OFType, List<IOFMessageListener>> getListeners() {
+        return Collections.unmodifiableMap(this.messageListeners);
     }
 }
