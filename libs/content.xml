@@ -2,10 +2,10 @@
 <?metadataRepository version='1.1.0'?>
 <repository name='file:/home/derickso/git/beacon/libs/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
   <properties size='2'>
-    <property name='p2.timestamp' value='1284766147781'/>
+    <property name='p2.timestamp' value='1284854551432'/>
     <property name='p2.compressed' value='false'/>
   </properties>
-  <units size='35'>
+  <units size='37'>
     <unit id='org.junit' version='3.8.2.v20090203-1005' singleton='false'>
       <update id='org.junit' range='[0.0.0,3.8.2.v20090203-1005)' severity='0'/>
       <properties size='5'>
@@ -550,76 +550,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.springframework.osgi.core' version='1.2.1' singleton='false'>
-      <update id='org.springframework.osgi.core' range='[0.0.0,1.2.1)' severity='0'/>
-      <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-core'/>
-        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi core classes. Offers OSGi-based application context and importer/exporter functionality.'/>
-        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
-        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
-      </properties>
-      <provides size='18'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.core' version='1.2.1'/>
-        <provided namespace='osgi.bundle' name='org.springframework.osgi.core' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.bundle' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.compendium.cm' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.compendium.config' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.config' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.context' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.context.event' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.context.support' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.service' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.service.exporter' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.service.exporter.support' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.service.importer' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.service.importer.event' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.service.importer.support' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.util' version='1.2.1'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='28'>
-        <required namespace='java.package' name='org.aopalliance.aop' range='0.0.0'/>
-        <required namespace='java.package' name='org.aopalliance.intercept' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.service.cm' range='1.2.0' optional='true'/>
-        <required namespace='java.package' name='org.osgi.service.packageadmin' range='1.2.0'/>
-        <required namespace='java.package' name='org.osgi.service.startlevel' range='1.0.0' optional='true'/>
-        <required namespace='java.package' name='org.springframework.aop' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.aop.framework' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.aop.support' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.beans' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.beans.factory' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.beans.factory.support' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.beans.factory.xml' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.beans.propertyeditors' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.context' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.context.event' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.context.support' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core.enums' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core.io' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core.io.support' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.osgi.io' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.util' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.util.xml' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.w3c.dom' range='0.0.0' optional='true'/>
-        <required namespace='java.package' name='org.xml.sax' range='0.0.0' optional='true'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.springframework.osgi.core' version='1.2.1'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Implementation-Version: 1.2.1&#xA;Import-Package: org.aopalliance.aop;version=&quot;0.0.0&quot;,org.aopalliance.intercept;version=&quot;0.0.0&quot;,org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.cm;version=&quot;1.2&quot;;resolution:=optional,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.osgi.service.startlevel;version=&quot;1.0&quot;;resolution:=optional,org.springframework.aop;version=&quot;[2.5.6,4.0)&quot;,org.springframework.aop.framework;version=&quot;[2.5.6,4.0)&quot;,org.springframework.aop.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.config;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.xml;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.propertyeditors;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context.event;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.enums;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.io;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.io.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.osgi.io;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.util;version=&quot;[2.5.6,4.0)&quot;,org.springframework.util.xml;version=&quot;[2.5.6,4.0)&quot;,org.w3c.dom;resolution:=optional,org.xml.sax;resolution:=optional&#xA;Spring-DM-Version: 1.2.1&#xA;Built-By: costin&#xA;Bundle-Description: Spring/OSGi core classes. Offers OSGi-based application context and importer/exporter functionality.&#xA;Spring-Version: 2.5.6.SEC01&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Vendor: SpringSource&#xA;Export-Package: org.springframework.osgi;version=&quot;1.2.1&quot;,org.springframework.osgi.bundle;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans.factory,org.springframework.context,org.springframework.core.enums,org.springframework.core.io,org.springframework.osgi.context&quot;,org.springframework.osgi.compendium.cm;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans.factory,org.springframework.osgi.context&quot;,org.springframework.osgi.compendium.config;version=&quot;1.2.1&quot;;uses:=&quot;org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.springframework.osgi.config.internal.util,org.w3c.dom&quot;,org.springframework.osgi.config;version=&quot;1.2.1&quot;;uses:=&quot;org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.springframework.osgi.config.internal.util,org.springframework.osgi.service.importer.support,org.w3c.dom&quot;,org.springframework.osgi.context;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans,org.springframework.beans.factory.config,org.springframework.context,org.springframework.osgi.context.event&quot;,org.springframework.osgi.context.event;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.context,org.springframework.context.event&quot;,org.springframework.osgi.context.support;version=&quot;1.2.1&quot;;uses:=&quot;org.apache.commons.logging,org.osgi.framework,org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.springframework.context,org.springframework.context.event,org.springframework.context.support,org.springframework.core.io,org.springframework.core.io.support,org.springframework.osgi.context,org.springframework.osgi.context.event,org.springframework.osgi.util.internal,org.xml.sax&quot;,org.springframework.osgi.service;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.osgi&quot;,org.springframework.osgi.service.exporter;version=&quot;1.2.1&quot;,org.springframework.osgi.service.exporter.support;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans,org.springframework.beans.factory,org.springframework.core,org.springframework.core.enums,org.springframework.osgi.context,org.springframework.osgi.service.exporter,org.springframework.osgi.service.exporter.support.internal.controller&quot;,org.springframework.osgi.service.importer;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.osgi.service&quot;,org.springframework.osgi.service.importer.event;version=&quot;1.2.1&quot;;uses:=&quot;org.springframework.context,org.springframework.osgi.service.importer&quot;,org.springframework.osgi.service.importer.support;version=&quot;1.2.1&quot;;uses:=&quot;org.aopalliance.aop,org.aopalliance.intercept,org.osgi.framework,org.springframework.beans.factory,org.springframework.context,org.springframework.core.enums,org.springframework.osgi.context,org.springframework.osgi.context.internal.classloader,org.springframework.osgi.service.importer,org.springframework.osgi.service.importer.support.internal.aop,org.springframework.osgi.service.importer.support.internal.collection,org.springframework.osgi.service.importer.support.internal.controller,org.springframework.osgi.service.importer.support.internal.dependency&quot;,org.springframework.osgi.util;version=&quot;1.2.1&quot;;uses:=&quot;org.apache.commons.logging,org.osgi.framework,org.springframework.util&quot;&#xA;Bundle-Name: spring-osgi-core&#xA;Bundle-Version: 1.2.1&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Bundle-Classpath: .&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Vendor: SpringSource&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Bundle-SymbolicName: org.springframework.osgi.core&#xA;Build-Jdk: 1.5.0_22&#xA;Unversioned-Imports: *&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
     <unit id='ch.qos.logback.classic' version='0.9.20' singleton='false'>
       <update id='ch.qos.logback.classic' range='[0.0.0,0.9.20)' severity='0'/>
       <properties size='4'>
@@ -816,6 +746,29 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-Name: log4j-over-slf4j&#xA;Bundle-Version: 1.5.11&#xA;Import-Package: org.slf4j, org.slf4j.spi&#xA;Created-By: Apache Maven&#xA;Bundle-Vendor: SLF4J.ORG&#xA;Archiver-Version: Plexus Archiver&#xA;Export-Package: org.apache.log4j&#xA;Implementation-Version: 1.5.11&#xA;Bundle-SymbolicName: log4j.over.slf4j&#xA;Built-By: ceki&#xA;Manifest-Version: 1.0&#xA;Build-Jdk: 1.6.0_16&#xA;Bundle-Description: Log4j implemented over SLF4J&#xA;Implementation-Title: log4j-over-slf4j&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.context.source' version='3.0.4.RELEASE' singleton='false'>
+      <update id='org.springframework.context.source' range='[0.0.0,3.0.4.RELEASE)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Spring Context Source'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.context.source' version='3.0.4.RELEASE'/>
+        <provided namespace='osgi.bundle' name='org.springframework.context.source' version='3.0.4.RELEASE'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='source' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.context.source' version='3.0.4.RELEASE'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Eclipse-SourceBundle: org.springframework.context;version=&quot;3.0.4.RELEASE&quot;&#xA;Bundle-ManifestVersion: 2&#xA;Created-By: 16.3-b01-279 (Apple Inc.)&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 3.0.4.RELEASE&#xA;Bundle-SymbolicName: org.springframework.context.source&#xA;Ant-Version: Apache Ant 1.7.1&#xA;Bundle-Name: Spring Context Source&#xA;Tool: Bundlor 1.0.0.RELEASE&#xA;Bundle-Vendor: SpringSource&#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -1079,58 +1032,82 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.springframework.osgi.extender' version='1.2.1' singleton='false'>
-      <update id='org.springframework.osgi.extender' range='[0.0.0,1.2.1)' severity='0'/>
+    <unit id='org.springframework.osgi.core' version='2.0.0.M1' singleton='false'>
+      <update id='org.springframework.osgi.core' range='[0.0.0,2.0.0.M1)' severity='0'/>
       <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-extender'/>
-        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi extender. Listens for and bootstraps Spring-powered OSGi bundles.'/>
+        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-core'/>
+        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi core classes. Offers OSGi-based application context and importer/exporter functionality.'/>
         <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
         <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
       </properties>
-      <provides size='7'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.extender' version='1.2.1'/>
-        <provided namespace='osgi.bundle' name='org.springframework.osgi.extender' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.extender' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.extender.event' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.extender.support' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.extender.support.scanning' version='1.2.1'/>
+      <provides size='25'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.core' version='2.0.0.M1'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.core' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.osgi.service.blueprint.container' version='1.0.0'/>
+        <provided namespace='java.package' name='org.osgi.service.blueprint.reflect' version='1.0.0'/>
+        <provided namespace='java.package' name='org.springframework.osgi' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.blueprint.compendium.cm.config' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.blueprint.config' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.blueprint.container' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.blueprint.container.support' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.blueprint.reflect' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.bundle' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.compendium.cm' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.compendium.config' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.config' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.context' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.context.event' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.context.support' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service.exporter' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service.exporter.support' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service.importer' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service.importer.event' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.service.importer.support' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.util' version='2.0.0.M1'/>
         <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
       </provides>
-      <requires size='25'>
+      <requires size='31'>
+        <required namespace='java.package' name='javax.xml.parsers' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.aopalliance.aop' range='0.0.0'/>
+        <required namespace='java.package' name='org.aopalliance.intercept' range='0.0.0'/>
         <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
         <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.cm' range='1.2.0' optional='true'/>
         <required namespace='java.package' name='org.osgi.service.packageadmin' range='1.2.0'/>
-        <required namespace='java.package' name='org.springframework.beans' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.beans.factory' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.beans.factory.xml' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.context' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.context.event' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core.enums' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core.io' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core.task' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.osgi' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.context' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.context.event' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.context.support' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.extensions.annotation' range='[1.2.1,1.2.1]' optional='true'/>
-        <required namespace='java.package' name='org.springframework.osgi.service.importer' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.service.importer.event' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.service.importer.support' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.util' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.scheduling.timer' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.util' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.osgi.service.startlevel' range='1.0.0' optional='true'/>
+        <required namespace='java.package' name='org.springframework.aop' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.aop.framework' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.aop.support' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.parsing' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.support' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.xml' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.propertyeditors' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context.event' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context.support' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.convert' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.enums' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io.support' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.osgi.io' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.util' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.util.xml' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.w3c.dom' range='0.0.0' optional='true'/>
         <required namespace='java.package' name='org.xml.sax' range='0.0.0' optional='true'/>
       </requires>
       <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.springframework.osgi.extender' version='1.2.1'/>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.core' version='2.0.0.M1'/>
       </artifacts>
       <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Bundle-Vendor: SpringSource&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.springframework.osgi.extender.internal.activator.ContextLoaderListener&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Manifest-Version: 1.0&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-SymbolicName: org.springframework.osgi.extender&#xA;Spring-DM-Version: 1.2.1&#xA;Bundle-Description: Spring/OSGi extender. Listens for and bootstraps Spring-powered OSGi bundles.&#xA;Spring-Version: 2.5.6.SEC01&#xA;Implementation-Vendor: SpringSource&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Export-Package: org.springframework.osgi.extender;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans,org.springframework.beans.factory.config,org.springframework.osgi.context&quot;,org.springframework.osgi.extender.event;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.context,org.springframework.osgi.context.event,org.springframework.osgi.service.importer.event&quot;,org.springframework.osgi.extender.support;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans.factory,org.springframework.osgi.context,org.springframework.osgi.extender,org.springframework.osgi.extender.support.scanning&quot;,org.springframework.osgi.extender.support.scanning;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework&quot;&#xA;Implementation-Version: 1.2.1&#xA;Bundle-Classpath: .&#xA;Built-By: costin&#xA;Import-Package: org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.springframework.beans;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.config;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.xml;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context.event;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.enums;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.io;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.task;version=&quot;[2.5.6,4.0)&quot;,org.springframework.osgi;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.context;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.context.event;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.context.support;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.extensions.annotation;version=&quot;[1.2.1,1.2.1]&quot;;resolution:=optional,org.springframework.osgi.service.importer;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.service.importer.event;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.service.importer.support;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.util;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.scheduling.timer;version=&quot;[2.5.6,4.0)&quot;,org.springframework.util;version=&quot;[2.5.6,4.0)&quot;,org.xml.sax;resolution:=optional&#xA;Bundle-Name: spring-osgi-extender&#xA;Build-Jdk: 1.5.0_22&#xA;Bundle-Version: 1.2.1&#xA;Unversioned-Imports: *&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;
+            Implementation-Version: 2.0.0.M1&#xA;Import-Package: javax.xml.parsers;resolution:=&quot;optional&quot;,org.aopalliance.aop;version=&quot;0.0.0&quot;,org.aopalliance.intercept;version=&quot;0.0.0&quot;,org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.cm;version=&quot;1.2&quot;;resolution:=&quot;optional&quot;,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.osgi.service.startlevel;version=&quot;1.0&quot;;resolution:=&quot;optional&quot;,org.springframework.aop;version=&quot;[3.0.0,4.0)&quot;,org.springframework.aop.framework;version=&quot;[3.0.0,4.0)&quot;,org.springframework.aop.support;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory.config;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory.parsing;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory.support;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory.xml;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.propertyeditors;version=&quot;[3.0.0,4.0)&quot;,org.springframework.context;version=&quot;[3.0.0,4.0)&quot;,org.springframework.context.event;version=&quot;[3.0.0,4.0)&quot;,org.springframework.context.support;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.convert;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.enums;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.io;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.io.support;version=&quot;[3.0.0,4.0)&quot;,org.springframework.osgi.io;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.util;version=&quot;[3.0.0,4.0)&quot;,org.springframework.util.xml;version=&quot;[3.0.0,4.0)&quot;,org.w3c.dom;resolution:=&quot;optional&quot;,org.xml.sax;resolution:=&quot;optional&quot;&#xA;Spring-DM-Version: 2.0.0.M1&#xA;Built-By: costin&#xA;Bundle-Description: Spring/OSGi core classes. Offers OSGi-based application context and importer/exporter functionality.&#xA;Spring-Version: 3.0.0.RC1&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Vendor: SpringSource&#xA;Export-Package: org.osgi.service.blueprint.container;version=&quot;1.0.0&quot;;uses:=&quot;org.osgi.framework,org.osgi.service.blueprint.reflect&quot;,org.osgi.service.blueprint.reflect;version=&quot;1.0.0&quot;,org.springframework.osgi;version=&quot;2.0.0.M1&quot;,org.springframework.osgi.blueprint.compendium.cm.config;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.springframework.beans.factory.xml&quot;,org.springframework.osgi.blueprint.config;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.springframework.osgi.blueprint.config.internal,org.springframework.osgi.service.importer.support,org.w3c.dom&quot;,org.springframework.osgi.blueprint.container;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.service.blueprint.container,org.osgi.service.blueprint.reflect,org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.context,org.springframework.core.convert&quot;,org.springframework.osgi.blueprint.container.support;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.osgi.service.blueprint.container,org.springframework.beans,org.springframework.beans.propertyeditors,org.springframework.context,org.springframework.context.event&quot;,org.springframework.osgi.blueprint.reflect;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.service.blueprint.reflect,org.springframework.beans,org.springframework.beans.factory.config,org.springframework.beans.factory.support&quot;,org.springframework.osgi.bundle;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans.factory,org.springframework.context,org.springframework.core.enums,org.springframework.core.io,org.springframework.osgi.context&quot;,org.springframework.osgi.compendium.cm;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.apache.commons.logging,org.osgi.framework,org.osgi.service.cm,org.springframework.beans.factory,org.springframework.osgi.context,org.springframework.osgi.service.exporter.support&quot;,org.springframework.osgi.compendium.config;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.springframework.beans.factory.xml&quot;,org.springframework.osgi.config;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.springframework.beans.factory.xml,org.springframework.osgi.config.internal,org.springframework.osgi.service.importer.support&quot;,org.springframework.osgi.context;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans,org.springframework.beans.factory.config,org.springframework.context,org.springframework.osgi.context.event&quot;,org.springframework.osgi.context.event;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.context,org.springframework.context.event&quot;,org.springframework.osgi.context.support;version=&quot;2.0.0.M1&quot;;uses:=&quot;javax.xml.parsers,org.apache.commons.logging,org.osgi.framework,org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.beans.factory.support,org.springframework.beans.factory.xml,org.springframework.context,org.springframework.context.event,org.springframework.context.support,org.springframework.core.io,org.springframework.core.io.support,org.springframework.osgi.context,org.springframework.osgi.context.event,org.springframework.osgi.util.internal,org.xml.sax&quot;,org.springframework.osgi.service;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.osgi&quot;,org.springframework.osgi.service.exporter;version=&quot;2.0.0.M1&quot;,org.springframework.osgi.service.exporter.support;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans,org.springframework.beans.factory,org.springframework.core,org.springframework.core.enums,org.springframework.osgi.context,org.springframework.osgi.service.exporter,org.springframework.osgi.service.exporter.support.internal.controller,org.springframework.osgi.service.exporter.support.internal.support&quot;,org.springframework.osgi.service.importer;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.osgi.service&quot;,org.springframework.osgi.service.importer.event;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.springframework.context,org.springframework.osgi.service.importer&quot;,org.springframework.osgi.service.importer.support;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.aopalliance.aop,org.aopalliance.intercept,org.osgi.framework,org.springframework.beans.factory,org.springframework.context,org.springframework.core.enums,org.springframework.osgi.context,org.springframework.osgi.context.support.internal.classloader,org.springframework.osgi.service.importer,org.springframework.osgi.service.importer.support.internal.aop,org.springframework.osgi.service.importer.support.internal.collection,org.springframework.osgi.service.importer.support.internal.controller,org.springframework.osgi.service.importer.support.internal.dependency&quot;,org.springframework.osgi.util;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.apache.commons.logging,org.osgi.framework,org.springframework.util&quot;&#xA;Bundle-Name: spring-osgi-core&#xA;Bundle-Version: 2.0.0.M1&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Vendor: SpringSource&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Tool: Bundlor 1.0.0.M6&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Bundle-SymbolicName: org.springframework.osgi.core&#xA;Build-Jdk: 1.5.0_18&#xA;Unversioned-Imports: *&#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -1189,6 +1166,47 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Manifest-Version: 1.0&#xA;Bundle-DocURL: http://jetty.mortbay.org&#xA;implementation-version: 6.1.25&#xA;Ignore-Package: org.mortbay.jetty,org.mortbay.servlet.jetty,org.mortbay.io.nio,org.mortbay.jetty.bio,org.mortbay.io,org.mortbay.jetty.security,org.mortbay.jetty.webapp,org.mortbay.jetty.nio,org.mortbay.xml,org.mortbay.jetty.handler,org.mortbay.resource,org.mortbay.jetty.servlet,org.mortbay.io.bio,org.mortbay.jetty.deployer&#xA;Created-By: 1.6.0_20 (Sun Microsystems Inc.)&#xA;Built-By: gregw&#xA;Bundle-Vendor: Mort Bay Consulting&#xA;url: http://www.eclipse.org/jetty/jetty-parent/project/modules/jetty&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Bundle-Description: Jetty server core&#xA;Import-Package: javax.net.ssl,javax.security.cert,javax.servlet;version=&quot;2.5&quot;,javax.servlet.http;version=&quot;2.5&quot;,javax.servlet.jsp;resolution:=optional,javax.servlet.resources;resolution:=optional;version=&quot;2.5&quot;,javax.xml.parsers,org.apache.jasper.servlet;resolution:=optional,org.mortbay.component;version=&quot;6.1&quot;,org.mortbay.jetty.handler.management;resolution:=optional,org.mortbay.log;version=&quot;6.1&quot;,org.mortbay.servlet;version=&quot;6.1&quot;,org.mortbay.thread;version=&quot;6.1&quot;,org.mortbay.util;version=&quot;6.1&quot;,org.mortbay.util.ajax;version=&quot;6.1&quot;,org.xml.sax,org.xml.sax.helpers&#xA;Archiver-Version: Plexus Archiver&#xA;Bundle-Name: Jetty Server&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0, http://www.eclipse.org/org/documents/epl-v10.php&#xA;mode: development&#xA;Export-Package: org.mortbay.jetty;uses:=&quot;org.mortbay.log,org.mortbay.io.nio,org.mortbay.jetty.bio,org.mortbay.io,org.mortbay.jetty.security,org.mortbay.jetty.webapp,org.mortbay.jetty.handler,org.mortbay.resource,javax.servlet,org.mortbay.jetty.servlet,org.mortbay.util.ajax,org.mortbay.thread,org.mortbay.component,org.mortbay.util,javax.servlet.http&quot;;version=&quot;6.1.25&quot;,org.mortbay.io.nio;uses:=&quot;org.mortbay.jetty,org.mortbay.log,org.mortbay.io,org.mortbay.thread,org.mortbay.component&quot;;version=&quot;6.1.25&quot;,org.mortbay.servlet.jetty;uses:=&quot;org.mortbay.jetty,javax.servlet,org.mortbay.io,org.mortbay.servlet,javax.servlet.http&quot;;version=&quot;6.1.25&quot;,org.mortbay.io;uses:=&quot;org.mortbay.log,org.mortbay.util&quot;;version=&quot;6.1.25&quot;,org.mortbay.jetty.bio;uses:=&quot;org.mortbay.log,org.mortbay.jetty,org.mortbay.io,org.mortbay.thread,org.mortbay.io.bio&quot;;version=&quot;6.1.25&quot;,org.mortbay.jetty.security;uses:=&quot;org.mortbay.jetty,org.mortbay.log,org.mortbay.io,org.mortbay.jetty.bio,org.mortbay.jetty.webapp,org.mortbay.resource,org.mortbay.jetty.handler,javax.servlet,org.mortbay.jetty.servlet,javax.security.cert,javax.net.ssl,org.mortbay.component,org.mortbay.util,org.mortbay.io.bio,javax.servlet.http&quot;;version=&quot;6.1.25&quot;,org.mortbay.jetty.webapp;uses:=&quot;org.mortbay.jetty,org.mortbay.log,org.mortbay.jetty.security,org.mortbay.xml,org.mortbay.resource,org.mortbay.jetty.handler,javax.servlet,org.mortbay.jetty.servlet,org.mortbay.util,org.mortbay.jetty.deployer,javax.servlet.http&quot;;version=&quot;6.1.25&quot;,org.mortbay.xml;uses:=&quot;org.mortbay.log,javax.xml.parsers,org.xml.sax,org.mortbay.resource,org.mortbay.component,org.mortbay.util,org.xml.sax.helpers&quot;;version=&quot;6.1.25&quot;,org.mortbay.jetty.nio;uses:=&quot;org.mortbay.log,org.mortbay.jetty,org.mortbay.io.nio,org.mortbay.util.ajax,org.mortbay.io,org.mortbay.thread&quot;;version=&quot;6.1.25&quot;,org.mortbay.jetty.handler;uses:=&quot;org.mortbay.log,org.mortbay.jetty,org.mortbay.io,org.mortbay.jetty.webapp,org.mortbay.resource,javax.servlet,org.mortbay.jetty.servlet,org.mortbay.component,org.mortbay.util,javax.servlet.http&quot;;version=&quot;6.1.25&quot;,org.mortbay.resource;uses:=&quot;org.mortbay.log,org.mortbay.util&quot;;version=&quot;6.1.25&quot;,org.mortbay.jetty.servlet;uses:=&quot;org.mortbay.log,org.mortbay.jetty,org.mortbay.io.nio,org.mortbay.io,org.mortbay.jetty.security,org.mortbay.jetty.nio,org.mortbay.resource,org.mortbay.jetty.handler,javax.servlet,org.mortbay.component,org.mortbay.util,javax.servlet.http&quot;;version=&quot;6.1.25&quot;,org.mortbay.io.bio;uses:=&quot;org.mortbay.log,org.mortbay.io&quot;;version=&quot;6.1.25&quot;,org.mortbay.jetty.deployer;uses:=&quot;org.mortbay.log,org.mortbay.jetty,org.mortbay.jetty.webapp,org.mortbay.xml,org.mortbay.jetty.handler,org.mortbay.resource,org.mortbay.util,org.mortbay.component&quot;;version=&quot;6.1.25&quot;&#xA;Bundle-Version: 6.1.25&#xA;Bundle-ManifestVersion: 2&#xA;Bnd-LastModified: 1280150535282&#xA;package: org.mortbay&#xA;Build-Jdk: 1.6.0_20&#xA;Tool: Bnd-0.0.238&#xA;Bundle-SymbolicName: org.mortbay.jetty.server&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.osgi.extensions.annotations' version='2.0.0.M1' singleton='false'>
+      <update id='org.springframework.osgi.extensions.annotations' range='[0.0.0,2.0.0.M1)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-annotation'/>
+        <property name='org.eclipse.equinox.p2.description' value='Provides OSGi service injection via annotations.'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.extensions.annotations' version='2.0.0.M1'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.extensions.annotations' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.extensions.annotation' version='2.0.0.M1'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='13'>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <required namespace='java.package' name='org.springframework.beans' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.annotation' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.osgi.context' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.extender' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.exporter.support' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.importer' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.importer.support' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.util' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.util' range='[3.0.0,4.0.0)'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.extensions.annotations' version='2.0.0.M1'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Implementation-Version: 2.0.0.M1&#xA;Import-Package: org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.springframework.beans;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory.config;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.annotation;version=&quot;[3.0.0,4.0)&quot;,org.springframework.osgi.context;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.extender;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.service.exporter.support;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.service.importer;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.service.importer.support;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.util;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.util;version=&quot;[3.0.0,4.0)&quot;&#xA;Spring-DM-Version: 2.0.0.M1&#xA;Built-By: costin&#xA;Bundle-Description: Provides OSGi service injection via annotations.&#xA;Spring-Version: 3.0.0.RC1&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Vendor: SpringSource&#xA;Export-Package: org.springframework.osgi.extensions.annotation;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.apache.commons.logging,org.osgi.framework,org.springframework.beans,org.springframework.beans.factory,org.springframework.beans.factory.config,org.springframework.osgi.context,org.springframework.osgi.extender,org.springframework.osgi.service.importer,org.springframework.osgi.service.importer.support,org.springframework.util&quot;&#xA;Bundle-Name: spring-osgi-annotation&#xA;Bundle-Version: 2.0.0.M1&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Vendor: SpringSource&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Tool: Bundlor 1.0.0.M6&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Bundle-SymbolicName: org.springframework.osgi.extensions.annotations&#xA;Build-Jdk: 1.5.0_18&#xA;Unversioned-Imports: *&#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -1421,8 +1439,178 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.springframework.osgi.io' version='1.2.1' singleton='false'>
-      <update id='org.springframework.osgi.io' range='[0.0.0,1.2.1)' severity='0'/>
+    <unit id='org.springframework.osgi.extender' version='2.0.0.M1' singleton='false'>
+      <update id='org.springframework.osgi.extender' range='[0.0.0,2.0.0.M1)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-extender'/>
+        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi extender. Listens for and bootstraps Spring-powered OSGi bundles.'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
+      </properties>
+      <provides size='7'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.extender' version='2.0.0.M1'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.extender' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.extender' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.extender.event' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.extender.support' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.extender.support.scanning' version='2.0.0.M1'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='36'>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.blueprint.container' range='1.0.0' optional='true'/>
+        <required namespace='java.package' name='org.osgi.service.blueprint.reflect' range='1.0.0' optional='true'/>
+        <required namespace='java.package' name='org.osgi.service.event' range='1.1.0' optional='true'/>
+        <required namespace='java.package' name='org.osgi.service.packageadmin' range='1.2.0'/>
+        <required namespace='java.package' name='org.osgi.util.tracker' range='1.3.0'/>
+        <required namespace='java.package' name='org.springframework.beans' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.parsing' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.support' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.xml' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context.event' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.convert' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io.support' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.task' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.osgi' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.blueprint.container' range='[2.0.0.M1,2.0.0.M1]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.osgi.blueprint.container.support' range='[2.0.0.M1,2.0.0.M1]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.osgi.context' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.context.event' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.context.support' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.extensions.annotation' range='[2.0.0.M1,2.0.0.M1]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.osgi.io' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.exporter.support' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.importer' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.importer.event' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.importer.support' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.util' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.scheduling.timer' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.util' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.extender' version='2.0.0.M1'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: SpringSource&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.springframework.osgi.extender.internal.boot.ChainActivator&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Manifest-Version: 1.0&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-SymbolicName: org.springframework.osgi.extender&#xA;Spring-DM-Version: 2.0.0.M1&#xA;Tool: Bundlor 1.0.0.M6&#xA;Bundle-Description: Spring/OSGi extender. Listens for and bootstraps Spring-powered OSGi bundles.&#xA;Spring-Version: 3.0.0.RC1&#xA;Implementation-Vendor: SpringSource&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Export-Package: org.springframework.osgi.extender;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans,org.springframework.beans.factory.config,org.springframework.osgi.context&quot;,org.springframework.osgi.extender.event;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.context,org.springframework.osgi.context.event,org.springframework.osgi.service.importer.event&quot;,org.springframework.osgi.extender.support;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans.factory,org.springframework.osgi.context,org.springframework.osgi.extender,org.springframework.osgi.extender.support.scanning&quot;,org.springframework.osgi.extender.support.scanning;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework&quot;&#xA;Implementation-Version: 2.0.0.M1&#xA;Built-By: costin&#xA;Import-Package: org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.blueprint.container;version=&quot;1.0.0&quot;;resolution:=&quot;optional&quot;,org.osgi.service.blueprint.reflect;version=&quot;1.0.0&quot;;resolution:=&quot;optional&quot;,org.osgi.service.event;version=&quot;1.1&quot;;resolution:=&quot;optional&quot;,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.osgi.util.tracker;version=&quot;1.3&quot;,org.springframework.beans;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory.config;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory.parsing;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory.support;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory.xml;version=&quot;[3.0.0,4.0)&quot;,org.springframework.context;version=&quot;[3.0.0,4.0)&quot;,org.springframework.context.event;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.convert;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.io;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.io.support;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.task;version=&quot;[3.0.0,4.0)&quot;,org.springframework.osgi;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.blueprint.container;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;;resolution:=&quot;optional&quot;,org.springframework.osgi.blueprint.container.support;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;;resolution:=&quot;optional&quot;,org.springframework.osgi.context;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.context.event;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.context.support;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.extensions.annotation;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;;resolution:=&quot;optional&quot;,org.springframework.osgi.io;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.service.exporter.support;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.service.importer;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.service.importer.event;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.service.importer.support;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.util;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.scheduling.timer;version=&quot;[3.0.0,4.0)&quot;,org.springframework.util;version=&quot;[3.0.0,4.0)&quot;,org.xml.sax;resolution:=&quot;optional&quot;&#xA;Bundle-Name: spring-osgi-extender&#xA;Build-Jdk: 1.5.0_18&#xA;Bundle-Version: 2.0.0.M1&#xA;Unversioned-Imports: *&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.osgi.web.extender' version='2.0.0.M1' singleton='false'>
+      <update id='org.springframework.osgi.web.extender' range='[0.0.0,2.0.0.M1)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-web-extender'/>
+        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi web extender. Detects war bundles and deploys them into the configured web container.'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.web.extender' version='2.0.0.M1'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.web.extender' version='2.0.0.M1'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='14'>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <required namespace='java.package' name='org.springframework.beans.factory' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.osgi' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.context' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.context.support' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.util' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.web.deployer' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.web.deployer.jetty' range='[2.0.0.M1,2.0.0.M1]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.osgi.web.deployer.support' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.web.deployer.tomcat' range='[2.0.0.M1,2.0.0.M1]' optional='true'/>
+        <required namespace='java.package' name='org.springframework.scheduling.timer' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.util' range='[3.0.0,4.0.0)'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.web.extender' version='2.0.0.M1'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Manifest-Version: 1.0&#xA;Build-Jdk: 1.5.0_18&#xA;Bundle-Activator: org.springframework.osgi.web.extender.internal.activator.WarLoaderListener&#xA;Bundle-SymbolicName: org.springframework.osgi.web.extender&#xA;Import-Package: org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.springframework.beans.factory;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core;version=&quot;[3.0.0,4.0)&quot;,org.springframework.osgi;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.context;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.context.support;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.util;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.web.deployer;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.web.deployer.jetty;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;;resolution:=&quot;optional&quot;,org.springframework.osgi.web.deployer.support;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.web.deployer.tomcat;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;;resolution:=&quot;optional&quot;,org.springframework.scheduling.timer;version=&quot;[3.0.0,4.0)&quot;,org.springframework.util;version=&quot;[3.0.0,4.0)&quot;&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Implementation-Version: 2.0.0.M1&#xA;Spring-DM-Version: 2.0.0.M1&#xA;Tool: Bundlor 1.0.0.M6&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Description: Spring/OSGi web extender. Detects war bundles and deploys them into the configured web container.&#xA;Unversioned-Imports: *&#xA;Bundle-Version: 2.0.0.M1&#xA;Bundle-Name: spring-osgi-web-extender&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Implementation-Vendor: SpringSource&#xA;Bundle-Vendor: SpringSource&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Spring-Version: 3.0.0.RC1&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.osgi.web' version='2.0.0.M1' singleton='false'>
+      <update id='org.springframework.osgi.web' range='[0.0.0,2.0.0.M1)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-web'/>
+        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi web support. Allows web applications to transparently run on OSGi platforms.'/>
+        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
+      </properties>
+      <provides size='8'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.web' version='2.0.0.M1'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.web' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.web.context.support' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.web.deployer' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.web.deployer.jetty' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.web.deployer.support' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.web.deployer.tomcat' version='2.0.0.M1'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='30'>
+        <required namespace='java.package' name='javax.servlet' range='2.4.0'/>
+        <required namespace='java.package' name='org.apache.catalina' range='5.5.23' optional='true'/>
+        <required namespace='java.package' name='org.apache.catalina.core' range='5.5.23' optional='true'/>
+        <required namespace='java.package' name='org.apache.catalina.startup' range='5.5.23' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
+        <required namespace='java.package' name='org.apache.jasper' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.jasper.servlet' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.mortbay.jetty' range='6.1.9' optional='true'/>
+        <required namespace='java.package' name='org.mortbay.jetty.handler' range='6.1.9' optional='true'/>
+        <required namespace='java.package' name='org.mortbay.jetty.webapp' range='6.1.9' optional='true'/>
+        <required namespace='java.package' name='org.mortbay.resource' range='6.1.9' optional='true'/>
+        <required namespace='java.package' name='org.mortbay.util' range='6.1.9' optional='true'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.packageadmin' range='1.2.0'/>
+        <required namespace='java.package' name='org.springframework.beans.factory' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.context' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io.support' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.osgi' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.context' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.context.support' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.io' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.service.importer.support' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.osgi.util' range='[2.0.0.M1,2.0.0.M1]'/>
+        <required namespace='java.package' name='org.springframework.ui.context' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.ui.context.support' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.util' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.web.context' range='[3.0.0,4.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.springframework.web.context.support' range='[3.0.0,4.0.0)' optional='true'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.web' version='2.0.0.M1'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Manifest-Version: 1.0&#xA;Build-Jdk: 1.5.0_18&#xA;Bundle-SymbolicName: org.springframework.osgi.web&#xA;Import-Package: javax.servlet;version=&quot;2.4&quot;,org.apache.catalina;version=&quot;5.5.23&quot;;resolution:=&quot;optional&quot;,org.apache.catalina.core;version=&quot;5.5.23&quot;;resolution:=&quot;optional&quot;,org.apache.catalina.startup;version=&quot;5.5.23&quot;;resolution:=&quot;optional&quot;,org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.apache.jasper;resolution:=&quot;optional&quot;,org.apache.jasper.servlet;resolution:=&quot;optional&quot;,org.mortbay.jetty;version=&quot;6.1.9&quot;;resolution:=&quot;optional&quot;,org.mortbay.jetty.handler;version=&quot;6.1.9&quot;;resolution:=&quot;optional&quot;,org.mortbay.jetty.webapp;version=&quot;6.1.9&quot;;resolution:=&quot;optional&quot;,org.mortbay.resource;version=&quot;6.1.9&quot;;resolution:=&quot;optional&quot;,org.mortbay.util;version=&quot;6.1.9&quot;;resolution:=&quot;optional&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.springframework.beans.factory;version=&quot;[3.0.0,4.0)&quot;,org.springframework.beans.factory.config;version=&quot;[3.0.0,4.0)&quot;,org.springframework.context;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.io;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.io.support;version=&quot;[3.0.0,4.0)&quot;,org.springframework.osgi;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.context;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.context.support;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.io;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.service.importer.support;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.osgi.util;version=&quot;[2.0.0.M1,2.0.0.M1]&quot;,org.springframework.ui.context;version=&quot;[3.0.0,4.0)&quot;,org.springframework.ui.context.support;version=&quot;[3.0.0,4.0)&quot;,org.springframework.util;version=&quot;[3.0.0,4.0)&quot;,org.springframework.web.context;version=&quot;[3.0.0,4.0)&quot;;resolution:=&quot;optional&quot;,org.springframework.web.context.support;version=&quot;[3.0.0,4.0)&quot;;resolution:=&quot;optional&quot;&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Implementation-Version: 2.0.0.M1&#xA;Spring-DM-Version: 2.0.0.M1&#xA;Tool: Bundlor 1.0.0.M6&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Description: Spring/OSGi web support. Allows web applications to transparently run on OSGi platforms.&#xA;Unversioned-Imports: *&#xA;Bundle-Version: 2.0.0.M1&#xA;Export-Package: org.springframework.osgi.web.context.support;version=&quot;2.0.0.M1&quot;;uses:=&quot;javax.servlet,org.springframework.beans.factory.config,org.springframework.osgi.context.support,org.springframework.ui.context,org.springframework.web.context&quot;,org.springframework.osgi.web.deployer;version=&quot;2.0.0.M1&quot;;uses:=&quot;javax.servlet,org.osgi.framework,org.springframework.osgi&quot;,org.springframework.osgi.web.deployer.jetty;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.mortbay.jetty.webapp,org.osgi.framework,org.springframework.osgi.web.deployer,org.springframework.osgi.web.deployer.support&quot;,org.springframework.osgi.web.deployer.support;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans.factory,org.springframework.osgi.context,org.springframework.osgi.web.deployer&quot;,org.springframework.osgi.web.deployer.tomcat;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.apache.catalina,org.osgi.framework,org.springframework.osgi.web.deployer,org.springframework.osgi.web.deployer.support&quot;&#xA;Bundle-Name: spring-osgi-web&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Implementation-Vendor: SpringSource&#xA;Bundle-Vendor: SpringSource&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Spring-Version: 3.0.0.RC1&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.springframework.osgi.io' version='2.0.0.M1' singleton='false'>
+      <update id='org.springframework.osgi.io' range='[0.0.0,2.0.0.M1)' severity='0'/>
       <properties size='4'>
         <property name='org.eclipse.equinox.p2.name' value='spring-osgi-io'/>
         <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi IO abstract classes. Provides Resource, ResourceLoader and ResourcePatternResolver for OSGi environments.'/>
@@ -1430,27 +1618,27 @@
         <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
       </properties>
       <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.io' version='1.2.1'/>
-        <provided namespace='osgi.bundle' name='org.springframework.osgi.io' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.io' version='1.2.1'/>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.io' version='2.0.0.M1'/>
+        <provided namespace='osgi.bundle' name='org.springframework.osgi.io' version='2.0.0.M1'/>
+        <provided namespace='java.package' name='org.springframework.osgi.io' version='2.0.0.M1'/>
         <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
       </provides>
       <requires size='6'>
         <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
         <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
         <required namespace='java.package' name='org.osgi.service.packageadmin' range='1.2.0'/>
-        <required namespace='java.package' name='org.springframework.core.io' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core.io.support' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.util' range='[2.5.6,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.core.io.support' range='[3.0.0,4.0.0)'/>
+        <required namespace='java.package' name='org.springframework.util' range='[3.0.0,4.0.0)'/>
       </requires>
       <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.springframework.osgi.io' version='1.2.1'/>
+        <artifact classifier='osgi.bundle' id='org.springframework.osgi.io' version='2.0.0.M1'/>
       </artifacts>
       <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Implementation-Version: 1.2.1&#xA;Import-Package: org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.springframework.core.io;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.io.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.util;version=&quot;[2.5.6,4.0)&quot;&#xA;Spring-DM-Version: 1.2.1&#xA;Built-By: costin&#xA;Bundle-Description: Spring/OSGi IO abstract classes. Provides Resource, ResourceLoader and ResourcePatternResolver for OSGi environments.&#xA;Spring-Version: 2.5.6.SEC01&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Vendor: SpringSource&#xA;Export-Package: org.springframework.osgi.io;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.core.io,org.springframework.core.io.support,org.springframework.osgi.io.internal.resolver&quot;&#xA;Bundle-Name: spring-osgi-io&#xA;Bundle-Version: 1.2.1&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Bundle-Classpath: .&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Vendor: SpringSource&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Bundle-SymbolicName: org.springframework.osgi.io&#xA;Build-Jdk: 1.5.0_22&#xA;Unversioned-Imports: &#xA;
+            Implementation-Version: 2.0.0.M1&#xA;Import-Package: org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.springframework.core.io;version=&quot;[3.0.0,4.0)&quot;,org.springframework.core.io.support;version=&quot;[3.0.0,4.0)&quot;,org.springframework.util;version=&quot;[3.0.0,4.0)&quot;&#xA;Spring-DM-Version: 2.0.0.M1&#xA;Built-By: costin&#xA;Bundle-Description: Spring/OSGi IO abstract classes. Provides Resource, ResourceLoader and ResourcePatternResolver for OSGi environments.&#xA;Spring-Version: 3.0.0.RC1&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Vendor: SpringSource&#xA;Export-Package: org.springframework.osgi.io;version=&quot;2.0.0.M1&quot;;uses:=&quot;org.osgi.framework,org.springframework.core.io,org.springframework.core.io.support,org.springframework.osgi.io.internal.resolver&quot;&#xA;Bundle-Name: spring-osgi-io&#xA;Bundle-Version: 2.0.0.M1&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Vendor: SpringSource&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Tool: Bundlor 1.0.0.M6&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Bundle-SymbolicName: org.springframework.osgi.io&#xA;Build-Jdk: 1.5.0_18&#xA;Unversioned-Imports: *&#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -1482,49 +1670,6 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Manifest-Version: 1.0&#xA;Implementation-Title: Jakarta Commons Logging&#xA;Implementation-Vendor: Apache Software Foundation&#xA;Created-By: Apache Maven&#xA;Implementation-Version: 1.1.1&#xA;Built-By: dlg01&#xA;X-Compile-Target-JDK: 1.2&#xA;Bundle-Vendor: SpringSource&#xA;Import-Package: javax.servlet;version=&quot;[2.1.0, 3.0.0)&quot;;resolution:=optional,org.apache.avalon.framework.logger;version=&quot;[4.1.3, 4.1.3]&quot;;resolution:=optional,org.apache.log;version=&quot;[1.0.1, 1.0.1]&quot;;resolution:=optional,org.apache.log4j;version=&quot;[1.2.15, 2.0.0)&quot;;resolution:=optional&#xA;Specification-Version: 1.0&#xA;Specification-Title: Jakarta Commons Logging&#xA;Archiver-Version: Plexus Archiver&#xA;Bundle-Name: Apache Commons Logging&#xA;Implementation-Vendor-Id: org.apache&#xA;Export-Package: org.apache.commons.logging;version=&quot;1.1.1&quot;,org.apache.commons.logging.impl;version=&quot;1.1.1&quot;;uses:=&quot;javax.servlet,org.apache.avalon.framework.logger,org.apache.commons.logging,org.apache.log,org.apache.log4j&quot;&#xA;Bundle-Version: 1.1.1&#xA;X-Compile-Source-JDK: 1.2&#xA;Bundle-ManifestVersion: 2&#xA;Extension-Name: org.apache.commons.logging&#xA;Specification-Vendor: Apache Software Foundation&#xA;Build-Jdk: 1.4.2_16&#xA;Bundle-SymbolicName: com.springsource.org.apache.commons.logging&#xA;Bundle-Classpath: .&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.springframework.osgi.web.extender' version='1.2.1' singleton='false'>
-      <update id='org.springframework.osgi.web.extender' range='[0.0.0,1.2.1)' severity='0'/>
-      <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-web-extender'/>
-        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi web extender. Detects war bundles and deploys them into the configured web container.'/>
-        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
-        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
-      </properties>
-      <provides size='3'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.web.extender' version='1.2.1'/>
-        <provided namespace='osgi.bundle' name='org.springframework.osgi.web.extender' version='1.2.1'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='16'>
-        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.service.packageadmin' range='1.2.0'/>
-        <required namespace='java.package' name='org.springframework.beans.factory' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core.task' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.osgi' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.context' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.context.support' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.util' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.web.deployer' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.web.deployer.jetty' range='[1.2.1,1.2.1]' optional='true'/>
-        <required namespace='java.package' name='org.springframework.osgi.web.deployer.support' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.web.deployer.tomcat' range='[1.2.1,1.2.1]' optional='true'/>
-        <required namespace='java.package' name='org.springframework.scheduling.timer' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.util' range='[2.5.6,4.0.0)'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.springframework.osgi.web.extender' version='1.2.1'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Implementation-Version: 1.2.1&#xA;Import-Package: org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.springframework.beans.factory;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.task;version=&quot;[2.5.6,4.0)&quot;,org.springframework.osgi;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.context;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.context.support;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.util;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.web.deployer;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.web.deployer.jetty;version=&quot;[1.2.1,1.2.1]&quot;;resolution:=optional,org.springframework.osgi.web.deployer.support;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.web.deployer.tomcat;version=&quot;[1.2.1,1.2.1]&quot;;resolution:=optional,org.springframework.scheduling.timer;version=&quot;[2.5.6,4.0)&quot;,org.springframework.util;version=&quot;[2.5.6,4.0)&quot;&#xA;Spring-DM-Version: 1.2.1&#xA;Built-By: costin&#xA;Bundle-Description: Spring/OSGi web extender. Detects war bundles and deploys them into the configured web container.&#xA;Spring-Version: 2.5.6.SEC01&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Vendor: SpringSource&#xA;Bundle-Name: spring-osgi-web-extender&#xA;Bundle-Version: 1.2.1&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Bundle-Classpath: .&#xA;Manifest-Version: 1.0&#xA;Bundle-Activator: org.springframework.osgi.web.extender.internal.activator.WarLoaderListener&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Vendor: SpringSource&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Bundle-SymbolicName: org.springframework.osgi.web.extender&#xA;Build-Jdk: 1.5.0_22&#xA;Unversioned-Imports: &#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -1908,68 +2053,6 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-ManifestVersion: 2&#xA;Specification-Version: 1.1&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Export-Package: org.apache.taglibs.standard.tag.common.core;uses:=&quot;javax.servlet.http,org.apache.taglibs.standard.resources,javax.servlet.jsp.tagext,javax.servlet.jsp.el,javax.servlet.jsp,javax.servlet.jsp.jstl.core,javax.servlet&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.sql;uses:=&quot;org.apache.taglibs.standard.tag.common.sql,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.xml;uses:=&quot;org.apache.taglibs.standard.tag.common.core,org.xml.sax,org.apache.taglibs.standard.tag.common.xml,javax.servlet.jsp.tagext,org.apache.taglibs.standard.tag.el.core,javax.servlet.jsp,javax.xml.transform&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl;uses:=&quot;javax.servlet.http,javax.servlet.jsp.tagext,org.apache.taglibs.standard.lang.jstl.parser,javax.servlet.jsp,javax.servlet,org.apache.taglibs.standard.lang.support&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.functions;uses:=&quot;org.apache.taglibs.standard.tag.common.core,org.apache.taglibs.standard.resources,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.extra.spath;uses:=&quot;org.apache.xalan.serialize,org.xml.sax,javax.servlet.jsp.tagext,org.xml.sax.helpers,javax.servlet.jsp,org.apache.xalan.templates&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.tlv;uses:=&quot;org.xml.sax,javax.servlet.jsp.tagext,javax.xml.parsers,org.xml.sax.helpers&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.test.beans;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.core;uses:=&quot;javax.servlet.jsp.jstl.core,org.apache.taglibs.standard.tag.common.core,javax.servlet.jsp.tagext,org.apache.taglibs.standard.lang.support,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.fmt;uses:=&quot;javax.servlet.http,org.apache.taglibs.standard.tag.common.core,javax.servlet.jsp.jstl.fmt,org.apache.taglibs.standard.resources,javax.servlet.jsp.tagext,javax.servlet.jsp,javax.servlet.jsp.jstl.core,javax.servlet&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.sql;uses:=&quot;javax.servlet.jsp.tagext,org.apache.taglibs.standard.lang.support,org.apache.taglibs.standard.tag.common.sql,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.test;uses:=&quot;javax.servlet.http,javax.servlet,org.apache.taglibs.standard.lang.jstl.test.beans,javax.servlet.jsp.tagext,javax.servlet.jsp.el,org.apache.taglibs.standard.lang.jstl,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.resources;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.fmt;uses:=&quot;org.apache.taglibs.standard.tag.common.fmt,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.parser;uses:=&quot;org.apache.taglibs.standard.lang.jstl&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.xml;uses:=&quot;org.xml.sax,org.apache.taglibs.standard.tag.common.xml,javax.servlet.jsp,javax.xml.transform&quot;;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.core;uses:=&quot;javax.servlet.http,javax.servlet,javax.servlet.jsp.tagext,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.fmt;uses:=&quot;javax.servlet.jsp.jstl.fmt,org.apache.taglibs.standard.tag.common.fmt,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.xml;uses:=&quot;javax.servlet.http,org.apache.taglibs.standard.tag.common.core,org.xml.sax,org.apache.taglibs.standard.resources,javax.servlet.jsp.tagext,org.w3c.dom,javax.servlet.jsp,javax.xml.transform,javax.xml.transform.dom,org.apache.xml.utils,org.w3c.dom.traversal,javax.xml.transform.sax,javax.servlet.jsp.jstl.core,javax.servlet,org.xml.sax.helpers,javax.xml.parsers,org.apache.xpath.objects,org.apache.xpath,javax.xml.transform.stream&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.core;uses:=&quot;javax.servlet.jsp.jstl.core,org.apache.taglibs.standard.tag.common.core,javax.servlet.jsp.tagext,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.support;uses:=&quot;javax.servlet.jsp.tagext,org.apache.taglibs.standard.lang.jstl,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.sql;uses:=&quot;org.apache.taglibs.standard.tag.common.core,org.apache.taglibs.standard.resources,javax.servlet.jsp.tagext,javax.servlet.jsp,javax.sql,javax.servlet.jsp.jstl.core,javax.naming,javax.servlet,javax.servlet.jsp.jstl.sql&quot;;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.sql;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tlv;uses:=&quot;org.xml.sax,org.apache.taglibs.standard.resources,javax.servlet.jsp.tagext,javax.xml.parsers,org.xml.sax.helpers,org.apache.taglibs.standard.lang.support,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.fmt;uses:=&quot;javax.servlet.jsp.jstl.fmt,javax.servlet.jsp.tagext,org.apache.taglibs.standard.lang.support,org.apache.taglibs.standard.tag.common.fmt,javax.servlet.jsp&quot;;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tei;uses:=&quot;javax.servlet.jsp.tagext&quot;;version=&quot;1.1.2&quot;&#xA;Private-Package: java_cup.runtime,org.apache.xalan,org.apache.xalan.client,org.apache.xalan.extensions,org.apache.xalan.lib,org.apache.xalan.lib.sql,org.apache.xalan.processor,org.apache.xalan.res,org.apache.xalan.serialize,org.apache.xalan.templates,org.apache.xalan.trace,org.apache.xalan.transformer,org.apache.xalan.xslt,org.apache.xalan.xsltc,org.apache.xalan.xsltc.cmdline,org.apache.xalan.xsltc.cmdline.getopt,org.apache.xalan.xsltc.compiler,org.apache.xalan.xsltc.compiler.util,org.apache.xalan.xsltc.dom,org.apache.xalan.xsltc.runtime,org.apache.xalan.xsltc.runtime.output,org.apache.xalan.xsltc.trax,org.apache.xalan.xsltc.util,org.apache.xml.dtm,org.apache.xml.dtm.ref,org.apache.xml.dtm.ref.dom2dtm,org.apache.xml.dtm.ref.sax2dtm,org.apache.xml.res,org.apache.xml.serializer,org.apache.xml.serializer.utils,org.apache.xml.utils,org.apache.xml.utils.res,org.apache.xpath,org.apache.xpath.axes,org.apache.xpath.compiler,org.apache.xpath.domapi,org.apache.xpath.functions,org.apache.xpath.jaxp,org.apache.xpath.objects,org.apache.xpath.operations,org.apache.xpath.patterns,org.apache.xpath.res&#xA;Extension-Name: javax.servlet.jsp.jstl&#xA;Bundle-Name: jstl.osgi&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bnd-LastModified: 1223002606211&#xA;Bundle-Description: JSTL 1.1.x (OSGi version)&#xA;Embed-Dependency: *;scope=provided;type=!pom;inline=true&#xA;Import-Package: javax.naming;resolution:=optional,javax.servlet;resolution:=optional,javax.servlet.http;resolution:=optional,javax.servlet.jsp;resolution:=optional,javax.servlet.jsp.el;resolution:=optional,javax.servlet.jsp.jstl.core;resolution:=optional;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.fmt;resolution:=optional;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.sql;resolution:=optional;version=&quot;1.1.2&quot;,javax.servlet.jsp.jstl.tlv;resolution:=optional;version=&quot;1.1.2&quot;,javax.servlet.jsp.tagext;resolution:=optional,javax.sql;resolution:=optional,javax.xml.namespace;resolution:=optional,javax.xml.parsers;resolution:=optional,javax.xml.transform;resolution:=optional,javax.xml.transform.dom;resolution:=optional,javax.xml.transform.sax;resolution:=optional,javax.xml.transform.stream;resolution:=optional,javax.xml.xpath;resolution:=optional,org.apache.bcel.classfile;resolution:=optional,org.apache.bcel.generic;resolution:=optional,org.apache.bcel.util;resolution:=optional,org.apache.taglibs.standard;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.extra.spath;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.functions;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.parser;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.test;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.jstl.test.beans;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.lang.support;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.resources;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.core;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.fmt;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.sql;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.common.xml;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.core;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.fmt;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.sql;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.el.xml;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.core;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.fmt;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.sql;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tag.rt.xml;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tei;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.taglibs.standard.tlv;resolution:=optional;version=&quot;1.1.2&quot;,org.apache.xerces.parsers;resolution:=optional,org.apache.xml.serialize;resolution:=optional,org.w3c.dom;resolution:=optional,org.w3c.dom.events;resolution:=optional,org.w3c.dom.traversal;resolution:=optional,org.w3c.dom.xpath;resolution:=optional,org.xml.sax;resolution:=optional,org.xml.sax.ext;resolution:=optional,org.xml.sax.helpers;resolution:=optional&#xA;Created-By: Apache Maven Bundle Plugin&#xA;Manifest-Version: 1.0&#xA;Tool: Bnd-0.0.227&#xA;Built-By: bamboo&#xA;Build-Jdk: 1.5.0_13&#xA;Specification-Title: JavaServer Pages Standard Tag Library (JSTL)&#xA;Bundle-Version: 1.1.2.SNAPSHOT&#xA;Implementation-Version: 1.1.2&#xA;Originally-Created-By: 1.4.2-38 (&quot;Apple Computer, Inc.&quot;)&#xA;Bundle-SymbolicName: org.springframework.osgi.jstl.osgi&#xA;Implementation-Vendor: Spring Dynamic Modules Framework&#xA;Ant-Version: Apache Ant 1.6.1&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.springframework.osgi.web' version='1.2.1' singleton='false'>
-      <update id='org.springframework.osgi.web' range='[0.0.0,1.2.1)' severity='0'/>
-      <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='spring-osgi-web'/>
-        <property name='org.eclipse.equinox.p2.description' value='Spring/OSGi web support. Allows web applications to transparently run on OSGi platforms.'/>
-        <property name='org.eclipse.equinox.p2.provider' value='SpringSource'/>
-        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.springframework.org/osgi'/>
-      </properties>
-      <provides size='8'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.springframework.osgi.web' version='1.2.1'/>
-        <provided namespace='osgi.bundle' name='org.springframework.osgi.web' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.web.context.support' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.web.deployer' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.web.deployer.jetty' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.web.deployer.support' version='1.2.1'/>
-        <provided namespace='java.package' name='org.springframework.osgi.web.deployer.tomcat' version='1.2.1'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='30'>
-        <required namespace='java.package' name='javax.servlet' range='2.4.0'/>
-        <required namespace='java.package' name='org.apache.catalina' range='5.5.23' optional='true'/>
-        <required namespace='java.package' name='org.apache.catalina.core' range='5.5.23' optional='true'/>
-        <required namespace='java.package' name='org.apache.catalina.startup' range='5.5.23' optional='true'/>
-        <required namespace='java.package' name='org.apache.commons.logging' range='[1.0.0,2.0.0)'/>
-        <required namespace='java.package' name='org.apache.jasper' range='0.0.0' optional='true'/>
-        <required namespace='java.package' name='org.apache.jasper.servlet' range='0.0.0' optional='true'/>
-        <required namespace='java.package' name='org.mortbay.jetty' range='6.1.9' optional='true'/>
-        <required namespace='java.package' name='org.mortbay.jetty.handler' range='6.1.9' optional='true'/>
-        <required namespace='java.package' name='org.mortbay.jetty.webapp' range='6.1.9' optional='true'/>
-        <required namespace='java.package' name='org.mortbay.resource' range='6.1.9' optional='true'/>
-        <required namespace='java.package' name='org.mortbay.util' range='6.1.9' optional='true'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.service.packageadmin' range='1.2.0'/>
-        <required namespace='java.package' name='org.springframework.beans.factory' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.beans.factory.config' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.context' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core.io' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.core.io.support' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.osgi' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.context' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.context.support' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.io' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.service.importer.support' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.osgi.util' range='[1.2.1,1.2.1]'/>
-        <required namespace='java.package' name='org.springframework.ui.context' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.ui.context.support' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.util' range='[2.5.6,4.0.0)'/>
-        <required namespace='java.package' name='org.springframework.web.context' range='[2.5.6,4.0.0)' optional='true'/>
-        <required namespace='java.package' name='org.springframework.web.context.support' range='[2.5.6,4.0.0)' optional='true'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.springframework.osgi.web' version='1.2.1'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Implementation-Version: 1.2.1&#xA;Import-Package: javax.servlet;version=&quot;2.4&quot;,org.apache.catalina;version=&quot;5.5.23&quot;;resolution:=optional,org.apache.catalina.core;version=&quot;5.5.23&quot;;resolution:=optional,org.apache.catalina.startup;version=&quot;5.5.23&quot;;resolution:=optional,org.apache.commons.logging;version=&quot;[1.0,2.0)&quot;,org.apache.jasper;resolution:=optional,org.apache.jasper.servlet;resolution:=optional,org.mortbay.jetty;version=&quot;6.1.9&quot;;resolution:=optional,org.mortbay.jetty.handler;version=&quot;6.1.9&quot;;resolution:=optional,org.mortbay.jetty.webapp;version=&quot;6.1.9&quot;;resolution:=optional,org.mortbay.resource;version=&quot;6.1.9&quot;;resolution:=optional,org.mortbay.util;version=&quot;6.1.9&quot;;resolution:=optional,org.osgi.framework;version=&quot;1.3&quot;,org.osgi.service.packageadmin;version=&quot;1.2&quot;,org.springframework.beans.factory;version=&quot;[2.5.6,4.0)&quot;,org.springframework.beans.factory.config;version=&quot;[2.5.6,4.0)&quot;,org.springframework.context;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.io;version=&quot;[2.5.6,4.0)&quot;,org.springframework.core.io.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.osgi;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.context;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.context.support;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.io;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.service.importer.support;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.osgi.util;version=&quot;[1.2.1,1.2.1]&quot;,org.springframework.ui.context;version=&quot;[2.5.6,4.0)&quot;,org.springframework.ui.context.support;version=&quot;[2.5.6,4.0)&quot;,org.springframework.util;version=&quot;[2.5.6,4.0)&quot;,org.springframework.web.context;version=&quot;[2.5.6,4.0)&quot;;resolution:=optional,org.springframework.web.context.support;version=&quot;[2.5.6,4.0)&quot;;resolution:=optional&#xA;Spring-DM-Version: 1.2.1&#xA;Built-By: costin&#xA;Bundle-Description: Spring/OSGi web support. Allows web applications to transparently run on OSGi platforms.&#xA;Spring-Version: 2.5.6.SEC01&#xA;Implementation-Vendor-Id: org.springframework.osgi&#xA;Bundle-Vendor: SpringSource&#xA;Export-Package: org.springframework.osgi.web.context.support;version=&quot;1.2.1&quot;;uses:=&quot;javax.servlet,org.springframework.beans.factory.config,org.springframework.osgi.context.support,org.springframework.ui.context,org.springframework.web.context&quot;,org.springframework.osgi.web.deployer;version=&quot;1.2.1&quot;;uses:=&quot;javax.servlet,org.osgi.framework,org.springframework.osgi&quot;,org.springframework.osgi.web.deployer.jetty;version=&quot;1.2.1&quot;;uses:=&quot;org.mortbay.jetty.webapp,org.osgi.framework,org.springframework.osgi.web.deployer,org.springframework.osgi.web.deployer.support&quot;,org.springframework.osgi.web.deployer.support;version=&quot;1.2.1&quot;;uses:=&quot;org.osgi.framework,org.springframework.beans.factory,org.springframework.osgi.context,org.springframework.osgi.web.deployer&quot;,org.springframework.osgi.web.deployer.tomcat;version=&quot;1.2.1&quot;;uses:=&quot;org.apache.catalina,org.osgi.framework,org.springframework.osgi.web.deployer,org.springframework.osgi.web.deployer.support&quot;&#xA;Bundle-Name: spring-osgi-web&#xA;Bundle-Version: 1.2.1&#xA;Bundle-DocURL: http://www.springframework.org/osgi&#xA;Bundle-Classpath: .&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Vendor: SpringSource&#xA;Implementation-Title: Spring Dynamic Modules Framework&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0&#xA;Bundle-SymbolicName: org.springframework.osgi.web&#xA;Build-Jdk: 1.5.0_22&#xA;Unversioned-Imports: &#xA;
           </instruction>
         </instructions>
       </touchpointData>
