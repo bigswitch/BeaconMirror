@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: net.beaconcontroller.storage.tests
+Bundle-SymbolicName: net.beaconcontroller.storage.tests
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: net.beaconcontroller
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: net.beaconcontroller.storage,
+ net.beaconcontroller.test,
+ org.junit;version="4.8.1"
+Export-Package: net.beaconcontroller.storage.tests
