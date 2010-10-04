@@ -7,6 +7,7 @@
     </head>
     <body>
         <h1><%="Welcome to Beacon!"%></h1>
+        <a href="bundles.do">Bundle List</a><br>
         Switches:<br>
         <table cellpadding="0" cellspacing="0">
             <tr>
@@ -39,5 +40,6 @@
                     </td>
                 </tr>
             </c:forEach>
+        </table>
     </body>
 </html>
