@@ -9,7 +9,7 @@
   <properties>
     <beacon.version>0.1.0-SNAPSHOT</beacon.version>
     <openflow.version>0.1.0</openflow.version>
-    <tycho.version>0.9.0</tycho.version>
+    <tycho.version>0.10.0</tycho.version>
   </properties>
   <modules>
     <module>../target-platform</module>
