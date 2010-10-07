@@ -19,7 +19,8 @@
     </encoder>
   </appender>
 
-  <root level="debug">
+  <root level="error">
     <appender-ref ref="STDOUT" />
   </root>
+  <logger name="net.beaconcontroller" level="DEBUG"/>
 </configuration>
