@@ -3,7 +3,6 @@
 
 <product name="Beacon Controller" uid="net.beaconcontroller" version="0.1.0" useFeatures="false" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -20,7 +19,6 @@
 
    <windowImages/>
 
-
    <launcher name="beacon">
       <solaris/>
       <win useIco="false">
@@ -28,10 +26,8 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="ch.qos.logback.classic"/>
@@ -58,9 +54,9 @@
       <plugin id="org.eclipse.equinox.util"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
-      <plugin id="org.mortbay.jetty.jsp-api-2.1"/>
-      <plugin id="org.mortbay.jetty.server"/>
-      <plugin id="org.mortbay.jetty.util"/>
+      <plugin id="org.mortbay.jetty.jsp-api-2.1" version="2.1.0"/>
+      <plugin id="org.mortbay.jetty.server" version="6.1.25"/>
+      <plugin id="org.mortbay.jetty.util" version="6.1.25"/>
       <plugin id="org.openflow"/>
       <plugin id="org.springframework.aop"/>
       <plugin id="org.springframework.asm"/>
