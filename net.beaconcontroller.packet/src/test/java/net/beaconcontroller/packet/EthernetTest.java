@@ -3,15 +3,18 @@
  */
 package net.beaconcontroller.packet;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @author David Erickson (derickso@stanford.edu)
  *
  */
-public class EthernetTest extends TestCase {
+public class EthernetTest {
+    @Test
     public void testToMACAddress() {
         byte[] address = new byte[] { 0x0, 0x11, 0x22, (byte) 0xff,
                 (byte) 0xee, (byte) 0xdd};
@@ -21,6 +24,7 @@ public class EthernetTest extends TestCase {
                 .toMACAddress("00:11:22:FF:EE:DD")));
     }
 
+    @Test
     public void testSerialize() {
         Ethernet ethernet = new Ethernet()
             .setDestinationMACAddress("de:ad:be:ef:de:ad")

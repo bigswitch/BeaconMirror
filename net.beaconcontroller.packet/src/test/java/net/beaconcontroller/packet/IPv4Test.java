@@ -3,20 +3,25 @@
  */
 package net.beaconcontroller.packet;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @author David Erickson (derickso@stanford.edu)
  *
  */
-public class IPv4Test extends TestCase {
+public class IPv4Test {
+    @Test
     public void testToIPv4Address() {
         int expected = 0xc0a80001;
         assertEquals(expected, IPv4.toIPv4Address("192.168.0.1"));
     }
 
+    @Test
     public void testSerialize() {
         byte[] expected = new byte[] { 0x45, 0x00, 0x00, 0x14, 0x5e, 0x4e,
                 0x00, 0x00, 0x3f, 0x06, 0x31, 0x2e, (byte) 0xac, 0x18,

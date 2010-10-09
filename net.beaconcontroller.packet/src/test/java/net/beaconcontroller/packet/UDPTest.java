@@ -3,16 +3,19 @@
  */
 package net.beaconcontroller.packet;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @author David Erickson (derickso@stanford.edu)
  *
  */
-public class UDPTest extends TestCase {
+public class UDPTest {
 
+    @Test
     public void testSerialize() {
         byte[] expected = new byte[] { 0x45, 0x00, 0x00, 0x1d, 0x56, 0x23,
                 0x00, 0x00, (byte) 0x80, 0x11, 0x48, 0x7f, (byte) 0xc0,

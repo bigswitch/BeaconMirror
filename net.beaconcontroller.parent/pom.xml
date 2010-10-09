@@ -8,7 +8,9 @@
   <packaging>pom</packaging>
   <properties>
     <beacon.version>0.1.0-SNAPSHOT</beacon.version>
+    <compiler.version>2.3.2</compiler.version>
     <openflow.version>0.1.0</openflow.version>
+    <surefire.version>2.6</surefire.version>
     <tycho.version>0.10.0</tycho.version>
   </properties>
   <modules>
