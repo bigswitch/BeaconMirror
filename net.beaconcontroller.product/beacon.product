@@ -3,6 +3,7 @@
 
 <product name="Beacon Controller" uid="net.beaconcontroller" version="0.1.0" useFeatures="false" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -25,6 +26,7 @@
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
@@ -49,10 +51,10 @@
       <plugin id="net.beaconcontroller.topology"/>
       <plugin id="net.beaconcontroller.web"/>
       <plugin id="org.apache.ant"/>
-      <plugin id="org.eclipse.equinox.ds"/>
+      <plugin id="org.eclipse.equinox.ds" version="1.2.0.v20100507"/>
       <plugin id="org.eclipse.equinox.log"/>
       <plugin id="org.eclipse.equinox.util"/>
-      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.osgi" version="3.6.0.v20100517"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.mortbay.jetty.jsp-api-2.1" version="2.1.0"/>
       <plugin id="org.mortbay.jetty.server" version="6.1.25"/>
