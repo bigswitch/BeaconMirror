@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFMessageListener.Command;
 import net.beaconcontroller.test.BeaconTestCase;
 
+import org.junit.Test;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
@@ -33,6 +35,7 @@ public class ControllerTest extends BeaconTestCase {
      * Verify that our callbacks are ordered with respect to the order specified
      * @throws Exception
      */
+    @Test
     public void testCallbackOrderingBase() throws Exception {
         testCallbackOrdering(new String[] {"2"}, new String[] {"2"});
         testCallbackOrdering(new String[] {"3"}, new String[] {"3"});
@@ -91,6 +94,7 @@ public class ControllerTest extends BeaconTestCase {
      * execution, and verify that the Commands STOP and CONTINUE are honored.
      * @throws Exception
      */
+    @Test
     public void testHandleMessages() throws Exception {
         Controller controller = getController();
         controller.getMessageListeners().remove(OFType.PACKET_IN);
@@ -103,7 +107,7 @@ public class ControllerTest extends BeaconTestCase {
         OFPacketIn pi = new OFPacketIn();
         IOFMessageListener test1 = createMock(IOFMessageListener.class);
         expect(test1.getName()).andReturn("test1").anyTimes();
-        expect(test1.receive(sw, pi)).andThrow(new RuntimeException());
+        expect(test1.receive(sw, pi)).andThrow(new RuntimeException("Catch me!"));
         IOFMessageListener test2 = createMock(IOFMessageListener.class);
         expect(test2.getName()).andReturn("test2").anyTimes();
         expect(test2.receive(sw, pi)).andReturn(Command.CONTINUE);

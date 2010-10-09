@@ -26,6 +26,8 @@ import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
 import net.beaconcontroller.test.BeaconTestCase;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
@@ -46,8 +48,8 @@ public class AllPairsShortestPathRoutingTest extends BeaconTestCase {
     protected IPacket testPacket;
     protected byte[] testPacketSerialized;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // Build our test packet
@@ -83,6 +85,7 @@ public class AllPairsShortestPathRoutingTest extends BeaconTestCase {
         return (AllPairsShortestPathRouting) getApplicationContext().getBean("routing");
     }
 
+    @Test
     public void testRouting() throws Exception {
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();
         AllPairsShortestPathRouting routing = getRouting();

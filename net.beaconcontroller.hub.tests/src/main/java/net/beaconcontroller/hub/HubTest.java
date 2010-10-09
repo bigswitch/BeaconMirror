@@ -18,12 +18,14 @@ import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.packet.UDP;
 import net.beaconcontroller.test.BeaconTestCase;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFPacketIn;
+import org.openflow.protocol.OFPacketIn.OFPacketInReason;
 import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
-import org.openflow.protocol.OFPacketIn.OFPacketInReason;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.protocol.factory.BasicFactory;
@@ -37,8 +39,8 @@ public class HubTest extends BeaconTestCase {
     protected IPacket testPacket;
     protected byte[] testPacketSerialized;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // Build our test packet
@@ -70,6 +72,7 @@ public class HubTest extends BeaconTestCase {
         return (MockBeaconProvider) getApplicationContext().getBean("mockBeaconProvider");
     }
 
+    @Test
     public void testFloodNoBufferId() throws Exception {
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();
 
@@ -103,6 +106,7 @@ public class HubTest extends BeaconTestCase {
         verify(mockSwitch, mockStream, mockInStream);
     }
 
+    @Test
     public void testFloodBufferId() throws Exception {
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();
         this.packetIn.setBufferId(10);

@@ -4,7 +4,7 @@ Bundle-Name: Beacon Test Library
 Bundle-SymbolicName: net.beaconcontroller.test
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: junit.framework;version="[3.8.2,4.0.0)",
+Import-Package: org.junit;version="[4.8.1,5.0.0)",
  org.openflow.protocol,
  org.springframework.asm;version="3.0.0",
  org.springframework.beans;version="3.0.0",

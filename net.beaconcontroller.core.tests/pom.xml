@@ -21,12 +21,18 @@
         <version>${tycho.version}</version>
         <configuration>
           <useUIHarness>false</useUIHarness>
-          <showEclipseLog>true</showEclipseLog>
+          <showEclipseLog>false</showEclipseLog>
           <!-- <debugPort>8000</debugPort> -->
           <bundleStartLevel>
             <!-- Start the core, we depend on it to register -->
             <bundle>
               <id>net.beaconcontroller.core</id>
+              <level>4</level>
+              <autoStart>true</autoStart>
+            </bundle>
+            <!-- Beans is required for PropertyOverrideConfigurer -->
+            <bundle>
+              <id>org.springframework.beans</id>
               <level>4</level>
               <autoStart>true</autoStart>
             </bundle>
@@ -48,7 +54,8 @@
             </bundle>
           </bundleStartLevel>
           <dependencies>
-            <!-- Enable to view logging
+            <!-- Enable to view logging -->
+            <!--
             <dependency>
               <artifactId>jcl.over.slf4j</artifactId>
               <version>1.5.11</version>
@@ -66,24 +73,23 @@
               <version>0.1.0</version>
               <type>eclipse-plugin</type>
             </dependency>
-             -->
+            -->
             <!-- No explicit dependencies on Spring DM so must list here -->
             <dependency>
-              <groupId></groupId>
               <artifactId>org.springframework.osgi.core</artifactId>
-              <version>1.2.1</version>
+              <version>2.0.0.M1</version>
               <type>eclipse-plugin</type>
             </dependency>
             <dependency>
               <groupId></groupId>
               <artifactId>org.springframework.osgi.extender</artifactId>
-              <version>1.2.1</version>
+              <version>2.0.0.M1</version>
               <type>eclipse-plugin</type>
             </dependency>
             <dependency>
               <groupId></groupId>
               <artifactId>org.springframework.osgi.io</artifactId>
-              <version>1.2.1</version>
+              <version>2.0.0.M1</version>
               <type>eclipse-plugin</type>
             </dependency>
           </dependencies>

@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
@@ -18,6 +19,8 @@ import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.packet.UDP;
 import net.beaconcontroller.test.BeaconTestCase;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
@@ -41,8 +44,8 @@ public class LearningSwitchTest extends BeaconTestCase {
     protected IPacket testPacket;
     protected byte[] testPacketSerialized;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // Build our test packet
@@ -81,6 +84,7 @@ public class LearningSwitchTest extends BeaconTestCase {
         return (MockBeaconProvider) getApplicationContext().getBean("mockBeaconProvider");
     }
 
+    @Test
     public void testFlood() throws Exception {
         LearningSwitch learningSwitch = getLearningSwitch();
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();
@@ -117,6 +121,7 @@ public class LearningSwitchTest extends BeaconTestCase {
                 .shortValue());
     }
 
+    @Test
     public void testFlowMod() throws Exception {
         LearningSwitch learningSwitch = getLearningSwitch();
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();

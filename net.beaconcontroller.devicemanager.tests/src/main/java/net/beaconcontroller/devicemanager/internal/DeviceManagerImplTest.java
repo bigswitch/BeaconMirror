@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
@@ -20,6 +21,8 @@ import net.beaconcontroller.test.BeaconTestCase;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.IdPortTuple;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPacketIn.OFPacketInReason;
 
@@ -32,8 +35,8 @@ public class DeviceManagerImplTest extends BeaconTestCase {
     protected IPacket testPacket;
     protected byte[] testPacketSerialized;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // Build our test packet
@@ -69,6 +72,7 @@ public class DeviceManagerImplTest extends BeaconTestCase {
         return (MockBeaconProvider) getApplicationContext().getBean("mockBeaconProvider");
     }
 
+    @Test
     public void testDeviceDiscover() throws Exception {
         DeviceManagerImpl deviceManager = getDeviceManager();
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();

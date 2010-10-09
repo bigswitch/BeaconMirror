@@ -6,10 +6,10 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: net.beaconcontroller
 Fragment-Host: net.beaconcontroller.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: junit.framework,
- net.beaconcontroller.core,
+Import-Package: net.beaconcontroller.core,
  net.beaconcontroller.test,
  org.easymock;version="2.5.2",
+ org.junit;version="4.8.1",
  org.springframework.asm;version="3.0.0",
  org.springframework.beans;version="3.0.0",
  org.springframework.beans.factory;version="3.0.0",

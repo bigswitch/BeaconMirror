@@ -1,15 +1,13 @@
 package net.beaconcontroller.test;
 
+import org.junit.Before;
 import org.springframework.context.ApplicationContext;
 
-import junit.framework.TestCase;
-
-public class BeaconTestCase extends TestCase {
+public class BeaconTestCase {
     protected ApplicationContext applicationContext;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         this.applicationContext =
             OsgiApplicationContextHolder.getApplicationContext(true);
     }
