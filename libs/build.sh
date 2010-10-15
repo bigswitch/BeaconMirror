@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 # You must have exported ECLIPSE_HOME for this to work, ie:
 # export ECLIPSE_HOME=/home/username/eclipse
 BASEDIR=`pwd`
