@@ -5,4 +5,4 @@ Bundle-SymbolicName: net.beaconcontroller.packet
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: net.beaconcontroller.packet
-Import-Package: junit.framework;version="4.8.1";resolution:=optional
+Import-Package: org.junit;version="4.8.1";resolution:=optional
