@@ -72,6 +72,10 @@
     </pluginRepository>
   </pluginRepositories>
   <build>
+    <!-- Following is a hack to indicate to javadoc where to find source files
+         see the tycho mailing list under search term javadoc for details,
+         depends on https://issues.sonatype.org/browse/TYCHO-483  -->
+    <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.sonatype.tycho</groupId>
@@ -115,6 +119,13 @@
       <groupId>org.openflow</groupId>
       <artifactId>openflow</artifactId>
       <version>${openflow.version}</version>
+    </dependency>
+    <!-- Following dep to solve a failure when running javadoc:javadoc -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <optional>true</optional>
     </dependency>
   </dependencies>
   <repositories>
