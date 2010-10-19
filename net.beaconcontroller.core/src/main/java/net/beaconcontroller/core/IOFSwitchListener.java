@@ -15,4 +15,10 @@ public interface IOFSwitchListener {
      * @param sw
      */
     public void removedSwitch(IOFSwitch sw);
+    
+    /**
+     * The name assigned to this listener
+     * @return
+     */
+    public String getName();
 }
