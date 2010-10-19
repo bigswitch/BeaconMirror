@@ -3,15 +3,20 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
 http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
   version="2.4">
-  <display-name>Spring DM web sample</display-name>
-  <description>Spring DM web sample</description>
+  <display-name>Beacon Web</display-name>
+  <description>Beacon Web</description>
   <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.html</welcome-file>
   </welcome-file-list>
+
+  <!-- IMPORTANT: There are 3 Spring Application contexts in a hierarchy in this
+  application. The top tier is configured from /META-INF/spring, the second is
+  in /WEB-INF/spring/*.xml, and the lowest is per servlet in 
+  /WEB-INF/spring/servlet/ -->
 
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>/WEB-INF/applicationContext.xml</param-value>
+    <param-value>/WEB-INF/spring/*.xml</param-value>
   </context-param>
   <context-param>
     <param-name>contextClass</param-name>
@@ -32,12 +37,17 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     </init-param>
     <init-param>
       <param-name>contextConfigLocation</param-name>
-      <param-value>/WEB-INF/spring/*servlet.xml</param-value>
+      <param-value>/WEB-INF/spring/servlet/springmvc-*.xml</param-value>
     </init-param>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>springmvc</servlet-name>
     <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>springmvc</servlet-name>
+    <url-pattern>/wm/*</url-pattern>
   </servlet-mapping>
 </web-app>

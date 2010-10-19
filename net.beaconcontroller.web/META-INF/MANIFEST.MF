@@ -5,24 +5,35 @@ Bundle-SymbolicName: net.beaconcontroller.web
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Web-ContextPath: /
-Import-Package: javax.servlet.http;version="2.5.0",
+Import-Package: 
+ javax.annotation,
+ javax.servlet,
+ javax.servlet.http;version="2.5.0",
  javax.servlet.jsp;version="2.0.0",
  javax.servlet.jsp.jstl.core;version="2.1.0",
  javax.servlet.jsp.jstl.fmt;version="2.1.0",
  javax.servlet.jsp.jstl.tlv;version="2.1.0",
  javax.servlet.resources;version="2.5.0",
  net.beaconcontroller.core,
- net.beaconcontroller.web,
+ net.beaconcontroller.util,
  org.apache.taglibs.standard.resources;version="1.1.2",
  org.apache.taglibs.standard.tag.common.core;version="1.1.2",
  org.apache.taglibs.standard.tag.rt.core;version="1.1.2",
  org.apache.taglibs.standard.tei;version="1.1.2",
  org.apache.taglibs.standard.tlv;version="1.1.2",
+ org.codehaus.jackson;version="1.6.1",
+ org.codehaus.jackson.annotate;version="1.6.1",
+ org.codehaus.jackson.map;version="1.6.1",
+ org.codehaus.jackson.map.annotate;version="1.6.1",
+ org.json,
  org.openflow.protocol,
  org.openflow.util,
  org.osgi.framework;version="1.5.0",
  org.slf4j;version="1.5.11",
  org.springframework.beans.factory.annotation;version="3.0.4.RELEASE",
+ org.springframework.core;version="3.0.4.RELEASE",
+ org.springframework.http.converter;version="3.0.4.RELEASE",
+ org.springframework.http.converter.json,
  org.springframework.osgi.context;version="2.0.0.M1",
  org.springframework.osgi.extensions.annotation;version="1.2.1",
  org.springframework.osgi.web.context.support;version="1.2.1",
@@ -30,6 +41,7 @@ Import-Package: javax.servlet.http;version="2.5.0",
  org.springframework.web.bind.annotation;version="3.0.4.RELEASE",
  org.springframework.web.context;version="3.0.4.RELEASE",
  org.springframework.web.servlet;version="3.0.4.RELEASE",
- org.springframework.web.servlet.view;version="3.0.4.RELEASE"
+ org.springframework.web.servlet.view;version="3.0.4.RELEASE",
+ org.springframework.web.servlet.view.json;version="3.0.4.RELEASE"
 Export-Package: net.beaconcontroller.web
 Bundle-ClassPath: .,WEB-INF/classes

@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: net.beaconcontroller.core.web
+Bundle-SymbolicName: net.beaconcontroller.core.web
+Bundle-Version: 0.1.0.qualifier
+Fragment-Host: net.beaconcontroller.web;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

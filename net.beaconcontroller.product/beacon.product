@@ -58,6 +58,7 @@
       <plugin id="org.mortbay.jetty.jsp-api-2.1" version="2.1.0"/>
       <plugin id="org.mortbay.jetty.server" version="6.1.25"/>
       <plugin id="org.mortbay.jetty.util" version="6.1.25"/>
+      <plugin id="org.json.simple"/>
       <plugin id="org.openflow"/>
       <plugin id="org.springframework.aop"/>
       <plugin id="org.springframework.asm"/>

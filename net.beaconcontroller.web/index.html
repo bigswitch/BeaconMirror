@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Beacon</title>
+    <link type="text/css" href="css/layout/layout.css" rel="stylesheet" />
+    <link type="text/css" href="css/smoothness/jquery-ui-1.8.5.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.5.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery.layout.js"></script>
+    <script type="text/javascript" src="js/jquery.values.js"></script>
+    <script type="text/javascript" src="js/jquery.xclone.js"></script>
+    <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+
+    <style type="text/css">
+      /* set base body font size so that the relative font sizing below works */
+      body {font-size: 12px}
+
+      /* neutralize pane formatting BEFORE loading UI Theme */
+      .ui-layout-pane, ui-layout-content {
+        background: rgb(250, 250, 250);
+        border:   0;
+        padding:  0;
+        overflow: auto;
+      }
+
+      p       { margin: 1em 0; }
+      /* use !important to override UI theme styles */
+      .grey     { background: #999 !important; }
+      .outline    { /*border:   1px dashed #F00 !important;*/ }
+      .add-padding  { padding:    10px !important; }
+      .no-padding   { padding:    0 !important; }
+      .add-scrollbar  { overflow:   auto; }
+      .no-scrollbar { overflow:   hidden; }
+      .allow-overflow { overflow:   visible; }
+      .full-height  { height:   100%; }
+      .ui-layout-west h3 a { font-size: 120% !important; font-weight: bolder !important;}
+
+      .two_column .column {float: left; width: 50%; padding-bottom: 10px;}
+      .section { margin: 0 1em 1em 1em; border: 0px}
+      .section-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+      .section-header .ui-icon { float: right; }
+      .section-content { width: 100%; height: 100%; padding: 0.1em; } //set height/width so children's % spec will be relative to section-content not column
+      .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
+      .ui-sortable-placeholder * { visibility: hidden; }
+
+      /* set styles for the beacon templating */
+      .beaconTable {width: 100%; height: 100%;}
+
+      /* set style fix-up for datatables plug-in */
+      .css_right {float:right;}
+      .css_left {float:left;}
+      .rowHover {background-color: #ededed;}
+    </style>
+
+    <script type="text/javascript">
+      var APPLICATIONS_LIST_URI = "wm.do";
+
+      /**
+      * Removes all of the tabs from the main panel and replaces them with the tabs referenced
+      * here.  Takes an array of tab objects {url: "some URL", title: "some string"}
+      **/
+      function newTabs(tabSet) {
+        //remove all existing tabs
+        $tabs = $("#center");
+        while($tabs.tabs("length") > 0)
+          $tabs.tabs("remove", 0);
+
+        //Add in the tabs that came with the tab set
+        for(var i = 0; i < tabSet.length; i++) {
+          $tabs.tabs('add', tabSet[i].url, tabSet[i].title);
+        }
+      };
+
+      /**
+       * Primary method where client-side templating is applied.
+       *
+       * Processing step that will go through the html used in a freshly loaded application's tab and decorate it
+       * with the css classes or jquery functionality to change the nice semantic html in to something
+       * with a bit more flash.
+       *
+       *
+       * tab should be a dom element representing the contents of a single tab
+       */
+      function decorateTab(tab) {
+        console.log("applying template decoration code");
+        //Connects all of the columns together for drag and drop
+        $(tab).find(".column").sortable({
+          connectWith: '.column'
+        });
+
+        //Add necessary classes for visual decoration and +/- signs
+        $(tab).find(".section").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+          .find(".section-header")
+            .addClass("ui-widget-header ui-corner-all")
+            .prepend('<span class="ui-icon ui-icon-minusthick"></span>')
+            .end();
+
+        //Set the +/- click action to hide the content component
+        $(tab).find(".section-header .ui-icon").click(function() {
+          $(this).toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+          $(this).parents(".section:first").find(".section-content").toggle();
+        });
+
+        //Set up any tables were just loaded (note need to iterate over each
+        $(tab).find(".beaconTable").each(function() {
+          $(this).dataTable({
+            bJQueryUI: true,
+            bPaginate: false,
+            bLengthChange: true,
+            bFilter: false,
+            bSort: true,
+            bInfo: true,
+            bRetrieve: true, //if this table already exists, retrieve it rather than creating a new one
+          });
+          // add hover over rows
+          $(this).find("tr").hover(
+            function () {
+              $(this).toggleClass("rowHover");
+            }
+          );
+        });
+
+        //Wrap up any dialog box-oriented buttons (see SimpleWebManageableTemplate.wrapWithDialogBox for more detail)
+        $(tab).find(".beaconGetDialog").each(function() {
+          $(this).click(function() {
+            var url = $(this).attr("href");
+            $.get(url, function(response) {
+              $("#beaconDialogBoxTemplate" ).html(response);
+              $("#beaconDialogBoxTemplate" ).dialog({
+                height: 140,
+                modal: true,
+                resizable: false,
+                buttons: {
+                  OK: function() {
+                    $( this ).dialog( "close" );
+
+                    //reload the currently open tab
+                    var $tabs = $('#center').tabs();
+                    var selectedIndex = $tabs.tabs('option', 'selected');
+                    $tabs.tabs('load', selectedIndex);
+                  }
+                }
+              });
+            });
+            return false; //Return false from the click method to stop any native browser processing
+          }); // close the click() inner function
+        }); //close the each() loop
+
+        // Wrap a refresh link
+        $(tab).find(".beaconRefreshTab").each(function() {
+            $(this).click(function() {
+                var url = $(this).attr("href");
+                $.get(url, function(response) {
+                    //reload the currently open tab
+                    var $tabs = $('#center').tabs();
+                    var selectedIndex = $tabs.tabs('option', 'selected');
+                    $tabs.tabs('load', selectedIndex);
+                });
+                return false; //Return false from the click method to stop any native browser processing
+            }); // close the click() inner function
+        }); //close the each() loop
+
+        $(tab).find(".column").disableSelection();
+      }
+
+      $(document).ready(function () {
+        // OUTER/PAGE LAYOUT
+        pageLayout = $("body").layout({
+            west__size:       250
+          , east__size:       .10
+          , north__size:      50
+          , south__size:      30
+          , south__initClosed:    false
+          , north__initClosed:    false
+          , east__initClosed:   true
+          , west__onresize:     function () { $("#accordion-west").accordion("resize"); }
+          , togglerLength_open:   50
+          , togglerLength_closed: 50
+          , spacing_open:     0
+          ,   spacing_closed:     0
+        });
+
+        // Center panel - set up tabs
+        $("#center").tabs({
+          //Hooks up the tab panel decoration code to run when tabs are loaded from remote
+          load: function(event, ui) {
+            decorateTab(this);
+          }
+        });
+
+        pageLayout.sizeContent("east"); // resize pane-content-elements after creating tabs
+
+        //Retrieve the app list from the server
+        $.get(APPLICATIONS_LIST_URI, function(appList, status) {
+          firstTabSet = appList[0].tabs;
+
+          //Fetch the content for the tabs needed
+          newTabs(firstTabSet);
+
+          //Init the left panel nav (copy in values and do a little html munging)
+          $("#appAccordianEntryTemplate").values(appList, {onlyNest:true});
+
+          $("#appAccordian").append($("#appAccordianEntryTemplate").children()); //work around to make accordian plugin line up with values plug-in
+          $("#appAccordian").accordion({ });
+
+          // Wire the accordian change in the left panel nav to changing up the tabs in the center panel
+          $("#appAccordian").bind( "accordionchange", function(event, ui) {
+              var name = ui.newHeader.find("a").html(); //crumby way to fish the app name back out
+              var app = null;
+              for(var i = 0; i < appList.length; i++)
+              if (appList[i].name == name)
+                app = appList[i];
+              if(app)
+                  newTabs(app.tabs);
+          });
+
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="header" class="ui-layout-north add-padding">
+      <div id="logo" style="position: absolute; left:50px; top:10px">
+        <span style="font-family: 'Helvetica'; font-size:28px; font-weight:900; color:#DE3623;">BEACON</span>
+      </div>
+    </div>
+
+    <div id="footer" class="ui-layout-south">
+      <div class="ui-widget-header" style="height:100%; margin:0px; padding:0px">
+        <p style="text-align:center; font-size:smaller">Footer goes here</p>
+      </div>
+    </div>
+
+    <div id="west" class="ui-layout-west no-scrollbar add-padding">
+      <div id="appAccordian">
+      </div>
+    </div>
+
+    <div id="center" class="ui-layout-center add-padding">
+      <div id="tabs" class="ui-widget-content ui-corner-all" style="min-height:600px">
+        <ul>
+        </ul>
+      </div>
+      <div class="ui-helper-clearfix ui-helper-reset"></div>
+    </div>
+
+    <!-- The items in this div are templates used by the xclone/values plugin they should not be end-user-visible  -->
+    <div id="templatesDiv" style="visibility:hidden">
+      <!-- Template for the accordian control (west panel) used to pick active application -->
+      <div id="appAccordianEntryTemplate">
+        <h3><a name="name" href="#">Section 1</a></h3>
+        <div name="description">
+          <p>description</p>
+        </div>
+      </div>
+      <!-- Template for dialog boxes -->
+      <div id="beaconDialogBoxTemplate">
+      </div>
+    </div>
+
+  </body>
+</html>
