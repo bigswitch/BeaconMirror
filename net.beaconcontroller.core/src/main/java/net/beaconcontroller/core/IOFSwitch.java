@@ -18,33 +18,15 @@ public interface IOFSwitch {
 
     /**
      *
-     * @param stream
-     */
-    public void setInputStream(OFMessageInStream stream);
-
-    /**
-     *
      * @return
      */
     public OFMessageSafeOutStream getOutputStream();
-
-    /**
-     * 
-     * @param stream
-     */
-    public void setOutputStream(OFMessageSafeOutStream stream);
 
     /**
      *
      * @return
      */
     public SocketChannel getSocketChannel();
-
-    /**
-     *
-     * @param channel
-     */
-    public void setSocketChannel(SocketChannel channel);
 
     /**
      * Returns the cached OFFeaturesReply message returned by the switch during

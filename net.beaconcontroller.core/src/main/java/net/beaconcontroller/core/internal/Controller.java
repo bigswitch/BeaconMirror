@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.core.IOFSwitchFilter;
 import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.core.IOFMessageListener.Command;
 import net.beaconcontroller.core.io.internal.OFStream;
@@ -80,7 +81,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         SocketChannel sock = listenSock.accept();
         log.info("Switch connected from {}", sock.toString());
         sock.configureBlocking(false);
-        IOFSwitch sw = new OFSwitchImpl();
+        OFSwitchImpl sw = new OFSwitchImpl();
         // hash this switch into a thread
         final SelectLoop sl = switchSelectLoops.get(sock.hashCode()
                 % switchSelectLoops.size());
@@ -185,6 +186,11 @@ public class Controller implements IBeaconProvider, SelectListener {
                     if (listeners != null) {
                         for (IOFMessageListener listener : listeners) {
                             try {
+                                if (listener instanceof IOFSwitchFilter) {
+                                    if (!((IOFSwitchFilter)listener).isInterested(sw)) {
+                                        break;
+                                    }
+                                }
                                 if (Command.STOP.equals(listener.receive(sw, m))) {
                                     break;
                                 }
