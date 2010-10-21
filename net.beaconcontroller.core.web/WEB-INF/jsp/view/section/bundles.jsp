@@ -7,10 +7,12 @@
   <div class="section-content">
     <table class="beaconTable">
         <thead>
+          <tr>
             <th>Id</th>
             <th>Status</th>
             <th>Name</th>
             <th>Action</th>
+          </tr>
         </thead>
         <tbody>
             <c:forEach items="${bundles}" var="entry" varStatus="status">
