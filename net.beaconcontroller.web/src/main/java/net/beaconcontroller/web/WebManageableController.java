@@ -4,17 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.beaconcontroller.web.view.BeaconViewResolver;
-import net.beaconcontroller.web.view.Tab;
+import net.beaconcontroller.web.view.BeaconJsonView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.View;
 
 /**
  * 
@@ -29,29 +26,11 @@ public class WebManageableController {
     protected List<IWebManageable> webManageables = new ArrayList<IWebManageable>();
 
     @RequestMapping(value = "wm")
-    public String overview(Map<String, Object> model) {
-        JSONArray ja = new JSONArray();
-        try {
-            for (IWebManageable wm : webManageables) {
-                JSONObject jo = new JSONObject();
-                jo.put("name", wm.getName());
-                jo.put("description", wm.getDescription());
-                JSONArray tabs = new JSONArray();
-                for (Tab tab : wm.getTabs()) {
-                    JSONObject jtab = new JSONObject();
-                    jtab.put("title", tab.getTitle());
-                    jtab.put("url", tab.getUrl());
-                    tabs.put(jtab);
-                }
-                jo.put("tabs", tabs);
-                ja.put(jo);
-            }
-        } catch (JSONException e) {
-            log.error("Error encoding webmanageable", e);
-        }
-
-        model.put("output", ja.toString());
-        return BeaconViewResolver.SIMPLE_JSON_VIEW;
+    public View overview(Map<String, Object> model) {
+        BeaconJsonView view = new BeaconJsonView();
+        view.setDisableCaching(true);
+        model.put(BeaconJsonView.ROOT_OBJECT_KEY, webManageables);
+        return view;
     }
 
     /**
