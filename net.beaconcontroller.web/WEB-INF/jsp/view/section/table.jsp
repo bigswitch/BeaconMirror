@@ -5,9 +5,11 @@
   <div class="section-content">
     <table class="beaconTable">
         <thead>
+          <tr>
             <c:forEach items="${columnNames}" var="columnName">
                 <th><c:out value="${columnName}"/></th>
             </c:forEach>
+          </tr>
         </thead>
         <tbody>
             <c:forEach items="${cells}" var="row">
