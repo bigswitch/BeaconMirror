@@ -25,7 +25,6 @@ Import-Package:
  org.codehaus.jackson.annotate;version="1.6.1",
  org.codehaus.jackson.map;version="1.6.1",
  org.codehaus.jackson.map.annotate;version="1.6.1",
- org.json,
  org.openflow.protocol,
  org.openflow.util,
  org.osgi.framework;version="1.5.0",
