@@ -28,7 +28,7 @@
                     <td><c:out value="${entry.symbolicName}"/>_<c:out value="${entry.version}"/></td>
                     <td>
                         <c:forEach items="${actions}" var="action">
-                            <a href="<c:url value="/wm/core/bundle/${entry.bundleId}/${action}"/>" class="bsnRefreshTab"><c:out value="${action}"/></a>
+                            <a href="<c:url value="/wm/core/bundle/${entry.bundleId}/${action}"/>" class="beaconRefreshTab"><c:out value="${action}"/></a>
                         </c:forEach>
                     </td>
                 </tr>

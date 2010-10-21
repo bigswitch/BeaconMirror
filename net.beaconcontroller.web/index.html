@@ -83,13 +83,11 @@
        * tab should be a dom element representing the contents of a single tab
        */
       function decorateTab(tab) {
-
         //console.log("decorating tab...");
-
         //Check to see if the plugins we need have loaded..
         if(!jQuery.fn.dataTable) {
-            //console.log("not all js/css loaded yet... stalling decorateTab until all libraries have loaded");
-            throw "required plugin (dataTable) not found or not yet loaded";
+          //console.log("not all js/css loaded yet... stalling decorateTab until all libraries have loaded");
+          throw "required plugin (dataTable) not found or not yet loaded";
         }
 
         //Connects all of the columns together for drag and drop
@@ -97,7 +95,7 @@
           connectWith: '.column'
         });
         $(tab).find(".column").disableSelection();
-        
+
         //Add necessary classes for visual decoration and +/- signs
         $(tab).find(".section").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
           .find(".section-header")
@@ -111,21 +109,21 @@
           $(this).parents(".section:first").find(".section-content").toggle();
         });
 
-        
         //Set up any tables were just loaded (note need to iterate over each
         $(tab).find(".beaconTable").each(function() {
-        	$(this).dataTable({
-            bJQueryUI: true,
-            bPaginate: false,
-            bLengthChange: true,
-            bFilter: false,
-            bSort: true,
-            bInfo: true,
-            bRetrieve: true, //if this table already exists, retrieve it rather than creating a new one
-          });
-          // add hover over rows
-          $(this).find("tr").hover(function () {
-              $(this).toggleClass("rowHover");
+          $(this).dataTable({
+          bJQueryUI: true,
+          bPaginate: false,
+          bLengthChange: true,
+          bFilter: false,
+          bSort: true,
+          bInfo: true,
+          bRetrieve: true, //if this table already exists, retrieve it rather than creating a new one
+        });
+
+        // add hover over rows
+        $(this).find("tr").hover(function () {
+            $(this).toggleClass("rowHover");
           });
         });
 
@@ -157,16 +155,16 @@
 
         // Wrap a refresh link
         $(tab).find(".beaconRefreshTab").each(function() {
-            $(this).click(function() {
-                var url = $(this).attr("href");
-                $.get(url, function(response) {
-                    //reload the currently open tab
-                    var $tabs = $('#center').tabs();
-                    var selectedIndex = $tabs.tabs('option', 'selected');
-                    $tabs.tabs('load', selectedIndex);
-                });
-                return false; //Return false from the click method to stop any native browser processing
-            }); // close the click() inner function
+          $(this).click(function() {
+            var url = $(this).attr("href");
+            $.get(url, function(response) {
+              //reload the currently open tab
+              var $tabs = $('#center').tabs();
+              var selectedIndex = $tabs.tabs('option', 'selected');
+              $tabs.tabs('load', selectedIndex);
+            });
+            return false; //Return false from the click method to stop any native browser processing
+          }); // close the click() inner function
         }); //close the each() loop
 
       } //end decorate Tabls
@@ -198,7 +196,7 @@
             catch(err) {
               alert("error when processing tab: " + err);
             }
-            
+
           }
         });
 
@@ -220,15 +218,14 @@
 
           // Wire the accordian change in the left panel nav to changing up the tabs in the center panel
           $("#appAccordian").bind( "accordionchange", function(event, ui) {
-              var name = ui.newHeader.find("a").html(); //crumby way to fish the app name back out
-              var app = null;
-              for(var i = 0; i < appList.length; i++)
-              if (appList[i].name == name)
-                app = appList[i];
-              if(app)
-                  newTabs(app.tabs);
+            var name = ui.newHeader.find("a").html(); //crumby way to fish the app name back out
+            var app = null;
+            for(var i = 0; i < appList.length; i++)
+            if (appList[i].name == name)
+              app = appList[i];
+            if(app)
+              newTabs(app.tabs);
           });
-
         });
       });
 
@@ -237,9 +234,9 @@
        */
       allLibrariesLoaded = false;
       $(window).load(function() {
-         window.allLibrariesLoaded = true; 
+         window.allLibrariesLoaded = true;
       });
-      
+
     </script>
   </head>
   <body>
