@@ -110,7 +110,8 @@ public class OFSwitchImpl implements IOFSwitch {
 
     @Override
     public Future<List<OFStatistics>> getStatistics(OFStatisticsRequest request) throws IOException {
-        OFStatisticsFuture future = new OFStatisticsFuture(beaconProvider, this, getNextTransactionId());
+        request.setXid(getNextTransactionId());
+        OFStatisticsFuture future = new OFStatisticsFuture(beaconProvider, this, request.getXid());
         this.beaconProvider.addOFMessageListener(OFType.STATS_REPLY, future);
         this.beaconProvider.addOFSwitchListener(future);
         this.getOutputStream().write(request);

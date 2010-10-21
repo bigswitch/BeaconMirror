@@ -2,15 +2,19 @@ package net.beaconcontroller.core.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.util.BundleAction;
 import net.beaconcontroller.web.IWebManageable;
+import net.beaconcontroller.web.view.BeaconJsonView;
 import net.beaconcontroller.web.view.BeaconViewResolver;
 import net.beaconcontroller.web.view.Tab;
 import net.beaconcontroller.web.view.layout.Layout;
@@ -19,7 +23,13 @@ import net.beaconcontroller.web.view.section.JspSection;
 import net.beaconcontroller.web.view.section.StringSection;
 import net.beaconcontroller.web.view.section.TableSection;
 
+import org.openflow.protocol.OFMatch;
+import org.openflow.protocol.OFPort;
+import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFType;
+import org.openflow.protocol.statistics.OFFlowStatisticsRequest;
+import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.statistics.OFStatisticsType;
 import org.openflow.util.HexString;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -32,6 +42,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.View;
 
 /**
  * This class sets up the web UI component for the structures in
@@ -148,7 +159,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
 
     @RequestMapping("/bundle/{bundleId}/{action}")
     @ResponseBody
-    public String performAction(@PathVariable Long bundleId, @PathVariable String action) {
+    public String osgiAction(@PathVariable Long bundleId, @PathVariable String action) {
         Bundle bundle = this.bundleContext.getBundle(bundleId);
         if (action != null) {
             try {
@@ -162,5 +173,33 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             }
         }
         return "";
+    }
+
+    @RequestMapping("/switch/{switchId}/flows/")
+    public View getSwitchFlows(@PathVariable String switchId, Map<String,Object> model) {
+        IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
+        BeaconJsonView view = new BeaconJsonView();
+        if (sw != null) {
+            Future<List<OFStatistics>> future;
+            OFStatisticsRequest req = new OFStatisticsRequest();
+            OFFlowStatisticsRequest fsr = new OFFlowStatisticsRequest();
+            OFMatch match = new OFMatch();
+            match.setWildcards(0xffffffff);
+            fsr.setMatch(match);
+            fsr.setOutPort(OFPort.OFPP_NONE.getValue());
+            fsr.setTableId((byte) 0xff);
+            req.setStatisticType(OFStatisticsType.FLOW);
+            req.setStatistics(Collections.singletonList((OFStatistics)fsr));
+            req.setLengthU(req.getLengthU() + fsr.getLength());
+            try {
+                future = sw.getStatistics(req);
+                List<OFStatistics> values = future.get(10, TimeUnit.SECONDS);
+                model.put(BeaconJsonView.ROOT_OBJECT_KEY, values);
+            } catch (Exception e) {
+                log.error("Failure retrieving flows", e);
+            }
+        }
+
+        return view;
     }
 }

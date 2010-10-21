@@ -74,6 +74,7 @@ public interface IOFSwitch {
     /**
      * Returns a Future object that can be used to retrieve the asynchronous
      * OFStatisticsReply when it is available.
+     *
      * @param request statistics request
      * @return Future object wrapping OFStatisticsReply
      * @throws IOException 
