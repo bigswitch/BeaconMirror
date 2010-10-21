@@ -1,13 +1,18 @@
 package net.beaconcontroller.core;
 
+import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Future;
 
 import net.beaconcontroller.core.io.OFMessageSafeOutStream;
 
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFeaturesReply;
+import org.openflow.protocol.OFStatisticsRequest;
+import org.openflow.protocol.statistics.OFStatistics;
 
 public interface IOFSwitch {
     /**
@@ -59,4 +64,20 @@ public interface IOFSwitch {
      * @return the date
      */
     public Date getConnectedSince();
+
+    /**
+     * Returns the next available transaction id
+     * @return
+     */
+    public int getNextTransactionId();
+
+    /**
+     * Returns a Future object that can be used to retrieve the asynchronous
+     * OFStatisticsReply when it is available.
+     * @param request statistics request
+     * @return Future object wrapping OFStatisticsReply
+     * @throws IOException 
+     */
+    public Future<List<OFStatistics>> getStatistics(OFStatisticsRequest request)
+            throws IOException;
 }

@@ -93,6 +93,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         sw.setInputStream(stream);
         sw.setOutputStream(stream);
         sw.setSocketChannel(sock);
+        sw.setBeaconProvider(this);
 
         List<OFMessage> l = new ArrayList<OFMessage>();
         l.add(factory.getMessage(OFType.HELLO));

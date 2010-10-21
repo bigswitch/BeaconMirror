@@ -5,22 +5,31 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import net.beaconcontroller.core.IOFMessageListener;
-import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFMessageListener.Command;
+import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.core.test.MockBeaconProvider;
 import net.beaconcontroller.test.BeaconTestCase;
 
 import org.junit.Test;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
+import org.openflow.protocol.OFStatisticsReply;
 import org.openflow.protocol.OFType;
+import org.openflow.protocol.statistics.OFFlowStatisticsReply;
+import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.statistics.OFStatisticsType;
 
 /**
  *
@@ -29,6 +38,21 @@ import org.openflow.protocol.OFType;
 public class ControllerTest extends BeaconTestCase {
     protected Controller getController() {
         return (Controller) getApplicationContext().getBean("controller");
+    }
+
+    protected OFStatisticsReply getStatisticsReply(int transactionId,
+            int count, boolean moreReplies) {
+        OFStatisticsReply sr = new OFStatisticsReply();
+        sr.setXid(transactionId);
+        sr.setStatisticType(OFStatisticsType.FLOW);
+        List<OFStatistics> statistics = new ArrayList<OFStatistics>();
+        for (int i = 0; i < count; ++i) {
+            statistics.add(new OFFlowStatisticsReply());
+        }
+        sr.setStatistics(statistics);
+        if (moreReplies)
+            sr.setFlags((short) 1);
+        return sr;
     }
 
     /**
@@ -125,5 +149,122 @@ public class ControllerTest extends BeaconTestCase {
         replay(test1, test2, sw);
         controller.handleMessages(sw, Arrays.asList(new OFMessage[] {pi}));
         verify(test1, test2, sw);
+    }
+
+    public class FutureFetcher<E> implements Runnable {
+        public E value;
+        public Future<E> future;
+
+        public FutureFetcher(Future<E> future) {
+            this.future = future;
+        }
+
+        @Override
+        public void run() {
+            try {
+                value = future.get();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        /**
+         * @return the value
+         */
+        public E getValue() {
+            return value;
+        }
+
+        /**
+         * @return the future
+         */
+        public Future<E> getFuture() {
+            return future;
+        }
+    }
+
+    /**
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testOFStatisticsFuture() throws Exception {
+        // Test for a single stats reply
+        MockBeaconProvider mbp = new MockBeaconProvider();
+        IOFSwitch sw = createMock(IOFSwitch.class);
+        OFStatisticsFuture sf = new OFStatisticsFuture(mbp, sw, 1);
+        mbp.addOFMessageListener(OFType.STATS_REPLY, sf);
+        mbp.addOFSwitchListener(sf);
+
+        replay(sw);
+        List<OFStatistics> stats;
+        FutureFetcher<List<OFStatistics>> ff = new FutureFetcher<List<OFStatistics>>(sf);
+        Thread t = new Thread(ff);
+        t.start();
+        mbp.dispatchMessage(sw, getStatisticsReply(1, 10, false));
+
+        t.join();
+        stats = ff.getValue();
+        verify(sw);
+        assertEquals(10, stats.size());
+        assertEquals(0, mbp.getListeners().get(OFType.STATS_REPLY).size());
+        assertEquals(0, mbp.getSwitchListeners().size());
+
+        // Test multiple stats replies
+        reset(sw);
+        sf = new OFStatisticsFuture(mbp, sw, 1);
+        mbp.addOFMessageListener(OFType.STATS_REPLY, sf);
+        mbp.addOFSwitchListener(sf);
+
+        replay(sw);
+        ff = new FutureFetcher<List<OFStatistics>>(sf);
+        t = new Thread(ff);
+        t.start();
+        mbp.dispatchMessage(sw, getStatisticsReply(1, 10, true));
+        mbp.dispatchMessage(sw, getStatisticsReply(1, 5, false));
+        t.join();
+
+        stats = sf.get();
+        verify(sw);
+        assertEquals(15, stats.size());
+        assertEquals(0, mbp.getListeners().get(OFType.STATS_REPLY).size());
+        assertEquals(0, mbp.getSwitchListeners().size());
+
+        // Test cancellation
+        reset(sw);
+        sf = new OFStatisticsFuture(mbp, sw, 1);
+        mbp.addOFMessageListener(OFType.STATS_REPLY, sf);
+        mbp.addOFSwitchListener(sf);
+
+        replay(sw);
+        ff = new FutureFetcher<List<OFStatistics>>(sf);
+        t = new Thread(ff);
+        t.start();
+        sf.cancel(true);
+        t.join();
+
+        stats = sf.get();
+        verify(sw);
+        assertEquals(0, stats.size());
+        assertEquals(0, mbp.getListeners().get(OFType.STATS_REPLY).size());
+        assertEquals(0, mbp.getSwitchListeners().size());
+
+        // Test self timeout
+        reset(sw);
+        sf = new OFStatisticsFuture(mbp, sw, 1, 3, TimeUnit.SECONDS);
+        mbp.addOFMessageListener(OFType.STATS_REPLY, sf);
+        mbp.addOFSwitchListener(sf);
+
+        replay(sw);
+        ff = new FutureFetcher<List<OFStatistics>>(sf);
+        t = new Thread(ff);
+        t.start();
+        t.join(5000);
+
+        stats = sf.get();
+        verify(sw);
+        assertEquals(0, stats.size());
+        assertEquals(0, mbp.getListeners().get(OFType.STATS_REPLY).size());
+        assertEquals(0, mbp.getSwitchListeners().size());
     }
 }

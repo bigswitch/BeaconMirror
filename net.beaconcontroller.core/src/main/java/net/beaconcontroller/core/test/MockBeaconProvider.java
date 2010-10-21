@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
@@ -21,6 +22,7 @@ import org.openflow.protocol.OFType;
  */
 public class MockBeaconProvider implements IBeaconProvider {
     protected Map<OFType, List<IOFMessageListener>> listeners;
+    protected List<IOFSwitchListener> switchListeners;
     protected Map<Long, IOFSwitch> switches;
 
     /**
@@ -29,6 +31,7 @@ public class MockBeaconProvider implements IBeaconProvider {
     public MockBeaconProvider() {
         listeners = new ConcurrentHashMap<OFType, List<IOFMessageListener>>();
         switches = new ConcurrentHashMap<Long, IOFSwitch>();
+        switchListeners = new CopyOnWriteArrayList<IOFSwitchListener>();
     }
 
     public void addOFMessageListener(OFType type, IOFMessageListener listener) {
@@ -67,10 +70,12 @@ public class MockBeaconProvider implements IBeaconProvider {
 
     @Override
     public void addOFSwitchListener(IOFSwitchListener listener) {
+        switchListeners.add(listener);
     }
 
     @Override
     public void removeOFSwitchListener(IOFSwitchListener listener) {
+        switchListeners.remove(listener);
     }
 
     public void dispatchMessage(IOFSwitch sw, OFMessage msg) {
@@ -82,5 +87,12 @@ public class MockBeaconProvider implements IBeaconProvider {
                 result = it.next().receive(sw, msg);
             }
         }
+    }
+
+    /**
+     * @return the switchListeners
+     */
+    public List<IOFSwitchListener> getSwitchListeners() {
+        return switchListeners;
     }
 }
