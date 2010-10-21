@@ -83,12 +83,21 @@
        * tab should be a dom element representing the contents of a single tab
        */
       function decorateTab(tab) {
-        console.log("applying template decoration code");
+
+        //console.log("decorating tab...");
+
+        //Check to see if the plugins we need have loaded..
+        if(!jQuery.fn.dataTable) {
+            //console.log("not all js/css loaded yet... stalling decorateTab until all libraries have loaded");
+            throw "required plugin (dataTable) not found or not yet loaded";
+        }
+
         //Connects all of the columns together for drag and drop
         $(tab).find(".column").sortable({
           connectWith: '.column'
         });
-
+        $(tab).find(".column").disableSelection();
+        
         //Add necessary classes for visual decoration and +/- signs
         $(tab).find(".section").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
           .find(".section-header")
@@ -102,9 +111,10 @@
           $(this).parents(".section:first").find(".section-content").toggle();
         });
 
+        
         //Set up any tables were just loaded (note need to iterate over each
         $(tab).find(".beaconTable").each(function() {
-          $(this).dataTable({
+        	$(this).dataTable({
             bJQueryUI: true,
             bPaginate: false,
             bLengthChange: true,
@@ -114,11 +124,9 @@
             bRetrieve: true, //if this table already exists, retrieve it rather than creating a new one
           });
           // add hover over rows
-          $(this).find("tr").hover(
-            function () {
+          $(this).find("tr").hover(function () {
               $(this).toggleClass("rowHover");
-            }
-          );
+          });
         });
 
         //Wrap up any dialog box-oriented buttons (see SimpleWebManageableTemplate.wrapWithDialogBox for more detail)
@@ -161,8 +169,7 @@
             }); // close the click() inner function
         }); //close the each() loop
 
-        $(tab).find(".column").disableSelection();
-      }
+      } //end decorate Tabls
 
       $(document).ready(function () {
         // OUTER/PAGE LAYOUT
@@ -185,11 +192,18 @@
         $("#center").tabs({
           //Hooks up the tab panel decoration code to run when tabs are loaded from remote
           load: function(event, ui) {
-            decorateTab(this);
+            try {
+              decorateTab(this);
+            }
+            catch(err) {
+              alert("error when processing tab: " + err);
+            }
+            
           }
         });
 
         pageLayout.sizeContent("east"); // resize pane-content-elements after creating tabs
+
 
         //Retrieve the app list from the server
         $.get(APPLICATIONS_LIST_URI, function(appList, status) {
@@ -217,6 +231,15 @@
 
         });
       });
+
+      /**
+       * Set this to true only after all libraries have loaded
+       */
+      allLibrariesLoaded = false;
+      $(window).load(function() {
+         window.allLibrariesLoaded = true; 
+      });
+      
     </script>
   </head>
   <body>
