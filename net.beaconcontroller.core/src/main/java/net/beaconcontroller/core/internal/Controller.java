@@ -4,6 +4,7 @@
 package net.beaconcontroller.core.internal;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -29,6 +30,7 @@ import net.beaconcontroller.core.IOFSwitchFilter;
 import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.core.IOFMessageListener.Command;
 import net.beaconcontroller.core.io.internal.OFStream;
+import net.beaconcontroller.packet.IPv4;
 
 import org.openflow.example.SelectListener;
 import org.openflow.example.SelectLoop;
@@ -52,6 +54,8 @@ public class Controller implements IBeaconProvider, SelectListener {
     protected Map<String,String> callbackOrdering;
     protected ExecutorService es;
     protected BasicFactory factory;
+    protected String listenAddress;
+    protected int listenPort = 6633;
     protected SelectLoop listenSelectLoop;
     protected ServerSocketChannel listenSock;
     protected ConcurrentMap<OFType, List<IOFMessageListener>> messageListeners;
@@ -264,8 +268,18 @@ public class Controller implements IBeaconProvider, SelectListener {
     public void startUp() throws IOException {
         listenSock = ServerSocketChannel.open();
         listenSock.configureBlocking(false);
-        listenSock.socket().bind(new java.net.InetSocketAddress(6633));
+        if (listenAddress != null) {
+            listenSock.socket().bind(
+                    new java.net.InetSocketAddress(InetAddress
+                            .getByAddress(IPv4
+                                    .toIPv4AddressBytes(listenAddress)),
+                            listenPort));
+        } else {
+            listenSock.socket().bind(new java.net.InetSocketAddress(listenPort));
+        }
         listenSock.socket().setReuseAddress(true);
+        log.info("Controller listening on {}:{}", listenAddress == null ? "*"
+                : listenAddress, listenPort);
 
         switchSelectLoops = new ArrayList<SelectLoop>();
         switches = new ConcurrentHashMap<Long, IOFSwitch>();
@@ -400,5 +414,19 @@ public class Controller implements IBeaconProvider, SelectListener {
     @Override
     public Map<OFType, List<IOFMessageListener>> getListeners() {
         return Collections.unmodifiableMap(this.messageListeners);
+    }
+
+    /**
+     * @param listenAddress the listenAddress to set
+     */
+    public void setListenAddress(String listenAddress) {
+        this.listenAddress = listenAddress;
+    }
+
+    /**
+     * @param listenPort the listenPort to set
+     */
+    public void setListenPort(int listenPort) {
+        this.listenPort = listenPort;
     }
 }

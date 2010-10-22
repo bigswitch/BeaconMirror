@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -19,6 +20,16 @@ public class IPv4Test {
     public void testToIPv4Address() {
         int expected = 0xc0a80001;
         assertEquals(expected, IPv4.toIPv4Address("192.168.0.1"));
+    }
+
+    @Test
+    public void testToIPv4AddressBytes() {
+        byte[] expected = new byte[] {(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff};
+        Assert.assertArrayEquals(expected, IPv4.toIPv4AddressBytes("255.255.255.255"));
+        expected = new byte[] {(byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80};
+        Assert.assertArrayEquals(expected, IPv4.toIPv4AddressBytes("128.128.128.128"));
+        expected = new byte[] {0x7f,0x7f,0x7f,0x7f};
+        Assert.assertArrayEquals(expected, IPv4.toIPv4AddressBytes("127.127.127.127"));
     }
 
     @Test

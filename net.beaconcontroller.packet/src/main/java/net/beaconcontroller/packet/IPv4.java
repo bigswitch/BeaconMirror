@@ -377,6 +377,25 @@ public class IPv4 extends BasePacket {
         return result;
     }
 
+    /**
+     * Accepts an IPv4 address of the form xxx.xxx.xxx.xxx, ie 192.168.0.1 and
+     * returns the corresponding byte array
+     * @param ipAddress
+     * @return
+     */
+    public static byte[] toIPv4AddressBytes(String ipAddress) {
+        String[] octets = ipAddress.split("\\.");
+        if (octets.length != 4) 
+            throw new IllegalArgumentException("Specified IPv4 address must" +
+                "contain 4 sets of numerical digits separated by periods");
+
+        byte[] result = new byte[4];
+        for (int i = 0; i < 4; ++i) {
+            result[i] = Integer.valueOf(octets[i]).byteValue();
+        }
+        return result;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */

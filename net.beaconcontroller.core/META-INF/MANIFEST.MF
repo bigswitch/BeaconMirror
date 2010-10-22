@@ -4,7 +4,8 @@ Bundle-Name: Beacon Core
 Bundle-SymbolicName: net.beaconcontroller.core
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openflow.example,
+Import-Package: net.beaconcontroller.packet,
+ org.openflow.example,
  org.openflow.io,
  org.openflow.protocol,
  org.openflow.protocol.action,

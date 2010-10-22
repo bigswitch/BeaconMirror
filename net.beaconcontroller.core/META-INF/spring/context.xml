@@ -9,12 +9,13 @@
 
   <bean class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
     <property name="ignoreResourceNotFound" value="true" />
-    <property name="locations" value="file:test.properties" />
+    <property name="locations" value="file:./beacon.properties"/>
   </bean>
 
   <bean id="controller" class="net.beaconcontroller.core.internal.Controller"
     init-method="startUp" destroy-method="shutDown">
     <property name="callbackOrdering" ref="callbackOrdering"/>
+    <property name="listenPort" value="6633"/>
   </bean>
 
   <util:map id="callbackOrdering">
