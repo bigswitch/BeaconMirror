@@ -18,6 +18,7 @@ import net.beaconcontroller.web.view.BeaconJsonView;
 import net.beaconcontroller.web.view.BeaconViewResolver;
 import net.beaconcontroller.web.view.Tab;
 import net.beaconcontroller.web.view.layout.Layout;
+import net.beaconcontroller.web.view.layout.OneColumnLayout;
 import net.beaconcontroller.web.view.layout.TwoColumnLayout;
 import net.beaconcontroller.web.view.section.JspSection;
 import net.beaconcontroller.web.view.section.StringSection;
@@ -112,19 +113,13 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
                 TwoColumnLayout.COLUMN1);
 
         // Switch List Table
-        List<String> columnNames = new ArrayList<String>();
-        columnNames.add("Switch ID");
-        columnNames.add("Connect Time");
-        List<List<String>> cells = new ArrayList<List<String>>();
-        for (IOFSwitch sw : beaconProvider.getSwitches().values()) {
-            List<String> row = new ArrayList<String>();
-            row.add(HexString.toHexString(sw.getId()));
-            row.add(sw.getConnectedSince().toString());
-            cells.add(row);
-        }
-        layout.addSection(new TableSection("Switches", columnNames, cells), TwoColumnLayout.COLUMN2);
+        model.put("title", "Switches");
+        model.put("switches", beaconProvider.getSwitches().values());
+        layout.addSection(new JspSection("switches.jsp", model), TwoColumnLayout.COLUMN2);
 
         // Listener List Table
+        List<String> columnNames = new ArrayList<String>();
+        List<List<String>> cells = new ArrayList<List<String>>();
         columnNames = new ArrayList<String>();
         columnNames.add("OpenFlow Packet Type");
         columnNames.add("Listeners");
@@ -146,7 +141,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
 
     @RequestMapping("/osgi")
     public String osgi(Map<String, Object> model) {
-        Layout layout = new TwoColumnLayout();
+        Layout layout = new OneColumnLayout();
         model.put("layout", layout);
 
         // Bundle List Table
@@ -175,12 +170,11 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         return "";
     }
 
-    @RequestMapping("/switch/{switchId}/flows/")
-    public View getSwitchFlows(@PathVariable String switchId, Map<String,Object> model) {
+    protected List<OFStatistics> getSwitchFlows(String switchId) {
         IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
-        BeaconJsonView view = new BeaconJsonView();
+        Future<List<OFStatistics>> future;
+        List<OFStatistics> values = null;
         if (sw != null) {
-            Future<List<OFStatistics>> future;
             OFStatisticsRequest req = new OFStatisticsRequest();
             OFFlowStatisticsRequest fsr = new OFFlowStatisticsRequest();
             OFMatch match = new OFMatch();
@@ -193,13 +187,28 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             req.setLengthU(req.getLengthU() + fsr.getLength());
             try {
                 future = sw.getStatistics(req);
-                List<OFStatistics> values = future.get(10, TimeUnit.SECONDS);
-                model.put(BeaconJsonView.ROOT_OBJECT_KEY, values);
+                values = future.get(10, TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.error("Failure retrieving flows", e);
             }
         }
+        return values;
+    }
 
+    @RequestMapping("/switch/{switchId}/flows/json")
+    public View getSwitchFlowsJson(@PathVariable String switchId, Map<String,Object> model) {
+        BeaconJsonView view = new BeaconJsonView();
+        model.put(BeaconJsonView.ROOT_OBJECT_KEY, getSwitchFlows(switchId));
         return view;
+    }
+
+    @RequestMapping("/switch/{switchId}/flows")
+    public String getSwitchFlows(@PathVariable String switchId, Map<String,Object> model) {
+        OneColumnLayout layout = new OneColumnLayout();
+        model.put("title", "Flows for switch: " + switchId);
+        model.put("layout", layout);
+        model.put("flows", getSwitchFlows(switchId));
+        layout.addSection(new JspSection("flows.jsp", model), null);
+        return BeaconViewResolver.SIMPLE_VIEW;
     }
 }

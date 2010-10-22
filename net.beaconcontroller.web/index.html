@@ -44,6 +44,9 @@
       .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
       .ui-sortable-placeholder * { visibility: hidden; }
 
+      /* style the close button for tabs */
+      #tabs li .ui-icon-close { float: left; margin: 0 0 0 -1em; cursor: pointer; }
+
       /* set styles for the beacon templating */
       .beaconTable {width: 100%; height: 100%;}
 
@@ -167,6 +170,36 @@
           }); // close the click() inner function
         }); //close the each() loop
 
+        // Wrap a new refreshing tab link
+        $(tab).find(".beaconNewRefreshingTab").each(function() {
+          $(this).click(function() {
+            $tabs = $("#center");
+
+            // add the new tab
+            var oldTemplate = $tabs.tabs( "option", "tabTemplate");
+            // use a custom template with an x to close the tab
+            $tabs.tabs( "option", "tabTemplate", '<li><a href="#{href}">#{label}</a> <span class="ui-icon ui-icon-close">Remove Tab</span></li>');
+            var t = $tabs.tabs('add', $(this).attr("href"), $(this).attr("name"));
+            $tabs.tabs( "option", "tabTemplate", oldTemplate);
+            // select it
+            var index = $tabs.tabs("length")-1;
+            $tabs.tabs("select", index);
+            // refresh every 5 seconds if we are selected
+            var timerId = setInterval(function () {
+              if (index == $tabs.tabs('option', 'selected')) {
+                $tabs.tabs('load', index);
+              }
+            }, 5000);
+
+            // add the close handler
+            $('#center span.ui-icon-close').last().click(function() {
+              var index = $('li',$tabs).index($(this).parent());
+              $tabs.tabs('remove', index);
+              clearInterval(timerId);
+            });
+            return false; //Return false from the click method to stop any native browser processing
+          }); // close the click() inner function
+        }); //close the each() loop
       } //end decorate Tabls
 
       $(document).ready(function () {
@@ -248,7 +281,7 @@
 
     <div id="footer" class="ui-layout-south">
       <div class="ui-widget-header" style="height:100%; margin:0px; padding:0px">
-        <p style="text-align:center; font-size:smaller">Footer goes here</p>
+        <p style="text-align:center; font-size:smaller"><a href="http://www.beaconcontroller.net">www.beaconcontroller.net</a></p>
       </div>
     </div>
 

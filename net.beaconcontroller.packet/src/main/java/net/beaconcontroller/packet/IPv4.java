@@ -378,6 +378,25 @@ public class IPv4 extends BasePacket {
     }
 
     /**
+     * Accepts an IPv4 address and returns of string of the form xxx.xxx.xxx.xxx
+     * ie 192.168.0.1
+     * 
+     * @param ipAddress
+     * @return
+     */
+    public static String fromIPv4Address(int ipAddress) {
+        StringBuffer sb = new StringBuffer();
+        int result = 0;
+        for (int i = 0; i < 4; ++i) {
+            result = (ipAddress >> ((3-i)*8)) & 0xff;
+            sb.append(Integer.valueOf(result).toString());
+            if (i != 3)
+                sb.append(".");
+        }
+        return sb.toString();
+    }
+
+    /**
      * Accepts an IPv4 address of the form xxx.xxx.xxx.xxx, ie 192.168.0.1 and
      * returns the corresponding byte array
      * @param ipAddress
