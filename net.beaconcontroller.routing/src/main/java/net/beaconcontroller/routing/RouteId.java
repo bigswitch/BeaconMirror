@@ -3,7 +3,7 @@ package net.beaconcontroller.routing;
 /**
  * Stores the endpoints of a route, in this case datapath ids
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class RouteId implements Cloneable {
     protected Long src;

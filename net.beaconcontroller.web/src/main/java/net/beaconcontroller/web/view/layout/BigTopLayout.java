@@ -7,9 +7,10 @@ import net.beaconcontroller.web.view.section.Section;
 
 /**
  * A big top area (e.g. for a chart) with a two column underneath
- * 
- * @author kyle
- * 
+ *
+ * @author Kyle Forster (kyle.forster@bigswitch.com)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ *
  */
 public class BigTopLayout extends TwoColumnLayout {
     protected Section topSection;

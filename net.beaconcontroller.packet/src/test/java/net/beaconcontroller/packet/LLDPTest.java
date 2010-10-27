@@ -11,7 +11,8 @@ import java.util.Arrays;
 import org.junit.Test;
 
 /**
- * @author David Erickson (derickso@stanford.edu)
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  *
  */
 public class LLDPTest {

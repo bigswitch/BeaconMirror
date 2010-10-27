@@ -27,7 +27,7 @@ import net.beaconcontroller.topology.TopologyAware;
 /**
  * Implementation of the APSP algorithm by Demetrescu and Italiano.
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, TopologyAware {
     protected static Logger log = LoggerFactory.getLogger(AllPairsShortestPathRoutingEngineImpl.class);

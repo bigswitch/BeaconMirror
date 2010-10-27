@@ -18,7 +18,7 @@ import org.openflow.protocol.OFType;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class MockBeaconProvider implements IBeaconProvider {
     protected Map<OFType, List<IOFMessageListener>> listeners;

@@ -19,7 +19,7 @@ import org.openflow.util.U16;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu) - 04/04/10
+ * @author David Erickson (daviderickson@cs.stanford.edu) - 04/04/10
  */
 public class Hub implements IOFMessageListener {
     protected IBeaconProvider beaconProvider;

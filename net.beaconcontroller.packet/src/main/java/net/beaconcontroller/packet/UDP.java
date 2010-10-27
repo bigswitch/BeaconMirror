@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class UDP extends BasePacket {
     protected short sourcePort;

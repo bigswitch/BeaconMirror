@@ -2,6 +2,11 @@ package net.beaconcontroller.devicemanager;
 
 import java.util.Arrays;
 
+/**
+ *
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public class Device {
     protected byte[] dataLayerAddress;
     protected Integer networkAddress;

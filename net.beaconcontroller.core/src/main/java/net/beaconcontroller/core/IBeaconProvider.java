@@ -5,6 +5,12 @@ import java.util.Map;
 
 import org.openflow.protocol.OFType;
 
+/**
+ * The interface exposed by the core bundle that allows you to interact
+ * with connected switches.
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public interface IBeaconProvider {
   /**
    * 

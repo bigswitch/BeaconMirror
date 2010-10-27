@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class OsgiApplicationContextHolder implements ApplicationContextAware {
     protected static ApplicationContext applicationContext;

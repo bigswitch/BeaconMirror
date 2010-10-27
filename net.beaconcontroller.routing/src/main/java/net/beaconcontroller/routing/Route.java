@@ -3,6 +3,11 @@ package net.beaconcontroller.routing;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a route between two switches
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public class Route implements Cloneable, Comparable<Route> {
     protected RouteId id;
     protected List<Link> path;

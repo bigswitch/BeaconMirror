@@ -17,7 +17,7 @@ import net.beaconcontroller.topology.LinkTuple;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class TopologyImplTest extends BeaconTestCase {
     public TopologyImpl getTopology() {

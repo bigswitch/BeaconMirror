@@ -2,6 +2,11 @@ package net.beaconcontroller.topology;
 
 import java.nio.ByteBuffer;
 
+/**
+ *
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public class LinkTuple {
     protected IdPortTuple src;
     protected IdPortTuple dst;

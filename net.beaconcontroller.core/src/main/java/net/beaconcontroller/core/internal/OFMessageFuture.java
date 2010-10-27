@@ -23,7 +23,7 @@ import net.beaconcontroller.core.IOFSwitchListener;
  * sub-classed and proper behavior added to the handleReply method, and
  * termination of the Future to be handled in the isFinished method.
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public abstract class OFMessageFuture<T,V> implements Future<V>, IOFMessageListener,
         IOFSwitchFilter, IOFSwitchListener {

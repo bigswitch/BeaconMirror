@@ -33,7 +33,7 @@ import org.openflow.protocol.statistics.OFStatisticsType;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class ControllerTest extends BeaconTestCase {
     protected Controller getController() {

@@ -14,6 +14,11 @@ import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.statistics.OFStatistics;
 
+/**
+ *
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public interface IOFSwitch {
     /**
      *

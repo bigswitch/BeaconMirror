@@ -1,6 +1,10 @@
 package net.beaconcontroller.core;
 
-
+/**
+ *
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public interface IOFSwitchListener {
 
     /**

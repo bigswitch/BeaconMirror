@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class AllPairsShortestPathRouting implements IOFMessageListener {
     protected static Logger log = LoggerFactory.getLogger(AllPairsShortestPathRouting.class);
