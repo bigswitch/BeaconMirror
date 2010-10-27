@@ -20,6 +20,7 @@
     <module>../target-platform</module>
     <module>../net.beaconcontroller.core</module>
     <module>../net.beaconcontroller.core.tests</module>
+    <module>../net.beaconcontroller.core.web</module>
     <module>../net.beaconcontroller.devicemanager</module>
     <module>../net.beaconcontroller.devicemanager.tests</module>
     <module>../net.beaconcontroller.hub</module>
@@ -38,6 +39,7 @@
     <module>../net.beaconcontroller.test</module>
     <module>../net.beaconcontroller.topology</module>
     <module>../net.beaconcontroller.topology.tests</module>
+    <module>../net.beaconcontroller.util</module>
     <module>../net.beaconcontroller.web</module>
   </modules>
   <pluginRepositories>
@@ -141,6 +143,17 @@
       <id>beaconlibs</id>
       <layout>p2</layout>
       <url>file:/${basedir}/../libs</url>
+    </repository>
+    <repository>
+      <id>openflow-public-repository-group</id>
+      <name>OpenFlow Public Repository Group</name>
+      <url>http://yuba.stanford.edu:8081/nexus/content/groups/public/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
   </repositories>
 </project>
