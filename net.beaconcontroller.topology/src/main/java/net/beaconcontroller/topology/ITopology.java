@@ -1,5 +1,7 @@
 package net.beaconcontroller.topology;
 
+import java.util.Map;
+
 public interface ITopology {
     /**
      * Query to determine if the specified switch id and port tuple are
@@ -9,4 +11,11 @@ public interface ITopology {
      * @return
      */
     public boolean isInternal(IdPortTuple idPort);
+
+    /**
+     * Retrieves a map of all known link connections between OpenFlow switches
+     * and the last time each link was known to be functioning
+     * @return
+     */
+    public Map<LinkTuple, Long> getLinks();
 }
