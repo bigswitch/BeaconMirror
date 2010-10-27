@@ -204,6 +204,11 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             return Command.CONTINUE;
 
         LLDP lldp = (LLDP) eth.getPayload();
+
+        // If this is a malformed lldp, ignore it and move on
+        if (lldp.getPortId() == null)
+            return Command.CONTINUE;
+
         ByteBuffer portBB = ByteBuffer.wrap(lldp.getPortId().getValue());
         portBB.position(1);
         Short remotePort = portBB.getShort();
