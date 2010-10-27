@@ -8,10 +8,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.beaconcontroller.core.IBeaconProvider;
@@ -30,12 +30,12 @@ import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFPhysicalPort;
-import org.openflow.protocol.OFPort;
-import org.openflow.protocol.OFPortStatus;
-import org.openflow.protocol.OFType;
 import org.openflow.protocol.OFPhysicalPort.OFPortConfig;
 import org.openflow.protocol.OFPhysicalPort.OFPortState;
+import org.openflow.protocol.OFPort;
+import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFPortStatus.OFPortReason;
+import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.slf4j.Logger;
@@ -460,5 +460,10 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      */
     public void setRoutingEngine(IRoutingEngine routingEngine) {
         this.routingEngine = routingEngine;
+    }
+
+    @Override
+    public Map<LinkTuple, Long> getLinks() {
+        return new HashMap<LinkTuple, Long>(links);
     }
 }
