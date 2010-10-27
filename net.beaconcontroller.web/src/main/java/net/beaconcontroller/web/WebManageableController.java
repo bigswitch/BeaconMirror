@@ -1,6 +1,7 @@
 package net.beaconcontroller.web;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ import org.springframework.web.servlet.View;
 public class WebManageableController {
     protected static Logger log = LoggerFactory.getLogger(WebManageableController.class);
 
-    protected List<IWebManageable> webManageables = new ArrayList<IWebManageable>();
+    protected List<IWebManageable> webManageables;
 
     @RequestMapping(value = "wm")
     public View overview(Map<String, Object> model) {
@@ -39,5 +40,12 @@ public class WebManageableController {
     @Autowired
     public void setWebManageables(List<IWebManageable> webManageables) {
         this.webManageables = webManageables;
+        // sort the list
+        Collections.sort(webManageables, new Comparator<IWebManageable>() {
+            @Override
+            public int compare(IWebManageable o1, IWebManageable o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
     }
 }
