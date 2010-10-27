@@ -28,7 +28,7 @@
       /* use !important to override UI theme styles */
       .grey     { background: #999 !important; }
       .outline    { /*border:   1px dashed #F00 !important;*/ }
-      .add-padding  { padding:    10px !important; }
+      .add-padding  { padding:    10px !important; } 
       .no-padding   { padding:    0 !important; }
       .add-scrollbar  { overflow:   auto; }
       .no-scrollbar { overflow:   hidden; }
@@ -207,7 +207,7 @@
         pageLayout = $("body").layout({
             west__size:       250
           , east__size:       .10
-          , north__size:      50
+          , north__size:      60
           , south__size:      30
           , south__initClosed:    false
           , north__initClosed:    false
@@ -243,14 +243,22 @@
           //Fetch the content for the tabs needed
           newTabs(firstTabSet);
 
-          //Init the left panel nav (copy in values and do a little html munging)
-          $("#appAccordianEntryTemplate").values(appList, {onlyNest:true});
+          // Set up our clones
+          $(".accordionHeader").xclone();
+          $(".accordionContent").xclone();
+          $.each(appList, function(index, value) {
+            //Init the left panel nav (copy in values and do a little html munging)
+            $(".accordionHeader").xclone(value, {onlyNest: true});
+            $(".accordionContent").xclone(value, {onlyNest: true});
 
-          $("#appAccordian").append($("#appAccordianEntryTemplate").children()); //work around to make accordian plugin line up with values plug-in
-          $("#appAccordian").accordion({ });
+            //$("#appAccordionEntryTemplate").values(value, {onlyNest:true});
+  
+            $("#appAccordion").append($("#appAccordionEntryTemplate").children()); //work around to make accordion plugin line up with values plug-in
+          });
+          $("#appAccordion").accordion({ });
 
-          // Wire the accordian change in the left panel nav to changing up the tabs in the center panel
-          $("#appAccordian").bind( "accordionchange", function(event, ui) {
+          // Wire the accordion change in the left panel nav to changing up the tabs in the center panel
+          $("#appAccordion").bind( "accordionchange", function(event, ui) {
             var name = ui.newHeader.find("a").html(); //crumby way to fish the app name back out
             var app = null;
             for(var i = 0; i < appList.length; i++)
@@ -280,13 +288,13 @@
     </div>
 
     <div id="footer" class="ui-layout-south">
-      <div class="ui-widget-header" style="height:100%; margin:0px; padding:0px">
-        <p style="text-align:center; font-size:smaller"><a href="http://www.beaconcontroller.net">www.beaconcontroller.net</a></p>
+      <div class="ui-widget-header" style="height: 28px; margin:0px; padding:0px;">
+        <p style="text-align:center; font-size:smaller; margin: 0px; padding-top: 9px;"><a href="http://www.beaconcontroller.net">www.beaconcontroller.net</a></p>
       </div>
     </div>
 
     <div id="west" class="ui-layout-west no-scrollbar add-padding">
-      <div id="appAccordian">
+      <div id="appAccordion">
       </div>
     </div>
 
@@ -300,10 +308,10 @@
 
     <!-- The items in this div are templates used by the xclone/values plugin they should not be end-user-visible  -->
     <div id="templatesDiv" style="visibility:hidden">
-      <!-- Template for the accordian control (west panel) used to pick active application -->
-      <div id="appAccordianEntryTemplate">
-        <h3><a name="name" href="#">Section 1</a></h3>
-        <div name="description">
+      <!-- Template for the accordion control (west panel) used to pick active application -->
+      <div id="appAccordionEntryTemplate">
+        <h3 class="accordionHeader"><a name="name" href="#">Section 1</a></h3>
+        <div class="accordionContent" name="description">
           <p>description</p>
         </div>
       </div>
