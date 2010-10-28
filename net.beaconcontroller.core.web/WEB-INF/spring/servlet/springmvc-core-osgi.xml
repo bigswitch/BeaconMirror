@@ -9,4 +9,8 @@
   <osgi:reference id="beaconProvider" cardinality="1..1"
     interface="net.beaconcontroller.core.IBeaconProvider">
   </osgi:reference>
+
+  <osgi:reference id="packageAdmin" cardinality="1..1"
+    interface="org.osgi.service.packageadmin.PackageAdmin">
+  </osgi:reference>
 </beans>

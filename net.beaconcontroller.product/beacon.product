@@ -3,6 +3,7 @@
 
 <product name="Beacon Controller" uid="beacon.product.id" version="0.1.0" useFeatures="false" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -19,6 +20,7 @@
 
    <windowImages/>
 
+
    <launcher name="beacon">
       <solaris/>
       <win useIco="false">
@@ -26,14 +28,18 @@
       </win>
    </launcher>
 
+
    <vm>
    </vm>
+
 
    <plugins>
       <plugin id="ch.qos.logback.classic"/>
       <plugin id="ch.qos.logback.core"/>
       <plugin id="com.springsource.net.sf.cglib"/>
       <plugin id="com.springsource.org.aopalliance"/>
+      <plugin id="jackson-core-asl"/>
+      <plugin id="jackson-mapper-asl"/>
       <plugin id="javax.servlet"/>
       <plugin id="javax.servlet.jsp"/>
       <plugin id="jcl.over.slf4j"/>
@@ -51,6 +57,8 @@
       <plugin id="net.beaconcontroller.util"/>
       <plugin id="net.beaconcontroller.web"/>
       <plugin id="org.apache.ant"/>
+      <plugin id="org.apache.commons.fileupload"/>
+      <plugin id="org.apache.commons.io"/>
       <plugin id="org.eclipse.equinox.ds" version="1.2.0.v20100507"/>
       <plugin id="org.eclipse.equinox.log"/>
       <plugin id="org.eclipse.equinox.util"/>
@@ -88,6 +96,8 @@
       <plugin id="ch.qos.logback.core" autoStart="true" startLevel="0" />
       <plugin id="com.springsource.net.sf.cglib" autoStart="true" startLevel="0" />
       <plugin id="com.springsource.org.aopalliance" autoStart="true" startLevel="0" />
+      <plugin id="jackson-core-asl" autoStart="true" startLevel="0" />
+      <plugin id="jackson-mapper-asl" autoStart="true" startLevel="0" />
       <plugin id="javax.servlet" autoStart="true" startLevel="0" />
       <plugin id="javax.servlet.jsp" autoStart="true" startLevel="0" />
       <plugin id="jcl.over.slf4j" autoStart="true" startLevel="0" />
@@ -102,6 +112,8 @@
       <plugin id="net.beaconcontroller.util" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.web" autoStart="true" startLevel="0" />
       <plugin id="org.apache.ant" autoStart="true" startLevel="0" />
+      <plugin id="org.apache.commons.fileupload" autoStart="true" startLevel="0" />
+      <plugin id="org.apache.commons.io" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.log" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.util" autoStart="true" startLevel="0" />

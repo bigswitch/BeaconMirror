@@ -1,8 +1,11 @@
 package net.beaconcontroller.core.web;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,6 +38,9 @@ import org.openflow.util.HexString;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.FrameworkEvent;
+import org.osgi.framework.FrameworkListener;
+import org.osgi.service.packageadmin.PackageAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +48,10 @@ import org.springframework.osgi.context.BundleContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.View;
 
 /**
@@ -61,6 +70,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
     protected static Logger log = LoggerFactory.getLogger(CoreWebManageable.class);
     protected IBeaconProvider beaconProvider;
     protected BundleContext bundleContext;
+    protected PackageAdmin packageAdmin;
     protected List<Tab> tabs;
 
     public CoreWebManageable() {
@@ -144,6 +154,10 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         Layout layout = new OneColumnLayout();
         model.put("layout", layout);
 
+        // Bundle Form
+        model.put("title", "Add Bundle");
+        layout.addSection(new JspSection("addBundle.jsp", new HashMap<String, Object>(model)), TwoColumnLayout.COLUMN1);
+
         // Bundle List Table
         model.put("bundles", Arrays.asList(this.bundleContext.getBundles()));
         model.put("title", "OSGi Bundles");
@@ -155,19 +169,48 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
     @RequestMapping("/bundle/{bundleId}/{action}")
     @ResponseBody
     public String osgiAction(@PathVariable Long bundleId, @PathVariable String action) {
-        Bundle bundle = this.bundleContext.getBundle(bundleId);
+        final Bundle bundle = this.bundleContext.getBundle(bundleId);
         if (action != null) {
             try {
                 if (BundleAction.START.toString().equals(action)) {
-                        bundle.start();
+                    bundle.start();
                 } else if (BundleAction.STOP.toString().equals(action)) {
-                        bundle.stop();
+                    bundle.stop();
+                } else if (BundleAction.UNINSTALL.toString().equals(action)) {
+                    bundle.uninstall();
+                } else if (BundleAction.REFRESH.toString().equals(action)) {
+                    packageAdmin.refreshPackages(new Bundle[] {bundle});
                 }
             } catch (BundleException e) {
                 log.error("Failure performing action " + action + " on bundle " + bundle.getSymbolicName(), e);
             }
         }
         return "";
+    }
+
+    @RequestMapping(value = "/bundle/add", method = RequestMethod.POST)
+    public View osgiBundleAdd(@RequestParam("file") MultipartFile file, Map<String, Object> model) throws Exception {
+        BeaconJsonView view = new BeaconJsonView();
+
+        File tempFile = null;
+        Bundle newBundle = null;
+        try {
+            tempFile = File.createTempFile("beacon", ".jar");
+            file.transferTo(tempFile);
+            tempFile.deleteOnExit();
+            newBundle = bundleContext.installBundle("file:"+tempFile.getCanonicalPath());
+            model.put(BeaconJsonView.ROOT_OBJECT_KEY,
+                    "Successfully installed: " + newBundle.getSymbolicName()
+                            + "_" + newBundle.getVersion());
+        } catch (IOException e) {
+            log.error("Failure to create temporary file", e);
+            model.put(BeaconJsonView.ROOT_OBJECT_KEY, "Failed to install bundle.");
+        } catch (BundleException e) {
+            log.error("Failure installing bundle", e);
+            model.put(BeaconJsonView.ROOT_OBJECT_KEY, "Failed to install bundle.");
+        }
+        view.setContentType("text/javascript");
+        return view;
     }
 
     protected List<OFStatistics> getSwitchFlows(String switchId) {
@@ -210,5 +253,13 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         model.put("flows", getSwitchFlows(switchId));
         layout.addSection(new JspSection("flows.jsp", model), null);
         return BeaconViewResolver.SIMPLE_VIEW;
+    }
+
+    /**
+     * @param packageAdmin the packageAdmin to set
+     */
+    @Autowired
+    public void setPackageAdmin(PackageAdmin packageAdmin) {
+        this.packageAdmin = packageAdmin;
     }
 }
