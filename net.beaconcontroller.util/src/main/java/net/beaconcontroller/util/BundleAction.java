@@ -11,7 +11,8 @@ import java.util.List;
 public enum BundleAction {
     START,
     STOP,
-    UNINSTALL;
+    UNINSTALL,
+    REFRESH;
 
     public static List<BundleAction> getAvailableActions(BundleState state) {
         List<BundleAction> actions = new ArrayList<BundleAction>();
@@ -28,6 +29,9 @@ public enum BundleAction {
                 BundleState.UNINSTALLED}, state) < 0) {
             actions.add(UNINSTALL);
         }
+
+        // Always capable of refresh?
+        actions.add(REFRESH);
         return actions;
     }
 }

@@ -11,6 +11,7 @@
     <script type="text/javascript" src="js/jquery.values.js"></script>
     <script type="text/javascript" src="js/jquery.xclone.js"></script>
     <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="js/jquery.form.js"></script>
 
     <style type="text/css">
       /* set base body font size so that the relative font sizing below works */
@@ -58,6 +59,13 @@
 
     <script type="text/javascript">
       var APPLICATIONS_LIST_URI = "wm.do";
+
+      // Reload the current tab
+      function reloadCurrentTab() {
+        var $tabs = $('#center').tabs();
+        var selectedIndex = $tabs.tabs('option', 'selected');
+        $tabs.tabs('load', selectedIndex);
+      }
 
       /**
       * Removes all of the tabs from the main panel and replaces them with the tabs referenced
@@ -155,6 +163,27 @@
             return false; //Return false from the click method to stop any native browser processing
           }); // close the click() inner function
         }); //close the each() loop
+
+        $(tab).find(".beaconAjaxDialogForm").each(function() {
+          $(this).ajaxForm({
+            dataType: 'json',
+            success: function (data) {
+              $("#beaconDialogBoxTemplate" ).html(data);
+              $("#beaconDialogBoxTemplate" ).dialog({
+                height: 'auto',
+                width: 500,
+                modal: true,
+                resizable: true,
+                buttons: {
+                  OK: function() {
+                    $( this ).dialog( "close" );
+                    reloadCurrentTab();
+                  }
+                }
+              });
+            }
+          });
+        });
 
         // Wrap a refresh link
         $(tab).find(".beaconRefreshTab").each(function() {
