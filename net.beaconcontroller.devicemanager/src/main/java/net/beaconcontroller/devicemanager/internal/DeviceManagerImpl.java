@@ -3,7 +3,9 @@
  */
 package net.beaconcontroller.devicemanager.internal;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -106,5 +108,10 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
     @Override
     public Device getDeviceByDataLayerAddress(byte[] address) {
         return this.getDeviceByDataLayerAddress(Arrays.hashCode(address));
+    }
+
+    @Override
+    public List<Device> getDevices() {
+        return new ArrayList<Device>(this.dataLayerAddressDeviceMap.values());
     }
 }
