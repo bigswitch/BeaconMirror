@@ -6,6 +6,8 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.*;
 
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,7 +53,7 @@ public class TopologyImplTest extends BeaconTestCase {
         TopologyImpl topology = getTopology();
         LinkTuple lt = new LinkTuple(1L, 2, 2L, 1);
         topology.addOrUpdateLink(lt);
-        topology.deleteLink(lt);
+        topology.deleteLinks(Collections.singletonList(lt));
 
         // check invariants hold
         assertNull(topology.switchLinks.get(lt.getSrc().getId()));
@@ -82,7 +84,7 @@ public class TopologyImplTest extends BeaconTestCase {
         TopologyImpl topology = getTopology();
         LinkTuple lt = new LinkTuple(1L, 2, 1L, 3);
         topology.addOrUpdateLink(lt);
-        topology.deleteLink(lt);
+        topology.deleteLinks(Collections.singletonList(lt));
 
         // check invariants hold
         assertNull(topology.switchLinks.get(lt.getSrc().getId()));
