@@ -23,6 +23,7 @@
     <module>../net.beaconcontroller.core.web</module>
     <module>../net.beaconcontroller.devicemanager</module>
     <module>../net.beaconcontroller.devicemanager.tests</module>
+    <module>../net.beaconcontroller.devicemanager.web</module>
     <module>../net.beaconcontroller.hub</module>
     <module>../net.beaconcontroller.hub.tests</module>
     <module>../net.beaconcontroller.jetty.config</module>
@@ -39,6 +40,7 @@
     <module>../net.beaconcontroller.test</module>
     <module>../net.beaconcontroller.topology</module>
     <module>../net.beaconcontroller.topology.tests</module>
+    <module>../net.beaconcontroller.topology.web</module>
     <module>../net.beaconcontroller.util</module>
     <module>../net.beaconcontroller.web</module>
   </modules>
