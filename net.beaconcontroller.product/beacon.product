@@ -3,7 +3,6 @@
 
 <product name="Beacon Controller" uid="beacon.product.id" version="0.1.0" useFeatures="false" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -20,7 +19,6 @@
 
    <windowImages/>
 
-
    <launcher name="beacon">
       <solaris/>
       <win useIco="false">
@@ -28,10 +26,8 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="ch.qos.logback.classic"/>
