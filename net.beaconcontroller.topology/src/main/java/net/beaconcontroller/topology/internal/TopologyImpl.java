@@ -260,8 +260,11 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     }
 
     protected void addOrUpdateLink(LinkTuple lt) {
+        boolean addRoute = false;
         lock.writeLock().lock();
         if (links.put(lt, System.currentTimeMillis()) == null) {
+            addRoute = true;
+
             // index it by switch source
             if (!switchLinks.containsKey(lt.getSrc().getId()))
                 switchLinks.put(lt.getSrc().getId(), new HashSet<LinkTuple>());
@@ -283,7 +286,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         }
         lock.writeLock().unlock();
 
-        if (routingEngine != null) {
+        if (addRoute && routingEngine != null) {
             routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(),
                     lt.getDst().getId(), lt.getDst().getPort(), true);
         }
