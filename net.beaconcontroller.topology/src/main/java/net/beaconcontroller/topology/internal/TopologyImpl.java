@@ -42,10 +42,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This class sends out LLDP messages containing the sending switch's datapath
+ * id as well as the outgoing port number.  Received LLDP messages that match
+ * a known switch cause a new LinkTuple to be created according to the
+ * invariant rules listed below.  This new LinkTuple is also passed to routing
+ * if it exists to trigger updates.
+ *
+ * This class also handles removing links that are associated to switch ports
+ * that go down, and switches that are disconnected.
+ *
  * Invariants:
  *  -portLinks and switchLinks will not contain empty Sets outside of critical sections
  *  -portLinks contains LinkTuples where one of the src or dst IdPortTuple matches the map key
  *  -switchLinks contains LinkTuples where one of the src or dst IdPortTuple's id matches the switch id
+ *  -Each LinkTuple will be indexed into switchLinks for both src.id and dst.id,
+ *    and portLinks for each src and dst
  *
  * @author David Erickson (derickso@stanford.edu)
  */
@@ -240,8 +251,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         }
 
         // Store the time of update to this link, and push it out to routingEngine
-        LinkTuple lt = new LinkTuple(new IdPortTuple(sw.getId(), pi.getInPort()),
-                new IdPortTuple(remoteDpid, remotePort));
+        LinkTuple lt = new LinkTuple(new IdPortTuple(remoteDpid, remotePort),
+                new IdPortTuple(sw.getId(), pi.getInPort()));
         addOrUpdateLink(lt);
 
         // Consume this message
@@ -269,39 +280,49 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             if (!portLinks.containsKey(lt.getDst()))
                 portLinks.put(lt.getDst(), new HashSet<LinkTuple>());
             portLinks.get(lt.getDst()).add(lt);
-
-            if (routingEngine != null) {
-                routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(),
-                        lt.getDst().getId(), lt.getDst().getPort(), true);
-            }
         }
-        lock.writeLock().unlock();
-    }
-
-    protected void deleteLink(LinkTuple lt) {
-        lock.writeLock().lock();
-        this.switchLinks.get(lt.getSrc().getId()).remove(lt);
-        this.switchLinks.get(lt.getDst().getId()).remove(lt);
-        if (this.switchLinks.containsKey(lt.getSrc().getId()) &&
-                this.switchLinks.get(lt.getSrc().getId()).isEmpty())
-            this.switchLinks.remove(lt.getSrc().getId());
-        if (this.switchLinks.containsKey(lt.getDst().getId()) &&
-                this.switchLinks.get(lt.getDst().getId()).isEmpty())
-            this.switchLinks.remove(lt.getDst().getId());
-
-        this.portLinks.get(lt.getSrc()).remove(lt);
-        this.portLinks.get(lt.getDst()).remove(lt);
-        if (this.portLinks.get(lt.getSrc()).isEmpty())
-            this.portLinks.remove(lt.getSrc());
-        if (this.portLinks.get(lt.getDst()).isEmpty())
-            this.portLinks.remove(lt.getDst());
-
-        this.links.remove(lt);
         lock.writeLock().unlock();
 
         if (routingEngine != null) {
             routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(),
-                    lt.getDst().getId(), lt.getDst().getPort(), false);
+                    lt.getDst().getId(), lt.getDst().getPort(), true);
+        }
+    }
+
+    /**
+     *
+     * @param links
+     */
+    protected void deleteLinks(List<LinkTuple> links) {
+        lock.writeLock().lock();
+        for (LinkTuple lt : links) {
+            this.switchLinks.get(lt.getSrc().getId()).remove(lt);
+            this.switchLinks.get(lt.getDst().getId()).remove(lt);
+            if (this.switchLinks.containsKey(lt.getSrc().getId()) &&
+                    this.switchLinks.get(lt.getSrc().getId()).isEmpty())
+                this.switchLinks.remove(lt.getSrc().getId());
+            if (this.switchLinks.containsKey(lt.getDst().getId()) &&
+                    this.switchLinks.get(lt.getDst().getId()).isEmpty())
+                this.switchLinks.remove(lt.getDst().getId());
+    
+            this.portLinks.get(lt.getSrc()).remove(lt);
+            this.portLinks.get(lt.getDst()).remove(lt);
+            if (this.portLinks.get(lt.getSrc()).isEmpty())
+                this.portLinks.remove(lt.getSrc());
+            if (this.portLinks.get(lt.getDst()).isEmpty())
+                this.portLinks.remove(lt.getDst());
+
+            this.links.remove(lt);
+        }
+        lock.writeLock().unlock();
+    }
+
+    protected void sendRoutingEngineUpdates(List<LinkTuple> links, boolean added) {
+        if (routingEngine != null) {
+            for (LinkTuple lt : links) {
+                routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(),
+                        lt.getDst().getId(), lt.getDst().getPort(), added);
+            }
         }
     }
 
@@ -317,38 +338,11 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             lock.writeLock().lock();
             if (this.portLinks.containsKey(tuple)) {
                 eraseList.addAll(this.portLinks.get(tuple));
-                for (LinkTuple lt : this.portLinks.get(tuple)) {
-                    // cleanup id:port->links map
-                    // check src
-                    if (!lt.getSrc().equals(tuple))
-                        if (portLinks.get(lt.getSrc()) != null) {
-                            portLinks.get(lt.getSrc()).remove(lt);
-                            if (portLinks.get(lt.getSrc()).isEmpty())
-                                portLinks.remove(lt.getSrc());
-                        }
-                    else
-                        if (portLinks.get(lt.getDst()) != null) {
-                            portLinks.get(lt.getDst()).remove(lt);
-                            if (portLinks.get(lt.getDst()).isEmpty())
-                                portLinks.remove(lt.getDst());
-                        }
-
-                    // cleanup swid->links map
-                    this.switchLinks.get(sw.getId()).remove(lt);
-                    if (this.switchLinks.get(sw.getId()).isEmpty())
-                        this.switchLinks.remove(sw.getId());
-
-                    // cleanup link->timeout map
-                    this.links.remove(lt);
-                    
-                }
+                deleteLinks(eraseList);
             }
             lock.writeLock().unlock();
 
-            for (LinkTuple lt : eraseList)
-                if (routingEngine != null)
-                    routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
-                            .getDst().getId(), lt.getDst().getPort(), false);
+            sendRoutingEngineUpdates(eraseList, false);
             eraseList.clear();
         }
         return Command.CONTINUE;
@@ -366,50 +360,11 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         if (switchLinks.containsKey(sw.getId())) {
             // add all tuples with an endpoint on this switch to erase list
             eraseList.addAll(switchLinks.get(sw.getId()));
-
-            for (LinkTuple lt : switchLinks.get(sw.getId())) {
-                // cleanup id:port->links map
-                // check src
-                if (lt.getSrc().getId().equals(sw.getId())) {
-                    portLinks.remove(lt.getSrc());
-                } else {
-                    if (portLinks.get(lt.getSrc()) != null) {
-                        portLinks.get(lt.getSrc()).remove(lt);
-                        if (portLinks.get(lt.getSrc()).isEmpty())
-                            portLinks.remove(lt.getSrc());
-                    }
-
-                    this.switchLinks.get(lt.getSrc().getId()).remove(lt);
-                    if (this.switchLinks.get(lt.getSrc().getId()).isEmpty())
-                        this.switchLinks.remove(lt.getSrc().getId());
-                }
-
-                // check dst
-                if (lt.getDst().getId().equals(sw.getId())) {
-                    portLinks.remove(lt.getDst());
-                } else {
-                    if (portLinks.get(lt.getDst()) != null) {
-                        portLinks.get(lt.getDst()).remove(lt);
-                        if (portLinks.get(lt.getDst()).isEmpty())
-                            portLinks.remove(lt.getDst());
-                    }
-
-                    this.switchLinks.get(lt.getDst().getId()).remove(lt);
-                    if (this.switchLinks.get(lt.getDst().getId()).isEmpty())
-                        this.switchLinks.remove(lt.getDst().getId());
-                }
-
-                // cleanup link->timeout map
-                this.links.remove(lt);
-            }
-            switchLinks.remove(sw.getId());
+            deleteLinks(eraseList);
         }
         lock.writeLock().unlock();
 
-        for (LinkTuple lt : eraseList)
-            if (routingEngine != null)
-                routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(), lt
-                        .getDst().getId(), lt.getDst().getPort(), false);
+        sendRoutingEngineUpdates(eraseList, false);
         eraseList.clear();
     }
 
@@ -427,10 +382,11 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             }
         }
 
-        for (LinkTuple lt : eraseList) {
-            deleteLink(lt);
-        }
+        deleteLinks(eraseList);
         lock.writeLock().unlock();
+
+        sendRoutingEngineUpdates(eraseList, false);
+        eraseList.clear();
     }
 
     /**
