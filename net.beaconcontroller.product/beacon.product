@@ -3,7 +3,6 @@
 
 <product name="Beacon Controller" uid="beacon.product.id" version="0.1.0" useFeatures="false" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -20,7 +19,6 @@
 
    <windowImages/>
 
-
    <launcher name="beacon">
       <solaris/>
       <win useIco="false">
@@ -28,10 +26,8 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="ch.qos.logback.classic"/>
@@ -46,6 +42,7 @@
       <plugin id="net.beaconcontroller.core"/>
       <plugin id="net.beaconcontroller.core.web" fragment="true"/>
       <plugin id="net.beaconcontroller.devicemanager"/>
+      <plugin id="net.beaconcontroller.devicemanager.web" fragment="true"/>
       <plugin id="net.beaconcontroller.jetty.config" fragment="true"/>
       <plugin id="net.beaconcontroller.learningswitch"/>
       <plugin id="net.beaconcontroller.logging.bridge"/>
@@ -54,6 +51,7 @@
       <plugin id="net.beaconcontroller.routing"/>
       <plugin id="net.beaconcontroller.routing.apsp"/>
       <plugin id="net.beaconcontroller.topology"/>
+      <plugin id="net.beaconcontroller.topology.web" fragment="true"/>
       <plugin id="net.beaconcontroller.util"/>
       <plugin id="net.beaconcontroller.web"/>
       <plugin id="org.apache.ant"/>
