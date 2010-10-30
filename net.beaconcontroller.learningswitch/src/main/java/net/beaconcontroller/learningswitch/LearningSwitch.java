@@ -1,10 +1,9 @@
 package net.beaconcontroller.learningswitch;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.beaconcontroller.core.IBeaconProvider;
@@ -82,7 +81,6 @@ public class LearningSwitch implements IOFMessageListener {
         OFMatch match = new OFMatch();
         match.loadFromPacket(pi.getPacketData(), pi.getInPort());
         byte[] dlDst = match.getDataLayerDestination();
-        Integer dlDstKey = Arrays.hashCode(dlDst);
         byte[] dlSrc = match.getDataLayerSource();
         Integer dlSrcKey = Arrays.hashCode(dlSrc);
         int bufferId = pi.getBufferId();
@@ -98,35 +96,30 @@ public class LearningSwitch implements IOFMessageListener {
         Short outPort = null;
         // if the destination is not multicast, look it up
         if ((dlDst[0] & 0x1) == 0) {
-            outPort = macTable.get(dlDstKey);
+            outPort = macTable.get(Arrays.hashCode(dlDst));
         }
 
-        // push a flow mod if we know where the packet should be going
+        // push a flow mod if we know where the destination lives
         if (outPort != null) {
             if (outPort == pi.getInPort()) {
-                // drop the packet
+                // don't send out the port it came in
                 return Command.CONTINUE;
             }
+            match.setInputPort(pi.getInPort());
+
+            // build action
+            OFActionOutput action = new OFActionOutput()
+                .setPort(outPort);
+
+            // build flow mod
             OFFlowMod fm = (OFFlowMod) sw.getInputStream().getMessageFactory()
                     .getMessage(OFType.FLOW_MOD);
-            fm.setBufferId(bufferId);
-            fm.setCommand((short) 0);
-            fm.setCookie(0);
-            fm.setFlags((short) 0);
-            fm.setHardTimeout((short) 0);
-            fm.setIdleTimeout((short) 5);
-            match.setInputPort(pi.getInPort());
-            match.setWildcards(0);
-            fm.setMatch(match);
-            fm.setOutPort((short) OFPort.OFPP_NONE.getValue());
-            fm.setPriority((short) 0);
-            OFActionOutput action = new OFActionOutput();
-            action.setMaxLength((short) 0);
-            action.setPort(outPort);
-            List<OFAction> actions = new ArrayList<OFAction>();
-            actions.add(action);
-            fm.setActions(actions);
-            fm.setLength(U16.t(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH));
+            fm.setBufferId(bufferId)
+                .setIdleTimeout((short) 5)
+                .setOutPort((short) OFPort.OFPP_NONE.getValue())
+                .setMatch(match)
+                .setActions(Collections.singletonList((OFAction)action))
+                .setLength(U16.t(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH));
             try {
                 sw.getOutputStream().write(fm);
             } catch (IOException e) {
@@ -136,21 +129,19 @@ public class LearningSwitch implements IOFMessageListener {
 
         // Send a packet out
         if (outPort == null || pi.getBufferId() == 0xffffffff) {
-            OFPacketOut po = new OFPacketOut();
-            po.setBufferId(bufferId);
-            po.setInPort(pi.getInPort());
-
-            // set actions
-            OFActionOutput action = new OFActionOutput();
-            action.setMaxLength((short) 0);
-            action.setPort((short) ((outPort == null) ? OFPort.OFPP_FLOOD
+            // build action
+            OFActionOutput action = new OFActionOutput()
+                .setPort((short) ((outPort == null) ? OFPort.OFPP_FLOOD
                     .getValue() : outPort));
-            List<OFAction> actions = new ArrayList<OFAction>();
-            actions.add(action);
-            po.setActions(actions);
-            po.setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
 
-            // set data if needed
+            // build packet out
+            OFPacketOut po = new OFPacketOut()
+                .setBufferId(bufferId)
+                .setInPort(pi.getInPort())
+                .setActions(Collections.singletonList((OFAction)action))
+                .setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
+
+            // set data if it is included in the packetin
             if (bufferId == 0xffffffff) {
                 byte[] packetData = pi.getPacketData();
                 po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH
