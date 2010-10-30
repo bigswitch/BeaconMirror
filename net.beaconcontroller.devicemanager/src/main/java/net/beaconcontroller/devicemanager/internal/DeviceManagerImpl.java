@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  *
  */
 public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {

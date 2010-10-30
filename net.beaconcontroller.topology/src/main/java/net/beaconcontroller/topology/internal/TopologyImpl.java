@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  *  -Each LinkTuple will be indexed into switchLinks for both src.id and dst.id,
  *    and portLinks for each src and dst
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITopology {
     protected static Logger log = LoggerFactory.getLogger(TopologyImpl.class);

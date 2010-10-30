@@ -2,6 +2,11 @@ package net.beaconcontroller.routing;
 
 import net.beaconcontroller.core.IOFSwitch;
 
+/**
+ *
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public interface IRoutingEngine {
     public Route getRoute(IOFSwitch src, IOFSwitch dst);
 

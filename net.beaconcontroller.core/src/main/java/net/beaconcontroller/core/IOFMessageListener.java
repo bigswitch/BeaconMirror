@@ -2,6 +2,11 @@ package net.beaconcontroller.core;
 
 import org.openflow.protocol.OFMessage;
 
+/**
+ *
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public interface IOFMessageListener {
     public enum Command {
         CONTINUE, STOP

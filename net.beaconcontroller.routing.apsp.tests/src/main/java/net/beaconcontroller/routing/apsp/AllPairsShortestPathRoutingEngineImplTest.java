@@ -10,7 +10,7 @@ import net.beaconcontroller.test.BeaconTestCase;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class AllPairsShortestPathRoutingEngineImplTest extends BeaconTestCase {
     protected IRoutingEngine getRouting() {

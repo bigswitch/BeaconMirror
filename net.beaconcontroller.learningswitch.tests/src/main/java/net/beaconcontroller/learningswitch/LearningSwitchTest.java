@@ -37,7 +37,7 @@ import org.openflow.util.LRULinkedHashMap;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class LearningSwitchTest extends BeaconTestCase {
     protected OFPacketIn packetIn;

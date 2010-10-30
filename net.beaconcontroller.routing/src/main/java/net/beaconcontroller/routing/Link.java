@@ -5,7 +5,7 @@ package net.beaconcontroller.routing;
  * Links will generally be held in a list, and that the first datapath's
  * id will be held in a different structure.
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class Link {
     /**

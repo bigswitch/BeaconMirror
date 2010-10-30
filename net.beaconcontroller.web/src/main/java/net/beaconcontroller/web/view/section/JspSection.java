@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class JspSection extends Section {
     protected String jspFileName;

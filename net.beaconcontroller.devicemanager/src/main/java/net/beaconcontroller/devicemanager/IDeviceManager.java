@@ -2,6 +2,11 @@ package net.beaconcontroller.devicemanager;
 
 import java.util.List;
 
+/**
+ * Used to interact with DeviceManager implementations
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public interface IDeviceManager {
     /**
      * Returns a device for the given data layer address hash code, created by

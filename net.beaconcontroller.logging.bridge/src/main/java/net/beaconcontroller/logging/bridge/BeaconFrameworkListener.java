@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class BeaconFrameworkListener implements FrameworkListener {
     private static Logger log = LoggerFactory.getLogger(BeaconFrameworkListener.class);

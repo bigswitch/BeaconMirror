@@ -2,7 +2,7 @@ package net.beaconcontroller.util;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public enum BundleState {
     ACTIVE              (32),

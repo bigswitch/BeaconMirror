@@ -22,7 +22,7 @@ import org.openflow.util.HexString;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class OFSwitchImpl implements IOFSwitch {
     protected ConcurrentMap<Object, Object> attributes;

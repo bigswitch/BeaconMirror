@@ -32,7 +32,7 @@ import org.openflow.protocol.factory.BasicFactory;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class HubTest extends BeaconTestCase {
     protected OFPacketIn packetIn;

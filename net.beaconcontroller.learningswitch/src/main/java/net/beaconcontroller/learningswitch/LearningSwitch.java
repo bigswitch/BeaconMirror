@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu) - 04/04/10
+ * @author David Erickson (daviderickson@cs.stanford.edu) - 04/04/10
  */
 public class LearningSwitch implements IOFMessageListener {
     protected static Logger log = LoggerFactory.getLogger(LearningSwitch.class);

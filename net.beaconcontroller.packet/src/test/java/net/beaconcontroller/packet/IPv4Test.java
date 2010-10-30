@@ -12,7 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  *
  */
 public class IPv4Test {

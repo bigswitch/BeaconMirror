@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author David Erickson (derickso@stanford.edu)
+ * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class SLF4JLogListener implements LogListener {
     private static Logger log = LoggerFactory.getLogger(SLF4JLogListener.class);

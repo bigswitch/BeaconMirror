@@ -2,7 +2,7 @@ package net.beaconcontroller.packet;
 
 /**
 *
-* @author David Erickson (derickso@stanford.edu)
+* @author David Erickson (daviderickson@cs.stanford.edu)
 */
 public interface IPacket {
     /**

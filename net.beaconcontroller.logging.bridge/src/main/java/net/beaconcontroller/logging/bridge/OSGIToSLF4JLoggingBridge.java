@@ -7,6 +7,11 @@ import org.osgi.service.log.LogReaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public class OSGIToSLF4JLoggingBridge {
     private static Logger log = LoggerFactory.getLogger(OSGIToSLF4JLoggingBridge.class);
     protected BeaconBundleListener bundleListener;
