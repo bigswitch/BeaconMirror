@@ -8,6 +8,11 @@ package net.beaconcontroller.topology;
 
 import java.util.Map;
 
+/**
+ *
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
 public interface ITopology {
     /**
      * Query to determine if the specified switch id and port tuple are
