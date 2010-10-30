@@ -1,8 +1,7 @@
 package net.beaconcontroller.hub;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
@@ -47,19 +46,16 @@ public class Hub implements IOFMessageListener {
         OFPacketIn pi = (OFPacketIn) msg;
         OFPacketOut po = (OFPacketOut) sw.getInputStream().getMessageFactory()
                 .getMessage(OFType.PACKET_OUT);
-        po.setBufferId(pi.getBufferId());
-        po.setInPort(pi.getInPort());
+        po.setBufferId(pi.getBufferId())
+            .setInPort(pi.getInPort());
 
         // set actions
-        OFActionOutput action = new OFActionOutput();
-        action.setMaxLength((short) 0);
-        action.setPort((short) OFPort.OFPP_FLOOD.getValue());
-        List<OFAction> actions = new ArrayList<OFAction>();
-        actions.add(action);
-        po.setActions(actions);
+        OFActionOutput action = new OFActionOutput()
+            .setPort((short) OFPort.OFPP_FLOOD.getValue());
+        po.setActions(Collections.singletonList((OFAction)action));
         po.setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
 
-        // set data if needed
+        // set data if is is included in the packetin
         if (pi.getBufferId() == 0xffffffff) {
             byte[] packetData = pi.getPacketData();
             po.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH
