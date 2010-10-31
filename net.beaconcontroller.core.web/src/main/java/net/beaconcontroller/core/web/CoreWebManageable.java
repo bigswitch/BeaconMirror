@@ -142,7 +142,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             row.add(sb.toString());
             cells.add(row);
         }
-        layout.addSection(new TableSection("OpenFlow Packet Listeners", columnNames, cells), TwoColumnLayout.COLUMN2);
+        layout.addSection(new TableSection("OpenFlow Packet Listeners", columnNames, cells), TwoColumnLayout.COLUMN1);
 
         return BeaconViewResolver.SIMPLE_VIEW;
     }
