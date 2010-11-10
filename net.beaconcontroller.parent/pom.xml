@@ -12,7 +12,7 @@
   <properties>
     <beacon.version>0.1.0-SNAPSHOT</beacon.version>
     <compiler.version>2.3.2</compiler.version>
-    <openflow.version>0.1.0</openflow.version>
+    <openflow.version>1.0.0</openflow.version>
     <surefire.version>2.6</surefire.version>
     <tycho.version>0.10.0</tycho.version>
   </properties>
@@ -129,7 +129,7 @@
   <dependencies>
     <dependency>
       <groupId>org.openflow</groupId>
-      <artifactId>openflow</artifactId>
+      <artifactId>openflowj</artifactId>
       <version>${openflow.version}</version>
     </dependency>
     <!-- Following dep to solve a failure when running javadoc:javadoc -->
