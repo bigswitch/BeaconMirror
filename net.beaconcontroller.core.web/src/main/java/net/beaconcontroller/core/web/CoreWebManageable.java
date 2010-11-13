@@ -109,7 +109,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         // Description
         layout.addSection(
                 new StringSection("Welcome",
-                        "Thanks for using Beacon!  We hope you find it as amazing as we do!"),
+                        "Thanks for using Beacon!"),
                 TwoColumnLayout.COLUMN1);
 
         // Switch List Table
