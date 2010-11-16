@@ -31,7 +31,12 @@ import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFType;
+import org.openflow.protocol.statistics.OFPortStatisticsRequest;
 import org.openflow.protocol.statistics.OFFlowStatisticsRequest;
+import org.openflow.protocol.statistics.OFTableStatistics;
+import org.openflow.protocol.statistics.OFAggregateStatisticsRequest;
+import org.openflow.protocol.statistics.OFQueueStatisticsRequest;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
 import org.openflow.protocol.statistics.OFStatistics;
 import org.openflow.protocol.statistics.OFStatisticsType;
 import org.openflow.util.HexString;
@@ -211,21 +216,50 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         return view;
     }
 
-    protected List<OFStatistics> getSwitchFlows(String switchId) {
+    protected List<OFStatistics> getSwitchStatistics(String switchId, OFStatisticsType statType) {
         IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
         Future<List<OFStatistics>> future;
         List<OFStatistics> values = null;
         if (sw != null) {
             OFStatisticsRequest req = new OFStatisticsRequest();
-            OFFlowStatisticsRequest fsr = new OFFlowStatisticsRequest();
-            OFMatch match = new OFMatch();
-            match.setWildcards(0xffffffff);
-            fsr.setMatch(match);
-            fsr.setOutPort(OFPort.OFPP_NONE.getValue());
-            fsr.setTableId((byte) 0xff);
-            req.setStatisticType(OFStatisticsType.FLOW);
-            req.setStatistics(Collections.singletonList((OFStatistics)fsr));
-            req.setLengthU(req.getLengthU() + fsr.getLength());
+            req.setStatisticType(statType);
+            int requestLength = req.getLengthU();
+            if (statType == OFStatisticsType.FLOW) {
+                OFFlowStatisticsRequest specificReq = new OFFlowStatisticsRequest();
+                OFMatch match = new OFMatch();
+                match.setWildcards(0xffffffff);
+                specificReq.setMatch(match);
+                specificReq.setOutPort(OFPort.OFPP_NONE.getValue());
+                specificReq.setTableId((byte) 0xff);
+                req.setStatistics(Collections.singletonList((OFStatistics)specificReq));
+                requestLength += specificReq.getLength();
+            } else if (statType == OFStatisticsType.AGGREGATE) {
+                OFAggregateStatisticsRequest specificReq = new OFAggregateStatisticsRequest();
+                OFMatch match = new OFMatch();
+                match.setWildcards(0xffffffff);
+                specificReq.setMatch(match);
+                specificReq.setOutPort(OFPort.OFPP_NONE.getValue());
+                specificReq.setTableId((byte) 0xff);
+                req.setStatistics(Collections.singletonList((OFStatistics)specificReq));
+                requestLength += specificReq.getLength();
+            } else if (statType == OFStatisticsType.PORT) {
+                OFPortStatisticsRequest specificReq = new OFPortStatisticsRequest();
+                specificReq.setPortNumber((short)OFPort.OFPP_NONE.getValue());
+                req.setStatistics(Collections.singletonList((OFStatistics)specificReq));
+                requestLength += specificReq.getLength();
+            } else if (statType == OFStatisticsType.QUEUE) {
+                OFQueueStatisticsRequest specificReq = new OFQueueStatisticsRequest();
+                specificReq.setPortNumber((short)OFPort.OFPP_NONE.getValue());
+                // LOOK! openflowj does not define OFPQ_ALL! pulled this from openflow.h
+                // note that I haven't seen this work yet though...
+                specificReq.setQueueId(0xffffffff);
+                req.setStatistics(Collections.singletonList((OFStatistics)specificReq));
+                requestLength += specificReq.getLength();
+            } else if (statType == OFStatisticsType.DESC ||
+                       statType == OFStatisticsType.TABLE) {
+                // pass - nothing todo besides set the type above
+            }
+            req.setLengthU(requestLength);
             try {
                 future = sw.getStatistics(req);
                 values = future.get(10, TimeUnit.SECONDS);
@@ -236,19 +270,34 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         return values;
     }
 
-    @RequestMapping("/switch/{switchId}/flows/json")
-    public View getSwitchFlowsJson(@PathVariable String switchId, Map<String,Object> model) {
+    @RequestMapping("/switch/{switchId}/{statType}/json")
+    public View getSwitchStatisticsJson(@PathVariable String switchId, @PathVariable String statType, Map<String,Object> model) {
         BeaconJsonView view = new BeaconJsonView();
-        model.put(BeaconJsonView.ROOT_OBJECT_KEY, getSwitchFlows(switchId));
+        List<OFStatistics> values = null;
+        if (statType.equals("port")) {
+            values = getSwitchStatistics(switchId, OFStatisticsType.PORT);
+        } else if (statType.equals("queue")) {
+            values = getSwitchStatistics(switchId, OFStatisticsType.QUEUE);
+        } else if (statType.equals("flow")) {
+            values = getSwitchStatistics(switchId, OFStatisticsType.FLOW);
+        } else if (statType.equals("aggregate")) {
+            values = getSwitchStatistics(switchId, OFStatisticsType.AGGREGATE);
+        } else if (statType.equals("desc")) {
+            values = getSwitchStatistics(switchId, OFStatisticsType.DESC);
+        } else if (statType.equals("table")) {
+            values = getSwitchStatistics(switchId, OFStatisticsType.TABLE);
+        }
+        model.put(BeaconJsonView.ROOT_OBJECT_KEY, values);
         return view;
     }
+
 
     @RequestMapping("/switch/{switchId}/flows")
     public String getSwitchFlows(@PathVariable String switchId, Map<String,Object> model) {
         OneColumnLayout layout = new OneColumnLayout();
         model.put("title", "Flows for switch: " + switchId);
         model.put("layout", layout);
-        model.put("flows", getSwitchFlows(switchId));
+        model.put("flows", getSwitchStatistics(switchId, OFStatisticsType.FLOW));
         layout.addSection(new JspSection("flows.jsp", model), null);
         return BeaconViewResolver.SIMPLE_VIEW;
     }
