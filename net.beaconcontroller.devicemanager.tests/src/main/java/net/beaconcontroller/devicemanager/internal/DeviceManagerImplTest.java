@@ -83,6 +83,7 @@ public class DeviceManagerImplTest extends BeaconTestCase {
         device.setDataLayerAddress(dataLayerSource);
         device.setSwId(1L);
         device.setSwPort((short)1);
+        device.getNetworkAddresses().add(IPv4.toIPv4Address("192.168.1.1"));
 
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);

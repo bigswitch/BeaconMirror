@@ -14,6 +14,7 @@ import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.devicemanager.Device;
 import net.beaconcontroller.devicemanager.IDeviceManager;
+import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.IdPortTuple;
 
@@ -21,6 +22,7 @@ import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFType;
+import org.openflow.util.HexString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
 
     protected IBeaconProvider beaconProvider;
     protected Map<Integer, Device> dataLayerAddressDeviceMap;
+    protected Map<Integer, Device> networkLayerAddressDeviceMap;
     protected ITopology topology;
 
     /**
@@ -40,6 +43,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
      */
     public DeviceManagerImpl() {
         this.dataLayerAddressDeviceMap = new ConcurrentHashMap<Integer, Device>();
+        this.networkLayerAddressDeviceMap = new ConcurrentHashMap<Integer, Device>();
     }
 
     public void startUp() {
@@ -62,6 +66,8 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
         match.loadFromPacket(pi.getPacketData(), pi.getInPort());
         Integer dlAddrHash = Arrays.hashCode(match.getDataLayerSource());
         Device device = dataLayerAddressDeviceMap.get(dlAddrHash);
+        Integer nwSrc = match.getNetworkSource();
+        Device nwDevice = networkLayerAddressDeviceMap.get(nwSrc);
         IdPortTuple ipt = new IdPortTuple(sw.getId(), pi.getInPort());
         if (!topology.isInternal(ipt)) {
             if (device != null) {
@@ -73,17 +79,58 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
                     log.debug("Device {} moved to port {}", device, pi.getInPort());
                     device.setSwPort(pi.getInPort());
                 }
+                if (nwDevice == null && nwSrc != 0) {
+                    // add the address
+                    device.getNetworkAddresses().add(nwSrc);
+                    this.networkLayerAddressDeviceMap.put(nwSrc, device);
+                    log.debug("Added IP {} to MAC {}",
+                            IPv4.fromIPv4Address(nwSrc),
+                            HexString.toHexString(device.getDataLayerAddress()));
+                } else if (nwDevice != null && !device.equals(nwDevice)) {
+                    // IP changed MACs.. really rare, potentially an error
+                    nwDevice.getNetworkAddresses().remove(nwSrc);
+                    device.getNetworkAddresses().add(nwSrc);
+                    this.networkLayerAddressDeviceMap.put(nwSrc, device);
+                    log.warn(
+                            "IP Address {} changed from MAC {} to {}",
+                            new Object[] {
+                                    IPv4.fromIPv4Address(nwSrc),
+                                    HexString.toHexString(nwDevice
+                                            .getDataLayerAddress()),
+                                    HexString.toHexString(device
+                                            .getDataLayerAddress()) });
+                }
             } else {
                 device = new Device();
                 device.setDataLayerAddress(match.getDataLayerSource());
                 device.setSwId(sw.getId());
                 device.setSwPort(pi.getInPort());
                 this.dataLayerAddressDeviceMap.put(dlAddrHash, device);
+                if (nwSrc != 0) {
+                    device.getNetworkAddresses().add(nwSrc);
+                    this.networkLayerAddressDeviceMap.put(nwSrc, device);
+                }
                 log.debug("New Device: {}", device);
+                if (nwDevice != null) {
+                    nwDevice.getNetworkAddresses().remove(nwSrc);
+                    log.warn(
+                            "IP Address {} changed from MAC {} to {}",
+                            new Object[] {
+                                    IPv4.fromIPv4Address(nwSrc),
+                                    HexString.toHexString(nwDevice
+                                            .getDataLayerAddress()),
+                                    HexString.toHexString(device
+                                            .getDataLayerAddress()) });
+                }
             }
         }
 
         return Command.CONTINUE;
+    }
+
+    @Override
+    public Device getDeviceByNetworkLayerAddress(Integer address) {
+        return this.networkLayerAddressDeviceMap.get(address);
     }
 
     /**

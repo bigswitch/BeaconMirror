@@ -1,6 +1,8 @@
 package net.beaconcontroller.devicemanager;
 
 import java.util.Arrays;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  *
@@ -9,9 +11,13 @@ import java.util.Arrays;
  */
 public class Device {
     protected byte[] dataLayerAddress;
-    protected Integer networkAddress;
+    protected Set<Integer> networkAddresses;
     protected Long swId;
     protected Short swPort;
+
+    public Device() {
+        this.networkAddresses = new ConcurrentSkipListSet<Integer>();
+    }
 
     /**
      * @return the dataLayerAddress
@@ -25,20 +31,6 @@ public class Device {
      */
     public void setDataLayerAddress(byte[] dataLayerAddress) {
         this.dataLayerAddress = dataLayerAddress;
-    }
-
-    /**
-     * @return the networkAddress
-     */
-    public Integer getNetworkAddress() {
-        return networkAddress;
-    }
-
-    /**
-     * @param networkAddress the networkAddress to set
-     */
-    public void setNetworkAddress(Integer networkAddress) {
-        this.networkAddress = networkAddress;
     }
 
     /**
@@ -69,6 +61,20 @@ public class Device {
         this.swId = swId;
     }
 
+    /**
+     * @return the networkAddresses
+     */
+    public Set<Integer> getNetworkAddresses() {
+        return networkAddresses;
+    }
+
+    /**
+     * @param networkAddresses the networkAddresses to set
+     */
+    public void setNetworkAddresses(Set<Integer> networkAddresses) {
+        this.networkAddresses = networkAddresses;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -77,8 +83,9 @@ public class Device {
         final int prime = 2633;
         int result = 1;
         result = prime * result + Arrays.hashCode(dataLayerAddress);
-        result = prime * result
-                + ((networkAddress == null) ? 0 : networkAddress.hashCode());
+        result = prime
+                * result
+                + ((networkAddresses == null) ? 0 : networkAddresses.hashCode());
         result = prime * result + ((swId == null) ? 0 : swId.hashCode());
         result = prime * result + ((swPort == null) ? 0 : swPort.hashCode());
         return result;
@@ -98,10 +105,10 @@ public class Device {
         Device other = (Device) obj;
         if (!Arrays.equals(dataLayerAddress, other.dataLayerAddress))
             return false;
-        if (networkAddress == null) {
-            if (other.networkAddress != null)
+        if (networkAddresses == null) {
+            if (other.networkAddresses != null)
                 return false;
-        } else if (!networkAddress.equals(other.networkAddress))
+        } else if (!networkAddresses.equals(other.networkAddresses))
             return false;
         if (swId == null) {
             if (other.swId != null)
@@ -122,7 +129,7 @@ public class Device {
     @Override
     public String toString() {
         return "Device [dataLayerAddress=" + Arrays.toString(dataLayerAddress)
-                + ", networkAddress=" + networkAddress + ", swId=" + swId
+                + ", networkAddresses=" + networkAddresses + ", swId=" + swId
                 + ", swPort=" + swPort + "]";
     }
 }
