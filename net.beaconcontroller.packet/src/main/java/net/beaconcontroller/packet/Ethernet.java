@@ -11,12 +11,14 @@ import java.util.Map;
  */
 public class Ethernet extends BasePacket {
     private static String HEXES = "0123456789ABCDEF";
+    public static short TYPE_ARP = 0x0806;
     public static short TYPE_IPv4 = 0x0800;
     public static short TYPE_LLDP = (short) 0x88cc;
     public static Map<Short, Class<? extends IPacket>> etherTypeClassMap;
 
     static {
         etherTypeClassMap = new HashMap<Short, Class<? extends IPacket>>();
+        etherTypeClassMap.put(TYPE_ARP, ARP.class);
         etherTypeClassMap.put(TYPE_IPv4, IPv4.class);
         etherTypeClassMap.put(TYPE_LLDP, LLDP.class);
     }
