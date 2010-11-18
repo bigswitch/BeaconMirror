@@ -8,6 +8,13 @@ import java.util.Arrays;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class ARP extends BasePacket {
+    public static short HW_TYPE_ETHERNET = 0x1;
+
+    public static short PROTO_TYPE_IP = 0x800;
+
+    public static short OP_REQUEST = 0x1;
+    public static short OP_REPLY = 0x2;
+
     protected short hardwareType;
     protected short protocolType;
     protected byte hardwareAddressLength;
