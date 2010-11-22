@@ -35,8 +35,9 @@ public class ARP extends BasePacket {
     /**
      * @param hardwareType the hardwareType to set
      */
-    public void setHardwareType(short hardwareType) {
+    public ARP setHardwareType(short hardwareType) {
         this.hardwareType = hardwareType;
+        return this;
     }
 
     /**
@@ -49,8 +50,9 @@ public class ARP extends BasePacket {
     /**
      * @param protocolType the protocolType to set
      */
-    public void setProtocolType(short protocolType) {
+    public ARP setProtocolType(short protocolType) {
         this.protocolType = protocolType;
+        return this;
     }
 
     /**
@@ -63,8 +65,9 @@ public class ARP extends BasePacket {
     /**
      * @param hardwareAddressLength the hardwareAddressLength to set
      */
-    public void setHardwareAddressLength(byte hardwareAddressLength) {
+    public ARP setHardwareAddressLength(byte hardwareAddressLength) {
         this.hardwareAddressLength = hardwareAddressLength;
+        return this;
     }
 
     /**
@@ -77,8 +80,9 @@ public class ARP extends BasePacket {
     /**
      * @param protocolAddressLength the protocolAddressLength to set
      */
-    public void setProtocolAddressLength(byte protocolAddressLength) {
+    public ARP setProtocolAddressLength(byte protocolAddressLength) {
         this.protocolAddressLength = protocolAddressLength;
+        return this;
     }
 
     /**
@@ -91,8 +95,9 @@ public class ARP extends BasePacket {
     /**
      * @param opCode the opCode to set
      */
-    public void setOpCode(short opCode) {
+    public ARP setOpCode(short opCode) {
         this.opCode = opCode;
+        return this;
     }
 
     /**
@@ -105,8 +110,9 @@ public class ARP extends BasePacket {
     /**
      * @param senderHardwareAddress the senderHardwareAddress to set
      */
-    public void setSenderHardwareAddress(byte[] senderHardwareAddress) {
+    public ARP setSenderHardwareAddress(byte[] senderHardwareAddress) {
         this.senderHardwareAddress = senderHardwareAddress;
+        return this;
     }
 
     /**
@@ -119,8 +125,9 @@ public class ARP extends BasePacket {
     /**
      * @param senderProtocolAddress the senderProtocolAddress to set
      */
-    public void setSenderProtocolAddress(byte[] senderProtocolAddress) {
+    public ARP setSenderProtocolAddress(byte[] senderProtocolAddress) {
         this.senderProtocolAddress = senderProtocolAddress;
+        return this;
     }
 
     /**
@@ -133,8 +140,9 @@ public class ARP extends BasePacket {
     /**
      * @param targetHardwareAddress the targetHardwareAddress to set
      */
-    public void setTargetHardwareAddress(byte[] targetHardwareAddress) {
+    public ARP setTargetHardwareAddress(byte[] targetHardwareAddress) {
         this.targetHardwareAddress = targetHardwareAddress;
+        return this;
     }
 
     /**
@@ -147,8 +155,9 @@ public class ARP extends BasePacket {
     /**
      * @param targetProtocolAddress the targetProtocolAddress to set
      */
-    public void setTargetProtocolAddress(byte[] targetProtocolAddress) {
+    public ARP setTargetProtocolAddress(byte[] targetProtocolAddress) {
         this.targetProtocolAddress = targetProtocolAddress;
+        return this;
     }
 
     @Override
