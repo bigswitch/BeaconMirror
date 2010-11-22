@@ -1,12 +1,15 @@
 package net.beaconcontroller.packet;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class UDP extends BasePacket {
+    public static Map<Short, Class<? extends IPacket>> decodeMap = new HashMap<Short, Class<? extends IPacket>>();
     protected short sourcePort;
     protected short destinationPort;
     protected short length;
@@ -180,7 +183,21 @@ public class UDP extends BasePacket {
         this.length = bb.getShort();
         this.checksum = bb.getShort();
 
-        IPacket payload = new Data();
+        if (UDP.decodeMap.containsKey(this.destinationPort)) {
+            try {
+                this.payload = UDP.decodeMap.get(this.destinationPort).getConstructor().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("Failure instantiating class", e);
+            }
+        } else if (UDP.decodeMap.containsKey(this.sourcePort)) {
+            try {
+                this.payload = UDP.decodeMap.get(this.destinationPort).getConstructor().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("Failure instantiating class", e);
+            }
+        } else {
+            this.payload = new Data();
+        }
         this.payload = payload.deserialize(data, bb.position(), bb.limit()-bb.position());
         this.payload.setParent(this);
         return this;
