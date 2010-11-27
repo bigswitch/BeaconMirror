@@ -39,6 +39,7 @@ import org.openflow.io.OFMessageOutStream;
 import org.openflow.protocol.OFEchoReply;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFSetConfig;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.BasicFactory;
 import org.slf4j.Logger;
@@ -102,6 +103,12 @@ public class Controller implements IBeaconProvider, SelectListener {
         List<OFMessage> l = new ArrayList<OFMessage>();
         l.add(factory.getMessage(OFType.HELLO));
         l.add(factory.getMessage(OFType.FEATURES_REQUEST));
+
+        // Ensure we receive the full packet via PacketIn
+        OFSetConfig config = (OFSetConfig) factory.getMessage(OFType.SET_CONFIG);
+        config.setMissSendLength((short) 0xffff)
+            .setLengthU(OFSetConfig.MINIMUM_LENGTH);
+        l.add(config);
         stream.write(l);
     }
 
