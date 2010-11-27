@@ -74,14 +74,15 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
 
     @Override
     public Route getRoute(IOFSwitch src, IOFSwitch dst) {
-        lock.readLock().lock();
-        Route result = shortest.get(new RouteId(src.getId(), dst.getId()));
-        lock.readLock().unlock();
-        return result;
+        return getRoute(src.getId(), dst.getId());
     }
 
     @Override
     public Route getRoute(Long srcDpid, Long dstDpid) {
+        // self route check
+        if (srcDpid.equals(dstDpid))
+            return new Route(srcDpid, dstDpid);
+
         lock.readLock().lock();
         Route result = shortest.get(new RouteId(srcDpid, dstDpid));
         lock.readLock().unlock();
@@ -304,5 +305,17 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
      */
     public void setBeaconProvider(IBeaconProvider beaconProvider) {
         this.beaconProvider = beaconProvider;
+    }
+
+    @Override
+    public boolean routeExists(Long srcId, Long dstId) {
+        // self route check
+        if (srcId.equals(dstId))
+            return true;
+
+        lock.readLock().lock();
+        Route result = shortest.get(new RouteId(srcId, dstId));
+        lock.readLock().unlock();
+        return (result != null);
     }
 }

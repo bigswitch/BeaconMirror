@@ -13,6 +13,14 @@ public interface IRoutingEngine {
     public Route getRoute(Long srcDpid, Long dstDpid);
 
     /**
+     * Checks if a route exists between two switches
+     * @param srcId
+     * @param dstId
+     * @return true if at least one route exists between the switches
+     */
+    public boolean routeExists(Long srcId, Long dstId);
+
+    /**
      * Updates a link status
      * @param srcId
      * @param srcPort
