@@ -4,6 +4,10 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import net.beaconcontroller.packet.IPv4;
+
+import org.openflow.util.HexString;
+
 /**
  *
  *
@@ -128,8 +132,11 @@ public class Device {
      */
     @Override
     public String toString() {
-        return "Device [dataLayerAddress=" + Arrays.toString(dataLayerAddress)
-                + ", networkAddresses=" + networkAddresses + ", swId=" + swId
-                + ", swPort=" + swPort + "]";
+        return "Device [dataLayerAddress=" + 
+                ((dataLayerAddress == null) ? "null" : HexString.toHexString(dataLayerAddress)) +
+                ", swId=" + ((swId == null) ? "null" : HexString.toHexString(swId)) +
+                ", swPort=" + ((swPort == null) ? "null" : (0xffff & swPort)) +
+                ", networkAddresses="
+                + IPv4.fromIPv4AddressCollection(networkAddresses) + "]";
     }
 }

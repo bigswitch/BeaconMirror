@@ -5,6 +5,8 @@ package net.beaconcontroller.topology;
 
 import java.nio.ByteBuffer;
 
+import org.openflow.util.HexString;
+
 /**
  * @author David Erickson (daviderickson@cs.stanford.edu)
  *
@@ -86,7 +88,9 @@ public class IdPortTuple {
      */
     @Override
     public String toString() {
-        return "IdPortTuple [id=" + id + ", port=" + port + "]";
+        return "IdPortTuple [id="
+                + ((id == null) ? "null" : HexString.toHexString(id))
+                + ", port=" + ((port == null) ? "null" : (0xff & port)) + "]";
     }
 
     public byte[] toBytes() {
