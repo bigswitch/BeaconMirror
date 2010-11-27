@@ -5,6 +5,7 @@ package net.beaconcontroller.packet;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -393,6 +394,27 @@ public class IPv4 extends BasePacket {
             if (i != 3)
                 sb.append(".");
         }
+        return sb.toString();
+    }
+
+    /**
+     * Accepts a collection of IPv4 addresses as integers and returns a single
+     * String useful in toString method's containing collections of IP
+     * addresses.
+     * 
+     * @param ipAddresses collection
+     * @return
+     */
+    public static String fromIPv4AddressCollection(Collection<Integer> ipAddresses) {
+        if (ipAddresses == null)
+            return "null";
+        StringBuffer sb = new StringBuffer();
+        sb.append("[");
+        for (Integer ip : ipAddresses) {
+            sb.append(fromIPv4Address(ip));
+            sb.append(",");
+        }
+        sb.replace(sb.length()-1, sb.length(), "]");
         return sb.toString();
     }
 
