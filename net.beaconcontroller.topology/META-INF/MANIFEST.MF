@@ -11,5 +11,6 @@ Import-Package: net.beaconcontroller.core,
  org.openflow.io,
  org.openflow.protocol,
  org.openflow.protocol.action,
+ org.openflow.util,
  org.slf4j;version="1.0.0"
 Export-Package: net.beaconcontroller.topology
