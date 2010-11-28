@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
@@ -31,6 +32,7 @@ import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFType;
+import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.statistics.OFPortStatisticsRequest;
 import org.openflow.protocol.statistics.OFFlowStatisticsRequest;
 import org.openflow.protocol.statistics.OFTableStatistics;
@@ -249,7 +251,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
                 requestLength += specificReq.getLength();
             } else if (statType == OFStatisticsType.QUEUE) {
                 OFQueueStatisticsRequest specificReq = new OFQueueStatisticsRequest();
-                specificReq.setPortNumber((short)OFPort.OFPP_NONE.getValue());
+                specificReq.setPortNumber((short)OFPort.OFPP_ALL.getValue());
                 // LOOK! openflowj does not define OFPQ_ALL! pulled this from openflow.h
                 // note that I haven't seen this work yet though...
                 specificReq.setQueueId(0xffffffff);
@@ -270,6 +272,16 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         return values;
     }
 
+    @RequestMapping("/switch/{switchId}/flows")
+    public String getSwitchFlows(@PathVariable String switchId, Map<String,Object> model) {
+        OneColumnLayout layout = new OneColumnLayout();
+        model.put("title", "Flows for switch: " + switchId);
+        model.put("layout", layout);
+        model.put("flows", getSwitchStatistics(switchId, OFStatisticsType.FLOW));
+        layout.addSection(new JspSection("flows.jsp", model), null);
+        return BeaconViewResolver.SIMPLE_VIEW;
+    }
+    
     @RequestMapping("/switch/{switchId}/{statType}/json")
     public View getSwitchStatisticsJson(@PathVariable String switchId, @PathVariable String statType, Map<String,Object> model) {
         BeaconJsonView view = new BeaconJsonView();
@@ -286,20 +298,28 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             values = getSwitchStatistics(switchId, OFStatisticsType.DESC);
         } else if (statType.equals("table")) {
             values = getSwitchStatistics(switchId, OFStatisticsType.TABLE);
+        } else if (statType.equals("features")) {
+            IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
+            OFFeaturesReply fr = sw.getFeaturesReply();
+            model.put(BeaconJsonView.ROOT_OBJECT_KEY, fr);
+            return view;
         }
         model.put(BeaconJsonView.ROOT_OBJECT_KEY, values);
         return view;
     }
-
-
-    @RequestMapping("/switch/{switchId}/flows")
-    public String getSwitchFlows(@PathVariable String switchId, Map<String,Object> model) {
-        OneColumnLayout layout = new OneColumnLayout();
-        model.put("title", "Flows for switch: " + switchId);
-        model.put("layout", layout);
-        model.put("flows", getSwitchStatistics(switchId, OFStatisticsType.FLOW));
-        layout.addSection(new JspSection("flows.jsp", model), null);
-        return BeaconViewResolver.SIMPLE_VIEW;
+    
+    @RequestMapping("/controller/switches/json")
+    public View getSwitchesJson(Map<String,Object> model) {
+        BeaconJsonView view = new BeaconJsonView();
+        List<Map<String,Long>> switchIds = new ArrayList<Map<String,Long>>();
+        for (IOFSwitch s:beaconProvider.getSwitches().values()) {
+            Map<String, Long> m = new HashMap<String, Long>();
+            m.put("dpid", s.getId());
+            switchIds.add(m);
+           
+        }
+       model.put(BeaconJsonView.ROOT_OBJECT_KEY, switchIds);
+        return view;
     }
 
     /**
