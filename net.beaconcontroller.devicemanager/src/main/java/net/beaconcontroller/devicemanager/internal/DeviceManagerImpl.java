@@ -64,6 +64,11 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener {
         OFPacketIn pi = (OFPacketIn) msg;
         OFMatch match = new OFMatch();
         match.loadFromPacket(pi.getPacketData(), pi.getInPort());
+
+        // if the source is multicast/broadcast ignore it
+        if ((match.getDataLayerSource()[0] & 0x1) != 0)
+            return Command.CONTINUE;
+
         Integer dlAddrHash = Arrays.hashCode(match.getDataLayerSource());
         Device device = dataLayerAddressDeviceMap.get(dlAddrHash);
         Integer nwSrc = match.getNetworkSource();
