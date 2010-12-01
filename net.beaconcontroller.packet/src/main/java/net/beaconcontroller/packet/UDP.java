@@ -9,7 +9,14 @@ import java.util.Map;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class UDP extends BasePacket {
-    public static Map<Short, Class<? extends IPacket>> decodeMap = new HashMap<Short, Class<? extends IPacket>>();
+    public static Map<Short, Class<? extends IPacket>> decodeMap;
+
+    static {
+        decodeMap = new HashMap<Short, Class<? extends IPacket>>();
+        UDP.decodeMap.put((short)67, DHCP.class);
+        UDP.decodeMap.put((short)68, DHCP.class);
+    }
+
     protected short sourcePort;
     protected short destinationPort;
     protected short length;
