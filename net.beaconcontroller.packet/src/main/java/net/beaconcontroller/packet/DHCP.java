@@ -315,13 +315,13 @@ public class DHCP extends BasePacket {
         } else {
             byte[] bytes = null;
             try {
-                 bytes = this.serverName.getBytes("ascii");
+                 bytes = string.getBytes("ascii");
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException("Failure encoding server name", e);
             }
             int writeLength = bytes.length;
             if (writeLength > maxLength) {
-                writeLength = maxLength - 1;
+                writeLength = maxLength;
             }
             bb.put(bytes, 0, writeLength);
             for (int i = writeLength; i < maxLength; ++i) {
@@ -381,7 +381,7 @@ public class DHCP extends BasePacket {
         bb.get(bytes);
         String result = null;
         try {
-            result = new String(bytes, "ascii");
+            result = new String(bytes, "ascii").trim();
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Failure decoding string", e);
         }
