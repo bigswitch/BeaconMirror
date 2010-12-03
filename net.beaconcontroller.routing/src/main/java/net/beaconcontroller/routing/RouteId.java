@@ -66,7 +66,7 @@ public class RouteId implements Cloneable {
 
     @Override
     public String toString() {
-        return "RouteId [src=" + HexString.toHexString(this.src) + "dst="
+        return "RouteId [src=" + HexString.toHexString(this.src) + " dst="
                 + HexString.toHexString(this.dst) + "]";
     }
 
