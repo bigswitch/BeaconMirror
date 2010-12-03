@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Set git pull to rebase rather than merge by default
+git config branch.autosetuprebase always
+
+# Convert newlines to LF on commit, regardless of OS
+# (see http://help.github.com/dealing-with-lineendings/)
+git config core.autocrlf input
+
+# Include original text in conflict markers, as well as theirs and ours
+git config merge.conflictstyle diff3
