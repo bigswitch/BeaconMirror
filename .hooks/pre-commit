@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+echo "Running ${PWD}/$0"
+
+# Create a script that diffs a staged file vs. the original, and looks for illegal
+# tabs in new or modified lines
+script=$(mktemp /tmp/check.XXXXXX)
+trap "rm -f ${script}" EXIT
+cat >${script} <<"EOF"
+#!/bin/bash
+diff --old-line-format= --unchanged-line-format= "$1" "$2" | grep -qP '\t' || exit
+fn=$(basename "$2")
+[ "$2" != "${2%%.java}" ] || [ "$2" != "${2%%.py}" ] || exit
+echo "$2"
+EOF
+chmod +x ${script}
+
+# Run the script on all staged files
+badfiles=$(git difftool --staged -y -x ${script})
+
+if [ "${badfiles}" ]; then
+  echo "New or modified lines in the following files contain tab characters:"
+  echo "${badfiles}" | sed "s/^/  /"
+  echo "Please correct these problems and retry the commit."
+  exit 1
+fi
