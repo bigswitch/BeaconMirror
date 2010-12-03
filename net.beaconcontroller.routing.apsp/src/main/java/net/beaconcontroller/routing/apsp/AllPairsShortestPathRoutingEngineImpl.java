@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
@@ -99,6 +101,34 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
         fixup(route, added);
         lock.writeLock().unlock();
         log.debug("Route {} added: {}", route, added);
+        if (log.isTraceEnabled()) {
+            lock.readLock().lock();
+            try {
+                logShortestPaths();
+            } finally {
+                lock.readLock().unlock();
+            }
+        }
+    }
+
+    protected void logShortestPaths() {
+        SortedMap<RouteId, Route> sortedRoutes = new TreeMap<RouteId, Route>(
+                new Comparator<RouteId>() {
+                    public int compare(RouteId o1, RouteId o2) {
+                        int result = o1.getSrc().compareTo(o2.getSrc());
+                        if (result != 0)
+                            return result;
+                        else
+                            return o1.getDst().compareTo(o2.getDst());
+                    }
+                });
+        sortedRoutes.putAll(shortest);
+        log.trace("All Shortest Routes");
+        log.trace("------------------------------------------------------------");
+        for (Map.Entry<RouteId, Route> entry : sortedRoutes.entrySet()) {
+            log.trace("{} | {}", entry.getKey(), entry.getValue());
+        }
+        log.trace("------------------------------------------------------------");
     }
 
     @Override
