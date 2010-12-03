@@ -177,13 +177,13 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         final Bundle bundle = this.bundleContext.getBundle(bundleId);
         if (action != null) {
             try {
-                if (BundleAction.START.toString().equals(action)) {
+                if (BundleAction.START.toString().equalsIgnoreCase(action)) {
                     bundle.start();
-                } else if (BundleAction.STOP.toString().equals(action)) {
+                } else if (BundleAction.STOP.toString().equalsIgnoreCase(action)) {
                     bundle.stop();
-                } else if (BundleAction.UNINSTALL.toString().equals(action)) {
+                } else if (BundleAction.UNINSTALL.toString().equalsIgnoreCase(action)) {
                     bundle.uninstall();
-                } else if (BundleAction.REFRESH.toString().equals(action)) {
+                } else if (BundleAction.REFRESH.toString().equalsIgnoreCase(action)) {
                     packageAdmin.refreshPackages(new Bundle[] {bundle});
                 }
             } catch (BundleException e) {
@@ -319,7 +319,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
            
         }
        model.put(BeaconJsonView.ROOT_OBJECT_KEY, switchIds);
-        return view;
+       return view;
     }
 
     /**
@@ -328,5 +328,21 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
     @Autowired
     public void setPackageAdmin(PackageAdmin packageAdmin) {
         this.packageAdmin = packageAdmin;
+    }
+    
+    @RequestMapping("/controller/bundle/json")
+    public View getOsgiJson(Map<String,Object>model) {
+        BeaconJsonView view = new BeaconJsonView();
+        List<Map<String, String>> bundleNames = new ArrayList<Map<String, String>>();
+        for (int i = 0; i < this.bundleContext.getBundles().length; i++) {
+            Bundle b = this.bundleContext.getBundles()[i];
+            Map<String, String> m = new HashMap<String, String>();
+            m.put("name", b.getSymbolicName());
+            m.put("id", new Long(b.getBundleId()).toString());
+            m.put("state", new Integer(b.getState()).toString());
+            bundleNames.add(m);
+        }
+        model.put(BeaconJsonView.ROOT_OBJECT_KEY, bundleNames);
+        return view;
     }
 }
