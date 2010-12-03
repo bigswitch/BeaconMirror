@@ -1,5 +1,7 @@
 package net.beaconcontroller.routing;
 
+import org.openflow.util.HexString;
+
 /**
  * Represents a link between two datapaths. It is assumed that
  * Links will generally be held in a list, and that the first datapath's
@@ -111,7 +113,10 @@ public class Link {
 
     @Override
     public String toString() {
-        return "Link [outPort=" + outPort + ", inPort=" + inPort + ", dst="
-                + dst + "]";
+        return "Link [outPort="
+                + ((outPort == null) ? "null" : (0xffff & outPort))
+                + ", inPort="
+                + ((inPort == null) ? "null" : (0xffff & inPort))
+                + ", dst=" + HexString.toHexString(this.dst) + "]";
     }
 }

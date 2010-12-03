@@ -1,5 +1,7 @@
 package net.beaconcontroller.routing;
 
+import org.openflow.util.HexString;
+
 /**
  * Stores the endpoints of a route, in this case datapath ids
  *
@@ -64,7 +66,8 @@ public class RouteId implements Cloneable {
 
     @Override
     public String toString() {
-        return "RouteId [dst=" + dst + ", src=" + src + "]";
+        return "RouteId [src=" + HexString.toHexString(this.src) + "dst="
+                + HexString.toHexString(this.dst) + "]";
     }
 
     @Override

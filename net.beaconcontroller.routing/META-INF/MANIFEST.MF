@@ -5,4 +5,5 @@ Bundle-SymbolicName: net.beaconcontroller.routing
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: net.beaconcontroller.routing
-Import-Package: net.beaconcontroller.core
+Import-Package: net.beaconcontroller.core,
+ org.openflow.util

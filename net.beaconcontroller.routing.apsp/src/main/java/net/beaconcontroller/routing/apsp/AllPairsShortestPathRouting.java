@@ -25,6 +25,7 @@ import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.protocol.factory.OFMessageFactory;
+import org.openflow.util.HexString;
 import org.openflow.util.U16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +77,21 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
                     pushPacket(in.getMessageFactory(), sw, match, pi);
                 }
                 return Command.STOP;
+            } else {
+                if (log.isTraceEnabled()) {
+                    log.trace("No route found from {}:{} to device {}",
+                            new Object[] { HexString.toHexString(sw.getId()),
+                                    pi.getInPort(), dstDevice });
+                }
+            }
+        } else {
+            if (log.isTraceEnabled()) {
+                // filter multicast destinations
+                if ((match.getDataLayerDestination()[0] & 0x1) == 0) {
+                    log.trace("Unable to locate device with address {}",
+                            HexString.toHexString(match
+                                    .getDataLayerDestination()));
+                }
             }
         }
 
