@@ -43,4 +43,9 @@ public interface IRoutingEngine {
      */
     public void update(Long srcId, Integer srcPort, Long dstId,
             Integer dstPort, boolean added);
+
+    /**
+     * Remove all routes and reset all state. USE CAREFULLY!
+     */
+    public void clear();
 }

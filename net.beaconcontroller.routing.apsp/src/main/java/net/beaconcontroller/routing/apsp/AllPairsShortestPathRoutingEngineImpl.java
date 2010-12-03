@@ -348,4 +348,16 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
         lock.readLock().unlock();
         return (result != null);
     }
+
+    @Override
+    public void clear() {
+        lock.writeLock().lock();
+        shortest.clear();
+        localRoutes.clear();
+        leftLocal.clear();
+        leftShortest.clear();
+        rightLocal.clear();
+        rightShortest.clear();
+        lock.writeLock().unlock();
+    }
 }
