@@ -11,12 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFSwitch;
@@ -25,6 +20,9 @@ import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
 import net.beaconcontroller.routing.RouteId;
 import net.beaconcontroller.topology.TopologyAware;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of the APSP algorithm by Demetrescu and Italiano.
@@ -104,31 +102,29 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
         if (log.isTraceEnabled()) {
             lock.readLock().lock();
             try {
-                logShortestPaths();
+                logState();
             } finally {
                 lock.readLock().unlock();
             }
         }
     }
 
-    protected void logShortestPaths() {
-        SortedMap<RouteId, Route> sortedRoutes = new TreeMap<RouteId, Route>(
-                new Comparator<RouteId>() {
-                    public int compare(RouteId o1, RouteId o2) {
-                        int result = o1.getSrc().compareTo(o2.getSrc());
-                        if (result != 0)
-                            return result;
-                        else
-                            return o1.getDst().compareTo(o2.getDst());
-                    }
-                });
-        sortedRoutes.putAll(shortest);
-        log.trace("All Shortest Routes");
-        log.trace("------------------------------------------------------------");
-        for (Map.Entry<RouteId, Route> entry : sortedRoutes.entrySet()) {
-            log.trace("{} | {}", entry.getKey(), entry.getValue());
+    protected void logState() {
+        printMap(shortest, "Shortest Routes");
+        printMap(this.localRoutes, "Local Routes   ");
+        printMap(this.leftLocal, "Left Local     ");
+        printMap(this.leftShortest, "Left Shortest  ");
+        printMap(this.rightLocal, "Right Local    ");
+        printMap(this.rightShortest, "Right Shortest ");
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected void printMap(Map map, String name) {
+        log.trace("/---{}-------------------------------------\\", name);
+        for (Object key : map.keySet()) {
+            log.trace("{} | {}", key, map.get(key));
         }
-        log.trace("------------------------------------------------------------");
+        log.trace("\\-------------------------------------------------------/");
     }
 
     @Override
