@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?artifactRepository version='1.1.0'?>
-<repository name='file:/home/derickso/git/beacon/libs/ - artifacts' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1.0.0'>
+<repository name='file:/home/eswierk/work/beacon/libs/ - artifacts' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1.0.0'>
   <properties size='2'>
-    <property name='p2.timestamp' value='1288221255371'/>
+    <property name='p2.timestamp' value='1292941094554'/>
     <property name='p2.compressed' value='false'/>
   </properties>
   <mappings size='3'>
@@ -10,68 +10,12 @@
     <rule filter='(&amp; (classifier=binary))' output='${repoUrl}/binary/${id}_${version}'/>
     <rule filter='(&amp; (classifier=org.eclipse.update.feature))' output='${repoUrl}/features/${id}_${version}.jar'/>
   </mappings>
-  <artifacts size='39'>
-    <artifact classifier='osgi.bundle' id='org.easymock' version='2.5.2'>
+  <artifacts size='40'>
+    <artifact classifier='osgi.bundle' id='jul.to.slf4j' version='1.5.11'>
       <properties size='3'>
-        <property name='artifact.size' value='94557'/>
-        <property name='download.size' value='94557'/>
-        <property name='download.md5' value='2e1f900aef63a0120ce298bc5a527ad6'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='com.springsource.net.sf.cglib' version='2.1.3'>
-      <properties size='3'>
-        <property name='artifact.size' value='328786'/>
-        <property name='download.size' value='328786'/>
-        <property name='download.md5' value='7e39e5b7fc1b771b8b474493046a51d2'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.mortbay.jetty.server' version='6.1.25'>
-      <properties size='3'>
-        <property name='artifact.size' value='538581'/>
-        <property name='download.size' value='538581'/>
-        <property name='download.md5' value='bfe558d6774e672aa7c57ac8db607538'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.expression' version='3.0.4.RELEASE'>
-      <properties size='3'>
-        <property name='artifact.size' value='166848'/>
-        <property name='download.size' value='166848'/>
-        <property name='download.md5' value='894820285865cc513fde140bb69dcddd'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.osgi.jetty.web.extender.fragment.osgi' version='1.0.1'>
-      <properties size='3'>
-        <property name='artifact.size' value='3765'/>
-        <property name='download.size' value='3765'/>
-        <property name='download.md5' value='d70f49e794e1c44314deea7cd95de040'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.mortbay.jetty.util' version='6.1.25'>
-      <properties size='3'>
-        <property name='artifact.size' value='177174'/>
-        <property name='download.size' value='177174'/>
-        <property name='download.md5' value='7a4e39052509fb5a65da2cd55494ae8a'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.core' version='3.0.4.RELEASE'>
-      <properties size='3'>
-        <property name='artifact.size' value='367170'/>
-        <property name='download.size' value='367170'/>
-        <property name='download.md5' value='37e82ec72eb62599c0bcbc66ba25419f'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.logging' version='1.1.1'>
-      <properties size='3'>
-        <property name='artifact.size' value='61464'/>
-        <property name='download.size' value='61464'/>
-        <property name='download.md5' value='8c9b8640b3b3821b8260294026c3864f'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.apache.commons.fileupload' version='1.2.2'>
-      <properties size='3'>
-        <property name='artifact.size' value='59590'/>
-        <property name='download.size' value='59590'/>
-        <property name='download.md5' value='a0ad9550a7062ddb6528d8725c8230dd'/>
+        <property name='artifact.size' value='4542'/>
+        <property name='download.size' value='4542'/>
+        <property name='download.md5' value='1d1c49ace6a6a822f1ca1c50bf13aabe'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.springframework.osgi.jasper.osgi' version='6.0.16.SNAPSHOT'>
@@ -81,27 +25,6 @@
         <property name='download.md5' value='77d0c7d3817f6d4655e96d12ef694d9a'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.jdbc' version='3.0.4.RELEASE'>
-      <properties size='3'>
-        <property name='artifact.size' value='379786'/>
-        <property name='download.size' value='379786'/>
-        <property name='download.md5' value='1144d5a146d92e7e2e7f288b1c4337b8'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.osgi.web.extender' version='2.0.0.M1'>
-      <properties size='3'>
-        <property name='artifact.size' value='31374'/>
-        <property name='download.size' value='31374'/>
-        <property name='download.md5' value='c33255aef3181dfdcbd99b6405f2b928'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='com.springsource.org.aopalliance' version='1.0.0'>
-      <properties size='3'>
-        <property name='artifact.size' value='4615'/>
-        <property name='download.size' value='4615'/>
-        <property name='download.md5' value='325a86164b9a6ebcaf067e7c1cbc2900'/>
-      </properties>
-    </artifact>
     <artifact classifier='osgi.bundle' id='org.springframework.context.support' version='3.0.4.RELEASE'>
       <properties size='3'>
         <property name='artifact.size' value='100860'/>
@@ -109,102 +32,25 @@
         <property name='download.md5' value='e1a24a01393146f75b0de040203088d9'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.osgi.web' version='2.0.0.M1'>
+    <artifact classifier='osgi.bundle' id='org.springframework.osgi.commons-el.osgi' version='1.0.0.SNAPSHOT'>
       <properties size='3'>
-        <property name='artifact.size' value='52948'/>
-        <property name='download.size' value='52948'/>
-        <property name='download.md5' value='1c54a465e334a3238b46bcd3b69a997e'/>
+        <property name='artifact.size' value='114401'/>
+        <property name='download.size' value='114401'/>
+        <property name='download.md5' value='4ced12580e6d6563f07d60e8bc2a1a6f'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.web' version='3.0.4.RELEASE'>
+    <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.collections' version='3.2.1'>
       <properties size='3'>
-        <property name='artifact.size' value='394421'/>
-        <property name='download.size' value='394421'/>
-        <property name='download.md5' value='e805f29abcd2bab0176505a9a3215f9f'/>
+        <property name='artifact.size' value='582869'/>
+        <property name='download.size' value='582869'/>
+        <property name='download.md5' value='91c8f0286f896f917f4614a17d8c3c45'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='slf4j.api' version='1.5.11'>
+    <artifact classifier='osgi.bundle' id='com.springsource.org.apache.commons.logging' version='1.1.1'>
       <properties size='3'>
-        <property name='artifact.size' value='23671'/>
-        <property name='download.size' value='23671'/>
-        <property name='download.md5' value='39bc264c656651e42f76136bcbe31dc7'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='ch.qos.logback.classic' version='0.9.20'>
-      <properties size='3'>
-        <property name='artifact.size' value='182806'/>
-        <property name='download.size' value='182806'/>
-        <property name='download.md5' value='19c55e360768fffbb4ad25663a93d091'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.context.source' version='3.0.4.RELEASE'>
-      <properties size='3'>
-        <property name='artifact.size' value='688015'/>
-        <property name='download.size' value='688015'/>
-        <property name='download.md5' value='5bf93896a927dabf92dc26841c0c124c'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.osgi.jetty.start.osgi' version='1.0.0'>
-      <properties size='3'>
-        <property name='artifact.size' value='11756'/>
-        <property name='download.size' value='11756'/>
-        <property name='download.md5' value='df672936639f9c31a4424aada8d9d63a'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.aop' version='3.0.4.RELEASE'>
-      <properties size='3'>
-        <property name='artifact.size' value='321005'/>
-        <property name='download.size' value='321005'/>
-        <property name='download.md5' value='94cb82e5a3d951711bc47b0e5b37ed82'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='jcl.over.slf4j' version='1.5.11'>
-      <properties size='3'>
-        <property name='artifact.size' value='17288'/>
-        <property name='download.size' value='17288'/>
-        <property name='download.md5' value='40c4111c491ffa7ee2d2900e98d18746'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.osgi.extensions.annotations' version='2.0.0.M1'>
-      <properties size='3'>
-        <property name='artifact.size' value='24204'/>
-        <property name='download.size' value='24204'/>
-        <property name='download.md5' value='3ff7d48ccbec93f5abadb412510704ec'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.mortbay.jetty.jsp-api-2.1' version='2.1.0'>
-      <properties size='3'>
-        <property name='artifact.size' value='134910'/>
-        <property name='download.size' value='134910'/>
-        <property name='download.md5' value='9507b4ea9ac36062b930e508c633aa98'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.asm' version='3.0.4.RELEASE'>
-      <properties size='3'>
-        <property name='artifact.size' value='53082'/>
-        <property name='download.size' value='53082'/>
-        <property name='download.md5' value='cb77839cc8427ba33b2c200528f3b351'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.osgi.extender' version='2.0.0.M1'>
-      <properties size='3'>
-        <property name='artifact.size' value='180718'/>
-        <property name='download.size' value='180718'/>
-        <property name='download.md5' value='1312c2b9c46d4204fc0f8c07d32b773c'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='jackson-core-asl' version='1.6.1'>
-      <properties size='3'>
-        <property name='artifact.size' value='200979'/>
-        <property name='download.size' value='200979'/>
-        <property name='download.md5' value='0ebaa9e0eddb816f95fa41e80231d740'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.beans' version='3.0.4.RELEASE'>
-      <properties size='3'>
-        <property name='artifact.size' value='555574'/>
-        <property name='download.size' value='555574'/>
-        <property name='download.md5' value='26656361cf83bc34a45d01479a722909'/>
+        <property name='artifact.size' value='61464'/>
+        <property name='download.size' value='61464'/>
+        <property name='download.md5' value='8c9b8640b3b3821b8260294026c3864f'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.apache.commons.io' version='2.0.0'>
@@ -221,18 +67,11 @@
         <property name='download.md5' value='47f4c444dba09336f45b4ad6f110856d'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.web.servlet' version='3.0.4.RELEASE'>
+    <artifact classifier='osgi.bundle' id='org.springframework.context' version='3.0.4.RELEASE'>
       <properties size='3'>
-        <property name='artifact.size' value='416967'/>
-        <property name='download.size' value='416967'/>
-        <property name='download.md5' value='37bc82f14134546d48930d5a625664d8'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.osgi.commons-el.osgi' version='1.0.0.SNAPSHOT'>
-      <properties size='3'>
-        <property name='artifact.size' value='114401'/>
-        <property name='download.size' value='114401'/>
-        <property name='download.md5' value='4ced12580e6d6563f07d60e8bc2a1a6f'/>
+        <property name='artifact.size' value='665772'/>
+        <property name='download.size' value='665772'/>
+        <property name='download.md5' value='e1d317c2c11c180e6482ce42e4c2caba'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.springframework.osgi.jstl.osgi' version='1.1.2.SNAPSHOT'>
@@ -242,25 +81,25 @@
         <property name='download.md5' value='a5f8b14e4876c36bcb0ccf368143b3df'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='jul.to.slf4j' version='1.5.11'>
+    <artifact classifier='osgi.bundle' id='jackson-core-asl' version='1.6.1'>
       <properties size='3'>
-        <property name='artifact.size' value='4542'/>
-        <property name='download.size' value='4542'/>
-        <property name='download.md5' value='1d1c49ace6a6a822f1ca1c50bf13aabe'/>
+        <property name='artifact.size' value='200979'/>
+        <property name='download.size' value='200979'/>
+        <property name='download.md5' value='0ebaa9e0eddb816f95fa41e80231d740'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.osgi.core' version='2.0.0.M1'>
+    <artifact classifier='osgi.bundle' id='org.mortbay.jetty.util' version='6.1.25'>
       <properties size='3'>
-        <property name='artifact.size' value='565742'/>
-        <property name='download.size' value='565742'/>
-        <property name='download.md5' value='c91b0e7910db422996bae6ba3efb34f2'/>
+        <property name='artifact.size' value='177174'/>
+        <property name='download.size' value='177174'/>
+        <property name='download.md5' value='7a4e39052509fb5a65da2cd55494ae8a'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.springframework.context' version='3.0.4.RELEASE'>
+    <artifact classifier='osgi.bundle' id='org.springframework.osgi.extensions.annotations' version='2.0.0.M1'>
       <properties size='3'>
-        <property name='artifact.size' value='665772'/>
-        <property name='download.size' value='665772'/>
-        <property name='download.md5' value='e1d317c2c11c180e6482ce42e4c2caba'/>
+        <property name='artifact.size' value='24204'/>
+        <property name='download.size' value='24204'/>
+        <property name='download.md5' value='3ff7d48ccbec93f5abadb412510704ec'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='log4j.over.slf4j' version='1.5.11'>
@@ -270,11 +109,25 @@
         <property name='download.md5' value='26dcb5a52b793a5e630fa57e5a9081fc'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='jackson-mapper-asl' version='1.6.1'>
+    <artifact classifier='osgi.bundle' id='org.springframework.osgi.core' version='2.0.0.M1'>
       <properties size='3'>
-        <property name='artifact.size' value='542255'/>
-        <property name='download.size' value='542255'/>
-        <property name='download.md5' value='4f8a9fa683d8c39fb473780642d6532b'/>
+        <property name='artifact.size' value='565742'/>
+        <property name='download.size' value='565742'/>
+        <property name='download.md5' value='c91b0e7910db422996bae6ba3efb34f2'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.web' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='394421'/>
+        <property name='download.size' value='394421'/>
+        <property name='download.md5' value='e805f29abcd2bab0176505a9a3215f9f'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.mortbay.jetty.server' version='6.1.25'>
+      <properties size='3'>
+        <property name='artifact.size' value='538581'/>
+        <property name='download.size' value='538581'/>
+        <property name='download.md5' value='bfe558d6774e672aa7c57ac8db607538'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='ch.qos.logback.core' version='0.9.20'>
@@ -282,6 +135,160 @@
         <property name='artifact.size' value='293495'/>
         <property name='download.size' value='293495'/>
         <property name='download.md5' value='ebc9cf92c11ce27274e65879ba791d7c'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.osgi.jetty.web.extender.fragment.osgi' version='1.0.1'>
+      <properties size='3'>
+        <property name='artifact.size' value='3765'/>
+        <property name='download.size' value='3765'/>
+        <property name='download.md5' value='d70f49e794e1c44314deea7cd95de040'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.springsource.org.aopalliance' version='1.0.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='4615'/>
+        <property name='download.size' value='4615'/>
+        <property name='download.md5' value='325a86164b9a6ebcaf067e7c1cbc2900'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='slf4j.api' version='1.5.11'>
+      <properties size='3'>
+        <property name='artifact.size' value='23671'/>
+        <property name='download.size' value='23671'/>
+        <property name='download.md5' value='39bc264c656651e42f76136bcbe31dc7'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.core' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='367170'/>
+        <property name='download.size' value='367170'/>
+        <property name='download.md5' value='37e82ec72eb62599c0bcbc66ba25419f'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.mortbay.jetty.jsp-api-2.1' version='2.1.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='134910'/>
+        <property name='download.size' value='134910'/>
+        <property name='download.md5' value='9507b4ea9ac36062b930e508c633aa98'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='jcl.over.slf4j' version='1.5.11'>
+      <properties size='3'>
+        <property name='artifact.size' value='17288'/>
+        <property name='download.size' value='17288'/>
+        <property name='download.md5' value='40c4111c491ffa7ee2d2900e98d18746'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.expression' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='166848'/>
+        <property name='download.size' value='166848'/>
+        <property name='download.md5' value='894820285865cc513fde140bb69dcddd'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.jdbc' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='379786'/>
+        <property name='download.size' value='379786'/>
+        <property name='download.md5' value='1144d5a146d92e7e2e7f288b1c4337b8'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.osgi.web.extender' version='2.0.0.M1'>
+      <properties size='3'>
+        <property name='artifact.size' value='31374'/>
+        <property name='download.size' value='31374'/>
+        <property name='download.md5' value='c33255aef3181dfdcbd99b6405f2b928'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.asm' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='53082'/>
+        <property name='download.size' value='53082'/>
+        <property name='download.md5' value='cb77839cc8427ba33b2c200528f3b351'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.context.source' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='688015'/>
+        <property name='download.size' value='688015'/>
+        <property name='download.md5' value='5bf93896a927dabf92dc26841c0c124c'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.osgi.jetty.start.osgi' version='1.0.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='11756'/>
+        <property name='download.size' value='11756'/>
+        <property name='download.md5' value='df672936639f9c31a4424aada8d9d63a'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='com.springsource.net.sf.cglib' version='2.1.3'>
+      <properties size='3'>
+        <property name='artifact.size' value='328786'/>
+        <property name='download.size' value='328786'/>
+        <property name='download.md5' value='7e39e5b7fc1b771b8b474493046a51d2'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.beans' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='555574'/>
+        <property name='download.size' value='555574'/>
+        <property name='download.md5' value='26656361cf83bc34a45d01479a722909'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.osgi.extender' version='2.0.0.M1'>
+      <properties size='3'>
+        <property name='artifact.size' value='180718'/>
+        <property name='download.size' value='180718'/>
+        <property name='download.md5' value='1312c2b9c46d4204fc0f8c07d32b773c'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.osgi.web' version='2.0.0.M1'>
+      <properties size='3'>
+        <property name='artifact.size' value='52948'/>
+        <property name='download.size' value='52948'/>
+        <property name='download.md5' value='1c54a465e334a3238b46bcd3b69a997e'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.easymock' version='2.5.2'>
+      <properties size='3'>
+        <property name='artifact.size' value='94557'/>
+        <property name='download.size' value='94557'/>
+        <property name='download.md5' value='2e1f900aef63a0120ce298bc5a527ad6'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='jackson-mapper-asl' version='1.6.1'>
+      <properties size='3'>
+        <property name='artifact.size' value='542255'/>
+        <property name='download.size' value='542255'/>
+        <property name='download.md5' value='4f8a9fa683d8c39fb473780642d6532b'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.apache.commons.fileupload' version='1.2.2'>
+      <properties size='3'>
+        <property name='artifact.size' value='59590'/>
+        <property name='download.size' value='59590'/>
+        <property name='download.md5' value='a0ad9550a7062ddb6528d8725c8230dd'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='ch.qos.logback.classic' version='0.9.20'>
+      <properties size='3'>
+        <property name='artifact.size' value='182806'/>
+        <property name='download.size' value='182806'/>
+        <property name='download.md5' value='19c55e360768fffbb4ad25663a93d091'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.web.servlet' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='416967'/>
+        <property name='download.size' value='416967'/>
+        <property name='download.md5' value='37bc82f14134546d48930d5a625664d8'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.springframework.aop' version='3.0.4.RELEASE'>
+      <properties size='3'>
+        <property name='artifact.size' value='321005'/>
+        <property name='download.size' value='321005'/>
+        <property name='download.md5' value='94cb82e5a3d951711bc47b0e5b37ed82'/>
       </properties>
     </artifact>
   </artifacts>
