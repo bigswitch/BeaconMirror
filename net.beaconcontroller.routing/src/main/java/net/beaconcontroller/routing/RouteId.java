@@ -7,7 +7,7 @@ import org.openflow.util.HexString;
  *
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class RouteId implements Cloneable {
+public class RouteId implements Cloneable, Comparable<RouteId> {
     protected Long src;
     protected Long dst;
 
@@ -73,5 +73,13 @@ public class RouteId implements Cloneable {
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return super.clone();
+    }
+
+    @Override
+    public int compareTo(RouteId o) {
+        int result = src.compareTo(o.getSrc());
+        if (result != 0)
+            return result;
+        return dst.compareTo(o.getDst());
     }
 }
