@@ -317,11 +317,17 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
                 path.remove(path.size()-1);
             if (path.isEmpty())
                 clone.getId().setDst(clone.getId().getSrc());
+            else
+                clone.getId().setDst(path.get(path.size()-1).getDst());
         } else {
+            Link link = null;
             if (path.size() > 0)
-                path.remove(0);
-            if (path.isEmpty())
+                link = path.remove(0);
+            if (path.isEmpty()) {
                 clone.getId().setSrc(clone.getId().getDst());
+            } else if (link != null) {
+                clone.getId().setSrc(link.getDst());
+            }
         }
         return clone;
     }
