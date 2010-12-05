@@ -12,10 +12,12 @@
           </tr>
         </thead>
         <tbody>
-            <c:forEach items="${cells}" var="row">
+            <c:forEach items="${cells}" var="row" varStatus="columnCounter">
                 <tr>
-                    <c:forEach items="${row}" var="cell">
-                        <td><c:out value="${cell}"/></td>
+                    <c:forEach items="${row}" var="cell" varStatus="columnCounter">
+                      <!--  note the off -by-one problem between varStatus variables and array indeces -->
+                      <c:set var="metadata" value="${columnMetadata[columnNames[columnCounter.count - 1]]}" scope="page"/>
+                      <td><c:out value="${cell}" escapeXml="${metadata['escapeXML']}"/></td> 
                     </c:forEach>
                 </tr>
             </c:forEach>
