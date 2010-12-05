@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: net.beaconcontroller.counter.web
+Bundle-SymbolicName: net.beaconcontroller.counter.web
+Bundle-Version: 0.1.0.qualifier
+Fragment-Host: net.beaconcontroller.web;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: net.beaconcontroller.counter,
+ org.openflow.protocol,
+ org.openflow.protocol.statistics,
+ org.openflow.util,
+ org.springframework.beans.factory.annotation,
+ org.springframework.stereotype
