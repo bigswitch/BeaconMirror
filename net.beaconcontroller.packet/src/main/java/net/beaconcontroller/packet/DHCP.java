@@ -288,11 +288,8 @@ public class DHCP extends BasePacket {
                 bb.put((byte) 0x0);
             }
         }
-        System.out.println("Position: " + bb.position());
         writeString(this.serverName, bb, 64);
-        System.out.println("Position: " + bb.position());
         writeString(this.bootFileName, bb, 128);
-        System.out.println("Position: " + bb.position());
         // magic cookie
         bb.put((byte) 0x63);
         bb.put((byte) 0x82);
