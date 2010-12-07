@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -38,6 +40,7 @@ import org.openflow.io.OFMessageInStream;
 import org.openflow.io.OFMessageOutStream;
 import org.openflow.protocol.OFEchoReply;
 import org.openflow.protocol.OFFeaturesReply;
+import org.openflow.protocol.OFGetConfigReply;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFSetConfig;
 import org.openflow.protocol.OFType;
@@ -51,6 +54,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Controller implements IBeaconProvider, SelectListener {
     protected static Logger log = LoggerFactory.getLogger(Controller.class);
+    protected static String SWITCH_REQUIREMENTS_TIMER_KEY = "SW_REQ_TIMER";
 
     protected Map<String,String> callbackOrdering;
     protected ExecutorService es;
@@ -100,16 +104,8 @@ public class Controller implements IBeaconProvider, SelectListener {
         sw.setSocketChannel(sock);
         sw.setBeaconProvider(this);
 
-        List<OFMessage> l = new ArrayList<OFMessage>();
-        l.add(factory.getMessage(OFType.HELLO));
-        l.add(factory.getMessage(OFType.FEATURES_REQUEST));
-
-        // Ensure we receive the full packet via PacketIn
-        OFSetConfig config = (OFSetConfig) factory.getMessage(OFType.SET_CONFIG);
-        config.setMissSendLength((short) 0xffff)
-            .setLengthU(OFSetConfig.MINIMUM_LENGTH);
-        l.add(config);
-        stream.write(l);
+        // Send HELLO
+        stream.write(factory.getMessage(OFType.HELLO));
     }
 
     protected void handleSwitchEvent(SelectionKey key, IOFSwitch sw) {
@@ -119,13 +115,8 @@ public class Controller implements IBeaconProvider, SelectListener {
             if (key.isReadable()) {
                 List<OFMessage> msgs = in.read();
                 if (msgs == null) {
-                    log.info("Switch disconnected from {}",
-                            sw.getSocketChannel().socket().toString());
-                    key.cancel();
-                    // only remove if we have a features reply (DPID)
-                    if (sw.getFeaturesReply() != null)
-                        removeSwitch(sw);
-                    sw.getSocketChannel().socket().close();
+                    // graceful disconnect
+                    disconnectSwitch(key, sw);
                     return;
                 }
                 handleMessages(sw, msgs);
@@ -145,17 +136,24 @@ public class Controller implements IBeaconProvider, SelectListener {
                 key.interestOps(SelectionKey.OP_READ);
         } catch (IOException e) {
             // if we have an exception, disconnect the switch
-            log.info("Switch disconnected from {}",
-                    sw.getSocketChannel().socket().toString());
-            key.cancel();
-            // only remove if we have a features reply (DPID)
-            if (sw.getFeaturesReply() != null)
-                removeSwitch(sw);
-            try {
-                sw.getSocketChannel().socket().close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            disconnectSwitch(key, sw);
+        }
+    }
+
+    /**
+     * Disconnect the switch from Beacon
+     */
+    protected void disconnectSwitch(SelectionKey key, IOFSwitch sw) {
+        log.info("Switch disconnected from {}",
+                sw.getSocketChannel().socket().toString());
+        key.cancel();
+        stopSwitchRequirementsTimer(sw);
+        // only remove if we have a features reply (DPID)
+        if (sw.getFeaturesReply() != null)
+            removeSwitch(sw);
+        try {
+            sw.getSocketChannel().socket().close();
+        } catch (IOException e1) {
         }
     }
 
@@ -171,6 +169,11 @@ public class Controller implements IBeaconProvider, SelectListener {
             switch (m.getType()) {
                 case HELLO:
                     log.debug("HELLO from {}", sw);
+                    // Send initial Features Request
+                    sw.getOutputStream().write(factory.getMessage(OFType.FEATURES_REQUEST));
+
+                    // Start required message timer
+                    startSwitchRequirementsTimer(sw);
                     break;
                 case ECHO_REQUEST:
                     OFMessageInStream in = sw.getInputStream();
@@ -185,6 +188,13 @@ public class Controller implements IBeaconProvider, SelectListener {
                     log.debug("Features Reply from {}", sw);
                     sw.setFeaturesReply((OFFeaturesReply) m);
                     addSwitch(sw);
+                    break;
+                case GET_CONFIG_REPLY:
+                    OFGetConfigReply cr = (OFGetConfigReply) m;
+                    if (cr.getMissSendLength() == (short)0xffff) {
+                        log.debug("Config Reply from {} confirms miss length set to 0xffff", sw);
+                        stopSwitchRequirementsTimer(sw);
+                    }
                     break;
                 default:
                     // Don't pass along messages until we have the features reply
@@ -218,6 +228,52 @@ public class Controller implements IBeaconProvider, SelectListener {
                     }
                     break;
             }
+        }
+    }
+
+    /**
+     * Creates a timer that keeps requesting a switch's feature reply until it
+     * is received, then continues sending set config/get config messages until
+     * the timer is canceled.
+     * @param sw
+     */
+    protected void startSwitchRequirementsTimer(final IOFSwitch sw) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    if (sw.getSocketChannel().isConnected()) {
+                        if (sw.getFeaturesReply() == null) {
+                            // send another features request
+                            sw.getOutputStream().write(factory.getMessage(OFType.FEATURES_REQUEST));
+                        } else {
+                            // Ensure we receive the full packet via PacketIn
+                            OFSetConfig config = (OFSetConfig) factory
+                                    .getMessage(OFType.SET_CONFIG);
+                            config.setMissSendLength((short) 0xffff)
+                                    .setLengthU(OFSetConfig.MINIMUM_LENGTH);
+                            sw.getOutputStream().write(config);
+                            sw.getOutputStream().write(factory.getMessage(OFType.GET_CONFIG_REQUEST));
+                        }
+                    } else {
+                        // stop timer
+                        stopSwitchRequirementsTimer(sw);
+                    }
+                } catch (Exception e) {
+                    stopSwitchRequirementsTimer(sw);
+                    log.error("Exception in switch requirements timer", e);
+                }
+            }}, 500, 500);
+        sw.getAttributes().put(SWITCH_REQUIREMENTS_TIMER_KEY, timer);
+    }
+
+    protected void stopSwitchRequirementsTimer(final IOFSwitch sw) {
+        Timer timer = (Timer) sw.getAttributes().get(
+                SWITCH_REQUIREMENTS_TIMER_KEY);
+        if (timer != null) {
+            timer.cancel();
+            sw.getAttributes().remove(SWITCH_REQUIREMENTS_TIMER_KEY);
         }
     }
 
