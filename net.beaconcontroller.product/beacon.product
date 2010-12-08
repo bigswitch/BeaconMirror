@@ -102,7 +102,7 @@
       <plugin id="net.beaconcontroller.core" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.devicemanager" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.learningswitch" autoStart="true" startLevel="0" />
-      <plugin id="net.beaconcontroller.logging.bridge" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.logging.bridge" autoStart="true" startLevel="1" />
       <plugin id="net.beaconcontroller.packet" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.routing" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.routing.apsp" autoStart="true" startLevel="0" />
@@ -112,8 +112,8 @@
       <plugin id="org.apache.ant" autoStart="true" startLevel="0" />
       <plugin id="org.apache.commons.fileupload" autoStart="true" startLevel="0" />
       <plugin id="org.apache.commons.io" autoStart="true" startLevel="0" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="0" />
-      <plugin id="org.eclipse.equinox.log" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.equinox.log" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.equinox.util" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
       <plugin id="org.eclipse.osgi.services" autoStart="true" startLevel="0" />
