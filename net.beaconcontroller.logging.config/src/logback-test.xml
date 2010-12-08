@@ -6,11 +6,11 @@
       </pattern>
     </encoder>
   </appender>
-  <appender name="test.log" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>logs/test.log</file>
+  <appender name="beacon.log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/beacon.log</file>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>logs/test.%d.log.zip</fileNamePattern>
+      <fileNamePattern>logs/beacon.%d.log.zip</fileNamePattern>
       <maxHistory>1</maxHistory>
     </rollingPolicy>
 
@@ -21,6 +21,7 @@
 
   <root level="error">
     <appender-ref ref="STDOUT" />
+    <appender-ref ref="beacon.log" />
   </root>
   <logger name="net.beaconcontroller" level="DEBUG"/>
 </configuration>
