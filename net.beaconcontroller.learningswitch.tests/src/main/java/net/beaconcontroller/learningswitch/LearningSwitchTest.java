@@ -135,8 +135,10 @@ public class LearningSwitchTest extends BeaconTestCase {
             .setBufferId(50)
             .setCommand(OFFlowMod.OFPFC_ADD)
             .setIdleTimeout((short) 5)
-            .setMatch(new OFMatch().loadFromPacket(testPacketSerialized, (short) 1))
+            .setMatch(new OFMatch().loadFromPacket(testPacketSerialized, (short) 1)
+                    .setWildcards(OFMatch.OFPFW_NW_TOS))
             .setOutPort(OFPort.OFPP_NONE.getValue())
+            .setCookie(1L << 52)
             .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
 
         // Mock up our expected behavior

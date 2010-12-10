@@ -126,9 +126,11 @@ public class RoutingTest extends BeaconTestCase {
         List<OFAction> actions = new ArrayList<OFAction>();
         actions.add(action);
         fm1.setIdleTimeout((short)5)
-            .setMatch(match)
+            .setMatch(match.clone()
+                    .setWildcards(OFMatch.OFPFW_NW_TOS))
             .setActions(actions)
             .setBufferId(-1)
+            .setCookie(2L << 52)
             .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
 
         OFFlowMod fm2 = fm1.clone();
