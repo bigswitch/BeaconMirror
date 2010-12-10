@@ -63,6 +63,7 @@ public class SSControllerDaoImpl implements IControllerDao {
     private static final String PORT_STATE = "state";
     private static final String PORT_CURRENT_FEATURES = "current_features";
     private static final String PORT_ADVERTISED_FEATURES = "advertised_features";
+    private static final String PORT_SUPPORTED_FEATURES = "supported_features";
     private static final String PORT_PEER_FEATURES = "peer_features";
     
     public SSControllerDaoImpl() {
@@ -101,7 +102,7 @@ public class SSControllerDaoImpl implements IControllerDao {
         // Obtain the row info for the switch
         Map<String, Object> switchInfo = new HashMap<String, Object>();
         Long datapathId = sw.getId();
-        String datapathIdString = U64.f(datapathId).toString();
+        String datapathIdString = HexString.toHexString(datapathId);
         switchInfo.put(SWITCH_DATAPATH_ID, datapathIdString);
         String controllerId = controller.getControllerId();
         switchInfo.put(SWITCH_CONTROLLER_ID, controllerId);
@@ -155,6 +156,8 @@ public class SSControllerDaoImpl implements IControllerDao {
             portInfo.put(PORT_CURRENT_FEATURES, currentFeatures);
             long advertisedFeatures = U32.f(port.getAdvertisedFeatures());
             portInfo.put(PORT_ADVERTISED_FEATURES, advertisedFeatures);
+            long supportedFeatures = U32.f(port.getSupportedFeatures());
+            portInfo.put(PORT_SUPPORTED_FEATURES, supportedFeatures);
             long peerFeatures = U32.f(port.getPeerFeatures());
             portInfo.put(PORT_PEER_FEATURES, peerFeatures);
             storageSource.updateRow(PORT_TABLE_NAME, portInfo);
@@ -166,7 +169,7 @@ public class SSControllerDaoImpl implements IControllerDao {
         // Update the controller info in the storage source to be inactive
         Map<String, Object> switchInfo = new HashMap<String, Object>();
         Long datapathId = sw.getId();
-        String datapathIdString = U64.f(datapathId).toString();
+        String datapathIdString = HexString.toHexString(datapathId);
         switchInfo.put(SWITCH_DATAPATH_ID, datapathIdString);
         //switchInfo.put(SWITCH_CONNECTED_SINCE, null);
         switchInfo.put(SWITCH_ACTIVE, Boolean.FALSE);
