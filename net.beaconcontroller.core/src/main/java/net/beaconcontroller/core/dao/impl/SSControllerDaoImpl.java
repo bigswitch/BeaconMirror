@@ -54,7 +54,7 @@ public class SSControllerDaoImpl implements IControllerDao {
     private static final String SWITCH_TABLES = "tables";
     private static final String SWITCH_ACTIONS = "actions";
     
-    private static final String PORT_TABLE_NAME = "controller_physicalport";
+    private static final String PORT_TABLE_NAME = "controller_port";
     private static final String PORT_ID = "id";
     private static final String PORT_SWITCH = "switch_id";
     private static final String PORT_NUMBER = "number";
@@ -167,8 +167,8 @@ public class SSControllerDaoImpl implements IControllerDao {
         // Update the controller info in the storage source to be inactive
         Map<String, Object> switchInfo = new HashMap<String, Object>();
         Long datapathId = sw.getId();
-        BigInteger unsignedDatapathId = U64.f(datapathId);
-        switchInfo.put(SWITCH_DATAPATH_ID, unsignedDatapathId);
+        String datapathIdString = U64.f(datapathId).toString();
+        switchInfo.put(SWITCH_DATAPATH_ID, datapathIdString);
         //switchInfo.put(SWITCH_CONNECTED_SINCE, null);
         switchInfo.put(SWITCH_ACTIVE, Boolean.FALSE);
         storageSource.updateRow(SWITCH_TABLE_NAME, switchInfo);
