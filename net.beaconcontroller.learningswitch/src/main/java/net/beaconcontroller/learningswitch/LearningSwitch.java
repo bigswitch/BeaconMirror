@@ -31,6 +31,13 @@ public class LearningSwitch implements IOFMessageListener {
     protected IBeaconProvider beaconProvider;
     protected ILearningSwitchDao learningSwitchDao;
 
+    // flow-mod - for use in the cookie                                                                                                                             
+    public static final int LEARNING_SWITCH_APP_ID = 1;
+    // LOOK! This should probably go in some class that encapsulates                                                                                                
+    // the app cookie management                                                                                                                                    
+    public static final int APP_ID_BITS = 12;
+    public static final int APP_ID_SHIFT = (64 - APP_ID_BITS);
+    
     /**
      * @param beaconProvider the beaconProvider to set
      */
@@ -88,6 +95,7 @@ public class LearningSwitch implements IOFMessageListener {
                 return Command.CONTINUE;
             }
             match.setInputPort(pi.getInPort());
+            match.setWildcards(OFMatch.OFPFW_NW_TOS);
 
             // build action
             OFActionOutput action = new OFActionOutput()
@@ -97,6 +105,7 @@ public class LearningSwitch implements IOFMessageListener {
             OFFlowMod fm = (OFFlowMod) sw.getInputStream().getMessageFactory()
                     .getMessage(OFType.FLOW_MOD);
             fm.setBufferId(bufferId)
+                .setCookie((LEARNING_SWITCH_APP_ID & ((1L << APP_ID_BITS) - 1)) << APP_ID_SHIFT)
                 .setIdleTimeout((short) 5)
                 .setOutPort((short) OFPort.OFPP_NONE.getValue())
                 .setMatch(match)

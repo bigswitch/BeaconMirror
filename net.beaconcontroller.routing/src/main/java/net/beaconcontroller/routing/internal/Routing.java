@@ -43,6 +43,13 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
     protected IBeaconProvider beaconProvider;
     protected IDeviceManager deviceManager;
     protected IRoutingEngine routingEngine;
+    
+    // flow-mod - for use in the cookie
+    public static final int ROUTING_APP_ID = 2;
+    // LOOK! This should probably go in some class that encapsulates
+    // the app cookie management
+    public static final int APP_ID_BITS = 12;
+    public static final int APP_ID_SHIFT = (64 - APP_ID_BITS);
 
     public void startUp() {
         beaconProvider.addOFMessageListener(OFType.PACKET_IN, this);
@@ -114,8 +121,10 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
         OFActionOutput action = new OFActionOutput();
         List<OFAction> actions = new ArrayList<OFAction>();
         actions.add(action);
+        match.setWildcards(OFMatch.OFPFW_NW_TOS);
         fm.setIdleTimeout((short)5)
             .setBufferId(0xffffffff)
+            .setCookie((ROUTING_APP_ID & ((1L << APP_ID_BITS) - 1)) << APP_ID_SHIFT)
             .setMatch(match.clone())
             .setActions(actions)
             .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
