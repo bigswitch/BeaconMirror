@@ -1,6 +1,5 @@
 package net.beaconcontroller.core.dao.impl;
 
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -176,6 +175,9 @@ public class SSControllerDaoImpl implements IControllerDao {
 
     public void setStorageSource(IStorageSource storageSource) {
         this.storageSource = storageSource;
+        storageSource.createTable(CONTROLLER_TABLE_NAME);
+        storageSource.createTable(SWITCH_TABLE_NAME);
+        storageSource.createTable(PORT_TABLE_NAME);
         storageSource.setTablePrimaryKeyName(CONTROLLER_TABLE_NAME, CONTROLLER_ID);
         storageSource.setTablePrimaryKeyName(SWITCH_TABLE_NAME, SWITCH_DATAPATH_ID);
         storageSource.setTablePrimaryKeyName(PORT_TABLE_NAME, PORT_ID);
