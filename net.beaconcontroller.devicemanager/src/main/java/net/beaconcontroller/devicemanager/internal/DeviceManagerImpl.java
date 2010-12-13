@@ -149,16 +149,13 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
             if (device != null) {
                 // Write lock is expensive, check if we have an update first
                 boolean updateNeeded = false;
-                boolean movedSwitch = false;
-                boolean movedSwitchPorts = false;
+                boolean movedLocation = false;
                 boolean addedNW = false;
                 boolean nwChanged = false;
 
-                if (sw.getId() != device.getSwId().longValue()) {
-                    movedSwitch = true;
-                }
-                if (pi.getInPort() != device.getSwPort().shortValue()) {
-                    movedSwitchPorts = true;
+                if ((sw.getId() != device.getSwId().longValue())
+                        || (pi.getInPort() != device.getSwPort().shortValue())) {
+                    movedLocation = true;
                 }
                 if (nwDevice == null && nwSrc != 0) {
                     addedNW = true;
@@ -166,7 +163,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
                     nwChanged = true;
                 }
 
-                if (movedSwitch || movedSwitchPorts || addedNW || nwChanged) {
+                if (movedLocation || addedNW || nwChanged) {
                     updateNeeded = true;
                 }
 
@@ -175,7 +172,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
                     lock.writeLock().lock();
                     try {
                         // Update both mappings once so no duplicated work later
-                        if (movedSwitch && movedSwitchPorts) {
+                        if (movedLocation) {
                             delSwitchDeviceMapping(device.getSwId(), device);
                             delSwitchPortDeviceMapping(
                                     new IdPortTuple(device.getSwId(),
@@ -195,30 +192,6 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
                             addSwitchPortDeviceMapping(
                                     new IdPortTuple(device.getSwId(),
                                             device.getSwPort()), device);
-                        } else {
-                            if (movedSwitch) {
-                                delSwitchDeviceMapping(device.getSwId(), device);
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Device {} moved to switch {}",
-                                            device,
-                                            HexString.toHexString(sw.getId()));
-                                }
-                                device.setSwId(sw.getId());
-                                addSwitchDeviceMapping(sw.getId(), device);
-                            }
-                            if (movedSwitchPorts) {
-                                delSwitchPortDeviceMapping(
-                                        new IdPortTuple(device.getSwId(),
-                                                device.getSwPort()), device);
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Device {} moved to port {}",
-                                            device, 0xffff & pi.getInPort());
-                                }
-                                device.setSwPort(pi.getInPort());
-                                addSwitchPortDeviceMapping(
-                                        new IdPortTuple(device.getSwId(),
-                                                device.getSwPort()), device);
-                            }
                         }
                         if (addedNW) {
                             // add the address
