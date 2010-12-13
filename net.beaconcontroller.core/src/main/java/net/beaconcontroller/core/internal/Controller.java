@@ -14,8 +14,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,10 +27,10 @@ import java.util.concurrent.Executors;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
+import net.beaconcontroller.core.IOFMessageListener.Command;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFSwitchFilter;
 import net.beaconcontroller.core.IOFSwitchListener;
-import net.beaconcontroller.core.IOFMessageListener.Command;
 import net.beaconcontroller.core.io.internal.OFStream;
 import net.beaconcontroller.packet.IPv4;
 
@@ -40,11 +40,15 @@ import org.openflow.io.OFMessageInStream;
 import org.openflow.io.OFMessageOutStream;
 import org.openflow.protocol.OFEchoReply;
 import org.openflow.protocol.OFFeaturesReply;
+import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFGetConfigReply;
+import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFSetConfig;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.BasicFactory;
+import org.openflow.util.U16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,6 +175,16 @@ public class Controller implements IBeaconProvider, SelectListener {
                     log.debug("HELLO from {}", sw);
                     // Send initial Features Request
                     sw.getOutputStream().write(factory.getMessage(OFType.FEATURES_REQUEST));
+
+                    // Delete all pre-existing flows
+                    OFMatch match = new OFMatch().setWildcards(OFMatch.OFPFW_ALL);
+                    OFMessage fm = ((OFFlowMod) sw.getInputStream().getMessageFactory()
+                        .getMessage(OFType.FLOW_MOD))
+                        .setMatch(match)
+                        .setCommand(OFFlowMod.OFPFC_DELETE)
+                        .setOutPort(OFPort.OFPP_NONE)
+                        .setLength(U16.t(OFFlowMod.MINIMUM_LENGTH));
+                    sw.getOutputStream().write(fm);
 
                     // Start required message timer
                     startSwitchRequirementsTimer(sw);
