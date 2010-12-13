@@ -346,7 +346,10 @@ public class Controller implements IBeaconProvider, SelectListener {
 
         switchSelectLoops = new ArrayList<SelectLoop>();
         switches = new ConcurrentHashMap<Long, IOFSwitch>();
-        threadCount = 1;
+
+        if (threadCount == null)
+            threadCount = 1;
+
         listenSelectLoop = new SelectLoop(this);
         // register this connection for accepting
         listenSelectLoop.register(listenSock, SelectionKey.OP_ACCEPT, listenSock);
@@ -491,5 +494,12 @@ public class Controller implements IBeaconProvider, SelectListener {
      */
     public void setListenPort(int listenPort) {
         this.listenPort = listenPort;
+    }
+
+    /**
+     * @param threadCount the threadCount to set
+     */
+    public void setThreadCount(Integer threadCount) {
+        this.threadCount = threadCount;
     }
 }
