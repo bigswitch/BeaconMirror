@@ -262,30 +262,37 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     protected void addOrUpdateLink(LinkTuple lt) {
         boolean addRoute = false;
         lock.writeLock().lock();
-        if (links.put(lt, System.currentTimeMillis()) == null) {
-            addRoute = true;
+        try {
+            if (links.put(lt, System.currentTimeMillis()) == null) {
+                addRoute = true;
 
-            // index it by switch source
-            if (!switchLinks.containsKey(lt.getSrc().getId()))
-                switchLinks.put(lt.getSrc().getId(), new HashSet<LinkTuple>());
-            switchLinks.get(lt.getSrc().getId()).add(lt);
+                // index it by switch source
+                if (!switchLinks.containsKey(lt.getSrc().getId()))
+                    switchLinks.put(lt.getSrc().getId(), new HashSet<LinkTuple>());
+                switchLinks.get(lt.getSrc().getId()).add(lt);
 
-            // index it by switch dest
-            if (!switchLinks.containsKey(lt.getDst().getId()))
-                switchLinks.put(lt.getDst().getId(), new HashSet<LinkTuple>());
-            switchLinks.get(lt.getDst().getId()).add(lt);
+                // index it by switch dest
+                if (!switchLinks.containsKey(lt.getDst().getId()))
+                    switchLinks.put(lt.getDst().getId(), new HashSet<LinkTuple>());
+                switchLinks.get(lt.getDst().getId()).add(lt);
 
-            // index both ends by switch:port
-            if (!portLinks.containsKey(lt.getSrc()))
-                portLinks.put(lt.getSrc(), new HashSet<LinkTuple>());
-            portLinks.get(lt.getSrc()).add(lt);
+                // index both ends by switch:port
+                if (!portLinks.containsKey(lt.getSrc()))
+                    portLinks.put(lt.getSrc(), new HashSet<LinkTuple>());
+                portLinks.get(lt.getSrc()).add(lt);
 
-            if (!portLinks.containsKey(lt.getDst()))
-                portLinks.put(lt.getDst(), new HashSet<LinkTuple>());
-            portLinks.get(lt.getDst()).add(lt);
+                if (!portLinks.containsKey(lt.getDst()))
+                    portLinks.put(lt.getDst(), new HashSet<LinkTuple>());
+                portLinks.get(lt.getDst()).add(lt);
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
-        lock.writeLock().unlock();
+        if (addRoute) {
+            log.debug("Added link {}", lt);
+        }
 
+        // TODO Is this safe to do outside of a synchronized lock?
         if (addRoute && routingEngine != null) {
             routingEngine.update(lt.getSrc().getId(), lt.getSrc().getPort(),
                     lt.getDst().getId(), lt.getDst().getPort(), true);
@@ -298,26 +305,30 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      */
     protected void deleteLinks(List<LinkTuple> links) {
         lock.writeLock().lock();
-        for (LinkTuple lt : links) {
-            this.switchLinks.get(lt.getSrc().getId()).remove(lt);
-            this.switchLinks.get(lt.getDst().getId()).remove(lt);
-            if (this.switchLinks.containsKey(lt.getSrc().getId()) &&
-                    this.switchLinks.get(lt.getSrc().getId()).isEmpty())
-                this.switchLinks.remove(lt.getSrc().getId());
-            if (this.switchLinks.containsKey(lt.getDst().getId()) &&
-                    this.switchLinks.get(lt.getDst().getId()).isEmpty())
-                this.switchLinks.remove(lt.getDst().getId());
-    
-            this.portLinks.get(lt.getSrc()).remove(lt);
-            this.portLinks.get(lt.getDst()).remove(lt);
-            if (this.portLinks.get(lt.getSrc()).isEmpty())
-                this.portLinks.remove(lt.getSrc());
-            if (this.portLinks.get(lt.getDst()).isEmpty())
-                this.portLinks.remove(lt.getDst());
+        try {
+            for (LinkTuple lt : links) {
+                this.switchLinks.get(lt.getSrc().getId()).remove(lt);
+                this.switchLinks.get(lt.getDst().getId()).remove(lt);
+                if (this.switchLinks.containsKey(lt.getSrc().getId()) &&
+                        this.switchLinks.get(lt.getSrc().getId()).isEmpty())
+                    this.switchLinks.remove(lt.getSrc().getId());
+                if (this.switchLinks.containsKey(lt.getDst().getId()) &&
+                        this.switchLinks.get(lt.getDst().getId()).isEmpty())
+                    this.switchLinks.remove(lt.getDst().getId());
 
-            this.links.remove(lt);
+                this.portLinks.get(lt.getSrc()).remove(lt);
+                this.portLinks.get(lt.getDst()).remove(lt);
+                if (this.portLinks.get(lt.getSrc()).isEmpty())
+                    this.portLinks.remove(lt.getSrc());
+                if (this.portLinks.get(lt.getDst()).isEmpty())
+                    this.portLinks.remove(lt.getDst());
+
+                this.links.remove(lt);
+                log.debug("Deleted link {}", lt);
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
-        lock.writeLock().unlock();
     }
 
     protected void sendRoutingEngineUpdates(List<LinkTuple> links, boolean added) {
@@ -339,11 +350,14 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
             List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
             lock.writeLock().lock();
-            if (this.portLinks.containsKey(tuple)) {
-                eraseList.addAll(this.portLinks.get(tuple));
-                deleteLinks(eraseList);
+            try {
+                if (this.portLinks.containsKey(tuple)) {
+                    eraseList.addAll(this.portLinks.get(tuple));
+                    deleteLinks(eraseList);
+                }
+            } finally {
+                lock.writeLock().unlock();
             }
-            lock.writeLock().unlock();
 
             sendRoutingEngineUpdates(eraseList, false);
             eraseList.clear();
@@ -360,12 +374,15 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     public void removedSwitch(IOFSwitch sw) {
         List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
         lock.writeLock().lock();
-        if (switchLinks.containsKey(sw.getId())) {
-            // add all tuples with an endpoint on this switch to erase list
-            eraseList.addAll(switchLinks.get(sw.getId()));
-            deleteLinks(eraseList);
+        try {
+            if (switchLinks.containsKey(sw.getId())) {
+                // add all tuples with an endpoint on this switch to erase list
+                eraseList.addAll(switchLinks.get(sw.getId()));
+                deleteLinks(eraseList);
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
-        lock.writeLock().unlock();
 
         sendRoutingEngineUpdates(eraseList, false);
         eraseList.clear();
@@ -377,16 +394,19 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
         // reentrant required here because deleteLink also write locks
         lock.writeLock().lock();
-        Iterator<Entry<LinkTuple, Long>> it = this.links.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<LinkTuple, Long> entry = it.next();
-            if (entry.getValue() + this.lldpTimeout < curTime) {
-                eraseList.add(entry.getKey());
+        try {
+            Iterator<Entry<LinkTuple, Long>> it = this.links.entrySet().iterator();
+            while (it.hasNext()) {
+                Entry<LinkTuple, Long> entry = it.next();
+                if (entry.getValue() + this.lldpTimeout < curTime) {
+                    eraseList.add(entry.getKey());
+                }
             }
+    
+            deleteLinks(eraseList);
+        } finally {
+            lock.writeLock().unlock();
         }
-
-        deleteLinks(eraseList);
-        lock.writeLock().unlock();
 
         sendRoutingEngineUpdates(eraseList, false);
         eraseList.clear();
@@ -409,8 +429,12 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     @Override
     public boolean isInternal(IdPortTuple idPort) {
         lock.readLock().lock();
-        boolean result = this.portLinks.containsKey(idPort);
-        lock.readLock().unlock();
+        boolean result;
+        try {
+            result = this.portLinks.containsKey(idPort);
+        } finally {
+            lock.readLock().unlock();
+        }
         return result;
     }
 
