@@ -1,5 +1,9 @@
 package net.beaconcontroller.test;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import net.beaconcontroller.core.IOFSwitch;
+
 import org.junit.Before;
 import org.springframework.context.ApplicationContext;
 
@@ -26,5 +30,11 @@ public class BeaconTestCase {
     }
 
     public void testSanity() {
+    }
+
+    public IOFSwitch createMockSwitch(Long id) {
+        IOFSwitch mockSwitch = createMock(IOFSwitch.class);
+        expect(mockSwitch.getId()).andReturn(id).anyTimes();
+        return mockSwitch;
     }
 }
