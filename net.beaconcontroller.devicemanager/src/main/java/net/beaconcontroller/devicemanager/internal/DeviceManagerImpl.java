@@ -21,7 +21,8 @@ import net.beaconcontroller.devicemanager.Device;
 import net.beaconcontroller.devicemanager.IDeviceManager;
 import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.topology.ITopology;
-import net.beaconcontroller.topology.IdPortTuple;
+import net.beaconcontroller.topology.SwitchPortTuple;
+import net.beaconcontroller.topology.TopologyAware;
 
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
@@ -39,15 +40,15 @@ import org.slf4j.LoggerFactory;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  *
  */
-public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IOFSwitchListener {
+public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IOFSwitchListener, TopologyAware {
     protected static Logger log = LoggerFactory.getLogger(DeviceManagerImpl.class);
 
     protected IBeaconProvider beaconProvider;
     protected Map<Integer, Device> dataLayerAddressDeviceMap;
     protected ReentrantReadWriteLock lock;
     protected Map<Integer, Device> networkLayerAddressDeviceMap;
-    protected Map<Long, Set<Device>> switchDeviceMap;
-    protected Map<IdPortTuple, Set<Device>> switchPortDeviceMap;
+    protected Map<IOFSwitch, Set<Device>> switchDeviceMap;
+    protected Map<SwitchPortTuple, Set<Device>> switchPortDeviceMap;
     protected ITopology topology;
 
     /**
@@ -56,19 +57,21 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
     public DeviceManagerImpl() {
         this.dataLayerAddressDeviceMap = new ConcurrentHashMap<Integer, Device>();
         this.networkLayerAddressDeviceMap = new ConcurrentHashMap<Integer, Device>();
-        this.switchDeviceMap = new ConcurrentHashMap<Long, Set<Device>>();
-        this.switchPortDeviceMap = new ConcurrentHashMap<IdPortTuple, Set<Device>>();
+        this.switchDeviceMap = new ConcurrentHashMap<IOFSwitch, Set<Device>>();
+        this.switchPortDeviceMap = new ConcurrentHashMap<SwitchPortTuple, Set<Device>>();
         this.lock = new ReentrantReadWriteLock();
     }
 
     public void startUp() {
         beaconProvider.addOFMessageListener(OFType.PACKET_IN, this);
         beaconProvider.addOFMessageListener(OFType.PORT_STATUS, this);
+        beaconProvider.addOFSwitchListener(this);
     }
 
     public void shutDown() {
         beaconProvider.removeOFMessageListener(OFType.PACKET_IN, this);
         beaconProvider.removeOFMessageListener(OFType.PORT_STATUS, this);
+        beaconProvider.removeOFSwitchListener(this);
     }
 
     @Override
@@ -82,7 +85,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
             ((byte)OFPortReason.OFPPR_MODIFY.ordinal() == ps.getReason() &&
                         (((OFPortConfig.OFPPC_PORT_DOWN.getValue() & ps.getDesc().getConfig()) > 0) ||
                                 ((OFPortState.OFPPS_LINK_DOWN.getValue() & ps.getDesc().getState()) > 0)))) {
-            IdPortTuple id = new IdPortTuple(sw.getId(), ps.getDesc().getPortNumber());
+            SwitchPortTuple id = new SwitchPortTuple(sw, ps.getDesc().getPortNumber());
             lock.writeLock().lock();
             try {
                 if (switchPortDeviceMap.containsKey(id)) {
@@ -90,7 +93,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
                     for (Device device : switchPortDeviceMap.get(id)) {
                         delDevice(device);
                         // Remove the device from the switch->device mapping
-                        switchDeviceMap.get(id.getId()).remove(device);
+                        switchDeviceMap.get(id.getSw()).remove(device);
                     }
                     // Remove this switch:port mapping
                     switchPortDeviceMap.remove(id);
@@ -144,7 +147,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
         } finally {
             lock.readLock().unlock();
         }
-        IdPortTuple ipt = new IdPortTuple(sw.getId(), pi.getInPort());
+        SwitchPortTuple ipt = new SwitchPortTuple(sw, pi.getInPort());
         if (!topology.isInternal(ipt)) {
             if (device != null) {
                 // Write lock is expensive, check if we have an update first
@@ -153,7 +156,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
                 boolean addedNW = false;
                 boolean nwChanged = false;
 
-                if ((sw.getId() != device.getSwId().longValue())
+                if ((!sw.equals(device.getSw()))
                         || (pi.getInPort() != device.getSwPort().shortValue())) {
                     movedLocation = true;
                 }
@@ -173,9 +176,9 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
                     try {
                         // Update both mappings once so no duplicated work later
                         if (movedLocation) {
-                            delSwitchDeviceMapping(device.getSwId(), device);
+                            delSwitchDeviceMapping(device.getSw(), device);
                             delSwitchPortDeviceMapping(
-                                    new IdPortTuple(device.getSwId(),
+                                    new SwitchPortTuple(device.getSw(),
                                             device.getSwPort()), device);
                             if (log.isDebugEnabled()) {
                                 log.debug(
@@ -186,11 +189,11 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
                                                         .getId()),
                                                 0xffff & pi.getInPort() });
                             }
-                            device.setSwId(sw.getId());
+                            device.setSw(sw);
                             device.setSwPort(pi.getInPort());
-                            addSwitchDeviceMapping(sw.getId(), device);
+                            addSwitchDeviceMapping(device.getSw(), device);
                             addSwitchPortDeviceMapping(
-                                    new IdPortTuple(device.getSwId(),
+                                    new SwitchPortTuple(device.getSw(),
                                             device.getSwPort()), device);
                         }
                         if (addedNW) {
@@ -225,7 +228,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
             } else {
                 device = new Device();
                 device.setDataLayerAddress(match.getDataLayerSource());
-                device.setSwId(sw.getId());
+                device.setSw(sw);
                 device.setSwPort(pi.getInPort());
                 lock.writeLock().lock();
                 try {
@@ -234,9 +237,9 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
                         device.getNetworkAddresses().add(nwSrc);
                         this.networkLayerAddressDeviceMap.put(nwSrc, device);
                     }
-                    addSwitchDeviceMapping(device.getSwId(), device);
-                    addSwitchPortDeviceMapping(new IdPortTuple(
-                            device.getSwId(), device.getSwPort()), device);
+                    addSwitchDeviceMapping(device.getSw(), device);
+                    addSwitchPortDeviceMapping(new SwitchPortTuple(
+                            sw, device.getSwPort()), device);
                     if (nwDevice != null) {
                         nwDevice.getNetworkAddresses().remove(nwSrc);
                         if (log.isWarnEnabled()) {
@@ -260,28 +263,28 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
         return Command.CONTINUE;
     }
 
-    protected void addSwitchDeviceMapping(Long id, Device device) {
-        if (switchDeviceMap.get(id) == null) {
-            switchDeviceMap.put(id, new HashSet<Device>());
+    protected void addSwitchDeviceMapping(IOFSwitch sw, Device device) {
+        if (switchDeviceMap.get(sw) == null) {
+            switchDeviceMap.put(sw, new HashSet<Device>());
         }
-        switchDeviceMap.get(id).add(device);
+        switchDeviceMap.get(sw).add(device);
     }
 
-    protected void delSwitchDeviceMapping(Long id, Device device) {
-        switchDeviceMap.get(id).remove(device);
-        if (switchDeviceMap.get(id).isEmpty()) {
-            switchDeviceMap.remove(id);
+    protected void delSwitchDeviceMapping(IOFSwitch sw, Device device) {
+        switchDeviceMap.get(sw).remove(device);
+        if (switchDeviceMap.get(sw).isEmpty()) {
+            switchDeviceMap.remove(sw);
         }
     }
 
-    protected void addSwitchPortDeviceMapping(IdPortTuple id, Device device) {
+    protected void addSwitchPortDeviceMapping(SwitchPortTuple id, Device device) {
         if (switchPortDeviceMap.get(id) == null) {
             switchPortDeviceMap.put(id, new HashSet<Device>());
         }
         switchPortDeviceMap.get(id).add(device);
     }
 
-    protected void delSwitchPortDeviceMapping(IdPortTuple id, Device device) {
+    protected void delSwitchPortDeviceMapping(SwitchPortTuple id, Device device) {
         switchPortDeviceMap.get(id).remove(device);
         if (switchPortDeviceMap.get(id).isEmpty()) {
             switchPortDeviceMap.remove(id);
@@ -351,24 +354,47 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
         // remove all devices attached to this switch
         lock.writeLock().lock();
         try {
-            Long id = sw.getId();
-            if (switchDeviceMap.get(id) != null) {
+            if (switchDeviceMap.get(sw) != null) {
                 // Remove all devices on this switch
-                for (Device device : switchDeviceMap.get(id)) {
+                for (Device device : switchDeviceMap.get(sw)) {
                     delDevice(device);
                 }
-                switchDeviceMap.remove(id);
+                switchDeviceMap.remove(sw);
                 // Remove all switch:port mappings where the switch is sw
-                for (Iterator<Map.Entry<IdPortTuple, Set<Device>>> it = switchPortDeviceMap
+                for (Iterator<Map.Entry<SwitchPortTuple, Set<Device>>> it = switchPortDeviceMap
                         .entrySet().iterator(); it.hasNext();) {
-                    Map.Entry<IdPortTuple, Set<Device>> entry = it.next();
-                    if (entry.getKey().getId().equals(id)) {
+                    Map.Entry<SwitchPortTuple, Set<Device>> entry = it.next();
+                    if (entry.getKey().getSw().equals(sw)) {
                         it.remove();
                     }
                 }
             }
         } finally {
             lock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public void linkUpdate(IOFSwitch src, short srcPort, IOFSwitch dst,
+            short dstPort, boolean added) {
+        if (added) {
+            // Remove all devices living on this switch:port now that it is internal
+            SwitchPortTuple id = new SwitchPortTuple(dst, dstPort);
+            lock.writeLock().lock();
+            try {
+                if (switchPortDeviceMap.containsKey(id)) {
+                    // Remove the devices
+                    for (Device device : switchPortDeviceMap.get(id)) {
+                        delDevice(device);
+                        // Remove the device from the switch->device mapping
+                        switchDeviceMap.get(id.getSw()).remove(device);
+                    }
+                    // Remove this switch:port mapping
+                    switchPortDeviceMap.remove(id);
+                }
+            } finally {
+                lock.writeLock().unlock();
+            }
         }
     }
 }

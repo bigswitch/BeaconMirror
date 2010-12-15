@@ -61,15 +61,9 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, To
     }
 
     @Override
-    public void linkAdded(IOFSwitch srcSwitch, short srcPort,
-            IOFSwitch dstSwitch, short dstPort) {
-        update(srcSwitch.getId(), srcPort, dstSwitch.getId(), dstPort, true);
-    }
-
-    @Override
-    public void linkRemoved(IOFSwitch srcSwitch, short srcPort,
-            IOFSwitch dstSwitch, short dstPort) {
-        update(srcSwitch.getId(), srcPort, dstSwitch.getId(), dstPort, false);
+    public void linkUpdate(IOFSwitch src, short srcPort, IOFSwitch dst, 
+            short dstPort, boolean added) {
+        update(src.getId(), srcPort, dst.getId(), dstPort, added);
     }
 
     @Override

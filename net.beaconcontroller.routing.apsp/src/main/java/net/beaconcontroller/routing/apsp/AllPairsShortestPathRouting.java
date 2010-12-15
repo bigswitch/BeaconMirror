@@ -65,7 +65,7 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
 
         if (dstDevice != null) {
             // does a route exist?
-            Route route = routingEngine.getRoute(sw.getId(), dstDevice.getSwId());
+            Route route = routingEngine.getRoute(sw.getId(), dstDevice.getSw().getId());
             if (route != null) {
                 // set the route
                 if (log.isTraceEnabled())

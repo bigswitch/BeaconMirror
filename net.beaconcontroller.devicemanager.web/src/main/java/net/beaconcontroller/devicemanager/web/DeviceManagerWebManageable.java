@@ -69,7 +69,7 @@ public class DeviceManagerWebManageable implements IWebManageable {
         for (Device device : deviceManager.getDevices()) {
             List<String> row = new ArrayList<String>();
             row.add(HexString.toHexString(device.getDataLayerAddress()));
-            row.add(HexString.toHexString(device.getSwId()));
+            row.add(HexString.toHexString(device.getSw().getId()));
             row.add(device.getSwPort().toString());
             cells.add(row);
         }

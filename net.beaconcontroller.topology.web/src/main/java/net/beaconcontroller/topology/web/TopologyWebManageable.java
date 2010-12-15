@@ -69,9 +69,9 @@ public class TopologyWebManageable implements IWebManageable {
         cells = new ArrayList<List<String>>();
         for (LinkTuple lt : topology.getLinks().keySet()) {
             List<String> row = new ArrayList<String>();
-            row.add(HexString.toHexString(lt.getSrc().getId()));
+            row.add(HexString.toHexString(lt.getSrc().getSw().getId()));
             row.add(lt.getSrc().getPort().toString());
-            row.add(HexString.toHexString(lt.getDst().getId()));
+            row.add(HexString.toHexString(lt.getDst().getSw().getId()));
             row.add(lt.getDst().getPort().toString());
             cells.add(row);
         }

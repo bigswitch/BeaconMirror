@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.packet.IPv4;
 
 import org.openflow.util.HexString;
@@ -16,7 +17,7 @@ import org.openflow.util.HexString;
 public class Device {
     protected byte[] dataLayerAddress;
     protected Set<Integer> networkAddresses;
-    protected Long swId;
+    protected IOFSwitch sw;
     protected Short swPort;
 
     public Device() {
@@ -52,17 +53,17 @@ public class Device {
     }
 
     /**
-     * @return the swId
+     * @return the sw
      */
-    public Long getSwId() {
-        return swId;
+    public IOFSwitch getSw() {
+        return sw;
     }
 
     /**
-     * @param swId the swId to set
+     * @param sw the sw to set
      */
-    public void setSwId(Long swId) {
-        this.swId = swId;
+    public void setSw(IOFSwitch sw) {
+        this.sw = sw;
     }
 
     /**
@@ -90,7 +91,7 @@ public class Device {
         result = prime
                 * result
                 + ((networkAddresses == null) ? 0 : networkAddresses.hashCode());
-        result = prime * result + ((swId == null) ? 0 : swId.hashCode());
+        result = prime * result + ((sw == null) ? 0 : sw.hashCode());
         result = prime * result + ((swPort == null) ? 0 : swPort.hashCode());
         return result;
     }
@@ -114,10 +115,10 @@ public class Device {
                 return false;
         } else if (!networkAddresses.equals(other.networkAddresses))
             return false;
-        if (swId == null) {
-            if (other.swId != null)
+        if (sw == null) {
+            if (other.sw != null)
                 return false;
-        } else if (!swId.equals(other.swId))
+        } else if (!sw.equals(other.sw))
             return false;
         if (swPort == null) {
             if (other.swPort != null)
@@ -134,7 +135,7 @@ public class Device {
     public String toString() {
         return "Device [dataLayerAddress=" + 
                 ((dataLayerAddress == null) ? "null" : HexString.toHexString(dataLayerAddress)) +
-                ", swId=" + ((swId == null) ? "null" : HexString.toHexString(swId)) +
+                ", swId=" + ((sw == null) ? "null" : HexString.toHexString(sw.getId())) +
                 ", swPort=" + ((swPort == null) ? "null" : (0xffff & swPort)) +
                 ", networkAddresses="
                 + IPv4.fromIPv4AddressCollection(networkAddresses) + "]";

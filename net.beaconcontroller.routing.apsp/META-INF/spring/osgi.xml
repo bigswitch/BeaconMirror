@@ -8,8 +8,11 @@
     http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd">
 
   <!-- Exports -->
-  <osgi:service id="IRoutingEngine" ref="routingEngine"
-    interface="net.beaconcontroller.routing.IRoutingEngine">
+  <osgi:service id="IRoutingEngine" ref="routingEngine">
+    <osgi:interfaces>
+      <value>net.beaconcontroller.routing.IRoutingEngine</value>
+      <value>net.beaconcontroller.topology.TopologyAware</value>
+    </osgi:interfaces>
   </osgi:service>
 
   <!-- Imports -->

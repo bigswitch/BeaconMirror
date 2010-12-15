@@ -1,6 +1,6 @@
 package net.beaconcontroller.topology;
 
-import java.nio.ByteBuffer;
+import net.beaconcontroller.core.IOFSwitch;
 
 /**
  *
@@ -8,21 +8,21 @@ import java.nio.ByteBuffer;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class LinkTuple {
-    protected IdPortTuple src;
-    protected IdPortTuple dst;
+    protected SwitchPortTuple src;
+    protected SwitchPortTuple dst;
 
     /**
      * @param src
      * @param dst
      */
-    public LinkTuple(IdPortTuple src, IdPortTuple dst) {
+    public LinkTuple(SwitchPortTuple src, SwitchPortTuple dst) {
         this.src = src;
         this.dst = dst;
     }
 
-    public LinkTuple(Long srcId, Short srcPort, Long dstId, Short dstPort) {
-        this.src = new IdPortTuple(srcId, srcPort);
-        this.dst = new IdPortTuple(dstId, dstPort);
+    public LinkTuple(IOFSwitch src, Short srcPort, IOFSwitch dst, Short dstPort) {
+        this.src = new SwitchPortTuple(src, srcPort);
+        this.dst = new SwitchPortTuple(dst, dstPort);
     }
 
     /**
@@ -32,36 +32,36 @@ public class LinkTuple {
      * @param dstId
      * @param dstPort
      */
-    public LinkTuple(Long srcId, Integer srcPort, Long dstId, Integer dstPort) {
-        this.src = new IdPortTuple(srcId, srcPort);
-        this.dst = new IdPortTuple(dstId, dstPort);
+    public LinkTuple(IOFSwitch src, Integer srcPort, IOFSwitch dst, Integer dstPort) {
+        this.src = new SwitchPortTuple(src, srcPort);
+        this.dst = new SwitchPortTuple(dst, dstPort);
     }
 
     /**
      * @return the src
      */
-    public IdPortTuple getSrc() {
+    public SwitchPortTuple getSrc() {
         return src;
     }
 
     /**
      * @param src the src to set
      */
-    public void setSrc(IdPortTuple src) {
+    public void setSrc(SwitchPortTuple src) {
         this.src = src;
     }
 
     /**
      * @return the dst
      */
-    public IdPortTuple getDst() {
+    public SwitchPortTuple getDst() {
         return dst;
     }
 
     /**
      * @param dst the dst to set
      */
-    public void setDst(IdPortTuple dst) {
+    public void setDst(SwitchPortTuple dst) {
         this.dst = dst;
     }
 
@@ -108,22 +108,5 @@ public class LinkTuple {
     @Override
     public String toString() {
         return "LinkTuple [src=" + src + ", dst=" + dst + "]";
-    }
-
-    public byte[] toBytes() {
-        byte[] ret = new byte[20];
-        ByteBuffer bb = ByteBuffer.wrap(ret);
-        bb.put(src.toBytes());
-        bb.put(dst.toBytes());
-        return ret;
-    }
-
-    public static LinkTuple fromBytes(byte[] data) {
-        ByteBuffer bb = ByteBuffer.wrap(data);
-        long srcId = bb.getLong();
-        short srcPort = bb.getShort();
-        long dstId = bb.getLong();
-        short dstPort = bb.getShort();
-        return new LinkTuple(srcId, srcPort, dstId, dstPort);
     }
 }

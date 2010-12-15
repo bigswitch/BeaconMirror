@@ -3,7 +3,7 @@
  */
 package net.beaconcontroller.topology;
 
-import java.nio.ByteBuffer;
+import net.beaconcontroller.core.IOFSwitch;
 
 import org.openflow.util.HexString;
 
@@ -11,13 +11,13 @@ import org.openflow.util.HexString;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  *
  */
-public class IdPortTuple {
-    protected Long id;
+public class SwitchPortTuple {
+    protected IOFSwitch sw;
     protected Short port;
 
-    public IdPortTuple(Long id, Short port) {
+    public SwitchPortTuple(IOFSwitch sw, Short port) {
         super();
-        this.id = id;
+        this.sw = sw;
         this.port = port;
     }
 
@@ -26,17 +26,17 @@ public class IdPortTuple {
      * @param id
      * @param port
      */
-    public IdPortTuple(Long id, Integer port) {
+    public SwitchPortTuple(IOFSwitch sw, Integer port) {
         super();
-        this.id = id;
+        this.sw = sw;
         this.port = port.shortValue();
     }
 
     /**
-     * @return the id
+     * @return the sw
      */
-    public Long getId() {
-        return id;
+    public IOFSwitch getSw() {
+        return sw;
     }
 
     /**
@@ -53,7 +53,7 @@ public class IdPortTuple {
     public int hashCode() {
         final int prime = 5557;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((sw == null) ? 0 : sw.hashCode());
         result = prime * result + ((port == null) ? 0 : port.hashCode());
         return result;
     }
@@ -67,13 +67,13 @@ public class IdPortTuple {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof IdPortTuple))
+        if (!(obj instanceof SwitchPortTuple))
             return false;
-        IdPortTuple other = (IdPortTuple) obj;
-        if (id == null) {
-            if (other.id != null)
+        SwitchPortTuple other = (SwitchPortTuple) obj;
+        if (sw == null) {
+            if (other.sw != null)
                 return false;
-        } else if (!id.equals(other.id))
+        } else if (!sw.equals(other.sw))
             return false;
         if (port == null) {
             if (other.port != null)
@@ -88,23 +88,8 @@ public class IdPortTuple {
      */
     @Override
     public String toString() {
-        return "IdPortTuple [id="
-                + ((id == null) ? "null" : HexString.toHexString(id))
+        return "SwitchPortTuple [id="
+                + ((sw == null) ? "null" : HexString.toHexString(sw.getId()))
                 + ", port=" + ((port == null) ? "null" : (0xff & port)) + "]";
-    }
-
-    public byte[] toBytes() {
-        byte[] ret = new byte[10];
-        ByteBuffer bb = ByteBuffer.wrap(ret);
-        bb.putLong(id);
-        bb.putShort(port);
-        return ret;
-    }
-
-    public static IdPortTuple fromBytes(byte[] data) {
-        ByteBuffer bb = ByteBuffer.wrap(data);
-        long id = bb.getLong();
-        short port = bb.getShort();
-        return new IdPortTuple(id, port);
     }
 }

@@ -17,7 +17,7 @@
     interface="net.beaconcontroller.core.IBeaconProvider">
   </osgi:reference>
 
-  <osgi:reference id="routingEngine" cardinality="0..1"
-    interface="net.beaconcontroller.routing.IRoutingEngine">
-  </osgi:reference>
+  <osgi:set id="topologyAwareSet" availability="optional"
+    interface="net.beaconcontroller.topology.TopologyAware">
+  </osgi:set>
 </beans>
