@@ -15,7 +15,7 @@ public interface ITopology {
      * @param idPort
      * @return
      */
-    public boolean isInternal(IdPortTuple idPort);
+    public boolean isInternal(SwitchPortTuple idPort);
 
     /**
      * Retrieves a map of all known link connections between OpenFlow switches

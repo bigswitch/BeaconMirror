@@ -19,7 +19,7 @@ import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.packet.UDP;
 import net.beaconcontroller.test.BeaconTestCase;
 import net.beaconcontroller.topology.ITopology;
-import net.beaconcontroller.topology.IdPortTuple;
+import net.beaconcontroller.topology.SwitchPortTuple;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -78,19 +78,20 @@ public class DeviceManagerImplTest extends BeaconTestCase {
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();
         byte[] dataLayerSource = ((Ethernet)this.testPacket).getSourceMACAddress();
 
-        // build our expected Device
-        Device device = new Device();
-        device.setDataLayerAddress(dataLayerSource);
-        device.setSwId(1L);
-        device.setSwPort((short)1);
-        device.getNetworkAddresses().add(IPv4.toIPv4Address("192.168.1.1"));
-
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         expect(mockSwitch.getId()).andReturn(1L).atLeastOnce();
         ITopology mockTopology = createMock(ITopology.class);
-        expect(mockTopology.isInternal(new IdPortTuple(1L, 1))).andReturn(false);
+        expect(mockTopology.isInternal(new SwitchPortTuple(mockSwitch, 1))).andReturn(false);
         deviceManager.setTopology(mockTopology);
+
+        // build our expected Device
+        Device device = new Device();
+        device.setDataLayerAddress(dataLayerSource);
+        device.setSw(mockSwitch);
+        device.setSwPort((short)1);
+        device.getNetworkAddresses().add(IPv4.toIPv4Address("192.168.1.1"));
+
 
         // Start recording the replay on the mocks
         replay(mockSwitch, mockTopology);
@@ -104,12 +105,12 @@ public class DeviceManagerImplTest extends BeaconTestCase {
         assertEquals(device, deviceManager.getDeviceByDataLayerAddress(Arrays.hashCode(dataLayerSource)));
 
         // move the port on this device
-        device.setSwId(2L);
+        device.setSw(mockSwitch);
         device.setSwPort((short)2);
 
         reset(mockSwitch, mockTopology);
         expect(mockSwitch.getId()).andReturn(2L).atLeastOnce();
-        expect(mockTopology.isInternal(new IdPortTuple(2L, 2))).andReturn(false);
+        expect(mockTopology.isInternal(new SwitchPortTuple(mockSwitch, 2))).andReturn(false);
 
         // Start recording the replay on the mocks
         replay(mockSwitch, mockTopology);

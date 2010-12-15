@@ -10,6 +10,6 @@
   <bean id="topology" class="net.beaconcontroller.topology.internal.TopologyImpl"
     init-method="startUp" destroy-method="shutDown">
     <property name="beaconProvider" ref="beaconProvider"/>
-    <property name="routingEngine" ref="routingEngine"/>
+    <property name="topologyAware" ref="topologyAwareSet"/>
   </bean>
 </beans>

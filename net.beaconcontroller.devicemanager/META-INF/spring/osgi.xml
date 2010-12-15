@@ -5,8 +5,11 @@
     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd">
 
   <!-- Exports -->
-  <osgi:service id="IDeviceManager" ref="deviceManager"
-    interface="net.beaconcontroller.devicemanager.IDeviceManager">
+  <osgi:service id="IDeviceManager" ref="deviceManager">
+    <osgi:interfaces>
+      <value>net.beaconcontroller.devicemanager.IDeviceManager</value>
+      <value>net.beaconcontroller.topology.TopologyAware</value>
+    </osgi:interfaces>
   </osgi:service>
 
   <!-- Imports -->

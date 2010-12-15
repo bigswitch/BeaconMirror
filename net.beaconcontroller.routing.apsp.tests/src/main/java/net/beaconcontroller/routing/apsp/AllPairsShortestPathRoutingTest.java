@@ -91,10 +91,18 @@ public class AllPairsShortestPathRoutingTest extends BeaconTestCase {
         AllPairsShortestPathRouting routing = getRouting();
         byte[] dataLayerSource = ((Ethernet)this.testPacket).getSourceMACAddress();
 
+        // Create mock switches
+        IOFSwitch sw1 = createMock(IOFSwitch.class);
+        OFMessageInStream mockIn = createMock(OFMessageInStream.class);
+        OFMessageSafeOutStream out1 = createMock(OFMessageSafeOutStream.class);
+        IOFSwitch sw2 = createMock(IOFSwitch.class);
+        expect(sw2.getId()).andReturn(2L).anyTimes();
+        OFMessageSafeOutStream out2 = createMock(OFMessageSafeOutStream.class);
+
         // build our expected Device
         Device dstDevice = new Device();
         dstDevice.setDataLayerAddress(dataLayerSource);
-        dstDevice.setSwId(2L);
+        dstDevice.setSw(sw2);
         dstDevice.setSwPort((short)3);
 
         // Mock deviceManager
@@ -135,13 +143,6 @@ public class AllPairsShortestPathRoutingTest extends BeaconTestCase {
             .setActionsLength((short) OFActionOutput.MINIMUM_LENGTH)
             .setPacketData(this.testPacketSerialized)
             .setLengthU(OFPacketOut.MINIMUM_LENGTH+po.getActionsLength()+this.testPacketSerialized.length);
-
-        // Create mock switches
-        IOFSwitch sw1 = createMock(IOFSwitch.class);
-        OFMessageInStream mockIn = createMock(OFMessageInStream.class);
-        OFMessageSafeOutStream out1 = createMock(OFMessageSafeOutStream.class);
-        IOFSwitch sw2 = createMock(IOFSwitch.class);
-        OFMessageSafeOutStream out2 = createMock(OFMessageSafeOutStream.class);
 
         // Load the switch map
         Map<Long, IOFSwitch> switches = new HashMap<Long, IOFSwitch>();
