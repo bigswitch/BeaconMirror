@@ -446,6 +446,20 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
 
         this.factory = new BasicFactory();
 
+        // This call is before starting up the threads because the DAO resets the
+        // persistent switch state to clean up after a possible abnormal termination
+        // of the beacon process. If this happened after the listen and switch select
+        // loops were active then there could be a potential race condition between
+        // deactivating the switches and a switch connecting to beacon.
+        if (coreDao != null) {
+            try {
+                coreDao.startedController(this);
+            }
+            catch (Exception e) {
+                log.error("Error writing controller startup info to database", e);
+            }
+        }
+            
         // Static number of threads equal to processor cores (+1 for listen loop)
         es = Executors.newFixedThreadPool(threadCount+1);
 
@@ -513,15 +527,6 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
             }}, "Controller Updates");
         updatesThread.start();
         
-        if (coreDao != null) {
-            try {
-                coreDao.startedController(this);
-            }
-            catch (Exception e) {
-                log.error("Error writing controller startup info to database", e);
-            }
-        }
-            
         log.info("Beacon Core Started");
     }
 

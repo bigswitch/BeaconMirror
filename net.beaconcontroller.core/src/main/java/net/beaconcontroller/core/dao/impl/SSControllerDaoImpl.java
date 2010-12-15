@@ -15,12 +15,14 @@ import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.util.HexString;
 import org.openflow.util.U16;
 import org.openflow.util.U32;
-import org.openflow.util.U64;
 
 import net.beaconcontroller.core.IOFController;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.dao.IControllerDao;
+import net.beaconcontroller.storage.IResultSet;
 import net.beaconcontroller.storage.IStorageSource;
+import net.beaconcontroller.storage.OperatorPredicate;
+import net.beaconcontroller.storage.StorageException;
 
 public class SSControllerDaoImpl implements IControllerDao {
 
@@ -69,9 +71,52 @@ public class SSControllerDaoImpl implements IControllerDao {
     public SSControllerDaoImpl() {
     }
     
+    private void deactivateSwitches() {
+        String controllerId = controller.getControllerId();
+        String[] switchColumns = { SWITCH_DATAPATH_ID, SWITCH_CONTROLLER_ID, SWITCH_ACTIVE };
+        String[] portColumns = { PORT_ID, PORT_SWITCH };
+        IResultSet switchResultSet = null;
+        try {
+            switchResultSet = storageSource.executeQuery(SWITCH_TABLE_NAME, switchColumns,
+                    new OperatorPredicate(SWITCH_CONTROLLER_ID, OperatorPredicate.Operator.EQ, controllerId), null);
+            while (switchResultSet.next()) {
+                IResultSet portResultSet = null;
+                try {
+                    String datapathId = switchResultSet.getString(SWITCH_DATAPATH_ID);
+                    switchResultSet.setBoolean(SWITCH_ACTIVE, Boolean.FALSE);
+                    portResultSet = storageSource.executeQuery(PORT_TABLE_NAME, portColumns,
+                            new OperatorPredicate(PORT_SWITCH, OperatorPredicate.Operator.EQ, datapathId), null);
+                    while (portResultSet.next()) {
+                        portResultSet.deleteRow();
+                    }
+                    portResultSet.save();
+                }
+                catch (StorageException e) {
+                    // Ignore exception.
+                    // FIXME: Should log something here.
+                }
+                finally {
+                    if (portResultSet != null)
+                        portResultSet.close();
+                }
+            }
+            switchResultSet.save();
+        }
+        catch (StorageException e) {
+            // Ignore exception.
+            // FIXME: Should log something here.
+        }
+        finally {
+            if (switchResultSet != null)
+                switchResultSet.close();
+        }
+    }
+    
     @Override
     public void startedController(IOFController controller) {
         this.controller = controller;
+        
+        deactivateSwitches();
         
         // Write out the controller info to the storage source
         Map<String, Object> controllerInfo = new HashMap<String, Object>();
@@ -95,6 +140,8 @@ public class SSControllerDaoImpl implements IControllerDao {
         controllerInfo.put(CONTROLLER_ID, id);
         controllerInfo.put(CONTROLLER_ACTIVE, Boolean.FALSE);
         storageSource.updateRow(CONTROLLER_TABLE_NAME, controllerInfo);
+        
+        deactivateSwitches();
     }
     
     @Override
