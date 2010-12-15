@@ -39,6 +39,14 @@ import org.openflow.example.SelectLoop;
 import org.openflow.io.OFMessageInStream;
 import org.openflow.io.OFMessageOutStream;
 import org.openflow.protocol.OFEchoReply;
+import org.openflow.protocol.OFError;
+import org.openflow.protocol.OFError.OFBadActionCode;
+import org.openflow.protocol.OFError.OFBadRequestCode;
+import org.openflow.protocol.OFError.OFErrorType;
+import org.openflow.protocol.OFError.OFFlowModFailedCode;
+import org.openflow.protocol.OFError.OFHelloFailedCode;
+import org.openflow.protocol.OFError.OFPortModFailedCode;
+import org.openflow.protocol.OFError.OFQueueOpFailedCode;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFGetConfigReply;
@@ -148,8 +156,6 @@ public class Controller implements IBeaconProvider, SelectListener {
      * Disconnect the switch from Beacon
      */
     protected void disconnectSwitch(SelectionKey key, IOFSwitch sw) {
-        log.info("Switch disconnected from {}",
-                sw.getSocketChannel().socket().toString());
         key.cancel();
         stopSwitchRequirementsTimer(sw);
         // only remove if we have a features reply (DPID)
@@ -159,6 +165,7 @@ public class Controller implements IBeaconProvider, SelectListener {
             sw.getSocketChannel().socket().close();
         } catch (IOException e1) {
         }
+        log.info("Switch disconnected {}", sw);
     }
 
     /**
@@ -210,6 +217,10 @@ public class Controller implements IBeaconProvider, SelectListener {
                         stopSwitchRequirementsTimer(sw);
                     }
                     break;
+                case ERROR:
+                    OFError error = (OFError) m;
+                    logError(sw, error);
+                    break;
                 default:
                     // Don't pass along messages until we have the features reply
                     if (sw.getFeaturesReply() == null) {
@@ -238,10 +249,43 @@ public class Controller implements IBeaconProvider, SelectListener {
                             }
                         }
                     } else {
-                        log.error("Unhandled OF Message: {} from {}", m, sw.getSocketChannel().socket().getInetAddress());
+                        log.error("Unhandled OF Message: {} from {}", m, sw);
                     }
                     break;
             }
+        }
+    }
+
+    protected void logError(IOFSwitch sw, OFError error) {
+        // TODO Move this to OFJ with *much* better printing
+        OFErrorType et = OFErrorType.values()[0xffff & error.getErrorType()];
+        switch (et) {
+            case OFPET_HELLO_FAILED:
+                OFHelloFailedCode hfc = OFHelloFailedCode.values()[0xffff & error.getErrorCode()];
+                log.error("Error {} {} from {}", new Object[] {et, hfc, sw});
+                break;
+            case OFPET_BAD_REQUEST:
+                OFBadRequestCode brc = OFBadRequestCode.values()[0xffff & error.getErrorCode()];
+                log.error("Error {} {} from {}", new Object[] {et, brc, sw});
+                break;
+            case OFPET_BAD_ACTION:
+                OFBadActionCode bac = OFBadActionCode.values()[0xffff & error.getErrorCode()];
+                log.error("Error {} {} from {}", new Object[] {et, bac, sw});
+                break;
+            case OFPET_FLOW_MOD_FAILED:
+                OFFlowModFailedCode fmfc = OFFlowModFailedCode.values()[0xffff & error.getErrorCode()];
+                log.error("Error {} {} from {}", new Object[] {et, fmfc, sw});
+                break;
+            case OFPET_PORT_MOD_FAILED:
+                OFPortModFailedCode pmfc = OFPortModFailedCode.values()[0xffff & error.getErrorCode()];
+                log.error("Error {} {} from {}", new Object[] {et, pmfc, sw});
+                break;
+            case OFPET_QUEUE_OP_FAILED:
+                OFQueueOpFailedCode qofc = OFQueueOpFailedCode.values()[0xffff & error.getErrorCode()];
+                log.error("Error {} {} from {}", new Object[] {et, qofc, sw});
+                break;
+            default:
+                break;
         }
     }
 
