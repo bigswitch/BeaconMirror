@@ -1,5 +1,7 @@
 package net.beaconcontroller.topology.internal;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.*;
@@ -20,6 +22,12 @@ import net.beaconcontroller.topology.LinkTuple;
 public class TopologyImplTest extends BeaconTestCase {
     public TopologyImpl getTopology() {
         return (TopologyImpl) getApplicationContext().getBean("topology");
+    }
+
+    public IOFSwitch createMockSwitch(Long id) {
+        IOFSwitch mockSwitch = createMock(IOFSwitch.class);
+        expect(mockSwitch.getId()).andReturn(id).anyTimes();
+        return mockSwitch;
     }
 
     @Before
