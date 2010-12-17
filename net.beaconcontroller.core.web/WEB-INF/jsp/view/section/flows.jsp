@@ -1,7 +1,7 @@
 <%@page import="org.openflow.protocol.statistics.OFFlowStatisticsReply"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="org.openflow.util.HexString, org.openflow.protocol.*,
-                 net.beaconcontroller.packet.*"%>
+                 org.openflow.protocol.action.*, net.beaconcontroller.packet.*"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="section">
@@ -24,6 +24,7 @@
           <th>Packets</th>
           <th>Time (s)</th>
           <th>Timeout (s)</th>
+          <th>Out Port(s)</th>
         </tr>
       </thead>
       <tbody>
@@ -63,6 +64,19 @@
             <td><c:out value="${flow.packetCount}"/></td>
             <td><c:out value="${flow.durationSeconds}"/></td>
             <td><c:out value="${flow.idleTimeout}"/></td>
+            <%  StringBuffer outPorts = new StringBuffer(); %>
+            <c:forEach items="${flow.actions}" var="action" varStatus="statusFlow">
+              <%  OFAction action = (OFAction)pageContext.findAttribute("action");
+                  if (action instanceof OFActionOutput) {
+                      OFActionOutput ao = (OFActionOutput)action;
+                      if (outPorts.length() > 0)
+                          outPorts.append(" ");
+                      outPorts.append(0xffff & ao.getPort());
+                  }
+              %>
+            </c:forEach>
+            <%  pageContext.setAttribute("outPorts", outPorts.toString()); %>
+            <td><c:out value="${outPorts}"/></td>
           </tr>
         </c:forEach>
       </tbody>
