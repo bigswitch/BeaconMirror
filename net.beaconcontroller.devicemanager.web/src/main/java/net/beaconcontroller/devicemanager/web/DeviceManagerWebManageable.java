@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.beaconcontroller.devicemanager.Device;
 import net.beaconcontroller.devicemanager.IDeviceManager;
+import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.web.IWebManageable;
 import net.beaconcontroller.web.view.BeaconViewResolver;
 import net.beaconcontroller.web.view.Tab;
@@ -63,12 +64,20 @@ public class DeviceManagerWebManageable implements IWebManageable {
         List<List<String>> cells = new ArrayList<List<String>>();
         columnNames = new ArrayList<String>();
         columnNames.add("MAC");
+        columnNames.add("IP");
         columnNames.add("Switch");
         columnNames.add("Port");
         cells = new ArrayList<List<String>>();
         for (Device device : deviceManager.getDevices()) {
             List<String> row = new ArrayList<String>();
             row.add(HexString.toHexString(device.getDataLayerAddress()));
+            StringBuffer sb = new StringBuffer();
+            for (Integer nw : device.getNetworkAddresses()) {
+                if (sb.length() > 0)
+                    sb.append(" ");
+                sb.append(IPv4.fromIPv4Address(nw) + " ");
+            }
+            row.add(sb.toString());
             row.add(HexString.toHexString(device.getSw().getId()));
             row.add(device.getSwPort().toString());
             cells.add(row);
