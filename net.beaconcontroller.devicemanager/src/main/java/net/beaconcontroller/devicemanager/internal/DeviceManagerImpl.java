@@ -4,7 +4,6 @@
 package net.beaconcontroller.devicemanager.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +18,7 @@ import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.devicemanager.Device;
 import net.beaconcontroller.devicemanager.IDeviceManager;
+import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.SwitchPortTuple;
@@ -44,7 +44,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
     protected static Logger log = LoggerFactory.getLogger(DeviceManagerImpl.class);
 
     protected IBeaconProvider beaconProvider;
-    protected Map<Integer, Device> dataLayerAddressDeviceMap;
+    protected Map<Long, Device> dataLayerAddressDeviceMap;
     protected ReentrantReadWriteLock lock;
     protected Map<Integer, Device> networkLayerAddressDeviceMap;
     protected Map<IOFSwitch, Set<Device>> switchDeviceMap;
@@ -55,7 +55,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
      * 
      */
     public DeviceManagerImpl() {
-        this.dataLayerAddressDeviceMap = new ConcurrentHashMap<Integer, Device>();
+        this.dataLayerAddressDeviceMap = new ConcurrentHashMap<Long, Device>();
         this.networkLayerAddressDeviceMap = new ConcurrentHashMap<Integer, Device>();
         this.switchDeviceMap = new ConcurrentHashMap<IOFSwitch, Set<Device>>();
         this.switchPortDeviceMap = new ConcurrentHashMap<SwitchPortTuple, Set<Device>>();
@@ -112,7 +112,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
      * @param device
      */
     protected void delDevice(Device device) {
-        dataLayerAddressDeviceMap.remove(Arrays.hashCode(device.getDataLayerAddress()));
+        dataLayerAddressDeviceMap.remove(Ethernet.toLong(device.getDataLayerAddress()));
         if (!device.getNetworkAddresses().isEmpty()) {
             for (Integer nwAddress : device.getNetworkAddresses()) {
                 networkLayerAddressDeviceMap.remove(nwAddress);
@@ -136,13 +136,13 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
         if ((match.getDataLayerSource()[0] & 0x1) != 0)
             return Command.CONTINUE;
 
-        Integer dlAddrHash = Arrays.hashCode(match.getDataLayerSource());
+        Long dlAddr = Ethernet.toLong(match.getDataLayerSource());
         Integer nwSrc = match.getNetworkSource();
         Device device = null;
         Device nwDevice = null;
         lock.readLock().lock();
         try {
-            device = dataLayerAddressDeviceMap.get(dlAddrHash);
+            device = dataLayerAddressDeviceMap.get(dlAddr);
             nwDevice = networkLayerAddressDeviceMap.get(nwSrc);
         } finally {
             lock.readLock().unlock();
@@ -232,7 +232,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
                 device.setSwPort(pi.getInPort());
                 lock.writeLock().lock();
                 try {
-                    this.dataLayerAddressDeviceMap.put(dlAddrHash, device);
+                    this.dataLayerAddressDeviceMap.put(dlAddr, device);
                     if (nwSrc != 0) {
                         device.getNetworkAddresses().add(nwSrc);
                         this.networkLayerAddressDeviceMap.put(nwSrc, device);
@@ -316,20 +316,10 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IO
     }
 
     @Override
-    public Device getDeviceByDataLayerAddress(Integer hashCode) {
-        lock.readLock().lock();
-        try {
-            return this.dataLayerAddressDeviceMap.get(hashCode);
-        } finally {
-            lock.readLock().unlock();
-        }
-    }
-
-    @Override
     public Device getDeviceByDataLayerAddress(byte[] address) {
         lock.readLock().lock();
         try {
-            return this.getDeviceByDataLayerAddress(Arrays.hashCode(address));
+            return this.dataLayerAddressDeviceMap.get(Ethernet.toLong(address));
         } finally {
             lock.readLock().unlock();
         }

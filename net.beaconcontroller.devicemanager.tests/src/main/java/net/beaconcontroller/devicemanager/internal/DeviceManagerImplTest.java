@@ -5,10 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-
+import static org.junit.Assert.assertEquals;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.test.MockBeaconProvider;
 import net.beaconcontroller.devicemanager.Device;
@@ -102,7 +99,7 @@ public class DeviceManagerImplTest extends BeaconTestCase {
         verify(mockSwitch, mockTopology);
 
         // Verify the device
-        assertEquals(device, deviceManager.getDeviceByDataLayerAddress(Arrays.hashCode(dataLayerSource)));
+        assertEquals(device, deviceManager.getDeviceByDataLayerAddress(dataLayerSource));
 
         // move the port on this device
         device.setSw(mockSwitch);
@@ -121,6 +118,6 @@ public class DeviceManagerImplTest extends BeaconTestCase {
         verify(mockSwitch, mockTopology);
 
         // Verify the device
-        assertEquals(device, deviceManager.getDeviceByDataLayerAddress(Arrays.hashCode(dataLayerSource)));
+        assertEquals(device, deviceManager.getDeviceByDataLayerAddress(dataLayerSource));
     }
 }
