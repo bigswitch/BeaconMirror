@@ -101,6 +101,7 @@ public class Controller implements IBeaconProvider, SelectListener {
             throws IOException {
         SocketChannel sock = listenSock.accept();
         log.info("Switch connected from {}", sock.toString());
+        sock.socket().setTcpNoDelay(true);
         sock.configureBlocking(false);
         OFSwitchImpl sw = new OFSwitchImpl();
         // hash this switch into a thread
