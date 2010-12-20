@@ -69,7 +69,7 @@ public class AllPairsShortestPathRouting implements IOFMessageListener {
             if (route != null) {
                 // set the route
                 if (log.isTraceEnabled())
-                    log.trace("Pushing route {}", route);
+                    log.trace("Pushing route match={} route={} destination={}:{}", new Object[] {match, route, dstDevice.getSw(), dstDevice.getSwPort()});
                 OFMessageInStream in = sw.getInputStream();
                 pushRoute(in.getMessageFactory(), match, route, dstDevice, pi.getBufferId());
 
