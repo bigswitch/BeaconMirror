@@ -3,6 +3,7 @@
  */
 package net.beaconcontroller.packet;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -35,5 +36,23 @@ public class EthernetTest {
                 (byte) 0xef, (byte) 0xde, (byte) 0xad, (byte) 0xbe,
                 (byte) 0xef, 0x0, 0x0 };
         assertTrue(Arrays.equals(expected, ethernet.serialize()));
+    }
+
+    @Test
+    public void testToLong() {
+        assertEquals(
+                281474976710655L,
+                Ethernet.toLong(new byte[] { (byte) 0xff, (byte) 0xff,
+                        (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff }));
+
+        assertEquals(
+                1103823438081L,
+                Ethernet.toLong(new byte[] { (byte) 0x01, (byte) 0x01,
+                        (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x01 }));
+
+        assertEquals(
+                141289400074368L,
+                Ethernet.toLong(new byte[] { (byte) 0x80, (byte) 0x80,
+                        (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80 }));
     }
 }
