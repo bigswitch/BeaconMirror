@@ -22,7 +22,7 @@ import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.SwitchPortTuple;
-import net.beaconcontroller.topology.TopologyAware;
+import net.beaconcontroller.topology.ITopologyAware;
 
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  *
  */
-public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IOFSwitchListener, TopologyAware {
+public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener, IOFSwitchListener, ITopologyAware {
     protected static Logger log = LoggerFactory.getLogger(DeviceManagerImpl.class);
 
     protected IBeaconProvider beaconProvider;

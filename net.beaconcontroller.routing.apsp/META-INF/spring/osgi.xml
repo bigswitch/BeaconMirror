@@ -11,7 +11,7 @@
   <osgi:service id="IRoutingEngine" ref="routingEngine">
     <osgi:interfaces>
       <value>net.beaconcontroller.routing.IRoutingEngine</value>
-      <value>net.beaconcontroller.topology.TopologyAware</value>
+      <value>net.beaconcontroller.topology.ITopologyAware</value>
     </osgi:interfaces>
   </osgi:service>
 

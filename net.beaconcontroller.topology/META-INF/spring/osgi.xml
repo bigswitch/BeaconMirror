@@ -18,6 +18,6 @@
   </osgi:reference>
 
   <osgi:set id="topologyAwareSet" availability="optional"
-    interface="net.beaconcontroller.topology.TopologyAware">
+    interface="net.beaconcontroller.topology.ITopologyAware">
   </osgi:set>
 </beans>

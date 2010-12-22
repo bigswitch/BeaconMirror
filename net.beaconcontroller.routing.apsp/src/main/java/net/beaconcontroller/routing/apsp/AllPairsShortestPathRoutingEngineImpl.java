@@ -19,7 +19,7 @@ import net.beaconcontroller.routing.IRoutingEngine;
 import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
 import net.beaconcontroller.routing.RouteId;
-import net.beaconcontroller.topology.TopologyAware;
+import net.beaconcontroller.topology.ITopologyAware;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, TopologyAware {
+public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, ITopologyAware {
     protected static Logger log = LoggerFactory.getLogger(AllPairsShortestPathRoutingEngineImpl.class);
 
     public IBeaconProvider beaconProvider;
