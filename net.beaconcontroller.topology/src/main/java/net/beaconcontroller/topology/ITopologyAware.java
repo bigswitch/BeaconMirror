@@ -7,7 +7,7 @@ import net.beaconcontroller.core.IOFSwitch;
  *
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public interface TopologyAware {
+public interface ITopologyAware {
     /**
      * 
      * @param src the source switch

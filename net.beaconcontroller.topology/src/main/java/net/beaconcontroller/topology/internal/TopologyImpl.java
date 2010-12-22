@@ -26,7 +26,7 @@ import net.beaconcontroller.packet.LLDPTLV;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.LinkTuple;
 import net.beaconcontroller.topology.SwitchPortTuple;
-import net.beaconcontroller.topology.TopologyAware;
+import net.beaconcontroller.topology.ITopologyAware;
 
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
@@ -88,7 +88,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      */
     protected Map<IOFSwitch, Set<LinkTuple>> switchLinks;
     protected Timer timeoutLinksTimer;
-    protected Set<TopologyAware> topologyAware;
+    protected Set<ITopologyAware> topologyAware;
     protected BlockingQueue<Update> updates;
     protected Thread updatesThread;
 
@@ -151,7 +151,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                     try {
                         Update update = updates.take();
                         if (topologyAware != null) {
-                            for (TopologyAware ta : topologyAware) {
+                            for (ITopologyAware ta : topologyAware) {
                                 try {
                                     ta.linkUpdate(update.src, update.srcPort,
                                             update.dst, update.dstPort,
@@ -473,7 +473,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     /**
      * @param topologyAware the topologyAware to set
      */
-    public void setTopologyAware(Set<TopologyAware> topologyAware) {
+    public void setTopologyAware(Set<ITopologyAware> topologyAware) {
         // TODO make this a copy on write set or lock it somehow
         this.topologyAware = topologyAware;
     }
