@@ -117,7 +117,7 @@ public class LearningSwitchTest extends BeaconTestCase {
 
         // Verify the MAC table inside the switch
         assertEquals(1, learningSwitch.getMacTables().get(mockSwitch).get(
-                Arrays.hashCode(Ethernet.toMACAddress("00:44:33:22:11:00")))
+                Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")))
                 .shortValue());
     }
 
@@ -153,9 +153,9 @@ public class LearningSwitchTest extends BeaconTestCase {
 
         // Populate the MAC table
         learningSwitch.getMacTables().put(mockSwitch,
-                new LRULinkedHashMap<Integer, Short>(64001, 64000));
+                new LRULinkedHashMap<Long, Short>(64001, 64000));
         learningSwitch.getMacTables().get(mockSwitch).put(
-                Arrays.hashCode(Ethernet.toMACAddress("00:11:22:33:44:55")),
+                Ethernet.toLong(Ethernet.toMACAddress("00:11:22:33:44:55")),
                 (short) 2);
 
         // Get the listener and trigger the packet in
@@ -168,7 +168,7 @@ public class LearningSwitchTest extends BeaconTestCase {
 
         // Verify the MAC table inside the switch
         assertEquals(1, learningSwitch.getMacTables().get(mockSwitch).get(
-                Arrays.hashCode(Ethernet.toMACAddress("00:44:33:22:11:00")))
+                Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")))
                 .shortValue());
     }
 }
