@@ -8,6 +8,7 @@
     class="net.beaconcontroller.devicemanager.internal.DeviceManagerImpl"
     init-method="startUp" destroy-method="shutDown">
     <property name="beaconProvider" ref="beaconProvider"/>
+    <property name="deviceManagerAware" ref="deviceManagerAwareSet"/>
     <property name="topology" ref="topology"/>
   </bean>
 </beans>
