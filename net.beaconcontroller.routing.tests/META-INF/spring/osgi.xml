@@ -7,7 +7,16 @@
     http://www.springframework.org/schema/osgi
     http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd">
 
-  <bean id="routingEngine" class="net.beaconcontroller.routing.apsp.AllPairsShortestPathRoutingEngineImpl"
-    init-method="startUp" destroy-method="shutDown">
-  </bean>
+  <!-- Imports -->
+  <osgi:reference id="beaconProvider" cardinality="0..1"
+    interface="net.beaconcontroller.core.IBeaconProvider">
+  </osgi:reference>
+
+  <osgi:reference id="deviceManager" cardinality="0..1"
+    interface="net.beaconcontroller.devicemanager.IDeviceManager">
+  </osgi:reference>
+
+  <osgi:reference id="routingEngine" cardinality="0..1"
+    interface="net.beaconcontroller.routing.IRoutingEngine">
+  </osgi:reference>
 </beans>

@@ -1,4 +1,4 @@
-package net.beaconcontroller.routing.apsp;
+package net.beaconcontroller.routing.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class AllPairsShortestPathRouting implements IOFMessageListener {
-    protected static Logger log = LoggerFactory.getLogger(AllPairsShortestPathRouting.class);
+public class Routing implements IOFMessageListener {
+    protected static Logger log = LoggerFactory.getLogger(Routing.class);
 
     protected IBeaconProvider beaconProvider;
     protected IDeviceManager deviceManager;

@@ -6,4 +6,11 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: net.beaconcontroller.routing
 Import-Package: net.beaconcontroller.core,
- org.openflow.util
+ net.beaconcontroller.core.io,
+ net.beaconcontroller.devicemanager,
+ org.openflow.io,
+ org.openflow.protocol,
+ org.openflow.protocol.action,
+ org.openflow.protocol.factory,
+ org.openflow.util,
+ org.slf4j;version="1.5.11"

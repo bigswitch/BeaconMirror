@@ -13,7 +13,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.routing.IRoutingEngine;
 import net.beaconcontroller.routing.Link;
@@ -31,8 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, ITopologyAware {
     protected static Logger log = LoggerFactory.getLogger(AllPairsShortestPathRoutingEngineImpl.class);
-
-    public IBeaconProvider beaconProvider;
 
     protected Map<RouteId, Route> shortest;
     protected Map<RouteId, List<Route>> localRoutes;
@@ -324,13 +321,6 @@ public class AllPairsShortestPathRoutingEngineImpl implements IRoutingEngine, IT
             }
         }
         return clone;
-    }
-
-    /**
-     * @param beaconProvider the beaconProvider to set
-     */
-    public void setBeaconProvider(IBeaconProvider beaconProvider) {
-        this.beaconProvider = beaconProvider;
     }
 
     @Override

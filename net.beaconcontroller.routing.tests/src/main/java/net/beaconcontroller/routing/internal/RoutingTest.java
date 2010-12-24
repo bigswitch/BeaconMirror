@@ -1,4 +1,4 @@
-package net.beaconcontroller.routing.apsp;
+package net.beaconcontroller.routing.internal;
 
 import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.createMock;
@@ -24,6 +24,7 @@ import net.beaconcontroller.packet.UDP;
 import net.beaconcontroller.routing.IRoutingEngine;
 import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
+import net.beaconcontroller.routing.internal.Routing;
 import net.beaconcontroller.test.BeaconTestCase;
 
 import org.junit.Before;
@@ -43,7 +44,7 @@ import org.openflow.protocol.factory.BasicFactory;
  *
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class AllPairsShortestPathRoutingTest extends BeaconTestCase {
+public class RoutingTest extends BeaconTestCase {
     protected OFPacketIn packetIn;
     protected IPacket testPacket;
     protected byte[] testPacketSerialized;
@@ -81,14 +82,14 @@ public class AllPairsShortestPathRoutingTest extends BeaconTestCase {
         return (MockBeaconProvider) getApplicationContext().getBean("mockBeaconProvider");
     }
 
-    protected AllPairsShortestPathRouting getRouting() {
-        return (AllPairsShortestPathRouting) getApplicationContext().getBean("routing");
+    protected Routing getRouting() {
+        return (Routing) getApplicationContext().getBean("routing");
     }
 
     @Test
     public void testRouting() throws Exception {
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();
-        AllPairsShortestPathRouting routing = getRouting();
+        Routing routing = getRouting();
         byte[] dataLayerSource = ((Ethernet)this.testPacket).getSourceMACAddress();
 
         // Create mock switches
