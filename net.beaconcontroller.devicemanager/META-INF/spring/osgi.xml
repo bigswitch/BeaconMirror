@@ -17,6 +17,10 @@
     interface="net.beaconcontroller.core.IBeaconProvider">
   </osgi:reference>
 
+  <osgi:set id="deviceManagerAwareSet" availability="optional"
+    interface="net.beaconcontroller.devicemanager.IDeviceManagerAware">
+  </osgi:set>
+
   <osgi:reference id="topology" cardinality="1..1"
     interface="net.beaconcontroller.topology.ITopology">
   </osgi:reference>
