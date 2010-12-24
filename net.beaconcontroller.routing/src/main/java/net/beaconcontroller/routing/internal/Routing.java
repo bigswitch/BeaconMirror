@@ -2,7 +2,9 @@ package net.beaconcontroller.routing.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
@@ -10,6 +12,7 @@ import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.io.OFMessageSafeOutStream;
 import net.beaconcontroller.devicemanager.Device;
 import net.beaconcontroller.devicemanager.IDeviceManager;
+import net.beaconcontroller.devicemanager.IDeviceManagerAware;
 import net.beaconcontroller.routing.IRoutingEngine;
 import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
@@ -34,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class Routing implements IOFMessageListener {
+public class Routing implements IOFMessageListener, IDeviceManagerAware {
     protected static Logger log = LoggerFactory.getLogger(Routing.class);
 
     protected IBeaconProvider beaconProvider;
@@ -196,5 +199,52 @@ public class Routing implements IOFMessageListener {
      */
     public void setDeviceManager(IDeviceManager deviceManager) {
         this.deviceManager = deviceManager;
+    }
+
+    @Override
+    public void deviceAdded(Device device) {
+        // NOOP
+    }
+
+    @Override
+    public void deviceRemoved(Device device) {
+        // NOOP
+    }
+
+    @Override
+    public void deviceMoved(Device device, IOFSwitch oldSw, Short oldPort,
+            IOFSwitch sw, Short port) {
+        // Build flow mod to delete based on destination mac == device mac
+        OFMatch match = new OFMatch();
+        match.setDataLayerDestination(device.getDataLayerAddress());
+        match.setWildcards(OFMatch.OFPFW_ALL ^ OFMatch.OFPFW_DL_DST);
+        OFFlowMod fm = (OFFlowMod) sw.getInputStream().getMessageFactory()
+            .getMessage(OFType.FLOW_MOD);
+        fm.setCommand(OFFlowMod.OFPFC_DELETE)
+            .setOutPort((short) OFPort.OFPP_NONE.getValue())
+            .setMatch(match)
+            .setActions(Collections.EMPTY_LIST)
+            .setLength(U16.t(OFFlowMod.MINIMUM_LENGTH));
+
+        // Flush to all switches
+        for (IOFSwitch outSw : beaconProvider.getSwitches().values()) {
+            try {
+                outSw.getOutputStream().write(fm);
+            } catch (IOException e) {
+                log.error("Failure sending flow mod delete for moved device", e);
+            }
+        }
+    }
+
+    @Override
+    public void deviceNetworkAddressAdded(Device device,
+            Set<Integer> networkAddresses, Integer networkAddress) {
+        // NOOP
+    }
+
+    @Override
+    public void deviceNetworkAddressRemoved(Device device,
+            Set<Integer> networkAddresses, Integer networkAddress) {
+        // NOOP
     }
 }

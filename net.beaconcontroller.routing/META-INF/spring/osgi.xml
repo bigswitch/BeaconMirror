@@ -19,4 +19,11 @@
   <osgi:reference id="routingEngine" cardinality="1..1"
     interface="net.beaconcontroller.routing.IRoutingEngine">
   </osgi:reference>
+
+  <!-- Exports -->
+  <osgi:service id="Routing" ref="routing">
+    <osgi:interfaces>
+      <value>net.beaconcontroller.devicemanager.IDeviceManagerAware</value>
+    </osgi:interfaces>
+  </osgi:service>
 </beans>
