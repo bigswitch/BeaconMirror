@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import net.beaconcontroller.routing.Link;
+import net.beaconcontroller.routing.Route;
 import net.beaconcontroller.test.BeaconTestCase;
 
 /**

@@ -1,6 +1,7 @@
 package net.beaconcontroller.routing;
 
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.routing.Route;
 
 /**
  *
