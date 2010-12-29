@@ -38,7 +38,8 @@ public class OFStream extends OFMessageAsyncStream implements OFMessageSafeOutSt
     /**
      * Buffers a single outgoing openflow message
      */
-    public void write(OFMessage m) {
+    @Override
+    public void write(OFMessage m) throws IOException {
         synchronized (outBuf) {
             appendMessageToOutBuf(m);
         }
@@ -48,7 +49,8 @@ public class OFStream extends OFMessageAsyncStream implements OFMessageSafeOutSt
     /**
      * Buffers a list of OpenFlow messages
      */
-    public void write(List<OFMessage> l) {
+    @Override
+    public void write(List<OFMessage> l) throws IOException {
         synchronized (outBuf) {
             for (OFMessage m : l) {
                 appendMessageToOutBuf(m);
