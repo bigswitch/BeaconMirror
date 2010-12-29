@@ -108,14 +108,17 @@ public class Controller implements IBeaconProvider, SelectListener {
         final SelectLoop sl = switchSelectLoops.get(sock.hashCode()
                 % switchSelectLoops.size());
 
-        // register with no interest ops so we get the key
+        // register initially with no ops because we need the key to init the stream
         SelectionKey switchKey = sl.registerBlocking(sock, 0, sw);
-
         OFStream stream = new OFStream(sock, factory, switchKey);
         sw.setInputStream(stream);
         sw.setOutputStream(stream);
         sw.setSocketChannel(sock);
         sw.setBeaconProvider(this);
+
+        // register for read
+        switchKey.interestOps(SelectionKey.OP_READ);
+        sl.wakeup();
 
         // Send HELLO
         stream.write(factory.getMessage(OFType.HELLO));
