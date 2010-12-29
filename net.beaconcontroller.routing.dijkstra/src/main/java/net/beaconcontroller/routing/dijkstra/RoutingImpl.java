@@ -97,6 +97,7 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
     @Override
     public void clear() {
         lock.writeLock().lock();
+        network.clear();
         pathcache.clear();
         nexthoplinkmaps.clear();
         nexthopnodemaps.clear();
