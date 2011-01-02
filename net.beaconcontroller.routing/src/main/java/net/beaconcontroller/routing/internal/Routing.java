@@ -144,6 +144,16 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
             } else {
                 sw = beaconProvider.getSwitches().get(route.getId().getSrc());
             }
+            if (sw == null) {
+                if (log.isWarnEnabled()) {
+                    log.warn(
+                            "Unable to push route, switch at DPID {} not available",
+                            (i > 0) ? HexString.toHexString(route.getPath()
+                                    .get(i - 1).getDst()) : HexString
+                                    .toHexString(route.getId().getSrc()));
+                }
+                return;
+            }
             out = sw.getOutputStream();
         }
         // set the original match for the first switch, and buffer id
