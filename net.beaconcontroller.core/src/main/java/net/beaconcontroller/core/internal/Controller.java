@@ -18,12 +18,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
@@ -76,10 +78,23 @@ public class Controller implements IBeaconProvider, SelectListener {
     protected SelectLoop listenSelectLoop;
     protected ServerSocketChannel listenSock;
     protected ConcurrentMap<OFType, List<IOFMessageListener>> messageListeners;
-    protected Map<Long, IOFSwitch> switches;
+    protected volatile boolean shuttingDown = false;
+    protected ConcurrentHashMap<Long, IOFSwitch> switches;
     protected Set<IOFSwitchListener> switchListeners;
     protected List<SelectLoop> switchSelectLoops;
     protected Integer threadCount;
+    protected BlockingQueue<Update> updates;
+    protected Thread updatesThread;
+
+    protected class Update {
+        public IOFSwitch sw;
+        public boolean added;
+
+        public Update(IOFSwitch sw, boolean added) {
+            this.sw = sw;
+            this.added = added;
+        }
+    }
 
     /**
      * 
@@ -88,6 +103,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         this.messageListeners =
             new ConcurrentHashMap<OFType, List<IOFMessageListener>>();
         this.switchListeners = new CopyOnWriteArraySet<IOFSwitchListener>();
+        this.updates = new LinkedBlockingQueue<Update>();
     }
 
     public void handleEvent(SelectionKey key, Object arg) throws IOException {
@@ -128,6 +144,13 @@ public class Controller implements IBeaconProvider, SelectListener {
         OFMessageInStream in = sw.getInputStream();
         OFMessageOutStream out = sw.getOutputStream();
         try {
+            /**
+             * A key may not be valid here if it has been disconnected while
+             * it was in a select operation.
+             */
+            if (!key.isValid())
+                return;
+
             if (key.isReadable()) {
                 List<OFMessage> msgs = in.read();
                 if (msgs == null) {
@@ -446,10 +469,38 @@ public class Controller implements IBeaconProvider, SelectListener {
                 }
             }}
         );
+
+        updatesThread = new Thread(new Runnable () {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Update update = updates.take();
+                        if (switchListeners != null) {
+                            for (IOFSwitchListener listener : switchListeners) {
+                                try {
+                                    if (update.added)
+                                        listener.addedSwitch(update.sw);
+                                    else
+                                        listener.removedSwitch(update.sw);
+                                } catch (Exception e) {
+                                    log.error("Error calling switch listener", e);
+                                }
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        log.warn("Controller updates thread interupted", e);
+                        if (shuttingDown)
+                            return;
+                    }
+                }
+            }}, "Controller Updates");
+        updatesThread.start();
         log.info("Beacon Core Started");
     }
 
     public void shutDown() throws IOException {
+        shuttingDown = true;
         // shutdown listening for new switches
         listenSelectLoop.shutdown();
         listenSock.socket().close();
@@ -468,6 +519,7 @@ public class Controller implements IBeaconProvider, SelectListener {
         }
 
         es.shutdown();
+        updatesThread.interrupt();
         log.info("Beacon Core Shutdown");
     }
 
@@ -515,12 +567,11 @@ public class Controller implements IBeaconProvider, SelectListener {
      */
     protected void addSwitch(IOFSwitch sw) {
         this.switches.put(sw.getId(), sw);
-        for (IOFSwitchListener listener : this.switchListeners) {
-            try {
-                listener.addedSwitch(sw);
-            } catch (Exception e) {
-                log.error("Error calling switch listener", e);
-            }
+        Update update = new Update(sw, true);
+        try {
+            this.updates.put(update);
+        } catch (InterruptedException e) {
+            log.error("Failure adding update to queue", e);
         }
     }
 
@@ -529,13 +580,14 @@ public class Controller implements IBeaconProvider, SelectListener {
      * @param sw the switch that has disconnected
      */
     protected void removeSwitch(IOFSwitch sw) {
-        this.switches.remove(sw.getId());
-        for (IOFSwitchListener listener : this.switchListeners) {
-            try {
-                listener.removedSwitch(sw);
-            } catch (Exception e) {
-                log.error("Error calling switch listener", e);
-            }
+        if (!this.switches.remove(sw.getId(), sw)) {
+            log.warn("Removing switch {} has already been replaced", sw);
+        }
+        Update update = new Update(sw, false);
+        try {
+            this.updates.put(update);
+        } catch (InterruptedException e) {
+            log.error("Failure adding update to queue", e);
         }
     }
 
