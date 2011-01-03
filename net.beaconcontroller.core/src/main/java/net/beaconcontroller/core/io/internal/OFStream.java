@@ -43,7 +43,6 @@ public class OFStream extends OFMessageAsyncStream implements OFMessageSafeOutSt
         synchronized (outBuf) {
             appendMessageToOutBuf(m);
         }
-        key.interestOps(SelectionKey.OP_WRITE);
       }
 
     /**
@@ -56,7 +55,6 @@ public class OFStream extends OFMessageAsyncStream implements OFMessageSafeOutSt
                 appendMessageToOutBuf(m);
             }
         }
-        key.interestOps(SelectionKey.OP_WRITE);
     }
 
     /**
