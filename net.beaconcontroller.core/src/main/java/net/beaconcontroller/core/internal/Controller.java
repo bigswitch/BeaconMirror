@@ -513,9 +513,15 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
             }}, "Controller Updates");
         updatesThread.start();
         
-        if (coreDao != null)
-            coreDao.startedController(this);
-        
+        if (coreDao != null) {
+            try {
+                coreDao.startedController(this);
+            }
+            catch (Exception e) {
+                log.error("Error writing controller startup info to database", e);
+            }
+        }
+            
         log.info("Beacon Core Started");
     }
 
@@ -541,8 +547,14 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         es.shutdown();
         updatesThread.interrupt();
 
-        if (coreDao != null)
-            coreDao.shutDownController(this);
+        if (coreDao != null) {
+            try {
+                coreDao.shutDownController(this);
+            }
+            catch (Exception e) {
+                log.error("Error writing controller shutdown info to database", e);
+            }
+        }
         
         log.info("Beacon Core Shutdown");
     }
@@ -591,8 +603,19 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
      */
     protected void addSwitch(IOFSwitch sw) {
         this.switches.put(sw.getId(), sw);
-        if (coreDao != null)
-            coreDao.addedSwitch(sw);
+        if (coreDao != null) {
+            try {
+                coreDao.addedSwitch(sw);
+            }
+            catch (Exception e) {
+                log.error("Error writing added switch info to database", e);
+            }
+        }
+        Update update = new Update(sw, true);
+        try {
+            this.updates.put(update);
+        } catch (InterruptedException e) {
+            log.error("Failure adding update to queue", e);
         }
     }
 
@@ -601,11 +624,14 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
      * @param sw the switch that has disconnected
      */
     protected void removeSwitch(IOFSwitch sw) {
-        if (!this.switches.remove(sw.getId(), sw)) {
-            log.warn("Removing switch {} has already been replaced", sw);
+        if (coreDao != null) {
+            try {
+                coreDao.removedSwitch(sw);
+            }
+            catch (Exception e) {
+                log.error("Error writing removed switch info to database", e);
+            }
         }
-        if (coreDao != null)
-            coreDao.removedSwitch(sw);
         Update update = new Update(sw, false);
         try {
             this.updates.put(update);
