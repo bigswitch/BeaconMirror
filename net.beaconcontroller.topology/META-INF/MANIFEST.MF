@@ -7,9 +7,10 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: net.beaconcontroller.core,
  net.beaconcontroller.core.io,
  net.beaconcontroller.packet,
+ net.beaconcontroller.storage,
  org.openflow.io,
  org.openflow.protocol,
  org.openflow.protocol.action,
  org.openflow.util,
- org.slf4j;version="1.0.0"
+ org.slf4j
 Export-Package: net.beaconcontroller.topology

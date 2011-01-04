@@ -20,4 +20,8 @@
   <osgi:set id="topologyAwareSet" availability="optional"
     interface="net.beaconcontroller.topology.ITopologyAware">
   </osgi:set>
+
+  <osgi:reference id="storageSource" cardinality="1..1"
+    interface="net.beaconcontroller.storage.IStorageSource">
+  </osgi:reference>
 </beans>
