@@ -9,6 +9,7 @@
     class="net.beaconcontroller.devicemanager.internal.DeviceManagerImpl"
     init-method="startUp" destroy-method="shutDown">
     <property name="beaconProvider" ref="mockBeaconProvider"/>
+    <property name="deviceManagerDao" ref="deviceManagerDao"/>
   </bean>
 
   <bean id="mockBeaconProvider" class="net.beaconcontroller.core.test.MockBeaconProvider">

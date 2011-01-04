@@ -9,6 +9,12 @@
     init-method="startUp" destroy-method="shutDown">
     <property name="beaconProvider" ref="beaconProvider"/>
     <property name="deviceManagerAware" ref="deviceManagerAwareSet"/>
+    <property name="deviceManagerDao" ref="deviceManagerDao"/>
     <property name="topology" ref="topology"/>
+  </bean>
+
+  <bean id="deviceManagerDao"
+    class="net.beaconcontroller.devicemanager.dao.impl.SSDeviceManagerDao">
+    <property name="storageSource" ref="storageSource"/>
   </bean>
 </beans>
