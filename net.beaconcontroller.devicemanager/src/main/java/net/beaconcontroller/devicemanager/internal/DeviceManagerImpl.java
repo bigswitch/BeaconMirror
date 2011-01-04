@@ -24,6 +24,7 @@ import net.beaconcontroller.devicemanager.IDeviceManager;
 import net.beaconcontroller.devicemanager.IDeviceManagerAware;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPv4;
+import net.beaconcontroller.devicemanager.dao.IDeviceManagerDao;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.SwitchPortTuple;
 import net.beaconcontroller.topology.ITopologyAware;
@@ -62,6 +63,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
     protected ITopology topology;
     protected BlockingQueue<Update> updates;
     protected Thread updatesThread;
+    protected IDeviceManagerDao deviceManagerDao;
 
     protected enum UpdateType {
         ADDED, REMOVED, MOVED, NW_ADDED, NW_REMOVED
@@ -202,6 +204,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
      */
     protected void delDevice(Device device) {
         dataLayerAddressDeviceMap.remove(Ethernet.toLong(device.getDataLayerAddress()));
+        deviceManagerDao.removeDevice(device);
         if (!device.getNetworkAddresses().isEmpty()) {
             for (Integer nwAddress : device.getNetworkAddresses()) {
                 networkLayerAddressDeviceMap.remove(nwAddress);
@@ -321,6 +324,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                         lock.writeLock().unlock();
                     }
                 }
+                deviceManagerDao.updateDevice(device);
             } else {
                 device = new Device();
                 device.setDataLayerAddress(match.getDataLayerSource());
@@ -328,9 +332,12 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                 device.setSwPort(pi.getInPort());
                 lock.writeLock().lock();
                 try {
-                    this.dataLayerAddressDeviceMap.put(dlAddr, device);
                     if (nwSrc != 0) {
                         device.getNetworkAddresses().add(nwSrc);
+                    }
+                    this.dataLayerAddressDeviceMap.put(dlAddr, device);
+                    deviceManagerDao.addDevice(device);
+                    if (nwSrc != 0) {
                         this.networkLayerAddressDeviceMap.put(nwSrc, device);
                     }
                     addSwitchDeviceMapping(device.getSw(), device);
@@ -492,6 +499,13 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
      */
     public void setDeviceManagerAware(Set<IDeviceManagerAware> deviceManagerAware) {
         this.deviceManagerAware = deviceManagerAware;
+    }
+
+    /**
+     * @param deviceManagerDao the deviceManagerDao to set
+     */
+    public void setDeviceManagerDao(IDeviceManagerDao deviceManagerDao) {
+        this.deviceManagerDao = deviceManagerDao;
     }
 
     /**
