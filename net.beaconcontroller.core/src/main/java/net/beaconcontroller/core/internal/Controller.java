@@ -5,6 +5,7 @@ package net.beaconcontroller.core.internal;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -27,7 +28,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import net.beaconcontroller.core.dao.IControllerDao;
 import net.beaconcontroller.core.IBeaconProvider;
+import net.beaconcontroller.core.IOFController;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFMessageListener.Command;
 import net.beaconcontroller.core.IOFSwitch;
@@ -66,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * @author David Erickson (daviderickson@cs.stanford.edu) - 04/04/10
  *
  */
-public class Controller implements IBeaconProvider, SelectListener {
+public class Controller implements IBeaconProvider, IOFController, SelectListener {
     protected static Logger log = LoggerFactory.getLogger(Controller.class);
     protected static String SWITCH_REQUIREMENTS_TIMER_KEY = "SW_REQ_TIMER";
 
@@ -96,6 +99,8 @@ public class Controller implements IBeaconProvider, SelectListener {
         }
     }
 
+    private IControllerDao coreDao;
+    
     /**
      * 
      */
@@ -476,6 +481,17 @@ public class Controller implements IBeaconProvider, SelectListener {
                 while (true) {
                     try {
                         Update update = updates.take();
+                        if (coreDao != null) {
+                            try {
+                                if (update.added)
+                                    coreDao.addedSwitch(update.sw);
+                                else
+                                    coreDao.removedSwitch(update.sw);
+                            }
+                            catch (Exception e) {
+                                log.error("Error updating switch info in database", e);
+                            }
+                        }
                         if (switchListeners != null) {
                             for (IOFSwitchListener listener : switchListeners) {
                                 try {
@@ -496,6 +512,10 @@ public class Controller implements IBeaconProvider, SelectListener {
                 }
             }}, "Controller Updates");
         updatesThread.start();
+        
+        if (coreDao != null)
+            coreDao.startedController(this);
+        
         log.info("Beacon Core Started");
     }
 
@@ -520,6 +540,10 @@ public class Controller implements IBeaconProvider, SelectListener {
 
         es.shutdown();
         updatesThread.interrupt();
+
+        if (coreDao != null)
+            coreDao.shutDownController(this);
+        
         log.info("Beacon Core Shutdown");
     }
 
@@ -567,11 +591,8 @@ public class Controller implements IBeaconProvider, SelectListener {
      */
     protected void addSwitch(IOFSwitch sw) {
         this.switches.put(sw.getId(), sw);
-        Update update = new Update(sw, true);
-        try {
-            this.updates.put(update);
-        } catch (InterruptedException e) {
-            log.error("Failure adding update to queue", e);
+        if (coreDao != null)
+            coreDao.addedSwitch(sw);
         }
     }
 
@@ -583,6 +604,8 @@ public class Controller implements IBeaconProvider, SelectListener {
         if (!this.switches.remove(sw.getId(), sw)) {
             log.warn("Removing switch {} has already been replaced", sw);
         }
+        if (coreDao != null)
+            coreDao.removedSwitch(sw);
         Update update = new Update(sw, false);
         try {
             this.updates.put(update);
@@ -596,6 +619,35 @@ public class Controller implements IBeaconProvider, SelectListener {
         return Collections.unmodifiableMap(this.messageListeners);
     }
 
+    @Override
+    public String getControllerId() {
+        return getListenAddress() + ":" + Integer.toString(getListenPort());
+    }
+    
+    @Override
+    public String getListenAddress() {
+        if (listenAddress != null)
+            return listenAddress;
+        
+        String localAddress = "UnknownAddress";
+        try {
+            localAddress = InetAddress.getLocalHost().getHostAddress();
+        }
+        catch (Exception e) {
+            log.error("Error getting local IP address", e);
+        }
+        return localAddress;
+    }
+    
+    @Override
+    public int getListenPort() {
+        return listenPort;
+    }
+
+    public void setControllerDao(IControllerDao coreDao) {
+        this.coreDao = coreDao;
+    }
+    
     /**
      * @param listenAddress the listenAddress to set
      */
