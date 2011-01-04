@@ -27,6 +27,9 @@ import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.LinkTuple;
 import net.beaconcontroller.topology.SwitchPortTuple;
 import net.beaconcontroller.topology.ITopologyAware;
+import net.beaconcontroller.topology.dao.ITopologyDao;
+import net.beaconcontroller.topology.dao.DaoLinkTuple;
+import net.beaconcontroller.topology.dao.DaoSwitchPortTuple;
 
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
@@ -91,6 +94,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     protected Set<ITopologyAware> topologyAware;
     protected BlockingQueue<Update> updates;
     protected Thread updatesThread;
+    protected ITopologyDao topologyDao;
 
     protected class Update {
         public IOFSwitch src;
@@ -162,7 +166,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                             }
                         }
                     } catch (InterruptedException e) {
-                        log.warn("Topology Updates thread interupted", e);
+                        log.warn("Topology Updates thread interrupted", e);
                         if (shuttingDown)
                             return;
                     }
@@ -322,7 +326,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     protected void addOrUpdateLink(LinkTuple lt) {
         lock.writeLock().lock();
         try {
-            if (links.put(lt, System.currentTimeMillis()) == null) {
+            Long t = System.currentTimeMillis();
+            if (links.put(lt, t) == null) {
                 // index it by switch source
                 if (!switchLinks.containsKey(lt.getSrc().getSw()))
                     switchLinks.put(lt.getSrc().getSw(), new HashSet<LinkTuple>());
@@ -343,6 +348,15 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 portLinks.get(lt.getDst()).add(lt);
 
                 updates.add(new Update(lt, true));
+
+                DaoLinkTuple daoLt = new DaoLinkTuple(lt.getSrc().getSw().getId(), lt.getSrc().getPort(),
+                                                      lt.getDst().getSw().getId(), lt.getDst().getPort());
+                if (topologyDao.getLink(daoLt) == null) {
+                    topologyDao.addLink(daoLt, t);
+                } else {
+                    topologyDao.updateLink(daoLt, t);
+                }
+
                 log.debug("Added link {}", lt);
             }
         } finally {
@@ -376,6 +390,11 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
                 this.links.remove(lt);
                 updates.add(new Update(lt, false));
+
+                DaoLinkTuple daoLt = new DaoLinkTuple(lt.getSrc().getSw().getId(), lt.getSrc().getPort(),
+                                                      lt.getDst().getSw().getId(), lt.getDst().getPort());
+                topologyDao.removeLink(daoLt);
+
                 log.debug("Deleted link {}", lt);
             }
         } finally {
@@ -476,5 +495,19 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     public void setTopologyAware(Set<ITopologyAware> topologyAware) {
         // TODO make this a copy on write set or lock it somehow
         this.topologyAware = topologyAware;
+    }
+
+    /**
+     * @return the topologyDao
+     */
+    public ITopologyDao getTopologyDao() {
+        return topologyDao;
+    }
+    
+    /**
+     * @param topologyDao the topologyDao to set
+     */
+    public void setTopologyDao(ITopologyDao topologyDao) {
+        this.topologyDao = topologyDao;
     }
 }
