@@ -8,4 +8,8 @@
     interface="net.beaconcontroller.core.IBeaconProvider">
   </osgi:service>
 
+  <osgi:reference id="storageSource" cardinality="1..1"
+    interface="net.beaconcontroller.storage.IStorageSource">
+  </osgi:reference>
+
 </beans>
