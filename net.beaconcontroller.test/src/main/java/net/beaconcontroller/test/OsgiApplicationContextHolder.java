@@ -1,5 +1,7 @@
 package net.beaconcontroller.test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -9,6 +11,7 @@ import org.springframework.context.ApplicationContextAware;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class OsgiApplicationContextHolder implements ApplicationContextAware {
+    protected static Logger log = LoggerFactory.getLogger(OsgiApplicationContextHolder.class);
     protected static ApplicationContext applicationContext;
     protected static Object applicationContextLock = new Object();
 
@@ -30,7 +33,7 @@ public class OsgiApplicationContextHolder implements ApplicationContextAware {
                     try {
                         OsgiApplicationContextHolder.applicationContextLock.wait();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        log.error("Interupted while waiting for ApplicationContext to be set", e);
                     }
                 }
             }

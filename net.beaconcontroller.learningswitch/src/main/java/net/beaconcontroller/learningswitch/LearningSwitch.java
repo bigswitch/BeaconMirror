@@ -114,7 +114,7 @@ public class LearningSwitch implements IOFMessageListener {
             try {
                 sw.getOutputStream().write(fm);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Failure writing FlowMod", e);
             }
         }
 
@@ -146,7 +146,7 @@ public class LearningSwitch implements IOFMessageListener {
             try {
                 sw.getOutputStream().write(po);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Failure writing PacketOut", e);
             }
         }
         return Command.CONTINUE;
