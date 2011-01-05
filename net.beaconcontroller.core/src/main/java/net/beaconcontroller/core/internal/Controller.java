@@ -471,8 +471,8 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                 public void run() {
                     try {
                         sl.doLoop();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        log.error("Exception during worker loop, terminating thread", e);
                     }
                 }}
             );
@@ -483,8 +483,8 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                 // Start the listen loop
                 try {
                     listenSelectLoop.doLoop();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    log.error("Exception during accept loop, terminating thread", e);
                 }
             }}
         );

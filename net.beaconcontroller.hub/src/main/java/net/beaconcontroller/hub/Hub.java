@@ -15,12 +15,16 @@ import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.util.U16;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author David Erickson (daviderickson@cs.stanford.edu) - 04/04/10
  */
 public class Hub implements IOFMessageListener {
+    protected static Logger log = LoggerFactory.getLogger(Hub.class);
+
     protected IBeaconProvider beaconProvider;
 
     /**
@@ -68,7 +72,7 @@ public class Hub implements IOFMessageListener {
         try {
             sw.getOutputStream().write(po);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failure writing PacketOut", e);
         }
 
         return Command.CONTINUE;

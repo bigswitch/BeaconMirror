@@ -6,6 +6,7 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.junit;version="[4.8.1,5.0.0)",
  org.openflow.protocol,
+ org.slf4j;version="1.5.11",
  org.springframework.asm;version="3.0.0",
  org.springframework.beans;version="3.0.0",
  org.springframework.context;version="3.0.0",
