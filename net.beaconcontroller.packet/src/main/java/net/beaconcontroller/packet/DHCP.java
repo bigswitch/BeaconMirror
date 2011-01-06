@@ -259,7 +259,7 @@ public class DHCP extends BasePacket {
         // minimum size 240 including magic cookie, options generally padded to 300
         int optionsLength = 0;
         for (DHCPOption option : this.options) {
-            if (option.getCode() == 0 || option.getCode() == 0x255) {
+            if (option.getCode() == 0 || option.getCode() == 255) {
                 optionsLength += 1;
             } else {
                 optionsLength += 2 + (int)(0xff & option.getLength());
@@ -361,7 +361,7 @@ public class DHCP extends BasePacket {
             if (option.getCode() == 0) {
                 // skip these
                 continue;
-            } else if (option.getCode() != 0x255) {
+            } else if (option.getCode() != 255) {
                 option.setLength(bb.get());
                 byte[] optionData = new byte[0xff & option.getLength()];
                 bb.get(optionData);
