@@ -629,6 +629,9 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
      * @param sw the switch that has disconnected
      */
     protected void removeSwitch(IOFSwitch sw) {
+        if (!this.switches.remove(sw.getId(), sw)) {
+            log.warn("Removing switch {} has already been replaced", sw);
+        }
         if (coreDao != null) {
             try {
                 coreDao.removedSwitch(sw);
