@@ -368,6 +368,10 @@ public class DHCP extends BasePacket {
                 option.setData(optionData);
             }
             this.options.add(option);
+            if (option.getCode() == 255) {
+                // remaining bytes are supposed to be 0, but ignore them just in case
+                break;
+            }
         }
 
         return this;
