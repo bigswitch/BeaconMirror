@@ -303,8 +303,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         }
 
         if (!remoteDpidSet) {
-            log.error("Failed to determine remote switch DPID from received LLDP");
-            return Command.STOP;
+            log.debug("No OpenFlow TLV found in received LLDP: {}", pi.getPacketData());
+            return Command.CONTINUE;
         }
 
         IOFSwitch remoteSwitch = beaconProvider.getSwitches().get(remoteDpid);
