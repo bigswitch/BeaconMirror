@@ -376,6 +376,9 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
     }
 
     protected void delSwitchDeviceMapping(IOFSwitch sw, Device device) {
+        if (switchDeviceMap.get(sw) == null) {
+            return;
+        }
         switchDeviceMap.get(sw).remove(device);
         if (switchDeviceMap.get(sw).isEmpty()) {
             switchDeviceMap.remove(sw);
@@ -390,6 +393,9 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
     }
 
     protected void delSwitchPortDeviceMapping(SwitchPortTuple id, Device device) {
+        if (switchPortDeviceMap.get(id) == null) {
+            return;
+        }
         switchPortDeviceMap.get(id).remove(device);
         if (switchPortDeviceMap.get(id).isEmpty()) {
             switchPortDeviceMap.remove(id);
@@ -484,7 +490,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                     // Remove the devices
                     for (Device device : devices) {
                         // Remove the device from the switch->device mapping
-                        switchDeviceMap.get(id.getSw()).remove(device);
+                        delSwitchDeviceMapping(id.getSw(), device);
                         delDevice(device);
                     }
                 }
