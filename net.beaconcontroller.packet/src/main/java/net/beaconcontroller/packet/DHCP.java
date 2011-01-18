@@ -357,18 +357,20 @@ public class DHCP extends BasePacket {
         // read options
         while (bb.hasRemaining()) {
             DHCPOption option = new DHCPOption();
-            option.setCode(bb.get());
-            if (option.getCode() == 0) {
+            int code = 0xff & option.getCode(); // convert signed byte to int in range [0,255]
+            option.setCode((byte) code);
+            if (code == 0) {
                 // skip these
                 continue;
-            } else if (option.getCode() != 255) {
-                option.setLength(bb.get());
-                byte[] optionData = new byte[0xff & option.getLength()];
+            } else if (code != 255) {
+                int l = 0xff & bb.get(); // convert signed byte to int in range [0,255]
+                option.setLength((byte) l);
+                byte[] optionData = new byte[l];
                 bb.get(optionData);
                 option.setData(optionData);
             }
             this.options.add(option);
-            if (option.getCode() == 255) {
+            if (code == 255) {
                 // remaining bytes are supposed to be 0, but ignore them just in case
                 break;
             }
