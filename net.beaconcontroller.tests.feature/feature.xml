@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="net.beaconcontroller.tests.feature"
+      label="Feature"
+      version="1.0.0.qualifier">
+
+   <includes
+         id="net.beaconcontroller.feature"
+         version="0.0.0"/>
+
+   <requires>
+      <import plugin="net.beaconcontroller.core"/>
+      <import plugin="net.beaconcontroller.devicemanager"/>
+      <import plugin="org.openflow"/>
+      <import plugin="net.beaconcontroller.packet"/>
+      <import plugin="org.junit" version="4.8.1" match="greaterOrEqual"/>
+      <import plugin="org.springframework.asm"/>
+      <import plugin="org.springframework.beans"/>
+      <import plugin="org.springframework.context"/>
+      <import plugin="org.springframework.core"/>
+      <import plugin="org.springframework.expression"/>
+      <import plugin="net.beaconcontroller.learningswitch"/>
+      <import plugin="net.beaconcontroller.routing.apsp"/>
+      <import plugin="net.beaconcontroller.routing"/>
+      <import plugin="net.beaconcontroller.storage"/>
+      <import plugin="net.beaconcontroller.topology"/>
+   </requires>
+
+   <plugin
+         id="net.beaconcontroller.core.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="net.beaconcontroller.devicemanager.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="net.beaconcontroller.hub"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.beaconcontroller.hub.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="net.beaconcontroller.learningswitch.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="net.beaconcontroller.routing.apsp.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="net.beaconcontroller.routing.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="net.beaconcontroller.test"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.beaconcontroller.topology.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="net.beaconcontroller.storage.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.beaconcontroller.storage.memory.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+</feature>
