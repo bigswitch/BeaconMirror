@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rm:rmap xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0" xmlns:rm="http://www.eclipse.org/buckminster/RMap-1.0">
+  <rm:searchPath name="beacon-source">
+    <rm:provider componentTypes="eclipse.feature,osgi.bundle" readerType="local" source="true" mutable="true">
+      <rm:uri format="${beacon.root}/{0}">
+        <bc:propertyRef key="buckminster.component"/>
+      </rm:uri>
+    </rm:provider>
+  </rm:searchPath>
+  <rm:searchPath name="openflow-source">
+    <rm:provider componentTypes="osgi.bundle" readerType="local" source="true" mutable="true">
+      <rm:uri format="${openflow.root}"/>
+    </rm:provider>
+  </rm:searchPath>
+  <rm:searchPath name="beacon-libs">
+    <rm:provider componentTypes="osgi.bundle" readerType="p2" source="false" mutable="true">
+      <rm:uri format="file://${beacon.root}/libs"/>
+    </rm:provider>
+  </rm:searchPath>
+  <rm:searchPath name="eclipse">
+    <rm:provider componentTypes="osgi.bundle" readerType="p2" source="false" mutable="false">
+      <rm:uri format="file://${tools.root}/eclipse"/>
+    </rm:provider>
+  </rm:searchPath>
+  <rm:searchPath name="equinox-sdk">
+    <rm:provider componentTypes="osgi.bundle" readerType="p2" source="false" mutable="false">
+      <rm:uri format="file://${tools.root}/equinox-sdk"/>
+    </rm:provider>
+  </rm:searchPath>
+  <rm:locator pattern="^net\.beaconcontroller\..*" searchPathRef="beacon-source"/>
+  <rm:locator pattern="^org\.openflow.*" searchPathRef="openflow-source"/>
+  <rm:locator searchPathRef="eclipse" failOnError="false"/>
+  <rm:locator searchPathRef="equinox-sdk" failOnError="false"/>
+  <rm:locator searchPathRef="beacon-libs"/>
+</rm:rmap>

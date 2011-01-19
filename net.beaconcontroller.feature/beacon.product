@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Beacon Controller" uid="beacon.product.id" version="0.1.0" useFeatures="false" includeLaunchers="true">
+<product name="Beacon" uid="net.beaconcontroller.product" version="0.1.0" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -30,64 +30,11 @@
    </vm>
 
    <plugins>
-      <plugin id="ch.qos.logback.classic"/>
-      <plugin id="ch.qos.logback.core"/>
-      <plugin id="com.springsource.net.sf.cglib"/>
-      <plugin id="com.springsource.org.aopalliance"/>
-      <plugin id="jackson-core-asl"/>
-      <plugin id="jackson-mapper-asl"/>
-      <plugin id="javax.servlet"/>
-      <plugin id="javax.servlet.jsp"/>
-      <plugin id="jcl.over.slf4j"/>
-      <plugin id="net.beaconcontroller.core"/>
-      <plugin id="net.beaconcontroller.core.web" fragment="true"/>
-      <plugin id="net.beaconcontroller.devicemanager"/>
-      <plugin id="net.beaconcontroller.devicemanager.web" fragment="true"/>
-      <plugin id="net.beaconcontroller.jetty.config" fragment="true"/>
-      <plugin id="net.beaconcontroller.learningswitch"/>
-      <plugin id="net.beaconcontroller.logging.bridge"/>
-      <plugin id="net.beaconcontroller.logging.config" fragment="true"/>
-      <plugin id="net.beaconcontroller.packet"/>
-      <plugin id="net.beaconcontroller.routing"/>
-      <plugin id="net.beaconcontroller.routing.apsp"/>
-      <plugin id="net.beaconcontroller.topology"/>
-      <plugin id="net.beaconcontroller.topology.web" fragment="true"/>
-      <plugin id="net.beaconcontroller.util"/>
-      <plugin id="net.beaconcontroller.web"/>
-      <plugin id="org.apache.ant"/>
-      <plugin id="org.apache.commons.fileupload"/>
-      <plugin id="org.apache.commons.io"/>
-      <plugin id="org.eclipse.equinox.ds" version="1.2.0.v20100507"/>
-      <plugin id="org.eclipse.equinox.log"/>
-      <plugin id="org.eclipse.equinox.util"/>
-      <plugin id="org.eclipse.osgi" version="3.6.0.v20100517"/>
-      <plugin id="org.eclipse.osgi.services"/>
-      <plugin id="org.mortbay.jetty.jsp-api-2.1" version="2.1.0"/>
-      <plugin id="org.mortbay.jetty.server" version="6.1.25"/>
-      <plugin id="org.mortbay.jetty.util" version="6.1.25"/>
-      <plugin id="org.openflow"/>
-      <plugin id="org.springframework.aop"/>
-      <plugin id="org.springframework.asm"/>
-      <plugin id="org.springframework.beans"/>
-      <plugin id="org.springframework.context"/>
-      <plugin id="org.springframework.context.support"/>
-      <plugin id="org.springframework.core"/>
-      <plugin id="org.springframework.expression"/>
-      <plugin id="org.springframework.osgi.commons-el.osgi"/>
-      <plugin id="org.springframework.osgi.core"/>
-      <plugin id="org.springframework.osgi.extender"/>
-      <plugin id="org.springframework.osgi.extensions.annotations"/>
-      <plugin id="org.springframework.osgi.io"/>
-      <plugin id="org.springframework.osgi.jasper.osgi"/>
-      <plugin id="org.springframework.osgi.jetty.start.osgi"/>
-      <plugin id="org.springframework.osgi.jetty.web.extender.fragment.osgi" fragment="true"/>
-      <plugin id="org.springframework.osgi.jstl.osgi"/>
-      <plugin id="org.springframework.osgi.web"/>
-      <plugin id="org.springframework.osgi.web.extender"/>
-      <plugin id="org.springframework.web"/>
-      <plugin id="org.springframework.web.servlet"/>
-      <plugin id="slf4j.api"/>
    </plugins>
+
+   <features>
+      <feature id="net.beaconcontroller.feature"/>
+   </features>
 
    <configurations>
       <plugin id="ch.qos.logback.classic" autoStart="true" startLevel="0" />
@@ -110,9 +57,9 @@
       <plugin id="net.beaconcontroller.util" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.web" autoStart="true" startLevel="0" />
       <plugin id="org.apache.ant" autoStart="true" startLevel="0" />
-      <plugin id="org.apache.commons.fileupload" autoStart="true" startLevel="0" />
-      <plugin id="org.apache.commons.io" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.equinox.launcher" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.log" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.equinox.util" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
@@ -130,7 +77,7 @@
       <plugin id="org.springframework.expression" autoStart="true" startLevel="0" />
       <plugin id="org.springframework.osgi.commons-el.osgi" autoStart="true" startLevel="0" />
       <plugin id="org.springframework.osgi.core" autoStart="true" startLevel="0" />
-      <plugin id="org.springframework.osgi.extender" autoStart="true" startLevel="0" />
+      <plugin id="org.springframework.osgi.extender" autoStart="true" startLevel="6" />
       <plugin id="org.springframework.osgi.extensions.annotations" autoStart="true" startLevel="0" />
       <plugin id="org.springframework.osgi.io" autoStart="true" startLevel="0" />
       <plugin id="org.springframework.osgi.jasper.osgi" autoStart="true" startLevel="0" />
