@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Topology Visual Web
+Bundle-SymbolicName: net.beaconcontroller.topology.visualweb
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: net.beaconcontroller.web
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: net.beaconcontroller.topology,
+ org.springframework.util,
+ org.springframework.web.servlet.mvc;version="3.0.4.RELEASE"
