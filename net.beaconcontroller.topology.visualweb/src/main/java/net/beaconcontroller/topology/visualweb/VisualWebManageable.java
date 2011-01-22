@@ -135,7 +135,8 @@ public class VisualWebManageable implements IWebManageable {
         Layout layout = new OneColumnLayout();
         model.put("title", "Topology View");
         //Map<Long, Set<LinkTuple>> switchLinks = topologyProvider.getSwitchLinks();
-        layout.addSection(new JspSection("topoview.jsp", model), null);
+        layout.addSection(new TopoViewSection(), null);
+        //layout.addSection(new JspSection("topoview.jsp", model), null);
         model.put("layout", layout);
         return BeaconViewResolver.SIMPLE_VIEW;
     }
