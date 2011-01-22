@@ -1,10 +1,13 @@
 package net.beaconcontroller.web.view;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.framework.Bundle;
 
@@ -28,6 +31,12 @@ public class ModelUtils {
      * rows
      */
     public static final String RAW_FORMAT = "RAW";
+    
+    /**
+     * Format used by becaon charts
+     * Originally from jit charts (see http://thejit.org/static/v20/Jit/Examples/AreaChart/example1.code.html)
+     */
+    public static final String BEACON_CHART = "BEACONCHART";
 
     /**
      * Entry point to decorate the model object passed in with a json-ready
@@ -41,9 +50,14 @@ public class ModelUtils {
     public static void generateTableModel(Map<String, Object> model,
             String format, List<Map<String, Object>> rows, String idProperty) {
         Object m = null;
+        
         if (format == null)
             format = RAW_FORMAT;
 
+        //do something sane if rows is null
+        if (rows == null)
+            m = new LinkedList<Map<String, Object>>();
+        
         if (format.equalsIgnoreCase(EXT_JS_FORMAT))
             m = generateGridExtModel(rows, idProperty);
         else if (format.equalsIgnoreCase(RAW_FORMAT))
@@ -55,15 +69,38 @@ public class ModelUtils {
         model.put(BeaconJsonView.ROOT_OBJECT_KEY, m);
     }
 
+    /**
+     * Generates a table-ready model from a list of beans, assuming that each bean
+     * corresponds to a row in the table.
+     * 
+     * The columns are taken from propertyNames.
+     * 
+     * @param model
+     * @param format
+     * @param beans
+     * @param propertyNames
+     * @param idProperty
+     */
     public static void generateTableModelFromBeans(Map<String, Object> model,
-            String format, List<Object> beans, List<String> propertyNames,
+            String format, List<?> beans, List<String> propertyNames,
             String idProperty) {
         List<Map<String, Object>> rows = beansToRows(beans, propertyNames);
         generateTableModel(model, format, rows, idProperty);
     }
 
+    /**
+     * Generates a table-ready model from a list of beans, assuming that each bean
+     * corresponds to a row in the table.
+     * 
+     * The columns are generated from the getters of the first bean in the list.
+     * 
+     * @param model
+     * @param format
+     * @param beans
+     * @param idProperty
+     */
     public static void generateTableModelFromBeans(Map<String, Object> model,
-            String format, List<Object> beans, String idProperty) {
+            String format, List<?> beans, String idProperty) {
         List<Map<String, Object>> rows = beansToRows(beans);
         generateTableModel(model, format, rows, idProperty);
     }
@@ -85,6 +122,12 @@ public class ModelUtils {
             idProperty = "id";
 
         Map<String, Object> ret = new HashMap<String, Object>();
+        
+        if(rows.size() == 0) {
+            ret.put("rowCount", "" + 0);
+            ret.put("rows", rows);
+            return ret;
+        }
 
         Map<String, Object> metadata = new HashMap<String, Object>();
         metadata.put("idProperty", idProperty);
@@ -93,7 +136,7 @@ public class ModelUtils {
         metadata.put("successProperty", "success");
 
         // fields
-        Map<String, Object> firstRow = rows.get(0);
+        Map<String, ?> firstRow = rows.get(0);
         List<Map<String, String>> fields = new LinkedList<Map<String, String>>();
         for (Object columnName : firstRow.keySet()) {
             Map<String, String> fieldMetadata = new HashMap<String, String>();
@@ -116,6 +159,41 @@ public class ModelUtils {
 
         return ret;
     }
+    
+    /**
+     * Generates a model that corresponds to the json format expected by the BeaconChart
+     * javascript class.  Most commonly the series argument has only one entry, but a stacked
+     * area or stacked bar chart is possible if it has multiple entries.  (Use an ordered map
+     * if there is a specific ordering requested.  The first will be on the bottom.)
+     * The length of labels and the length of the int[] in series should be the same.
+     * 
+     * 
+     * var json = {  
+      'values': [
+        {  
+          'label': 'date A',  
+          'values': [10, 40, 15, 7]  
+        }
+      ]
+    };
+     * 
+     */
+    public static void generateBeaconChartModel(Map<String, Object> model, List<?> labels, String seriesName, long[] series) {
+        //Map<String, Object> ret = new HashMap<String, Object>();
+        List<Map<String, Object>> values = new ArrayList<Map<String, Object>>();
+        int i = 0;
+        for(Object label : labels) {
+            Map<String, Object> point = new HashMap<String, Object>();
+            point.put("label", label.toString());
+            point.put("values", Arrays.asList(series[i]));
+            values.add(point);
+            i++;
+        }
+        model.put("label", Arrays.asList(seriesName));
+        model.put("values", values);
+        
+    }
+
 
     /**
      * Converts a list of objects to the rows structure used elsewhere by
@@ -127,7 +205,7 @@ public class ModelUtils {
      * @param beans
      * @return
      */
-    protected static List<Map<String, Object>> beansToRows(List<Object> beans) {
+    protected static List<Map<String, Object>> beansToRows(List<?> beans) {
         Object b = beans.get(0);
         Method[] methods = b.getClass().getMethods();
         List<String> propertyNames = new LinkedList<String>(); // actual
@@ -163,7 +241,7 @@ public class ModelUtils {
      * @param propertyNames
      * @return
      */
-    protected static List<Map<String, Object>> beansToRows(List<Object> beans,
+    protected static List<Map<String, Object>> beansToRows(List<?> beans,
             List<String> propertyNames) {
         List<Map<String, Object>> rows = new LinkedList<Map<String, Object>>();
         for (Object b : beans) {

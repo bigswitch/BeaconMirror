@@ -16,7 +16,6 @@ Import-Package:
  javax.servlet.resources;version="2.5.0",
  net.beaconcontroller.core,
  net.beaconcontroller.util,
- org.apache.commons.fileupload;version="1.2.2",
  org.apache.taglibs.standard.resources;version="1.1.2",
  org.apache.taglibs.standard.tag.common.core;version="1.1.2",
  org.apache.taglibs.standard.tag.common.fmt;version="1.1.2",
@@ -42,7 +41,6 @@ Import-Package:
  org.springframework.stereotype;version="3.0.4.RELEASE",
  org.springframework.web.bind.annotation;version="3.0.4.RELEASE",
  org.springframework.web.context;version="3.0.4.RELEASE",
- org.springframework.web.multipart.commons;version="3.0.4.RELEASE",
  org.springframework.web.servlet;version="3.0.4.RELEASE",
  org.springframework.web.servlet.view;version="3.0.4.RELEASE",
  org.springframework.web.servlet.view.json;version="3.0.4.RELEASE"

@@ -11,8 +11,13 @@
     <script type="text/javascript" src="js/jquery.values.js"></script>
     <script type="text/javascript" src="js/jquery.xclone.js"></script>
     <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="js/jquery.form.js"></script>
-
+    
+    <!-- TODO - move these back to dynamically loaded scripts (here for debugger) -->
+    
+    <script type="text/javascript" src="js/jit.js"></script>
+    <script type="text/javascript" src="js/excanvas.js"></script>
+    <script type="text/javascript" src="js/beaconChart.js"></script>
+    
     <style type="text/css">
       /* set base body font size so that the relative font sizing below works */
       body {font-size: 12px}
@@ -29,7 +34,7 @@
       /* use !important to override UI theme styles */
       .grey     { background: #999 !important; }
       .outline    { /*border:   1px dashed #F00 !important;*/ }
-      .add-padding  { padding:    10px !important; } 
+      .add-padding  { padding:    10px !important; }
       .no-padding   { padding:    0 !important; }
       .add-scrollbar  { overflow:   auto; }
       .no-scrollbar { overflow:   hidden; }
@@ -60,13 +65,6 @@
     <script type="text/javascript">
       var APPLICATIONS_LIST_URI = "wm.do";
 
-      // Reload the current tab
-      function reloadCurrentTab() {
-        var $tabs = $('#center').tabs();
-        var selectedIndex = $tabs.tabs('option', 'selected');
-        $tabs.tabs('load', selectedIndex);
-      }
-
       /**
       * Removes all of the tabs from the main panel and replaces them with the tabs referenced
       * here.  Takes an array of tab objects {url: "some URL", title: "some string"}
@@ -82,6 +80,60 @@
           $tabs.tabs('add', tabSet[i].url, tabSet[i].title);
         }
       };
+      
+
+      /**
+       * Registers a "decorator" -- this is basically a small function that is given a matching dom element as an argument
+       * every time a tab is loaded (or refreshed).  The string "selector" uses jquery syntax to find the dom element.  The callback
+       * should have the signature callback(element, params) where element is the DOM element matched by the selector string and
+       * params is a map of key/value strings that came from the back end as html param elements.
+       * 
+       * (put example here)
+       *
+       * Note that if two decorators register for the same selectorString, only one of them will get called (i.e. stay out of the 
+       * global namespace if your decorators are application specific!)
+       */
+      var decorators = {};
+      function registerDecorator(selectorString, callback) {
+        decorators[selectorString] = callback;
+      };
+      
+      function getDecorators() {
+        return decorators;
+      };
+      
+      /**
+       * Implementation of a simple script loader to pull in js files dynamically
+       * (used only when loading tabs)
+       */
+      var scriptFilesQueued = [];
+      var scriptFilesLoaded = "";
+      var scriptOnLoadCallbacks = [];
+      
+      function loadScript(pathToJs) {
+        scriptFilesQueued.push(pathToJs);
+      };
+      function loadScripts(callbackWhenDone) {
+        var scriptPath = scriptFilesQueued.pop();
+        
+        if(!scriptPath) {
+          callbackWhenDone();
+          return;
+        }
+        
+        
+        if(scriptFilesLoaded.indexOf(scriptPath) == -1 ) {
+          scriptFilesLoaded += "[" + scriptPath + "]";
+          $.getScript(scriptPath, function() {
+            loadScripts(callbackWhenDone);
+          });
+        }
+        else {
+          loadScripts(callbackWhenDone); //if the script is already loaded, just continue recursion
+        }
+      };
+
+      
 
       /**
        * Primary method where client-side templating is applied.
@@ -94,53 +146,99 @@
        * tab should be a dom element representing the contents of a single tab
        */
       function decorateTab(tab) {
-        //console.log("decorating tab...");
-        //Check to see if the plugins we need have loaded..
-        if(!jQuery.fn.dataTable) {
-          //console.log("not all js/css loaded yet... stalling decorateTab until all libraries have loaded");
-          throw "required plugin (dataTable) not found or not yet loaded";
+        var decorators = getDecorators();
+        for(var selectorString in decorators) {
+          var decoratorCallback = decorators[selectorString];
+          $(tab).find(selectorString).each(function(index, el) {
+            var params = {};
+            $(this).children("param").each(function(index, el){
+              var key = $(el).attr("name");
+              var val = $(el).attr("value");
+              params[key] = val;
+            });
+            decoratorCallback(el, params);
+          });
         }
+      };
+      
+      /**
+       * Sends an event to all of the elements matching a registered decorator - for advanced
+       * decorator use.
+       * Example: inside a decorator:
+       * var timerId;
+       *  $(el).bind("tabLoad", function(){
+       *   timerId = setInterval(function () {
+       *     $.getJSON(seriesDataPath, function(seriesData){
+       *       beaconChart.loadJSON(seriesData);
+       *     });
+       *   }, 5000);
+       * });
+       *
+       * $(el).bind("tabHide", function(){
+       *   clearInterval(timerId);
+       * });
+       */
+      function sendBeaconEvent(tab, eventName, extraParams) {
+        var decorators = getDecorators();
+        for(var selectorString in decorators) {
+          //console.log("Sending event to selector string: " + selectorString + " " + eventName);
+          $(tab).find(selectorString).each(function(index, el) {
+            $(el).trigger(eventName, extraParams);
+          });
+        }
+      };
+      
+      
+      
+      
+      $(document).ready(function () {
 
-        //Connects all of the columns together for drag and drop
-        $(tab).find(".column").sortable({
-          connectWith: '.column'
+        
+        /**
+         * Decoration defaults
+         */
+        registerDecorator(".column", function(el, params) {
+          $(el).sortable({
+            connectWith: '.column',
+          });
+          $(el).disableSelection();
         });
-        $(tab).find(".column").disableSelection();
-
-        //Add necessary classes for visual decoration and +/- signs
-        $(tab).find(".section").addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
-          .find(".section-header")
-            .addClass("ui-widget-header ui-corner-all")
-            .prepend('<span class="ui-icon ui-icon-minusthick"></span>')
-            .end();
-
-        //Set the +/- click action to hide the content component
-        $(tab).find(".section-header .ui-icon").click(function() {
-          $(this).toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
-          $(this).parents(".section:first").find(".section-content").toggle();
+        
+        registerDecorator(".section", function(el, params) {
+          $(el).addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all");
+          $(el).find(".section-header")
+              .addClass("ui-widget-header ui-corner-all")
+              .prepend('<span class="ui-icon ui-icon-minusthick"></span>');
         });
-
-        //Set up any tables were just loaded (note need to iterate over each
-        $(tab).find(".beaconTable").each(function() {
-          $(this).dataTable({
-          bJQueryUI: true,
-          bPaginate: false,
-          bLengthChange: true,
-          bFilter: false,
-          bSort: true,
-          bInfo: true,
-          bRetrieve: true, //if this table already exists, retrieve it rather than creating a new one
+        
+        registerDecorator(".section-header .ui-icon", function(el, params) {
+          $(el).click(function() {
+            $(this).toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+            $(this).parents(".section:first").find(".section-content").toggle();
+          });
         });
-
-        // add hover over rows
-        $(this).find("tr").hover(function () {
+        
+        registerDecorator(".beaconTable", function(el, params) {
+          $(el).dataTable({
+            bJQueryUI: true,
+            bPaginate: false,
+            bLengthChange: true,
+            bFilter: false,
+            bSort: true,
+            bInfo: true,
+            bRetrieve: true, //if this table already exists, retrieve it rather than creating a new one
+          });
+          
+          //add a hover over rows.
+          $(el).find("tr").hover(function () {
             $(this).toggleClass("rowHover");
           });
         });
-
+        
+        
         //Wrap up any dialog box-oriented buttons (see SimpleWebManageableTemplate.wrapWithDialogBox for more detail)
-        $(tab).find(".beaconGetDialog").each(function() {
-          $(this).click(function() {
+        registerDecorator(".beaconGetDialog", function(el, params) {
+          $(el).click(function() {
             var url = $(this).attr("href");
             $.get(url, function(response) {
               $("#beaconDialogBoxTemplate" ).html(response);
@@ -162,32 +260,11 @@
             });
             return false; //Return false from the click method to stop any native browser processing
           }); // close the click() inner function
-        }); //close the each() loop
-
-        $(tab).find(".beaconAjaxDialogForm").each(function() {
-          $(this).ajaxForm({
-            dataType: 'json',
-            success: function (data) {
-              $("#beaconDialogBoxTemplate" ).html(data);
-              $("#beaconDialogBoxTemplate" ).dialog({
-                height: 'auto',
-                width: 500,
-                modal: true,
-                resizable: true,
-                buttons: {
-                  OK: function() {
-                    $( this ).dialog( "close" );
-                    reloadCurrentTab();
-                  }
-                }
-              });
-            }
-          });
-        });
-
+        }); //close the decorator function
+        
         // Wrap a refresh link
-        $(tab).find(".beaconRefreshTab").each(function() {
-          $(this).click(function() {
+        registerDecorator(".beaconRefreshTab", function(el, params) {
+          $(el).click(function() {
             var url = $(this).attr("href");
             $.get(url, function(response) {
               //reload the currently open tab
@@ -198,10 +275,11 @@
             return false; //Return false from the click method to stop any native browser processing
           }); // close the click() inner function
         }); //close the each() loop
-
+        
+        
         // Wrap a new refreshing tab link
-        $(tab).find(".beaconNewRefreshingTab").each(function() {
-          $(this).click(function() {
+        registerDecorator(".beaconNewRefreshingTab", function(el, params) {
+          $(el).click(function() {
             $tabs = $("#center");
 
             // add the new tab
@@ -229,101 +307,129 @@
             return false; //Return false from the click method to stop any native browser processing
           }); // close the click() inner function
         }); //close the each() loop
-      } //end decorate Tabls
+        
+        
+        
+        // Wrap a new  tab link
+        registerDecorator(".beaconNewTab", function(el, params) {
+          $(el).click(function() {
+            $tabs = $("#center");
 
-      $(document).ready(function () {
-        // OUTER/PAGE LAYOUT
-        pageLayout = $("body").layout({
-            west__size:       250
-          , east__size:       .10
-          , north__size:      60
-          , south__size:      30
-          , south__initClosed:    false
-          , north__initClosed:    false
-          , east__initClosed:   true
-          , west__onresize:     function () { $("#accordion-west").accordion("resize"); }
-          , togglerLength_open:   50
-          , togglerLength_closed: 50
-          , spacing_open:     0
-          ,   spacing_closed:     0
-        });
+            // add the new tab
+            var oldTemplate = $tabs.tabs( "option", "tabTemplate");
+            // use a custom template with an x to close the tab
+            $tabs.tabs( "option", "tabTemplate", '<li><a href="#{href}">#{label}</a> <span class="ui-icon ui-icon-close">Remove Tab</span></li>');
+            var t = $tabs.tabs('add', $(this).attr("href"), $(this).attr("name"));
+            $tabs.tabs( "option", "tabTemplate", oldTemplate);
+            // select it
+            var index = $tabs.tabs("length")-1;
+            $tabs.tabs("select", index);
 
-        // Center panel - set up tabs
-        $("#center").tabs({
-          //Hooks up the tab panel decoration code to run when tabs are loaded from remote
-          load: function(event, ui) {
-            try {
-              decorateTab(this);
-            }
-            catch(err) {
-              alert("error when processing tab: " + err);
-            }
+            // add the close handler
+            $('#center span.ui-icon-close').last().click(function() {
+              var index = $('li',$tabs).index($(this).parent());
+              $tabs.tabs('remove', index);
+            });
+            return false; //Return false from the click method to stop any native browser processing
+          }); // close the click() inner function
+        }); //close the each() loop
 
-          }
-        });
-
-        pageLayout.sizeContent("east"); // resize pane-content-elements after creating tabs
-
-
-        //Retrieve the app list from the server
-        $.get(APPLICATIONS_LIST_URI, function(appList, status) {
-          firstTabSet = appList[0].tabs;
-
-          //Fetch the content for the tabs needed
-          newTabs(firstTabSet);
-
-          // Set up our clones
-          $(".accordionHeader").xclone();
-          $(".accordionContent").xclone();
-          $.each(appList, function(index, value) {
-            //Init the left panel nav (copy in values and do a little html munging)
-            $(".accordionHeader").xclone(value, {onlyNest: true});
-            $(".accordionContent").xclone(value, {onlyNest: true});
-
-            //$("#appAccordionEntryTemplate").values(value, {onlyNest:true});
-  
-            $("#appAccordion").append($("#appAccordionEntryTemplate").children()); //work around to make accordion plugin line up with values plug-in
-          });
-          $("#appAccordion").accordion({ });
-
-          // Wire the accordion change in the left panel nav to changing up the tabs in the center panel
-          $("#appAccordion").bind( "accordionchange", function(event, ui) {
-            var name = ui.newHeader.find("a").html(); //crumby way to fish the app name back out
-            var app = null;
-            for(var i = 0; i < appList.length; i++)
-            if (appList[i].name == name)
-              app = appList[i];
-            if(app)
-              newTabs(app.tabs);
-          });
-        });
+      
+    }); //end document ready for registerDecorators
+    </script>
+    
+    <script type="text/javascript">
+    $(document).ready(function () {
+      // OUTER/PAGE LAYOUT
+      pageLayout = $("body").layout({
+          west__size:       250
+        , east__size:       .10
+        , north__size:      50
+        , south__size:      30
+        , south__initClosed:    false
+        , north__initClosed:    false
+        , east__initClosed:   true
+        , west__onresize:     function () { $("#accordion-west").accordion("resize"); }
+        , togglerLength_open:   50
+        , togglerLength_closed: 50
+        , spacing_open:     0
+        ,   spacing_closed:     0
       });
 
-      /**
-       * Set this to true only after all libraries have loaded
-       */
-      allLibrariesLoaded = false;
-      $(window).load(function() {
-         window.allLibrariesLoaded = true;
+      var currentTab;
+      // Center panel - set up tabs
+      $("#center").tabs({
+        //Hooks up the tab panel decoration code to run when tabs are loaded from remote
+        load: function(event, ui) {
+          var newTab = ui.panel;
+          sendBeaconEvent(currentTab, "tabHide", {});
+          window.loadScripts(function(){
+            decorateTab(newTab); // set up callback chain to makes ure libs are loaded before decorate
+            sendBeaconEvent(newTab, "tabLoad", {});
+            currentTab = newTab;
+          });
+         },
+         remove: function(event, ui) {
+           var tab = ui.panel;
+           sendBeaconEvent(currentTab, "tabRemove", {});
+          },
       });
+
+      pageLayout.sizeContent("east"); // resize pane-content-elements after creating tabs
+
+
+      //Retrieve the app list from the server
+      $.get(APPLICATIONS_LIST_URI, function(appList, status) {
+        firstTabSet = appList[0].tabs;
+
+        //Fetch the content for the tabs needed
+        newTabs(firstTabSet);
+        
+        //Init the left panel nav (copy in values and do a little html munging)
+        for(var i = 0; i < appList.length; i++) {
+          $("#appAccordianEntryTemplate").values(appList[i], {onlyNest:true});
+          $("#appAccordian").append($("#appAccordianEntryTemplate").clone().children()); //work around to make accordian plugin line up with values plug-in
+        }
+        $("#appAccordian").accordion({ });
+
+        // Wire the accordian change in the left panel nav to changing up the tabs in the center panel
+        $("#appAccordian").bind( "accordionchange", function(event, ui) {
+          var name = ui.newHeader.find("a").html(); //crumby way to fish the app name back out
+          var app = null;
+          for(var i = 0; i < appList.length; i++)
+          if (appList[i].name == name)
+            app = appList[i];
+          if(app)
+            newTabs(app.tabs);
+        });
+      });
+    });
+
+    /**
+     * Set this to true only after all libraries have loaded
+     */
+    allLibrariesLoaded = false;
+    $(window).load(function() {
+       window.allLibrariesLoaded = true;
+    });
 
     </script>
   </head>
   <body>
     <div id="header" class="ui-layout-north add-padding">
-      <div id="logo" style="position: absolute; left:10px; top:0px">
-        <img src="images/beacon_logo.png" style="position:absolute; top: 0px; left: 4px; z-index: 5;"/>
+      <div id="logo" style="position: absolute; left:50px; top:10px">
+        <span style="font-family: 'Helvetica'; font-size:28px; font-weight:900; color:#DE3623;">BEACON</span>
       </div>
     </div>
 
     <div id="footer" class="ui-layout-south">
-      <div class="ui-widget-header" style="height: 28px; margin:0px; padding:0px;">
-        <p style="text-align:center; font-size:smaller; margin: 0px; padding-top: 9px;"><a href="http://www.beaconcontroller.net">www.beaconcontroller.net</a></p>
+      <div class="ui-widget-header" style="height:100%; margin:0px; padding:0px">
+        <p style="text-align:center; font-size:smaller"><a href="http://www.beaconcontroller.net">www.beaconcontroller.net</a></p>
       </div>
     </div>
 
     <div id="west" class="ui-layout-west no-scrollbar add-padding">
-      <div id="appAccordion">
+      <div id="appAccordian">
       </div>
     </div>
 
@@ -337,10 +443,10 @@
 
     <!-- The items in this div are templates used by the xclone/values plugin they should not be end-user-visible  -->
     <div id="templatesDiv" style="visibility:hidden">
-      <!-- Template for the accordion control (west panel) used to pick active application -->
-      <div id="appAccordionEntryTemplate">
-        <h3 class="accordionHeader"><a name="name" href="#">Section 1</a></h3>
-        <div class="accordionContent" name="description">
+      <!-- Template for the accordian control (west panel) used to pick active application -->
+      <div id="appAccordianEntryTemplate">
+        <h3><a name="name" href="#">Section 1</a></h3>
+        <div name="description">
           <p>description</p>
         </div>
       </div>

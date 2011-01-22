@@ -1,11 +1,6 @@
 package net.beaconcontroller.web.view;
 
-/**
- *
- *
- * @author David Erickson (daviderickson@cs.stanford.edu)
- * @author Kyle Forster (kyle.forster@bigswitch.com)
- */
+
 public class Tab {
     protected String title;
     protected String url;

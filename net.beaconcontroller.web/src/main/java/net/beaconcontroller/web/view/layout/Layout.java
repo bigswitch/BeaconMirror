@@ -10,7 +10,7 @@ import net.beaconcontroller.web.view.section.Section;
 /**
  * 
  *
- * @author David Erickson (daviderickson@cs.stanford.edu)
+ * @author David Erickson (derickso@stanford.edu)
  */
 public abstract class Layout implements Renderable {
     protected static String RESOURCE_PATH = "/WEB-INF/jsp/view/layout/";
