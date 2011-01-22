@@ -44,7 +44,7 @@ import org.springframework.web.servlet.View;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  * 
  */
-@Controller("visualtopology")
+@Controller()
 @RequestMapping("/visualtopology")
 public class VisualWebManageable implements IWebManageable {
     protected static Logger log = LoggerFactory.getLogger(VisualWebManageable.class);
@@ -123,9 +123,9 @@ public class VisualWebManageable implements IWebManageable {
                 TwoColumnLayout.COLUMN1);
 
         // Link List Table
-        model.put("title", "Links");
-        model.put("links", topologyProvider.getLinks());
-        layout.addSection(new JspSection("links.jsp", model), TwoColumnLayout.COLUMN2);
+        //model.put("title", "Links");
+        //model.put("links", topologyProvider.getLinks());
+        //layout.addSection(new JspSection("links.jsp", model), TwoColumnLayout.COLUMN2);
 
         return BeaconViewResolver.SIMPLE_VIEW;
     }
