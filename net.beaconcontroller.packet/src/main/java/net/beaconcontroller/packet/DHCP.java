@@ -357,7 +357,7 @@ public class DHCP extends BasePacket {
         // read options
         while (bb.hasRemaining()) {
             DHCPOption option = new DHCPOption();
-            int code = 0xff & option.getCode(); // convert signed byte to int in range [0,255]
+            int code = 0xff & bb.get(); // convert signed byte to int in range [0,255]
             option.setCode((byte) code);
             if (code == 0) {
                 // skip these
