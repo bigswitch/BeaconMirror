@@ -2,9 +2,7 @@
 <%@ page import="org.osgi.framework.Bundle, net.beaconcontroller.util.BundleState,
                  java.util.List, net.beaconcontroller.util.BundleAction"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<div class="section">
-  <div class="section-header">${title}</div>
-  <div class="section-content">
+
     <table class="beaconTable">
         <thead>
           <tr>
@@ -35,5 +33,3 @@
             </c:forEach>
         </tbody>
     </table>
-  </div>
-</div>

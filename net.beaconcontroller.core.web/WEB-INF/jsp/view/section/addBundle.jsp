@@ -4,21 +4,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<div class="section">
-  <div class="section-header">${title}</div>
-  <div class="section-content">
-    <form method="post" action="/wm/core/bundle/add" enctype="multipart/form-data" class="beaconAjaxDialogForm">
-      <table>
-        <tr>
-          <td>Select a bundle to upload (must be a .jar file): </td>
-          <td><input type="file" name="file"/></td>
-        </tr>
-        <tr>
-          <td colspan="2">
-            <input type="submit" value="Upload"/>
-          </td>
-        </tr>
-      </table>
-    </form>
-  </div>
-</div>
+<form method="post" action="/wm/core/bundle/add" enctype="multipart/form-data" class="beaconAjaxDialogForm">
+  <table>
+    <tr>
+      <td>Select a bundle to upload (must be a .jar file): </td>
+      <td><input type="file" name="file"/></td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <input type="submit" value="Upload"/>
+      </td>
+    </tr>
+  </table>
+</form>
