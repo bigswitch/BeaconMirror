@@ -239,12 +239,12 @@ var bsnTopologyViewer = {
    */
   save: function(switchId) {
 	  var sw = this.getSwitch(switchId);
-	  $.post('/wm/topology/topoview/switch/' + switchId + '/switchView', sw.data);
+	  $.post('/wm/visualtopology/topoview/switch/' + switchId + '/switchView', sw.data);
   },
   
 };
 
-$.get('/wm/topology/topoview/links/json', function(topology, status) {
+$.get('/wm/visualtopology/topoview/links/json', function(topology, status) {
     bsnTopologyViewer.init(topology);
 });
 
