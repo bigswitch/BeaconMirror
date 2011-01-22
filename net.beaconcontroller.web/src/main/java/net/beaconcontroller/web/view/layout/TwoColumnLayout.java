@@ -9,12 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.beaconcontroller.web.view.section.Section;
 
-/**
- *
- *
- * @author David Erickson (daviderickson@cs.stanford.edu)
- * @author Kyle Forster (kyle.forster@bigswitch.com)
- */
 public class TwoColumnLayout extends Layout {
     public static final String COLUMN1 = "column1";
     public static final String COLUMN2 = "column2";

@@ -7,7 +7,7 @@ import net.beaconcontroller.web.view.section.Section;
 
 /**
  *
- * @author David Erickson (daviderickson@cs.stanford.edu)
+ * @author David Erickson (derickso@stanford.edu)
  */
 public class OneColumnLayout extends Layout {
 

@@ -9,7 +9,7 @@ import org.springframework.web.servlet.View;
 
 /**
  *
- * @author David Erickson (daviderickson@cs.stanford.edu)
+ * @author David Erickson (derickso@stanford.edu)
  */
 public class SimpleJsonView implements View {
 
