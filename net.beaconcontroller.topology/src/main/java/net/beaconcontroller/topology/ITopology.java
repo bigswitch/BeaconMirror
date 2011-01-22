@@ -21,7 +21,7 @@ public interface ITopology {
 
     /**
      * Retrieves a map of all known link connections between OpenFlow switches
-     * and the last time each link was known to be functioning
+     * and the last time each link was known to be functioning.
      * @return
      */
     public Map<LinkTuple, Long> getLinks();
@@ -44,4 +44,10 @@ public interface ITopology {
      * @return true if the switches are in the same cluster
      */
     public boolean inSameCluster(IOFSwitch switch1, IOFSwitch switch2);
+    
+    /**
+     * Returns an unmodifiable map from switch id to a set of all links with it 
+     * as an endpoint.
+     */
+    public Map<IOFSwitch, Set<LinkTuple>> getSwitchLinks();
 }

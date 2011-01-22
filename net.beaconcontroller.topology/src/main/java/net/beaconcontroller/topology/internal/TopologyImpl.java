@@ -392,6 +392,10 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         }
     }
 
+    public Map<IOFSwitch, Set<LinkTuple>> getSwitchLinks() {
+        return this.switchLinks;
+    }
+    
     /**
      *
      * @param links
