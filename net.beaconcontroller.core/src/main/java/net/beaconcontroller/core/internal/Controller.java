@@ -4,6 +4,7 @@
 package net.beaconcontroller.core.internal;
 
 import java.io.IOException;
+import java.io.EOFException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -159,11 +160,16 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
             if (key.isReadable()) {
                 List<OFMessage> msgs = in.read();
                 if (msgs == null) {
-                    // graceful disconnect
-                    disconnectSwitch(key, sw);
-                    return;
+                    // if the other end closed its end of the connection, flush
+                    // any remaining written data before closing our end
+                    // (otherwise the socket hangs around forever in CLOSE_WAIT
+                    // state, and the associated stream and buffer objects are
+                    // never freed)
+                    if (!out.needsFlush())
+                        throw new EOFException();
+                } else {
+                    handleMessages(sw, msgs);
                 }
-                handleMessages(sw, msgs);
             }
 
             if (key.isWritable()) {
