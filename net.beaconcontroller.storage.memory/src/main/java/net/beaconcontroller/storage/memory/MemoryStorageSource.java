@@ -286,7 +286,8 @@ public class MemoryStorageSource implements IStorageSource {
 
     @Override
     public void updateRow(String tableName, Map<String, Object> values) {
-        updateRow(tableName, (String) values.get("id"), values);
+        String primaryKeyName = primaryKeyMap.get(tableName);
+        updateRow(tableName, (String) values.get(primaryKeyName), values);
     }
 
     @Override
