@@ -53,10 +53,14 @@
       <plugin id="net.beaconcontroller.packet" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.routing" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.routing.dijkstra" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.routing.apsp" autoStart="false" startLevel="0" />
+      <plugin id="net.beaconcontroller.storage" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.storage.memory" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.topology" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.util" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.web" autoStart="true" startLevel="0" />
-      <plugin id="org.apache.ant" autoStart="true" startLevel="0" />
+      <plugin id="org.apache.commons.fileupload" autoStart="false" startLevel="0" />
+      <plugin id="org.apache.commons.io" autoStart="false" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.equinox.launcher" autoStart="true" startLevel="0" />

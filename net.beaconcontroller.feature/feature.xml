@@ -220,18 +220,18 @@
          unpack="false"/>
 
    <plugin
-	id="net.beaconcontroller.topology.web"
-	download-size="0"
-	install-size="0"
-	version="0.0.0"
-	unpack="false"/>
+		id="net.beaconcontroller.topology.web"
+		download-size="0"
+		install-size="0"
+		version="0.0.0"
+		unpack="false"/>
 
    <plugin
-	id="net.beaconcontroller.topology.visualweb"
-	download-size="0"
-	install-size="0"
-	version="0.0.0"
-	unpack="false"/>
+		id="net.beaconcontroller.topology.visualweb"
+		download-size="0"
+		install-size="0"
+		version="0.0.0"
+		unpack="false"/>
 
 
    <plugin
