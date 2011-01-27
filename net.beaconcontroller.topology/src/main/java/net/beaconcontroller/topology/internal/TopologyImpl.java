@@ -29,7 +29,6 @@ import net.beaconcontroller.topology.SwitchPortTuple;
 import net.beaconcontroller.topology.ITopologyAware;
 import net.beaconcontroller.topology.dao.ITopologyDao;
 import net.beaconcontroller.topology.dao.DaoLinkTuple;
-import net.beaconcontroller.topology.dao.DaoSwitchPortTuple;
 
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
@@ -43,6 +42,7 @@ import org.openflow.protocol.OFPortStatus.OFPortReason;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
+import org.openflow.util.HexString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -219,10 +219,17 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             System.arraycopy(dpidArray, 2, chassisId, 1, 6);
             // set the optional tlv to the full dpid
             System.arraycopy(dpidArray, 0, dpidTLVValue, 4, 8);
-            for (OFPhysicalPort port : sw.getFeaturesReply().getPorts()) {
+            for (OFPhysicalPort port : sw.getPorts()) {
                 if (port.getPortNumber() == OFPort.OFPP_LOCAL.getValue())
                     continue;
-
+                
+                // Don't send LLDP packets to blocked STP ports
+                if ((port.getState() & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue()) {
+                    //log.debug("In sendLLDPs: switch {}; port state is {} in sending LLDP packets for port {}",
+                    //        new Object[] {HexString.toHexString(sw.getId()), port.getState(), port.getPortNumber()});
+                    continue;
+                }
+                
                 // set the portId to the outgoing port
                 portBB.putShort(port.getPortNumber());
 
@@ -307,6 +314,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             return Command.CONTINUE;
         }
 
+        //log.debug("Received OpenFlow LLDP packet on port {}", pi.getInPort());
+        
         IOFSwitch remoteSwitch = beaconProvider.getSwitches().get(remoteDpid);
 
         if (remoteSwitch == null) {
@@ -403,11 +412,15 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     }
 
     protected Command handlePortStatus(IOFSwitch sw, OFPortStatus ps) {
+        //log.debug("!!!! In handlePortStatus: Switch {}; port #{} state is {}",
+        //        new Object[] {HexString.toHexString(sw.getId()), ps.getDesc().getPortNumber(), ps.getDesc().getState()});
+        
         // if ps is a delete, or a modify where the port is down or configured down
         if ((byte)OFPortReason.OFPPR_DELETE.ordinal() == ps.getReason() ||
             ((byte)OFPortReason.OFPPR_MODIFY.ordinal() == ps.getReason() &&
                         (((OFPortConfig.OFPPC_PORT_DOWN.getValue() & ps.getDesc().getConfig()) > 0) ||
-                                ((OFPortState.OFPPS_LINK_DOWN.getValue() & ps.getDesc().getState()) > 0)))) {
+                                ((OFPortState.OFPPS_LINK_DOWN.getValue() & ps.getDesc().getState()) > 0) ||
+                                ((ps.getDesc().getState() & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue())))) {
             SwitchPortTuple tuple = new SwitchPortTuple(sw, ps.getDesc().getPortNumber());
 
             List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
