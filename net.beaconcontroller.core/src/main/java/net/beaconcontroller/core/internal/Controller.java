@@ -53,12 +53,15 @@ import org.openflow.protocol.OFError.OFFlowModFailedCode;
 import org.openflow.protocol.OFError.OFHelloFailedCode;
 import org.openflow.protocol.OFError.OFPortModFailedCode;
 import org.openflow.protocol.OFError.OFQueueOpFailedCode;
+import org.openflow.protocol.OFPortStatus.OFPortReason;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFGetConfigReply;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPort;
+import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFSetConfig;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.BasicFactory;
@@ -206,6 +209,24 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         log.info("Switch disconnected {}", sw);
     }
 
+    protected void handlePortStatusMessage(IOFSwitch sw, OFPortStatus m) {
+        short portNumber = m.getDesc().getPortNumber();
+        OFPhysicalPort port = m.getDesc();
+        if (m.getReason() == (byte)OFPortReason.OFPPR_MODIFY.ordinal()) {
+            sw.modifyPort(port);
+            coreDao.modifiedPort(sw, port);
+            log.debug("Port #{} modified for {}", portNumber, sw);
+        } else if (m.getReason() == (byte)OFPortReason.OFPPR_ADD.ordinal()) {
+            sw.addPort(port);
+            coreDao.addedPort(sw, port);
+            log.debug("Port #{} added for {}", portNumber, sw);
+        } else if (m.getReason() == (byte)OFPortReason.OFPPR_DELETE.ordinal()) {
+            sw.deletePort(portNumber);
+            coreDao.deletedPort(sw, portNumber);
+            log.debug("Port #{} deleted for {}", portNumber, sw);
+        }
+    }
+    
     /**
      * Handle replies to certain OFMessages, and pass others off to listeners
      * @param sw
@@ -266,6 +287,10 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                             "{} before receiving a features reply.", m.getType(), sw);
                         break;
                     }
+                    
+                    if (m.getType() == OFType.PORT_STATUS)
+                        handlePortStatusMessage(sw, (OFPortStatus)m);
+                    
                     List<IOFMessageListener> listeners = messageListeners
                             .get(m.getType());
                     if (listeners != null) {

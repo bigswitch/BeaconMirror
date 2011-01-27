@@ -11,6 +11,7 @@ import net.beaconcontroller.core.io.OFMessageSafeOutStream;
 
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFeaturesReply;
+import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.statistics.OFStatistics;
 
@@ -51,6 +52,40 @@ public interface IOFSwitch {
      * @param featuresReply
      */
     public void setFeaturesReply(OFFeaturesReply featuresReply);
+
+    /**
+     * Get the current list of ports. This will typically be different from
+     * the list of ports in the OFFeaturesReply, since that one is a static
+     * snapshot of the ports at the time the switch connected to the controller
+     * whereas this port list also reflects the port status messages that have
+     * been received.
+     * @return Unmodifiable list of ports
+     */
+    public List<OFPhysicalPort> getPorts();
+
+    /**
+     * Add a new port to the switch. This is called by the core controller
+     * code in response to a OFPortStatus message. It should not typically be
+     * called by other beacon applications.
+     * @param port
+     */
+    public void addPort(OFPhysicalPort port);
+
+    /**
+     * Update a port for the switch. This is called by the core controller
+     * code in response to a OFPortStatus message. It should not typically be
+     * called by other beacon applications.
+     * @param port
+     */
+    public void modifyPort(OFPhysicalPort port);
+    
+    /**
+     * Delete a port for the switch. This is called by the core controller
+     * code in response to a OFPortStatus message. It should not typically be
+     * called by other beacon applications.
+     * @param portNumber
+     */
+    public void deletePort(short portNumber);
 
     /**
      * Get the datapathId of the switch

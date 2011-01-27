@@ -15,6 +15,8 @@ import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.util.HexString;
 import org.openflow.util.U16;
 import org.openflow.util.U32;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.beaconcontroller.core.IOFController;
 import net.beaconcontroller.core.IOFSwitch;
@@ -25,6 +27,8 @@ import net.beaconcontroller.storage.OperatorPredicate;
 import net.beaconcontroller.storage.StorageException;
 
 public class SSControllerDaoImpl implements IControllerDao {
+
+    protected static Logger log = LoggerFactory.getLogger(SSControllerDaoImpl.class);
 
     private IOFController controller;
     private IStorageSource storageSource;
@@ -44,13 +48,6 @@ public class SSControllerDaoImpl implements IControllerDao {
     private static final String SWITCH_ACTIVE = "active";
     private static final String SWITCH_CONNECTED_SINCE = "connected_since";
     private static final String SWITCH_CAPABILITIES = "capabilities";
-    //private static final String SWITCH_SUPPORTS_FLOW_STATS = "supports_flow_stats";
-    //private static final String SWITCH_SUPPORTS_TABLE_STATS = "supports_table_stats";
-    //private static final String SWITCH_SUPPORTS_PORT_STATS = "supports_port_stats";
-    //private static final String SWITCH_SUPPORTS_STP = "supports_stp";
-    //private static final String SWITCH_SUPPORTS_IP_REASM = "supports_ip_reasm";
-    //private static final String SWITCH_SUPPORTS_QUEUE_STATS = "supports_queue_stats";
-    //private static final String SWITCH_SUPPORTS_ARP_MATCH_IP = "supports_arp_match_ip";
     private static final String SWITCH_BUFFERS = "buffers";
     private static final String SWITCH_TABLES = "tables";
     private static final String SWITCH_ACTIONS = "actions";
@@ -184,30 +181,7 @@ public class SSControllerDaoImpl implements IControllerDao {
         
         // Update the ports
         for (OFPhysicalPort port: featuresReply.getPorts()) {
-            Map<String, Object> portInfo = new HashMap<String, Object>();
-            int portNumber = U16.f(port.getPortNumber());
-            String id = datapathIdString + ":" + portNumber;
-            portInfo.put(PORT_ID, id);
-            portInfo.put(PORT_SWITCH, datapathIdString);
-            portInfo.put(PORT_NUMBER, portNumber);
-            byte[] hardwareAddress = port.getHardwareAddress();
-            String hardwareAddressString = HexString.toHexString(hardwareAddress);
-            portInfo.put(PORT_HARDWARE_ADDRESS, hardwareAddressString);
-            String name = port.getName();
-            portInfo.put(PORT_NAME, name);
-            long config = U32.f(port.getConfig());
-            portInfo.put(PORT_CONFIG, config);
-            long state = U32.f(port.getState());
-            portInfo.put(PORT_STATE, state);
-            long currentFeatures = U32.f(port.getCurrentFeatures());
-            portInfo.put(PORT_CURRENT_FEATURES, currentFeatures);
-            long advertisedFeatures = U32.f(port.getAdvertisedFeatures());
-            portInfo.put(PORT_ADVERTISED_FEATURES, advertisedFeatures);
-            long supportedFeatures = U32.f(port.getSupportedFeatures());
-            portInfo.put(PORT_SUPPORTED_FEATURES, supportedFeatures);
-            long peerFeatures = U32.f(port.getPeerFeatures());
-            portInfo.put(PORT_PEER_FEATURES, peerFeatures);
-            storageSource.updateRow(PORT_TABLE_NAME, portInfo);
+            addOrModifyPort(sw, port);
         }
     }
     
@@ -221,6 +195,48 @@ public class SSControllerDaoImpl implements IControllerDao {
         //switchInfo.put(SWITCH_CONNECTED_SINCE, null);
         switchInfo.put(SWITCH_ACTIVE, Boolean.FALSE);
         storageSource.updateRow(SWITCH_TABLE_NAME, switchInfo);
+    }
+
+    private void addOrModifyPort(IOFSwitch sw, OFPhysicalPort port) {
+        String datapathIdString = HexString.toHexString(sw.getId());
+        Map<String, Object> portInfo = new HashMap<String, Object>();
+        int portNumber = U16.f(port.getPortNumber());
+        String id = datapathIdString + ":" + portNumber;
+        portInfo.put(PORT_ID, id);
+        portInfo.put(PORT_SWITCH, datapathIdString);
+        portInfo.put(PORT_NUMBER, portNumber);
+        byte[] hardwareAddress = port.getHardwareAddress();
+        String hardwareAddressString = HexString.toHexString(hardwareAddress);
+        portInfo.put(PORT_HARDWARE_ADDRESS, hardwareAddressString);
+        String name = port.getName();
+        portInfo.put(PORT_NAME, name);
+        long config = U32.f(port.getConfig());
+        portInfo.put(PORT_CONFIG, config);
+        long state = U32.f(port.getState());
+        portInfo.put(PORT_STATE, state);
+        long currentFeatures = U32.f(port.getCurrentFeatures());
+        portInfo.put(PORT_CURRENT_FEATURES, currentFeatures);
+        long advertisedFeatures = U32.f(port.getAdvertisedFeatures());
+        portInfo.put(PORT_ADVERTISED_FEATURES, advertisedFeatures);
+        long supportedFeatures = U32.f(port.getSupportedFeatures());
+        portInfo.put(PORT_SUPPORTED_FEATURES, supportedFeatures);
+        long peerFeatures = U32.f(port.getPeerFeatures());
+        portInfo.put(PORT_PEER_FEATURES, peerFeatures);
+        storageSource.updateRow(PORT_TABLE_NAME, portInfo);
+    }
+    
+    public void addedPort(IOFSwitch sw, OFPhysicalPort port) {
+        addOrModifyPort(sw, port);
+    }
+    
+    public void modifiedPort(IOFSwitch sw, OFPhysicalPort port) {
+        addOrModifyPort(sw, port);
+    }
+    
+    public void deletedPort(IOFSwitch sw, short portNumber) {
+        String datapathIdString = HexString.toHexString(sw.getId());
+        String id = datapathIdString + ":" + portNumber;
+        storageSource.deleteRow(PORT_TABLE_NAME, id);
     }
 
     public void setStorageSource(IStorageSource storageSource) {
