@@ -52,7 +52,7 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
         
         log.info("Initialized Dijkstra RouterImpl");
     }
-    
+   
     @Override
     public boolean routeExists(Long srcId, Long dstId) {
         // self route check
@@ -77,7 +77,7 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
         nexthopnodemaps.clear();
         lock.writeLock().unlock();
     }
-    
+
     @Override
     public Route getRoute(IOFSwitch src, IOFSwitch dst) {
         return getRoute(src.getId(), dst.getId());
