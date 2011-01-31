@@ -412,8 +412,12 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     }
 
     protected Command handlePortStatus(IOFSwitch sw, OFPortStatus ps) {
-        //log.debug("!!!! In handlePortStatus: Switch {}; port #{} state is {}",
-        //        new Object[] {HexString.toHexString(sw.getId()), ps.getDesc().getPortNumber(), ps.getDesc().getState()});
+        log.debug("handlePortStatus: Switch {} port #{} reason {}; config is {} state is {}",
+                  new Object[] {HexString.toHexString(sw.getId()),
+                                ps.getDesc().getPortNumber(),
+                                ps.getReason(),
+                                ps.getDesc().getConfig(),
+                                ps.getDesc().getState()});
         
         // if ps is a delete, or a modify where the port is down or configured down
         if ((byte)OFPortReason.OFPPR_DELETE.ordinal() == ps.getReason() ||
@@ -427,8 +431,17 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             lock.writeLock().lock();
             try {
                 if (this.portLinks.containsKey(tuple)) {
+                    log.debug("handlePortStatus: Switch {} port #{} reason {}; removing links",
+                              new Object[] {HexString.toHexString(sw.getId()),
+                                            ps.getDesc().getPortNumber(),
+                                            ps.getReason()});
                     eraseList.addAll(this.portLinks.get(tuple));
                     deleteLinks(eraseList);
+                } else {
+                    log.debug("handlePortStatus: Switch {} port #{} reason {}; no links to remove",
+                              new Object[] {HexString.toHexString(sw.getId()),
+                                            ps.getDesc().getPortNumber(),
+                                            ps.getReason()});
                 }
             } finally {
                 lock.writeLock().unlock();
