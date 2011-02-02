@@ -1,12 +1,11 @@
 package net.beaconcontroller.devicemanager;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.packet.IPv4;
+import net.beaconcontroller.topology.SwitchPortTuple;
 
 import org.openflow.util.HexString;
 
@@ -17,12 +16,12 @@ import org.openflow.util.HexString;
  */
 public class Device {
     protected byte[] dataLayerAddress;
-    protected Set<Integer> networkAddresses;
-    protected IOFSwitch sw;
-    protected Short swPort;
+    protected Queue<Integer> networkAddresses;
+    protected Queue<SwitchPortTuple> swPorts;
 
     public Device() {
-        this.networkAddresses = new ConcurrentSkipListSet<Integer>();
+        this.networkAddresses = new ConcurrentLinkedQueue<Integer>();
+        this.swPorts = new ConcurrentLinkedQueue<SwitchPortTuple>();
     }
 
     /**
@@ -40,44 +39,30 @@ public class Device {
     }
 
     /**
-     * @return the swPort
+     * @return the swPorts
      */
-    public Short getSwPort() {
-        return swPort;
+    public Queue<SwitchPortTuple> getSwPorts() {
+        return swPorts;
     }
 
     /**
      * @param swPort the swPort to set
      */
-    public void setSwPort(Short swPort) {
-        this.swPort = swPort;
-    }
-
-    /**
-     * @return the sw
-     */
-    public IOFSwitch getSw() {
-        return sw;
-    }
-
-    /**
-     * @param sw the sw to set
-     */
-    public void setSw(IOFSwitch sw) {
-        this.sw = sw;
+    public void setSwPorts(Queue<SwitchPortTuple> swPorts) {
+        this.swPorts = swPorts;
     }
 
     /**
      * @return the networkAddresses
      */
-    public Set<Integer> getNetworkAddresses() {
+    public Queue<Integer> getNetworkAddresses() {
         return networkAddresses;
     }
 
     /**
      * @param networkAddresses the networkAddresses to set
      */
-    public void setNetworkAddresses(Set<Integer> networkAddresses) {
+    public void setNetworkAddresses(Queue<Integer> networkAddresses) {
         this.networkAddresses = networkAddresses;
     }
 
@@ -92,8 +77,7 @@ public class Device {
         result = prime
                 * result
                 + ((networkAddresses == null) ? 0 : networkAddresses.hashCode());
-        result = prime * result + ((sw == null) ? 0 : sw.hashCode());
-        result = prime * result + ((swPort == null) ? 0 : swPort.hashCode());
+        result = prime * result + ((swPorts == null) ? 0 : swPorts.hashCode());
         return result;
     }
 
@@ -114,17 +98,14 @@ public class Device {
         if (networkAddresses == null) {
             if (other.networkAddresses != null)
                 return false;
-        } else if (!networkAddresses.equals(other.networkAddresses))
+        } else if (!Arrays.equals(networkAddresses.toArray(new Integer[0]),
+                other.networkAddresses.toArray(new Integer[0])))
             return false;
-        if (sw == null) {
-            if (other.sw != null)
+        if (swPorts == null) {
+            if (other.swPorts != null)
                 return false;
-        } else if (!sw.equals(other.sw))
-            return false;
-        if (swPort == null) {
-            if (other.swPort != null)
-                return false;
-        } else if (!swPort.equals(other.swPort))
+        } else if (!Arrays.equals(swPorts.toArray(new SwitchPortTuple[0]),
+                other.swPorts.toArray(new SwitchPortTuple[0])))
             return false;
         return true;
     }
@@ -136,9 +117,7 @@ public class Device {
     public String toString() {
         return "Device [dataLayerAddress=" + 
                 ((dataLayerAddress == null) ? "null" : HexString.toHexString(dataLayerAddress)) +
-                ", swId=" + ((sw == null) ? "null" : HexString.toHexString(sw.getId())) +
-                ", swPort=" + ((swPort == null) ? "null" : (0xffff & swPort)) +
-                ", networkAddresses="
+                ", swPorts=" + swPorts + ", networkAddresses="
                 + IPv4.fromIPv4AddressCollection(networkAddresses) + "]";
     }
 }

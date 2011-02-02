@@ -8,6 +8,7 @@ import net.beaconcontroller.devicemanager.dao.IDeviceManagerDao;
 import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.storage.IResultSet;
 import net.beaconcontroller.storage.IStorageSource;
+import net.beaconcontroller.topology.SwitchPortTuple;
 
 import org.openflow.util.HexString;
 import org.slf4j.Logger;
@@ -45,12 +46,13 @@ public class SSDeviceManagerDao implements IDeviceManagerDao {
         Map<String, Object> rowValues = new HashMap<String, Object>();
         String macString = HexString.toHexString(device.getDataLayerAddress());
         rowValues.put(MAC_COLUMN_NAME, macString);
-        String ipString = IPv4.fromIPv4Address(device.getNetworkAddresses().isEmpty() ? 0 :
-                                               device.getNetworkAddresses().iterator().next());
-        rowValues.put(IP_COLUMN_NAME, ipString);
-        String switchString = HexString.toHexString(device.getSw().getId());
-        rowValues.put(SWITCH_COLUMN_NAME, switchString);
-        rowValues.put(PORT_COLUMN_NAME, device.getSwPort());
+        Integer nwAddr = null;
+        for (Integer a : device.getNetworkAddresses()) { nwAddr = a; }
+        rowValues.put(IP_COLUMN_NAME, (nwAddr == null) ? "" : IPv4.fromIPv4Address(nwAddr));
+        SwitchPortTuple swPort = null;
+        for (SwitchPortTuple t : device.getSwPorts()) { swPort = t; }
+        rowValues.put(SWITCH_COLUMN_NAME, (swPort == null) ? "" : HexString.toHexString(swPort.getSw().getId()));
+        rowValues.put(PORT_COLUMN_NAME, (swPort == null) ? "" : swPort.getPort());
         rowValues.put("id", macString);
         storageSource.updateRow(DEVICE_TABLE_NAME, rowValues);
     }
@@ -73,7 +75,7 @@ public class SSDeviceManagerDao implements IDeviceManagerDao {
         String switchString = rs.getString(SWITCH_COLUMN_NAME);
         Long switchId = HexString.toLong(switchString);
         // d.setSwId(switchId); // FIXME xyx
-        d.setSwPort(rs.getShort(PORT_COLUMN_NAME));
+        // d.setSwPort(rs.getShort(PORT_COLUMN_NAME)); // FIXME xyx
         return d;
     }
 

@@ -8,6 +8,7 @@ Export-Package: net.beaconcontroller.routing
 Import-Package: net.beaconcontroller.core,
  net.beaconcontroller.core.io,
  net.beaconcontroller.devicemanager,
+ net.beaconcontroller.topology,
  org.openflow.io,
  org.openflow.protocol,
  org.openflow.protocol.action,
