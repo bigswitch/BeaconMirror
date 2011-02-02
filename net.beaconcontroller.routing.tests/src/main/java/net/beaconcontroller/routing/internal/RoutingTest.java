@@ -26,6 +26,7 @@ import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
 import net.beaconcontroller.routing.internal.Routing;
 import net.beaconcontroller.test.BeaconTestCase;
+import net.beaconcontroller.topology.SwitchPortTuple;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -103,8 +104,7 @@ public class RoutingTest extends BeaconTestCase {
         // build our expected Device
         Device dstDevice = new Device();
         dstDevice.setDataLayerAddress(dataLayerSource);
-        dstDevice.setSw(sw2);
-        dstDevice.setSwPort((short)3);
+        dstDevice.getSwPorts().add(new SwitchPortTuple(sw2, (short)3));
 
         // Mock deviceManager
         IDeviceManager deviceManager = createMock(IDeviceManager.class);

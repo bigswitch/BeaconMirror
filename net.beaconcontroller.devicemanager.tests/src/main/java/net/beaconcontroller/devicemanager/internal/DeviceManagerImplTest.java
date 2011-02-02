@@ -85,8 +85,7 @@ public class DeviceManagerImplTest extends BeaconTestCase {
         // build our expected Device
         Device device = new Device();
         device.setDataLayerAddress(dataLayerSource);
-        device.setSw(mockSwitch);
-        device.setSwPort((short)1);
+        device.getSwPorts().add(new SwitchPortTuple(mockSwitch, (short)1));
         device.getNetworkAddresses().add(IPv4.toIPv4Address("192.168.1.1"));
 
 
@@ -102,8 +101,7 @@ public class DeviceManagerImplTest extends BeaconTestCase {
         assertEquals(device, deviceManager.getDeviceByDataLayerAddress(dataLayerSource));
 
         // move the port on this device
-        device.setSw(mockSwitch);
-        device.setSwPort((short)2);
+        device.getSwPorts().add(new SwitchPortTuple(mockSwitch, (short)2));
 
         reset(mockSwitch, mockTopology);
         expect(mockSwitch.getId()).andReturn(2L).atLeastOnce();

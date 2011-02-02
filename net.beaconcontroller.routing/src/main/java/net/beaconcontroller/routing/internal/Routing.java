@@ -16,6 +16,7 @@ import net.beaconcontroller.devicemanager.IDeviceManagerAware;
 import net.beaconcontroller.routing.IRoutingEngine;
 import net.beaconcontroller.routing.Link;
 import net.beaconcontroller.routing.Route;
+import net.beaconcontroller.topology.SwitchPortTuple;
 
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFlowMod;
@@ -75,13 +76,21 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
 
         if (dstDevice != null) {
             // does a route exist?
-            Route route = routingEngine.getRoute(sw.getId(), dstDevice.getSw().getId());
+            Route route = null;
+            SwitchPortTuple dstSwPort = null;
+            for (SwitchPortTuple p : dstDevice.getSwPorts()) {
+                route = routingEngine.getRoute(sw.getId(), p.getSw().getId());
+                if (route != null) {
+                    dstSwPort = p;
+                    break;
+                }
+            }
             if (route != null) {
                 // set the route
                 if (log.isTraceEnabled())
-                    log.trace("Pushing route match={} route={} destination={}:{}", new Object[] {match, route, dstDevice.getSw(), dstDevice.getSwPort()});
+                    log.trace("Pushing route match={} route={} destination={}:{}", new Object[] {match, route, dstSwPort.getSw(), dstSwPort.getPort()});
                 OFMessageInStream in = sw.getInputStream();
-                pushRoute(in.getMessageFactory(), match, route, dstDevice, pi.getBufferId());
+                pushRoute(in.getMessageFactory(), match, route, dstSwPort, pi.getBufferId());
 
                 // send the packet if its not buffered
                 if (pi.getBufferId() == 0xffffffff) {
@@ -116,7 +125,7 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
      * @param route
      * @param dstDevice
      */
-    public void pushRoute(OFMessageFactory factory, OFMatch match, Route route, Device dstDevice, int bufferId) {
+    public void pushRoute(OFMessageFactory factory, OFMatch match, Route route, SwitchPortTuple dstSwPort, int bufferId) {
         OFFlowMod fm = (OFFlowMod) factory.getMessage(OFType.FLOW_MOD);
         OFActionOutput action = new OFActionOutput();
         List<OFAction> actions = new ArrayList<OFAction>();
@@ -128,9 +137,9 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
             .setMatch(match.clone())
             .setActions(actions)
             .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
-        IOFSwitch sw = beaconProvider.getSwitches().get(route.getId().getDst());
+        IOFSwitch sw = dstSwPort.getSw();
         OFMessageSafeOutStream out = sw.getOutputStream(); // to prevent NoClassDefFoundError
-        ((OFActionOutput)fm.getActions().get(0)).setPort(dstDevice.getSwPort());
+        ((OFActionOutput)fm.getActions().get(0)).setPort(dstSwPort.getPort());
 
         for (int i = route.getPath().size() - 1; i >= 0; --i) {
             Link link = route.getPath().get(i);

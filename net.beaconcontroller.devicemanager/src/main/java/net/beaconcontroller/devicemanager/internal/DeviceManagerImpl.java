@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,6 +41,8 @@ import org.openflow.protocol.OFType;
 import org.openflow.util.HexString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * DeviceManager creates Devices based upon MAC addresses seen in the network.
@@ -245,13 +248,15 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
             if (device != null) {
                 // Write lock is expensive, check if we have an update first
                 boolean updateNeeded = false;
-                boolean movedLocation = false;
+                boolean movedLocation = true;
                 boolean addedNW = false;
                 boolean nwChanged = false;
 
-                if ((!sw.equals(device.getSw()))
-                        || (pi.getInPort() != device.getSwPort().shortValue())) {
-                    movedLocation = true;
+                for (SwitchPortTuple currSwPort : device.getSwPorts()) {
+                    if (currSwPort.equals(ipt)) {
+                        movedLocation = false;
+                        break;
+                    }
                 }
                 if (nwDevice == null && nwSrc != 0) {
                     addedNW = true;
@@ -269,56 +274,35 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                     try {
                         // Update both mappings once so no duplicated work later
                         if (movedLocation) {
-                            IOFSwitch oldSw = device.getSw();
-                            Short oldPort = device.getSwPort();
-                            delSwitchDeviceMapping(device.getSw(), device);
-                            delSwitchPortDeviceMapping(
-                                    new SwitchPortTuple(device.getSw(),
-                                            device.getSwPort()), device);
-                            device.setSw(sw);
-                            device.setSwPort(pi.getInPort());
-                            addSwitchDeviceMapping(device.getSw(), device);
-                            addSwitchPortDeviceMapping(
-                                    new SwitchPortTuple(device.getSw(),
-                                            device.getSwPort()), device);
-                            updateMoved(device, oldSw, oldPort, sw, device.getSwPort());
-                            if (log.isDebugEnabled()) {
-                                log.debug("Device {} moved from switch: {} port: {} to switch: {} port: {}",
-                                        new Object[] {
-                                                device,
-                                                HexString.toHexString(oldSw.getId()),
-                                                0xffff & oldPort.shortValue(),
-                                                HexString.toHexString(sw.getId()),
-                                                0xffff & pi.getInPort()});
-                            }
+// FIXME: age out old device - swPort mappings
+//                            IOFSwitch oldSw = device.getSw();
+//                            Short oldPort = device.getSwPort();
+//                            delSwitchDeviceMapping(device.getSw(), device);
+//                            delSwitchPortDeviceMapping(
+//                                    new SwitchPortTuple(device.getSw(),
+//                                            device.getSwPort()), device);
+                            device.getSwPorts().add(ipt);
+                            addSwitchDeviceMapping(ipt.getSw(), device);
+                            addSwitchPortDeviceMapping(ipt, device);
+                            updateMoved(device, ipt, ipt);
+                            log.info("Device {} added {}", device, ipt);
                         }
                         if (addedNW) {
                             // add the address
                             device.getNetworkAddresses().add(nwSrc);
                             this.networkLayerAddressDeviceMap.put(nwSrc, device);
                             updateNetwork(device, device.getNetworkAddresses(), nwSrc, true);
-                            if (log.isDebugEnabled()) {
-                                log.debug("Added IP {} to MAC {}",
-                                        IPv4.fromIPv4Address(nwSrc),
-                                        HexString.toHexString(device.getDataLayerAddress()));
-                            }
+                            log.info("Device {} added IP {}", device,
+                                    IPv4.fromIPv4Address(nwSrc));
                         } else if (nwChanged) {
-                            // IP changed MACs.. really rare, potentially an error
+                            // IP changed MACs
                             nwDevice.getNetworkAddresses().remove(nwSrc);
                             updateNetwork(nwDevice, nwDevice.getNetworkAddresses(), nwSrc, false);
                             device.getNetworkAddresses().add(nwSrc);
                             this.networkLayerAddressDeviceMap.put(nwSrc, device);
                             updateNetwork(device, device.getNetworkAddresses(), nwSrc, true);
-                            if (log.isWarnEnabled()) {
-                                log.warn(
-                                        "IP Address {} changed from MAC {} to {}",
-                                        new Object[] {
-                                                IPv4.fromIPv4Address(nwSrc),
-                                                HexString.toHexString(nwDevice
-                                                        .getDataLayerAddress()),
-                                                HexString.toHexString(device
-                                                        .getDataLayerAddress()) });
-                            }
+                            log.info("Device {} changed IP {} from {}", new Object[] {
+                                    device, IPv4.fromIPv4Address(nwSrc), nwDevice });
                         }
                     } finally {
                         lock.writeLock().unlock();
@@ -328,8 +312,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
             } else {
                 device = new Device();
                 device.setDataLayerAddress(match.getDataLayerSource());
-                device.setSw(sw);
-                device.setSwPort(pi.getInPort());
+                device.getSwPorts().add(ipt);
                 lock.writeLock().lock();
                 try {
                     if (nwSrc != 0) {
@@ -340,25 +323,16 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                     if (nwSrc != 0) {
                         this.networkLayerAddressDeviceMap.put(nwSrc, device);
                     }
-                    addSwitchDeviceMapping(device.getSw(), device);
-                    addSwitchPortDeviceMapping(new SwitchPortTuple(
-                            sw, device.getSwPort()), device);
+                    addSwitchDeviceMapping(ipt.getSw(), device);
+                    addSwitchPortDeviceMapping(ipt, device);
                     if (nwDevice != null) {
                         nwDevice.getNetworkAddresses().remove(nwSrc);
                         updateNetwork(nwDevice, nwDevice.getNetworkAddresses(), nwSrc, false);
-                        if (log.isWarnEnabled()) {
-                            log.warn(
-                                    "IP Address {} changed from MAC {} to {}",
-                                    new Object[] {
-                                            IPv4.fromIPv4Address(nwSrc),
-                                            HexString.toHexString(nwDevice
-                                                    .getDataLayerAddress()),
-                                                    HexString.toHexString(device
-                                                            .getDataLayerAddress()) });
-                        }
+                        log.info("Device {} changed IP {} from {}", new Object[] {
+                                device, IPv4.fromIPv4Address(nwSrc), nwDevice });
                     }
                     updateStatus(device, true);
-                    log.debug("New Device: {}", device);
+                    log.info("New device {}", device);
                 } finally {
                     lock.writeLock().unlock();
                 }
@@ -540,14 +514,13 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
      * @param sw
      * @param port
      */
-    protected void updateMoved(Device device, IOFSwitch oldSw, Short oldPort,
-            IOFSwitch sw, Short port) {
+    protected void updateMoved(Device device, SwitchPortTuple oldSwPort, SwitchPortTuple swPort) {
         Update update = new Update(UpdateType.MOVED);
         update.device = device;
-        update.oldSw = oldSw;
-        update.oldSwPort = oldPort;
-        update.sw = sw;
-        update.swPort = port;
+        update.oldSw = oldSwPort.getSw();
+        update.oldSwPort = oldSwPort.getPort();
+        update.sw = swPort.getSw();
+        update.swPort = swPort.getPort();
         this.updates.add(update);
     }
 
@@ -559,7 +532,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
      * @param networkAddress
      * @param added
      */
-    protected void updateNetwork(Device device, Set<Integer> networkAddresses,
+    protected void updateNetwork(Device device, Queue<Integer> networkAddresses,
             Integer networkAddress, boolean added) {
         Update update;
         if (added) {
