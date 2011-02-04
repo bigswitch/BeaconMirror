@@ -219,16 +219,9 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             System.arraycopy(dpidArray, 2, chassisId, 1, 6);
             // set the optional tlv to the full dpid
             System.arraycopy(dpidArray, 0, dpidTLVValue, 4, 8);
-            for (OFPhysicalPort port : sw.getPorts()) {
+            for (OFPhysicalPort port : sw.getEnabledPorts()) {
                 if (port.getPortNumber() == OFPort.OFPP_LOCAL.getValue())
                     continue;
-                
-                // Don't send LLDP packets to blocked STP ports
-                if (!portEnabled(port)) {
-                    //log.debug("In sendLLDPs: switch {}; port state is {} in sending LLDP packets for port {}",
-                    //        new Object[] {HexString.toHexString(sw.getId()), port.getState(), port.getPortNumber()});
-                    continue;
-                }
                 
                 // set the portId to the outgoing port
                 portBB.putShort(port.getPortNumber());
@@ -323,11 +316,11 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             return Command.STOP;
         }
         
-        if (!portEnabled(remoteSwitch.getPort(remotePort))) {
+        if (!remoteSwitch.portEnabled(remotePort)) {
             log.debug("Ignoring link with disabled source port: switch {} port {}", remoteSwitch, remotePort);
             return Command.STOP;
         }
-        if (!portEnabled(sw.getPort(pi.getInPort()))) {
+        if (!sw.portEnabled(pi.getInPort())) {
             log.debug("Ignoring link with disabled dest port: switch {} port {}", sw, pi.getInPort());
             return Command.STOP;
         }

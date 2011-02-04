@@ -15,8 +15,6 @@ import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFPhysicalPort;
-import org.openflow.protocol.OFPhysicalPort.OFPortConfig;
-import org.openflow.protocol.OFPhysicalPort.OFPortState;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
@@ -77,8 +75,7 @@ public class LearningSwitch implements IOFMessageListener {
         int bufferId = pi.getBufferId();
 
         // if the input port is blocked, ignore the packet
-        OFPhysicalPort inPhysPort = sw.getPort(pi.getInPort());
-        if (!portEnabled(inPhysPort)) {
+        if (!sw.portEnabled(pi.getInPort())) {
             log.debug("{} dropping packet received on disabled port {}", sw, pi.getInPort());
             return Command.STOP;
         }
@@ -134,14 +131,12 @@ public class LearningSwitch implements IOFMessageListener {
             // on the switch to implement it correctly
             ArrayList<OFAction> actions = new ArrayList<OFAction>();
             short actionsLength = 0;
-            for (OFPhysicalPort outPhysPort : sw.getPorts()) {
+            for (OFPhysicalPort outPhysPort : sw.getEnabledPorts()) {
                 if ((outPort != null) && (outPort != outPhysPort.getPortNumber()))
                     continue;
                 if (outPhysPort.getPortNumber() == OFPort.OFPP_LOCAL.getValue())
                     continue;
                 if (outPhysPort.getPortNumber() == pi.getInPort())
-                    continue;
-                if (!portEnabled(outPhysPort))
                     continue;
                 actions.add(new OFActionOutput().setPort(outPhysPort.getPortNumber()));
                 actionsLength += OFActionOutput.MINIMUM_LENGTH;
@@ -172,18 +167,6 @@ public class LearningSwitch implements IOFMessageListener {
             }
         }
         return Command.CONTINUE;
-    }
-
-    private boolean portEnabled(OFPhysicalPort port) {
-        if (port == null)
-            return false;
-        if ((OFPortConfig.OFPPC_PORT_DOWN.getValue() & port.getConfig()) > 0)
-            return false;
-        if ((OFPortState.OFPPS_LINK_DOWN.getValue() & port.getState()) > 0)
-            return false;
-        if ((port.getState() & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue())
-            return false;
-        return true;
     }
 
     /**

@@ -3,11 +3,9 @@ package net.beaconcontroller.core.internal;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
@@ -20,6 +18,8 @@ import net.beaconcontroller.core.io.OFMessageSafeOutStream;
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFPhysicalPort;
+import org.openflow.protocol.OFPhysicalPort.OFPortConfig;
+import org.openflow.protocol.OFPhysicalPort.OFPortState;
 import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.statistics.OFStatistics;
@@ -82,20 +82,38 @@ public class OFSwitchImpl implements IOFSwitch {
         }
     }
 
-    public synchronized List<OFPhysicalPort> getPorts() {
-        return new ArrayList<OFPhysicalPort>(ports.values());
-    }
-    
-    public synchronized OFPhysicalPort getPort(short portNumber) {
-        return ports.get(portNumber);
+    public synchronized List<OFPhysicalPort> getEnabledPorts() {
+        List<OFPhysicalPort> result = new ArrayList<OFPhysicalPort>();
+        for (OFPhysicalPort port : ports.values()) {
+            if (portEnabled(port)) {
+                result.add(port);
+            }
+        }
+        return result;
     }
     
     public synchronized void setPort(OFPhysicalPort port) {
         ports.put(port.getPortNumber(), port);
     }
     
-    public void deletePort(short portNumber) {
+    public synchronized void deletePort(short portNumber) {
         ports.remove(portNumber);
+    }
+
+    public synchronized boolean portEnabled(short portNumber) {
+        return portEnabled(ports.get(portNumber));
+    }
+    
+    public boolean portEnabled(OFPhysicalPort port) {
+        if (port == null)
+            return false;
+        if ((port.getConfig() & OFPortConfig.OFPPC_PORT_DOWN.getValue()) > 0)
+            return false;
+        if ((port.getState() & OFPortState.OFPPS_LINK_DOWN.getValue()) > 0)
+            return false;
+        if ((port.getState() & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue())
+            return false;
+        return true;
     }
     
     @Override

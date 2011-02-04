@@ -54,16 +54,14 @@ public interface IOFSwitch {
     public void setFeaturesReply(OFFeaturesReply featuresReply);
 
     /**
-     * Get the current list of ports. This will typically be different from
+     * Get list of all enabled ports. This will typically be different from
      * the list of ports in the OFFeaturesReply, since that one is a static
      * snapshot of the ports at the time the switch connected to the controller
      * whereas this port list also reflects the port status messages that have
      * been received.
      * @return Unmodifiable list of ports
      */
-    public List<OFPhysicalPort> getPorts();
-
-    public OFPhysicalPort getPort(short portNumber);
+    public List<OFPhysicalPort> getEnabledPorts();
 
     /**
      * Add or modify a switch port. This is called by the core controller
@@ -80,6 +78,20 @@ public interface IOFSwitch {
      * @param portNumber
      */
     public void deletePort(short portNumber);
+
+    /**
+     * @param portNumber
+     * @return Whether a port is enabled per latest port status message
+     * (not configured down nor link down nor in spanning tree blocking state)
+     */
+    public boolean portEnabled(short portNumber);
+
+    /**
+     * @param port
+     * @return Whether a port is enabled per latest port status message
+     * (not configured down nor link down nor in spanning tree blocking state)
+     */
+    public boolean portEnabled(OFPhysicalPort port);
 
     /**
      * Get the datapathId of the switch
