@@ -2,7 +2,6 @@ package net.beaconcontroller.routing.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -246,12 +245,11 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
         OFMatch match = new OFMatch();
         match.setDataLayerDestination(device.getDataLayerAddress());
         match.setWildcards(OFMatch.OFPFW_ALL ^ OFMatch.OFPFW_DL_DST);
-        OFFlowMod fm = (OFFlowMod) sw.getInputStream().getMessageFactory()
-            .getMessage(OFType.FLOW_MOD);
-        fm.setCommand(OFFlowMod.OFPFC_DELETE)
+        OFMessage fm = ((OFFlowMod) sw.getInputStream().getMessageFactory()
+            .getMessage(OFType.FLOW_MOD))
+            .setCommand(OFFlowMod.OFPFC_DELETE)
             .setOutPort((short) OFPort.OFPP_NONE.getValue())
             .setMatch(match)
-            .setActions(Collections.EMPTY_LIST)
             .setLength(U16.t(OFFlowMod.MINIMUM_LENGTH));
 
         // Flush to all switches
