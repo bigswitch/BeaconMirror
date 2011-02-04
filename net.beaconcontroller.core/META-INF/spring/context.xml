@@ -25,6 +25,6 @@
   </bean>
   
   <util:map id="callbackOrdering">
-    <entry key="PACKET_IN" value="topology,devicemanager,routing,switch"/>
+    <entry key="PACKET_IN" value="topology,devicemanager,routing,learningswitch"/>
   </util:map>
 </beans>
