@@ -213,11 +213,11 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         short portNumber = m.getDesc().getPortNumber();
         OFPhysicalPort port = m.getDesc();
         if (m.getReason() == (byte)OFPortReason.OFPPR_MODIFY.ordinal()) {
-            sw.modifyPort(port);
+            sw.setPort(port);
             coreDao.modifiedPort(sw, port);
             log.debug("Port #{} modified for {}", portNumber, sw);
         } else if (m.getReason() == (byte)OFPortReason.OFPPR_ADD.ordinal()) {
-            sw.addPort(port);
+            sw.setPort(port);
             coreDao.addedPort(sw, port);
             log.debug("Port #{} added for {}", portNumber, sw);
         } else if (m.getReason() == (byte)OFPortReason.OFPPR_DELETE.ordinal()) {

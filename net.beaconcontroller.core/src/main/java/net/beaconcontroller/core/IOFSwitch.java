@@ -63,22 +63,16 @@ public interface IOFSwitch {
      */
     public List<OFPhysicalPort> getPorts();
 
-    /**
-     * Add a new port to the switch. This is called by the core controller
-     * code in response to a OFPortStatus message. It should not typically be
-     * called by other beacon applications.
-     * @param port
-     */
-    public void addPort(OFPhysicalPort port);
+    public OFPhysicalPort getPort(short portNumber);
 
     /**
-     * Update a port for the switch. This is called by the core controller
+     * Add or modify a switch port. This is called by the core controller
      * code in response to a OFPortStatus message. It should not typically be
      * called by other beacon applications.
      * @param port
      */
-    public void modifyPort(OFPhysicalPort port);
-    
+    public void setPort(OFPhysicalPort port);
+
     /**
      * Delete a port for the switch. This is called by the core controller
      * code in response to a OFPortStatus message. It should not typically be
