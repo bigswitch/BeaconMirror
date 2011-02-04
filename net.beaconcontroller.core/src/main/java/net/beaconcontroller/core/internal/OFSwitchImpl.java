@@ -5,6 +5,7 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,12 +38,13 @@ public class OFSwitchImpl implements IOFSwitch {
     protected OFMessageSafeOutStream outStream;
     protected SocketChannel socketChannel;
     protected AtomicInteger transactionIdSource;
-    protected ArrayList<OFPhysicalPort> portList;
+    protected HashMap<Short, OFPhysicalPort> ports;
     
     public OFSwitchImpl() {
         this.attributes = new ConcurrentHashMap<Object, Object>();
         this.connectedSince = new Date();
         this.transactionIdSource = new AtomicInteger();
+        this.ports = new HashMap<Short, OFPhysicalPort>();
     }
 
     public SocketChannel getSocketChannel() {
@@ -69,86 +71,31 @@ public class OFSwitchImpl implements IOFSwitch {
         this.outStream = stream;
     }
 
-    /**
-     *
-     */
     public OFFeaturesReply getFeaturesReply() {
         return this.featuresReply;
     }
 
-    /**
-     * @param featuresReply the featuresReply to set
-     */
-    public void setFeaturesReply(OFFeaturesReply featuresReply) {
+    public synchronized void setFeaturesReply(OFFeaturesReply featuresReply) {
         this.featuresReply = featuresReply;
-        // Initialize the port list from the list in the OFFeaturesReply
-        synchronized (this) {
-            List<OFPhysicalPort> ports = featuresReply.getPorts();
-            this.portList = (ports != null) ?
-                    new ArrayList<OFPhysicalPort>(ports) :
-                    new ArrayList<OFPhysicalPort>();
+        for (OFPhysicalPort port : featuresReply.getPorts()) {
+            ports.put(port.getPortNumber(), port);
         }
     }
 
-    public List<OFPhysicalPort> getPorts() {
-        ArrayList<OFPhysicalPort> portListCopy;
-        synchronized (this) {
-            portListCopy = new ArrayList<OFPhysicalPort>(portList);
-        }
-        return Collections.unmodifiableList(portListCopy);
+    public synchronized List<OFPhysicalPort> getPorts() {
+        return new ArrayList<OFPhysicalPort>(ports.values());
     }
     
-    private void addOrModifyPort(OFPhysicalPort port) {
-        // This method works for both the add and modify cases -- it succeeds
-        // whether or not there's already a port object with the same port number
-        // as the new port. Typically there shouldn't be an existing port object
-        // with the same port number if we're doing an add and there should be
-        // an existing port object if we're doing a modify, but it's possible
-        // that there was a previous port status message from the switch that
-        // was missed/dropped, so the controller port list state may be out of
-        // sync with the switch. In that case we don't want to fail on subsequent
-        // add/modify port operations, so we handle both cases. We could possibly
-        // add a log warning message here, though, if the add or modify call
-        // indicates that our port list is out of sync.
-        synchronized (this) {
-            ListIterator<OFPhysicalPort> iter = portList.listIterator();
-            while (iter.hasNext()) {
-                OFPhysicalPort nextPort = iter.next();
-                if (nextPort.getPortNumber() == port.getPortNumber()) {
-                    iter.set(port);
-                    return;
-                } else if (nextPort.getPortNumber() == port.getPortNumber()) {
-                    portList.add(iter.previousIndex(), port);
-                    return;
-                }
-            }
-            portList.add(port);
-        }
+    public synchronized OFPhysicalPort getPort(short portNumber) {
+        return ports.get(portNumber);
     }
     
-    public void addPort(OFPhysicalPort port) {
-        addOrModifyPort(port);
-    }
-    
-    public void modifyPort(OFPhysicalPort port) {
-        addOrModifyPort(port);
+    public synchronized void setPort(OFPhysicalPort port) {
+        ports.put(port.getPortNumber(), port);
     }
     
     public void deletePort(short portNumber) {
-        synchronized (this) {
-            ListIterator<OFPhysicalPort> iter = portList.listIterator();
-            while (iter.hasNext()) {
-                OFPhysicalPort nextPort = iter.next();
-                if (nextPort.getPortNumber() == portNumber) {
-                    iter.remove();
-                    return;
-                }
-            }
-        }
-        // Normally we shouldn't reach here, but it's possible that a port
-        // status message to add the port was dropped/missed, so we may not
-        // have the port in our port list and we don't want to treat that
-        // as an error. Should possibly/probably log a warning here, though.
+        ports.remove(portNumber);
     }
     
     @Override
