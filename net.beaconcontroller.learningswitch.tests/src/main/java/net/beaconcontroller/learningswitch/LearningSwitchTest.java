@@ -6,7 +6,9 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
@@ -27,6 +29,7 @@ import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPacketOut;
+import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.OFPacketIn.OFPacketInReason;
@@ -87,11 +90,23 @@ public class LearningSwitchTest extends BeaconTestCase {
     public void testFlood() throws Exception {
         LearningSwitch learningSwitch = getLearningSwitch();
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();
-
+        
         // build our expected flooded packetOut
+        List<OFPhysicalPort> enabledPorts = new ArrayList<OFPhysicalPort>();
+        List<OFAction> actions = new ArrayList<OFAction>();
+        short actionsLength = 0;
+        for (short i = 1; i < 10; i++) {
+            OFPhysicalPort port = new OFPhysicalPort();
+            port.setPortNumber(i);
+            enabledPorts.add(port);
+            if (i != 1) {
+                actions.add(new OFActionOutput().setPort(i));
+                actionsLength += OFActionOutput.MINIMUM_LENGTH;
+            }
+        }
         OFPacketOut po = new OFPacketOut()
-            .setActions(Arrays.asList(new OFAction[] {new OFActionOutput().setPort(OFPort.OFPP_FLOOD.getValue())}))
-            .setActionsLength((short) OFActionOutput.MINIMUM_LENGTH)
+            .setActions(actions)
+            .setActionsLength(actionsLength)
             .setBufferId(-1)
             .setInPort((short)1)
             .setPacketData(this.testPacketSerialized);
@@ -103,6 +118,8 @@ public class LearningSwitchTest extends BeaconTestCase {
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
         expect(mockSwitch.getId()).andReturn(1L).anyTimes();
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
+        expect(mockSwitch.portEnabled((short) 1)).andReturn(true);
+        expect(mockSwitch.getEnabledPorts()).andReturn(enabledPorts);
         mockStream.write(po);
 
         // Start recording the replay on the mocks
@@ -149,6 +166,7 @@ public class LearningSwitchTest extends BeaconTestCase {
         expect(mockSwitch.getInputStream()).andReturn(mockInStream);
         expect(mockInStream.getMessageFactory()).andReturn(new BasicFactory());
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
+        expect(mockSwitch.portEnabled((short) 1)).andReturn(true);
         mockStream.write(fm);
 
         // Start recording the replay on the mocks
