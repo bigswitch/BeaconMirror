@@ -16,13 +16,6 @@ public interface IDeviceManager {
     public Device getDeviceByDataLayerAddress(byte[] address);
 
     /**
-     * Returns a device for the given network layer address
-     * @param address
-     * @return
-     */
-    public Device getDeviceByNetworkLayerAddress(Integer address);
-
-    /**
      * Returns a list of all known devices in the system
      * @return
      */

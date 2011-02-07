@@ -1,7 +1,5 @@
 package net.beaconcontroller.devicemanager;
 
-import java.util.Set;
-
 import net.beaconcontroller.core.IOFSwitch;
 
 /**
@@ -37,29 +35,4 @@ public interface IDeviceManagerAware {
      */
     public void deviceMoved(Device device, IOFSwitch oldSw, Short oldPort,
             IOFSwitch sw, Short port);
-
-    /**
-     * Called when a network address is added to a Device.
-     * 
-     * @param device
-     * @param networkAddresses
-     *            the set of networkAddresses owned by this device including the
-     *            newly added address at the time of its addition
-     * @param networkAddress the newly added network address
-     */
-    public void deviceNetworkAddressAdded(Device device,
-            Set<Integer> networkAddresses, Integer networkAddress);
-
-    /**
-     * Called when a network address is removed from a Device.
-     * 
-     * @param device
-     * @param networkAddresses
-     *            the set of networkAddresses owned by this device directly
-     *            after the removal of the specified address
-     * @param networkAddress
-     *            the removed network address
-     */
-    public void deviceNetworkAddressRemoved(Device device,
-            Set<Integer> networkAddresses, Integer networkAddress);
 }

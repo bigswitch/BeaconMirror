@@ -261,16 +261,4 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
             }
         }
     }
-
-    @Override
-    public void deviceNetworkAddressAdded(Device device,
-            Set<Integer> networkAddresses, Integer networkAddress) {
-        // NOOP
-    }
-
-    @Override
-    public void deviceNetworkAddressRemoved(Device device,
-            Set<Integer> networkAddresses, Integer networkAddress) {
-        // NOOP
-    }
 }

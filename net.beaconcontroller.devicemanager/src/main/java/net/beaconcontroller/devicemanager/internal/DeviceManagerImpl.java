@@ -4,12 +4,10 @@
 package net.beaconcontroller.devicemanager.internal;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,7 +55,6 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
     protected Map<Long, Device> dataLayerAddressDeviceMap;
     protected Set<IDeviceManagerAware> deviceManagerAware;
     protected ReentrantReadWriteLock lock;
-    protected Map<Integer, Device> networkLayerAddressDeviceMap;
     protected volatile boolean shuttingDown = false;
     protected Map<IOFSwitch, Set<Device>> switchDeviceMap;
     protected Map<SwitchPortTuple, Set<Device>> switchPortDeviceMap;
@@ -67,7 +64,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
     protected IDeviceManagerDao deviceManagerDao;
 
     protected enum UpdateType {
-        ADDED, REMOVED, MOVED, NW_ADDED, NW_REMOVED
+        ADDED, REMOVED, MOVED
     }
 
     /**
@@ -75,9 +72,6 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
      */
     protected class Update {
         public Device device;
-        public Integer networkAddress;
-        public Set<Integer> networkAddresses;
-        public Set<Integer> oldNetworkAddresses;
         public IOFSwitch oldSw;
         public Short oldSwPort;
         public IOFSwitch sw;
@@ -95,7 +89,6 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
     public DeviceManagerImpl() {
         this.dataLayerAddressDeviceMap = new ConcurrentHashMap<Long, Device>();
         this.lock = new ReentrantReadWriteLock();
-        this.networkLayerAddressDeviceMap = new ConcurrentHashMap<Integer, Device>();
         this.switchDeviceMap = new ConcurrentHashMap<IOFSwitch, Set<Device>>();
         this.switchPortDeviceMap = new ConcurrentHashMap<SwitchPortTuple, Set<Device>>();
         this.updates = new LinkedBlockingQueue<Update>();
@@ -127,18 +120,6 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                                                     update.oldSw,
                                                     update.oldSwPort,
                                                     update.sw, update.swPort);
-                                            break;
-                                        case NW_ADDED:
-                                            dma.deviceNetworkAddressAdded(
-                                                    update.device,
-                                                    update.networkAddresses,
-                                                    update.networkAddress);
-                                            break;
-                                        case NW_REMOVED:
-                                            dma.deviceNetworkAddressRemoved(
-                                                    update.device,
-                                                    update.networkAddresses,
-                                                    update.networkAddress);
                                             break;
                                     }
                                 } catch (Exception e) {
@@ -206,11 +187,6 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
     protected void delDevice(Device device) {
         dataLayerAddressDeviceMap.remove(Ethernet.toLong(device.getDataLayerAddress()));
         deviceManagerDao.removeDevice(device);
-        if (!device.getNetworkAddresses().isEmpty()) {
-            for (Integer nwAddress : device.getNetworkAddresses()) {
-                networkLayerAddressDeviceMap.remove(nwAddress);
-            }
-        }
         updateStatus(device, false);
         if (log.isDebugEnabled()) {
             log.debug("Removed device {}", device);
@@ -244,11 +220,9 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
         }
 
         Device device = null;
-        Device nwDevice = null;
         lock.readLock().lock();
         try {
             device = dataLayerAddressDeviceMap.get(dlAddr);
-            nwDevice = networkLayerAddressDeviceMap.get(nwSrc);
         } finally {
             lock.readLock().unlock();
         }
@@ -256,10 +230,8 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
         if (!topology.isInternal(ipt)) {
             if (device != null) {
                 // Write lock is expensive, check if we have an update first
-                boolean updateNeeded = false;
                 boolean movedLocation = true;
-                boolean addedNW = false;
-                boolean nwChanged = false;
+                boolean addedNW = true;
 
                 for (SwitchPortTuple currSwPort : device.getSwPorts()) {
                     if (currSwPort.equals(ipt)) {
@@ -267,17 +239,14 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                         break;
                     }
                 }
-                if (nwDevice == null && nwSrc != 0) {
-                    addedNW = true;
-                } else if (nwDevice != null && !device.equals(nwDevice)) {
-                    nwChanged = true;
+                for (Integer currAddr : device.getNetworkAddresses()) {
+                    if ((nwSrc == 0) || (currAddr.intValue() == nwSrc)) {
+                        addedNW = false;
+                        break;
+                    }
                 }
-
-                if (movedLocation || addedNW || nwChanged) {
-                    updateNeeded = true;
-                }
-
-                if (updateNeeded) {
+            
+                if (movedLocation || addedNW) {
                     // Update everything needed during one write lock
                     lock.writeLock().lock();
                     try {
@@ -299,19 +268,8 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                         if (addedNW) {
                             // add the address
                             device.getNetworkAddresses().add(nwSrc);
-                            this.networkLayerAddressDeviceMap.put(nwSrc, device);
-                            updateNetwork(device, device.getNetworkAddresses(), nwSrc, true);
                             log.info("Device {} added IP {}", device,
                                     IPv4.fromIPv4Address(nwSrc));
-                        } else if (nwChanged) {
-                            // IP changed MACs
-                            nwDevice.getNetworkAddresses().remove(nwSrc);
-                            updateNetwork(nwDevice, nwDevice.getNetworkAddresses(), nwSrc, false);
-                            device.getNetworkAddresses().add(nwSrc);
-                            this.networkLayerAddressDeviceMap.put(nwSrc, device);
-                            updateNetwork(device, device.getNetworkAddresses(), nwSrc, true);
-                            log.info("Device {} changed IP {} from {}", new Object[] {
-                                    device, IPv4.fromIPv4Address(nwSrc), nwDevice });
                         }
                     } finally {
                         lock.writeLock().unlock();
@@ -329,17 +287,8 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                     }
                     this.dataLayerAddressDeviceMap.put(dlAddr, device);
                     deviceManagerDao.addDevice(device);
-                    if (nwSrc != 0) {
-                        this.networkLayerAddressDeviceMap.put(nwSrc, device);
-                    }
                     addSwitchDeviceMapping(ipt.getSw(), device);
                     addSwitchPortDeviceMapping(ipt, device);
-                    if (nwDevice != null) {
-                        nwDevice.getNetworkAddresses().remove(nwSrc);
-                        updateNetwork(nwDevice, nwDevice.getNetworkAddresses(), nwSrc, false);
-                        log.info("Device {} changed IP {} from {}", new Object[] {
-                                device, IPv4.fromIPv4Address(nwSrc), nwDevice });
-                    }
                     updateStatus(device, true);
                     log.info("New device {}", device);
                 } finally {
@@ -382,16 +331,6 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
         switchPortDeviceMap.get(id).remove(device);
         if (switchPortDeviceMap.get(id).isEmpty()) {
             switchPortDeviceMap.remove(id);
-        }
-    }
-
-    @Override
-    public Device getDeviceByNetworkLayerAddress(Integer address) {
-        lock.readLock().lock();
-        try {
-            return this.networkLayerAddressDeviceMap.get(address);
-        } finally {
-            lock.readLock().unlock();
         }
     }
 
@@ -530,29 +469,6 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
         update.oldSwPort = oldSwPort.getPort();
         update.sw = swPort.getSw();
         update.swPort = swPort.getPort();
-        this.updates.add(update);
-    }
-
-    /**
-     * Puts an update in queue to indicate the addition/removal of a network
-     * address.  Must be called from within the write lock.
-     * @param device
-     * @param networkAddresses
-     * @param networkAddress
-     * @param added
-     */
-    protected void updateNetwork(Device device, Queue<Integer> networkAddresses,
-            Integer networkAddress, boolean added) {
-        Update update;
-        if (added) {
-            update = new Update(UpdateType.NW_ADDED);
-        } else {
-            update = new Update(UpdateType.NW_REMOVED);
-        }
-        update.device = device;
-        update.networkAddress = networkAddress;
-        update.networkAddresses = Collections
-                .unmodifiableSet(new HashSet<Integer>(networkAddresses));
         this.updates.add(update);
     }
 }
