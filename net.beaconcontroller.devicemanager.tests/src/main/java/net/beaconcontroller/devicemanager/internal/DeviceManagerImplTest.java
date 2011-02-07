@@ -9,11 +9,10 @@ import static org.junit.Assert.assertEquals;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.test.MockBeaconProvider;
 import net.beaconcontroller.devicemanager.Device;
-import net.beaconcontroller.packet.Data;
+import net.beaconcontroller.packet.ARP;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPacket;
 import net.beaconcontroller.packet.IPv4;
-import net.beaconcontroller.packet.UDP;
 import net.beaconcontroller.test.BeaconTestCase;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.SwitchPortTuple;
@@ -38,18 +37,20 @@ public class DeviceManagerImplTest extends BeaconTestCase {
 
         // Build our test packet
         this.testPacket = new Ethernet()
-            .setDestinationMACAddress("00:11:22:33:44:55")
             .setSourceMACAddress("00:44:33:22:11:00")
-            .setEtherType(Ethernet.TYPE_IPv4)
+            .setDestinationMACAddress("00:11:22:33:44:55")
+            .setEtherType(Ethernet.TYPE_ARP)
             .setPayload(
-                new IPv4()
-                .setTtl((byte) 128)
-                .setSourceAddress("192.168.1.1")
-                .setDestinationAddress("192.168.1.2")
-                .setPayload(new UDP()
-                            .setSourcePort((short) 5000)
-                            .setDestinationPort((short) 5001)
-                            .setPayload(new Data(new byte[] {0x01}))));
+                    new ARP()
+                    .setHardwareType(ARP.HW_TYPE_ETHERNET)
+                    .setProtocolType(ARP.PROTO_TYPE_IP)
+                    .setHardwareAddressLength((byte) 6)
+                    .setProtocolAddressLength((byte) 4)
+                    .setOpCode(ARP.OP_REPLY)
+                    .setSenderHardwareAddress(Ethernet.toMACAddress("00:44:33:22:11:00"))
+                    .setSenderProtocolAddress(IPv4.toIPv4AddressBytes("192.168.1.1"))
+                    .setTargetHardwareAddress(Ethernet.toMACAddress("00:11:22:33:44:55"))
+                    .setTargetProtocolAddress(IPv4.toIPv4AddressBytes("192.168.1.2")));
         this.testPacketSerialized = testPacket.serialize();
 
         // Build the PacketIn
