@@ -379,6 +379,21 @@ public class IPv4 extends BasePacket {
     }
 
     /**
+     * Accepts an IPv4 address in a byte array and returns the corresponding
+     * 32-bit integer value.
+     * @param ipAddress
+     * @return
+     */
+    public static int toIPv4Address(byte[] ipAddress) {
+        int ip = 0;
+        for (int i = 0; i < 4; i++) {
+          int t = (ipAddress[i] & 0xff) << ((3-i)*8);
+          ip |= t;
+        }
+        return ip;
+    }
+
+    /**
      * Accepts an IPv4 address and returns of string of the form xxx.xxx.xxx.xxx
      * ie 192.168.0.1
      * 
