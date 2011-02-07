@@ -23,12 +23,13 @@ import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.devicemanager.Device;
 import net.beaconcontroller.devicemanager.IDeviceManager;
 import net.beaconcontroller.devicemanager.IDeviceManagerAware;
+import net.beaconcontroller.devicemanager.dao.IDeviceManagerDao;
+import net.beaconcontroller.packet.ARP;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPv4;
-import net.beaconcontroller.devicemanager.dao.IDeviceManagerDao;
 import net.beaconcontroller.topology.ITopology;
-import net.beaconcontroller.topology.SwitchPortTuple;
 import net.beaconcontroller.topology.ITopologyAware;
+import net.beaconcontroller.topology.SwitchPortTuple;
 
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
@@ -38,11 +39,8 @@ import org.openflow.protocol.OFPhysicalPort.OFPortState;
 import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFPortStatus.OFPortReason;
 import org.openflow.protocol.OFType;
-import org.openflow.util.HexString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * DeviceManager creates Devices based upon MAC addresses seen in the network.
@@ -233,7 +231,18 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
             return Command.CONTINUE;
 
         Long dlAddr = Ethernet.toLong(match.getDataLayerSource());
-        Integer nwSrc = match.getNetworkSource();
+
+        Integer nwSrc = 0;
+        Ethernet eth = new Ethernet();
+        eth.deserialize(pi.getPacketData(), 0, pi.getPacketData().length);
+        if (eth.getPayload() instanceof ARP) {
+            ARP arp = (ARP) eth.getPayload();
+            if ((arp.getProtocolType() == ARP.PROTO_TYPE_IP)
+                    && (Ethernet.toLong(arp.getSenderHardwareAddress()) == dlAddr)) {
+                nwSrc = IPv4.toIPv4Address(arp.getSenderProtocolAddress());
+            }
+        }
+
         Device device = null;
         Device nwDevice = null;
         lock.readLock().lock();
