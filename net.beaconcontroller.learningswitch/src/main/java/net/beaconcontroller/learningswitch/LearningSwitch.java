@@ -134,8 +134,6 @@ public class LearningSwitch implements IOFMessageListener {
             for (OFPhysicalPort outPhysPort : sw.getEnabledPorts()) {
                 if ((outPort != null) && (outPort != outPhysPort.getPortNumber()))
                     continue;
-                if (outPhysPort.getPortNumber() == OFPort.OFPP_LOCAL.getValue())
-                    continue;
                 if (outPhysPort.getPortNumber() == pi.getInPort())
                     continue;
                 actions.add(new OFActionOutput().setPort(outPhysPort.getPortNumber()));
