@@ -36,6 +36,7 @@ import org.openflow.protocol.OFPacketIn.OFPacketInReason;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.protocol.factory.BasicFactory;
+import org.openflow.util.LRULinkedHashMap;
 
 /**
  *
@@ -75,7 +76,7 @@ public class LearningSwitchTest extends BeaconTestCase {
             .setTotalLength((short) this.testPacketSerialized.length);
 
         // clear the MAC tables
-        getLearningSwitch().clearTables();
+        getLearningSwitch().getMacTables().clear();
     }
 
     protected LearningSwitch getLearningSwitch() {
@@ -116,7 +117,6 @@ public class LearningSwitchTest extends BeaconTestCase {
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
-        expect(mockSwitch.getId()).andReturn(1L).anyTimes();
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
         expect(mockSwitch.portEnabled((short) 1)).andReturn(true);
         expect(mockSwitch.getEnabledPorts()).andReturn(enabledPorts);
@@ -133,8 +133,8 @@ public class LearningSwitchTest extends BeaconTestCase {
         verify(mockSwitch, mockStream);
 
         // Verify the MAC table inside the switch
-        assertEquals(1, learningSwitch.getLearningSwitchDao()
-                .getMapping(mockSwitch, Ethernet.toMACAddress("00:44:33:22:11:00"))
+        assertEquals(1, learningSwitch.getMacTables().get(mockSwitch).get(
+                Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")))
                 .shortValue());
     }
 
@@ -162,7 +162,6 @@ public class LearningSwitchTest extends BeaconTestCase {
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         OFMessageInStream mockInStream = createMock(OFMessageInStream.class);
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
-        expect(mockSwitch.getId()).andReturn(1L).anyTimes();
         expect(mockSwitch.getInputStream()).andReturn(mockInStream);
         expect(mockInStream.getMessageFactory()).andReturn(new BasicFactory());
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
@@ -173,8 +172,11 @@ public class LearningSwitchTest extends BeaconTestCase {
         replay(mockSwitch, mockStream, mockInStream);
 
         // Populate the MAC table
-        learningSwitch.getLearningSwitchDao().setMapping(mockSwitch,
-                Ethernet.toMACAddress("00:11:22:33:44:55"), (short)2);
+        learningSwitch.getMacTables().put(mockSwitch,
+                new LRULinkedHashMap<Long, Short>(64001, 64000));
+        learningSwitch.getMacTables().get(mockSwitch).put(
+                Ethernet.toLong(Ethernet.toMACAddress("00:11:22:33:44:55")),
+                (short) 2);
 
         // Get the listener and trigger the packet in
         IOFMessageListener listener = mockBeaconProvider.getListeners().get(
@@ -185,8 +187,8 @@ public class LearningSwitchTest extends BeaconTestCase {
         verify(mockSwitch, mockStream, mockInStream);
 
         // Verify the MAC table inside the switch
-        assertEquals(1, learningSwitch.getLearningSwitchDao()
-                .getMapping(mockSwitch, Ethernet.toMACAddress("00:44:33:22:11:00"))
+        assertEquals(1, learningSwitch.getMacTables().get(mockSwitch).get(
+                Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")))
                 .shortValue());
     }
 }

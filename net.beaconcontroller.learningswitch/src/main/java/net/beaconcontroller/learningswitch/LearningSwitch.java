@@ -3,11 +3,13 @@ package net.beaconcontroller.learningswitch;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
-import net.beaconcontroller.learningswitch.dao.ILearningSwitchDao;
+import net.beaconcontroller.packet.Ethernet;
 
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
@@ -19,6 +21,7 @@ import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
+import org.openflow.util.LRULinkedHashMap;
 import org.openflow.util.U16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +33,8 @@ import org.slf4j.LoggerFactory;
 public class LearningSwitch implements IOFMessageListener {
     protected static Logger log = LoggerFactory.getLogger(LearningSwitch.class);
     protected IBeaconProvider beaconProvider;
-    protected ILearningSwitchDao learningSwitchDao;
+    protected Map<IOFSwitch, Map<Long, Short>> macTables =
+        new HashMap<IOFSwitch, Map<Long, Short>>();
 
     // flow-mod - for use in the cookie                                                                                                                             
     public static final int LEARNING_SWITCH_APP_ID = 1;
@@ -60,18 +64,34 @@ public class LearningSwitch implements IOFMessageListener {
         return "switch";
     }
 
-    public void clearTables() {
-        learningSwitchDao.clearTables();
+    /**
+     * @return the macTables
+     */
+    public Map<IOFSwitch, Map<Long, Short>> getMacTables() {
+        return macTables;
+    }
+
+    /**
+     * @param macTables the macTables to set
+     */
+    public void setMacTables(Map<IOFSwitch, Map<Long, Short>> macTables) {
+        this.macTables = macTables;
     }
 
     public Command receive(IOFSwitch sw, OFMessage msg) {
         OFPacketIn pi = (OFPacketIn) msg;
+        Map<Long, Short> macTable = macTables.get(sw);
+        if (macTable == null) {
+            macTable = new LRULinkedHashMap<Long, Short>(64001, 64000);
+            macTables.put(sw, macTable);
+        }
 
         // Build the Match
         OFMatch match = new OFMatch();
         match.loadFromPacket(pi.getPacketData(), pi.getInPort());
         byte[] dlDst = match.getDataLayerDestination();
         byte[] dlSrc = match.getDataLayerSource();
+        Long dlSrcLong = Ethernet.toLong(dlSrc);
         int bufferId = pi.getBufferId();
 
         // if the input port is blocked, ignore the packet
@@ -82,17 +102,16 @@ public class LearningSwitch implements IOFMessageListener {
         
         // if the src is not multicast, learn it
         if ((dlSrc[0] & 0x1) == 0) {
-            Short srcMapping = learningSwitchDao.getMapping(sw, dlSrc);
-            if (srcMapping == null ||
-                    !srcMapping.equals(pi.getInPort())) {
-                learningSwitchDao.setMapping(sw, dlSrc, pi.getInPort());
+            if (!macTable.containsKey(dlSrcLong) ||
+                    !macTable.get(dlSrcLong).equals(pi.getInPort())) {
+                macTable.put(dlSrcLong, pi.getInPort());
             }
         }
 
         Short outPort = null;
         // if the destination is not multicast, look it up
         if ((dlDst[0] & 0x1) == 0) {
-            outPort = learningSwitchDao.getMapping(sw, dlDst);
+            outPort = macTable.get(Ethernet.toLong(dlDst));
         }
 
         // push a flow mod if we know where the destination lives
@@ -165,19 +184,5 @@ public class LearningSwitch implements IOFMessageListener {
             }
         }
         return Command.CONTINUE;
-    }
-
-    /**
-     * @return the learningSwitchDAO
-     */
-    public ILearningSwitchDao getLearningSwitchDao() {
-        return learningSwitchDao;
-    }
-
-    /**
-     * @param learningSwitchDAO the learningSwitchDAO to set
-     */
-    public void setLearningSwitchDao(ILearningSwitchDao learningSwitchDao) {
-        this.learningSwitchDao = learningSwitchDao;
     }
 }

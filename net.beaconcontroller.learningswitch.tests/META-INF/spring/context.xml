@@ -9,7 +9,6 @@
     class="net.beaconcontroller.learningswitch.LearningSwitch"
     init-method="startUp" destroy-method="shutDown">
     <property name="beaconProvider" ref="mockBeaconProvider"/>
-    <property name="learningSwitchDao" ref="learningSwitchDao"/>
   </bean>
 
   <bean id="mockBeaconProvider" class="net.beaconcontroller.core.test.MockBeaconProvider">
