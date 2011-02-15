@@ -25,6 +25,8 @@ public class Ethernet extends BasePacket {
 
     protected byte[] destinationMACAddress;
     protected byte[] sourceMACAddress;
+    protected byte priorityCode;
+    protected short vlanID;
     protected short etherType;
     protected boolean pad = false;
 
@@ -76,6 +78,36 @@ public class Ethernet extends BasePacket {
     }
 
     /**
+     * @return the priorityCode
+     */
+    public byte getPriorityCode() {
+        return priorityCode;
+    }
+
+    /**
+     * @param priorityCode the priorityCode to set
+     */
+    public Ethernet setPriorityCode(byte priorityCode) {
+        this.priorityCode = priorityCode;
+        return this;
+    }
+
+    /**
+     * @return the vlanID
+     */
+    public short getVlanID() {
+        return vlanID;
+    }
+
+    /**
+     * @param vlanID the vlanID to set
+     */
+    public Ethernet setVlanID(short vlanID) {
+        this.vlanID = vlanID;
+        return this;
+    }
+
+    /**
      * @return the etherType
      */
     public short getEtherType() {
@@ -121,6 +153,10 @@ public class Ethernet extends BasePacket {
         ByteBuffer bb = ByteBuffer.wrap(data);
         bb.put(destinationMACAddress);
         bb.put(sourceMACAddress);
+        if (vlanID != 0) {
+            bb.putShort((short) 0x8100);
+            bb.putShort((short) ((priorityCode << 13) | (vlanID & 0x0fff)));
+        }
         bb.putShort(etherType);
         if (payloadData != null)
             bb.put(payloadData);
@@ -140,7 +176,15 @@ public class Ethernet extends BasePacket {
         if (this.sourceMACAddress == null)
             this.sourceMACAddress = new byte[6];
         bb.get(this.sourceMACAddress);
-        this.etherType = bb.getShort();
+
+        short etherType = bb.getShort();
+        if (etherType == (short) 0x8100) {
+            short tci = bb.getShort();
+            this.priorityCode = (byte) ((tci >> 13) & 0x07);
+            this.vlanID = (short) (tci & 0x0fff);
+            etherType = bb.getShort();
+        }
+        this.etherType = etherType;
 
         IPacket payload;
         if (Ethernet.etherTypeClassMap.containsKey(this.etherType)) {
@@ -222,6 +266,10 @@ public class Ethernet extends BasePacket {
             return false;
         Ethernet other = (Ethernet) obj;
         if (!Arrays.equals(destinationMACAddress, other.destinationMACAddress))
+            return false;
+        if (priorityCode != other.priorityCode)
+            return false;
+        if (vlanID != other.vlanID)
             return false;
         if (etherType != other.etherType)
             return false;
