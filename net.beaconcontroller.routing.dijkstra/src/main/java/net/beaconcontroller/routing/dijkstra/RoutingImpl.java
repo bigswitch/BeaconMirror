@@ -78,31 +78,6 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
         nexthopnodemaps.clear();
         lock.writeLock().unlock();
     }
-
-    @Override
-    public boolean routeExists(Long srcId, Long dstId) {
-        // self route check
-        if (srcId.equals(dstId))
-            return true;
-
-        // Check if next hop exists
-        lock.readLock().lock();
-        HashMap<Long, Long> nexthopnodes = nexthopnodemaps.get(srcId);
-        boolean exists = (nexthopnodes!=null) && (nexthopnodes.get(dstId)!=null);
-        lock.readLock().unlock();
-
-        return exists;
-    }
-
-    @Override
-    public void clear() {
-        lock.writeLock().lock();
-        network.clear();
-        pathcache.clear();
-        nexthoplinkmaps.clear();
-        nexthopnodemaps.clear();
-        lock.writeLock().unlock();
-    }
     
     @Override
     public Route getRoute(IOFSwitch src, IOFSwitch dst) {
