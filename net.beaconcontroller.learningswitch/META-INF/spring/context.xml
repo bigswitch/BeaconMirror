@@ -8,10 +8,6 @@
     class="net.beaconcontroller.learningswitch.LearningSwitch"
     init-method="startUp" destroy-method="shutDown">
     <property name="beaconProvider" ref="beaconProvider"/>
-    <property name="learningSwitchDao" ref="learningSwitchDao"/>
   </bean>
 
-  <bean id="learningSwitchDao" class="net.beaconcontroller.learningswitch.dao.impl.InMemoryLearningSwitchDao">
-    <!--  <property name="storageSource" ref="storageSource"/> -->
-  </bean>
 </beans>
