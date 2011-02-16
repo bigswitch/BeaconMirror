@@ -32,7 +32,7 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
 
     protected static Logger log;
     protected ReentrantReadWriteLock lock;
-    protected HashMap<Long, TreeMap<Short, Link>> network;
+    protected HashMap<Long, TreeMap<Link, Link>> network;
     protected HashMap<Long, HashMap<Long, Link>> nexthoplinkmaps;
     protected HashMap<Long, HashMap<Long, Long>> nexthopnodemaps;
     protected LRUHashMap<RouteId, Route> pathcache;
@@ -46,7 +46,7 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
         log = LoggerFactory.getLogger(RoutingImpl.class);
         lock = new ReentrantReadWriteLock();
 
-        network = new HashMap<Long, TreeMap<Short, Link>>();
+        network = new HashMap<Long, TreeMap<Link, Link>>();
         nexthoplinkmaps = new HashMap<Long, HashMap<Long, Link>>();
         nexthopnodemaps = new HashMap<Long, HashMap<Long, Long>>();
         pathcache = new LRUHashMap<RouteId, Route>(PATH_CACHE_SIZE);
@@ -150,18 +150,18 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
         lock.writeLock().lock();
         boolean network_updated = false;
        
-        TreeMap<Short, Link> src = network.get(srcId);
+        TreeMap<Link, Link> src = network.get(srcId);
         if (src == null) {
             log.debug("update: new node: {}", srcId);
-            src = new TreeMap<Short, Link>();
+            src = new TreeMap<Link, Link>();
             network.put(srcId, src);
             network_updated = true;
         }
 
-        TreeMap<Short, Link> dst = network.get(dstId);
+        TreeMap<Link, Link> dst = network.get(dstId);
         if (dst == null) {
             log.debug("update: new node: {}", dstId);
-            dst = new TreeMap<Short, Link>();
+            dst = new TreeMap<Link, Link>();
             network.put(dstId, dst);
             network_updated = true;
         }
@@ -172,7 +172,7 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
                 log.debug("update: unexpected link add request - srcPort in use src, link: {}, {}", srcId, src.get(srcPort));
             }
             log.debug("update: added link: {}, {}", srcId, srcLink);
-            src.put(srcPort, srcLink);
+            src.put(srcLink, srcLink);
             network_updated = true;
         }
         else {
@@ -255,9 +255,9 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
             if (seen.containsKey(cnode)) continue;
             seen.put(cnode, true);
             
-            TreeMap<Short,Link> ports = network.get(cnode);
-            for (Short port : ports.keySet()) {
-                Link link = ports.get(port);
+            TreeMap<Link,Link> ports = network.get(cnode);
+            for (Link linkspec : ports.keySet()) {
+                Link link = ports.get(linkspec);
                 Long neighbor = link.getDst();
                 int ndist = cdist + 1; // the weight of the link, always 1 in current version of beacon.
                 if (ndist < dist.get(neighbor)) {
