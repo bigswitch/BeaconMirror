@@ -4,7 +4,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,15 +28,14 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
+import org.openflow.protocol.OFPacketIn.OFPacketInReason;
 import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
-import org.openflow.protocol.OFPacketIn.OFPacketInReason;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.protocol.factory.BasicFactory;
-import org.openflow.util.LRULinkedHashMap;
 
 /**
  *
@@ -76,7 +75,7 @@ public class LearningSwitchTest extends BeaconTestCase {
             .setTotalLength((short) this.testPacketSerialized.length);
 
         // clear the MAC tables
-        getLearningSwitch().getMacTables().clear();
+        //getLearningSwitch().getMacTables().clear();
     }
 
     protected LearningSwitch getLearningSwitch() {
@@ -91,23 +90,11 @@ public class LearningSwitchTest extends BeaconTestCase {
     public void testFlood() throws Exception {
         LearningSwitch learningSwitch = getLearningSwitch();
         MockBeaconProvider mockBeaconProvider = getMockBeaconProvider();
-        
+
         // build our expected flooded packetOut
-        List<OFPhysicalPort> enabledPorts = new ArrayList<OFPhysicalPort>();
-        List<OFAction> actions = new ArrayList<OFAction>();
-        short actionsLength = 0;
-        for (short i = 1; i < 10; i++) {
-            OFPhysicalPort port = new OFPhysicalPort();
-            port.setPortNumber(i);
-            enabledPorts.add(port);
-            if (i != 1) {
-                actions.add(new OFActionOutput().setPort(i));
-                actionsLength += OFActionOutput.MINIMUM_LENGTH;
-            }
-        }
         OFPacketOut po = new OFPacketOut()
-            .setActions(actions)
-            .setActionsLength(actionsLength)
+            .setActions(Arrays.asList(new OFAction[] {new OFActionOutput().setPort(OFPort.OFPP_FLOOD.getValue())}))
+            .setActionsLength((short) OFActionOutput.MINIMUM_LENGTH)
             .setBufferId(-1)
             .setInPort((short)1)
             .setPacketData(this.testPacketSerialized);
@@ -118,8 +105,6 @@ public class LearningSwitchTest extends BeaconTestCase {
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
-        expect(mockSwitch.portEnabled((short) 1)).andReturn(true);
-        expect(mockSwitch.getEnabledPorts()).andReturn(enabledPorts);
         mockStream.write(po);
 
         // Start recording the replay on the mocks
@@ -133,9 +118,8 @@ public class LearningSwitchTest extends BeaconTestCase {
         verify(mockSwitch, mockStream);
 
         // Verify the MAC table inside the switch
-        assertEquals(1, learningSwitch.getMacTables().get(mockSwitch).get(
-                Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")))
-                .shortValue());
+        assertEquals(1, learningSwitch.getMacToPortMap(mockSwitch).get(
+                Arrays.hashCode(Ethernet.toMACAddress("00:44:33:22:11:00"))).shortValue());
     }
 
     @Test
@@ -151,32 +135,28 @@ public class LearningSwitchTest extends BeaconTestCase {
             .setActions(Arrays.asList(new OFAction[] {new OFActionOutput().setPort((short) 2)}))
             .setBufferId(50)
             .setCommand(OFFlowMod.OFPFC_ADD)
-            .setIdleTimeout((short) 5)
+            .setIdleTimeout((short) 10)
             .setMatch(new OFMatch().loadFromPacket(testPacketSerialized, (short) 1)
                     .setWildcards(OFMatch.OFPFW_NW_TOS))
             .setOutPort(OFPort.OFPP_NONE.getValue())
             .setCookie(1L << 52)
+            .setPriority((short) 100)
+            .setFlags((short)(1 << 0))
             .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
 
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         OFMessageInStream mockInStream = createMock(OFMessageInStream.class);
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
-        expect(mockSwitch.getInputStream()).andReturn(mockInStream);
-        expect(mockInStream.getMessageFactory()).andReturn(new BasicFactory());
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
-        expect(mockSwitch.portEnabled((short) 1)).andReturn(true);
         mockStream.write(fm);
 
         // Start recording the replay on the mocks
         replay(mockSwitch, mockStream, mockInStream);
 
         // Populate the MAC table
-        learningSwitch.getMacTables().put(mockSwitch,
-                new LRULinkedHashMap<Long, Short>(64001, 64000));
-        learningSwitch.getMacTables().get(mockSwitch).put(
-                Ethernet.toLong(Ethernet.toMACAddress("00:11:22:33:44:55")),
-                (short) 2);
+        learningSwitch.addToMacToPortMap(mockSwitch,
+                Arrays.hashCode(Ethernet.toMACAddress("00:11:22:33:44:55")), (short) 2);
 
         // Get the listener and trigger the packet in
         IOFMessageListener listener = mockBeaconProvider.getListeners().get(
@@ -187,8 +167,7 @@ public class LearningSwitchTest extends BeaconTestCase {
         verify(mockSwitch, mockStream, mockInStream);
 
         // Verify the MAC table inside the switch
-        assertEquals(1, learningSwitch.getMacTables().get(mockSwitch).get(
-                Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")))
-                .shortValue());
+        assertEquals(1, learningSwitch.getMacToPortMap(mockSwitch).get(
+                Arrays.hashCode(Ethernet.toMACAddress("00:44:33:22:11:00"))).shortValue());
     }
 }
