@@ -15,29 +15,28 @@ package net.beaconcontroller.learningswitch;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
 import java.util.LinkedList;
-
-import org.openflow.protocol.OFPacketIn;
-import org.openflow.protocol.OFPacketOut;
-import org.openflow.protocol.OFMatch;
-import org.openflow.protocol.OFFlowMod;
-import org.openflow.protocol.OFPort;
-import org.openflow.protocol.OFPortStatus;
-import org.openflow.protocol.OFPhysicalPort;
-import org.openflow.protocol.OFError;
-import org.openflow.protocol.action.OFAction;
-import org.openflow.protocol.action.OFActionOutput;
+import java.util.List;
+import java.util.Map;
 
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFSwitchListener;
 
+import org.openflow.protocol.OFError;
+import org.openflow.protocol.OFFlowMod;
+import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFPacketIn;
+import org.openflow.protocol.OFPacketOut;
+import org.openflow.protocol.OFPhysicalPort;
+import org.openflow.protocol.OFPort;
+import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFType;
+import org.openflow.protocol.action.OFAction;
+import org.openflow.protocol.action.OFActionOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +141,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
 
     // Skip broadcast and multicast addresses
     public boolean shouldLearnThisMac(byte[] mac) {
-        if (mac[0] & 0x1) { // multicast
+        if ((mac[0] & 0x1) == 0x1) { // multicast
             return false;
         }
         for (int i=0; i<6; i++) {
