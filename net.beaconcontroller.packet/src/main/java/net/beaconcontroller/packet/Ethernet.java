@@ -145,7 +145,7 @@ public class Ethernet extends BasePacket {
             payload.setParent(this);
             payloadData = payload.serialize();
         }
-        int length = 14 + ((payloadData == null) ? 0 : payloadData.length);
+        int length = 14 + ((vlanID == 0) ? 0 : 4) + ((payloadData == null) ? 0 : payloadData.length);
         if (pad && length < 60) {
             length = 60;
         }
