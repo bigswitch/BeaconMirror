@@ -14,9 +14,7 @@ package net.beaconcontroller.learningswitch;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +22,7 @@ import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFSwitchListener;
+import net.beaconcontroller.packet.Ethernet;
 
 import org.openflow.protocol.OFError;
 import org.openflow.protocol.OFFlowMod;
@@ -52,22 +51,34 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
     public static final int APP_ID_SHIFT = (64 - APP_ID_BITS);
     
     // more flow-mod defaults 
-    protected static final short IDLE_TIMEOUT_DEFAULT = 10;
+    protected static final short IDLE_TIMEOUT_DEFAULT = 5;
     protected static final short HARD_TIMEOUT_DEFAULT = 0;
     protected static final short PRIORITY_DEFAULT     = 100;
     
     // for managing our map sizes
     protected static final int   MAX_MACS_PER_SWITCH  = 1000;
-    protected static final int   PRUNE_MACS           = 100;
 
+    class MacVlanPair {
+        public Long mac;
+        public Short vlan;
+        public MacVlanPair(Long mac, Short vlan) {
+            this.mac = mac;
+            this.vlan = vlan;
+        }
+        public boolean equals(Object o) {
+            return (o instanceof MacVlanPair) && (mac.equals(((MacVlanPair) o).mac))
+                && (vlan.equals(((MacVlanPair) o).vlan));
+        }
+        public int hashCode() {
+            return mac.hashCode() ^ vlan.hashCode();
+        }
+    }
+    
     // for lookup of the port based on mac
-    protected Map<Integer,Map<Integer,Short>> perSwitchMacToPortMaps;
-    // maintain a list of macs on a switch to allow expiration
-    protected Map<Integer,List<Integer>> perSwitchMacLists;
+    protected Map<Integer,Map<MacVlanPair,Short>> macVlanToPortMaps;
     
     public LearningSwitch() {
-        this.perSwitchMacToPortMaps = new HashMap<Integer,Map<Integer,Short>>();
-        this.perSwitchMacLists = new HashMap<Integer,List<Integer>>();
+        this.macVlanToPortMaps = new HashMap<Integer,Map<MacVlanPair,Short>>();
     }
     
     /**
@@ -99,62 +110,33 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         return "switch";
     }
 
-    // LOOK! we manage a LinkedList somewhat "behind-the-scenes" of the Map -
-    // would be better if we encapsulated the two into a class...
-    protected Map<Integer,Short> getMacToPortMap(IOFSwitch sw) {
+    private Map<MacVlanPair,Short> getPortMap(IOFSwitch sw) {
         int switchHash = sw.hashCode();
-        Map<Integer,Short> macToPortMap = this.perSwitchMacToPortMaps.get(switchHash);
+        Map<MacVlanPair,Short> macToPortMap = this.macVlanToPortMaps.get(switchHash);
         if (macToPortMap == null) {
-            // size map double the number of expected elements to minimize collisions
-            macToPortMap = new HashMap<Integer,Short>(LearningSwitch.MAX_MACS_PER_SWITCH * 2);
-            this.perSwitchMacToPortMaps.put(switchHash, macToPortMap);
-        }
-        List<Integer> macList = this.perSwitchMacLists.get(switchHash);
-        if (macList == null) {
-            macList = new LinkedList<Integer>();
-            this.perSwitchMacLists.put(switchHash, macList);
+            macToPortMap = new org.openflow.util.LRULinkedHashMap<MacVlanPair,Short>(
+                    LearningSwitch.MAX_MACS_PER_SWITCH);
+            this.macVlanToPortMaps.put(switchHash, macToPortMap);
         }
         return macToPortMap;
     }
 
-    protected void addToMacToPortMap(IOFSwitch sw, int macKey, short portVal) {
-        Map<Integer,Short> macToPortMap = this.getMacToPortMap(sw);
-        int switchHash = sw.hashCode();
-        List<Integer> macList = this.perSwitchMacLists.get(switchHash);
-        if (macToPortMap != null && macList != null) {
-            if (macToPortMap.get(macKey) == null || macToPortMap.get(macKey) != portVal) {
-                macToPortMap.put(macKey, portVal);
-                macList.add(macKey);
-                // Check if macList has hit the threshold - if so, delete old ones
-                if (macList.size() > LearningSwitch.MAX_MACS_PER_SWITCH) {
-                    // delete a bunch so we're not always hitting this code
-                    for (int i = 0; i < LearningSwitch.PRUNE_MACS; i++) {
-                        Integer macHash = macList.remove(0);  // hopefully removing 0 is fast
-                        macToPortMap.remove(macHash);
-                    }
-                }
-            }
+    protected void addToPortMap(IOFSwitch sw, Long mac, Short vlan, short portVal) {
+        Map<MacVlanPair,Short> macToPortMap = this.getPortMap(sw);
+        if (macToPortMap != null) {
+            macToPortMap.put(new MacVlanPair(mac, vlan), portVal);
         } else {
-            log.error("Whoa - we should have macToPortMap and macList for the switch");
+            log.error("Whoa - we should have macToPortMap for the switch");
         }
-    }
-
-    // Skip broadcast and multicast addresses
-    public boolean shouldLearnThisMac(byte[] mac) {
-        if ((mac[0] & 0x1) == 0x1) { // multicast
-            return false;
-        }
-        for (int i=0; i<6; i++) {
-            if (mac[i] != 0xff)
-                return true;  // not a broadcast
-        }
-        return false;  // must have been a broadcast
     }
     
-    public void writeFlowModForMatch(IOFSwitch sw, 
+    public Short getFromPortMap(IOFSwitch sw, Long mac, Short vlan) {
+        return getPortMap(sw).get(new MacVlanPair(mac, vlan));
+    }
+
+    private void writeFlowModForMatch(IOFSwitch sw,
                                      int bufferId,
-                                     OFMatch matchFields, 
-                                     byte[] destMac, 
+                                     OFMatch matchFields,
                                      short egressPort) {
         // from openflow 1.0 spec - need to set these on a struct ofp_flow_mod:
         // struct ofp_flow_mod {
@@ -225,7 +207,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         }
     }
     
-    public void writePacketOutForPacketIn(IOFSwitch sw, 
+    private void writePacketOutForPacketIn(IOFSwitch sw, 
                                           OFPacketIn packetInMessage, 
                                           short egressPort) {
         // from openflow 1.0 spec - need to set these on a struct ofp_packet_out:
@@ -269,61 +251,48 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         }
     }
     
-    public Command processPacketInMessage(IOFSwitch sw, OFPacketIn packetInMessage) {
-        Map<Integer,Short> macToPortMap = this.getMacToPortMap(sw);
-        
+    private Command processPacketInMessage(IOFSwitch sw, OFPacketIn packetInMessage) {
         // read in packet data headers by using OFMatch 
         OFMatch matchFields = new OFMatch();
         matchFields.loadFromPacket(packetInMessage.getPacketData(), 
                                    packetInMessage.getInPort());
-        byte[] sourceMac = matchFields.getDataLayerSource();
-        int sourceMacHash = Arrays.hashCode(sourceMac);
-        if (this.shouldLearnThisMac(sourceMac)) { 
-           // step a: learn it
-            this.addToMacToPortMap(sw, 
-                                   sourceMacHash, 
-                                   packetInMessage.getInPort());
+        Long sourceMac = Ethernet.toLong(matchFields.getDataLayerSource());
+        Short vlan = matchFields.getDataLayerVirtualLan();
+        if (vlan == (short) 0xffff) {
+            // OFMatch.loadFromPacket sets VLAN ID to 0xffff if the packet contains no VLAN tag;
+            // for our purposes that is equivalent to the default VLAN ID 0
+            vlan = 0;
+        }
+        if ((sourceMac & 0x010000000000L) == 0) {
+            // sourceMac is a unicast address
+            this.addToPortMap(sw, sourceMac, vlan, packetInMessage.getInPort());
         }
         
         // now output flow-mod and/or packet
-        byte[] destMac = matchFields.getDataLayerDestination();
-        int destMacHash = Arrays.hashCode(destMac);
-        if (macToPortMap.get(destMacHash) != null) { 
-            // step b: send a flow-mod since we know where dest mac is
-            this.writeFlowModForMatch(sw, 
-                                      packetInMessage.getBufferId(), 
-                                      matchFields, 
-                                      destMac, 
-                                      macToPortMap.get(destMacHash));
+        Short outPort = getFromPortMap(sw, Ethernet.toLong(matchFields.getDataLayerDestination()), vlan);
+        if (outPort == null) {
+            this.writePacketOutForPacketIn(sw, packetInMessage, OFPort.OFPP_FLOOD.getValue());
         } else {
-            // this is either step b (cont.) or step c
-            // step b (cont.): we sent flow mod above, so now send packet to egress
-            // step c: we don't know where dest-mac lives, so broadcast/flood 
-            short egressPort = OFPort.OFPP_FLOOD.getValue();
-            if (macToPortMap.get(destMacHash) != null) {
-                egressPort = macToPortMap.get(destMacHash);
-            }
-            this.writePacketOutForPacketIn(sw, packetInMessage, egressPort);
+            this.writeFlowModForMatch(sw, packetInMessage.getBufferId(), matchFields, outPort);
         }
         return Command.CONTINUE;
     }
     
     public void addedSwitch(IOFSwitch sw) {
         // go ahead and initialize structures per switch
-        log.info("Adding maps for switch " + sw.getId());
-        this.getMacToPortMap(sw);
+        log.info("adding maps for switch " + sw.getId());
+        this.getPortMap(sw);
     }
     
     public void removedSwitch(IOFSwitch sw) {
         // delete the switch structures 
         // they will get recreated on first packetin 
-        log.info("Removing maps for switch " + sw.getId());
+        log.info("removing maps for switch " + sw.getId());
         int switchHash = sw.hashCode();
-        this.perSwitchMacToPortMaps.remove(switchHash);
-        this.perSwitchMacLists.remove(switchHash);
+        this.macVlanToPortMaps.remove(switchHash);
     }
     
-    public void processPortStatusMessage(IOFSwitch sw, OFPortStatus portStatusMessage) {
+    private void processPortStatusMessage(IOFSwitch sw, OFPortStatus portStatusMessage) {
         OFPhysicalPort port = portStatusMessage.getDesc();
         log.info("received port status: " + portStatusMessage.getReason() + " for port " + port.getPortNumber());
         // LOOK! should be using the reason enums - but how?
