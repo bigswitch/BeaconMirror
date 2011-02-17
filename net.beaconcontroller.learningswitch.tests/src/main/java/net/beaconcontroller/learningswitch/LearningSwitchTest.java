@@ -134,7 +134,7 @@ public class LearningSwitchTest extends BeaconTestCase {
             .setCommand(OFFlowMod.OFPFC_ADD)
             .setIdleTimeout((short) 5)
             .setMatch(new OFMatch().loadFromPacket(testPacketSerialized, (short) 1)
-                    .setWildcards(OFMatch.OFPFW_NW_TOS))
+                    .setWildcards(OFMatch.OFPFW_ALL & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_DST))
             .setOutPort(OFPort.OFPP_NONE.getValue())
             .setCookie(1L << 52)
             .setPriority((short) 100)

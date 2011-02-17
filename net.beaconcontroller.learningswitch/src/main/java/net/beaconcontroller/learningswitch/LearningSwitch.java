@@ -164,12 +164,10 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         OFFlowMod flowMod = new OFFlowMod();
         short flowModLength = (short) OFFlowMod.MINIMUM_LENGTH;
         
-        // the ofp_match is set entirely from the packetInMessage, 
-        // but we'll override the wildcards here so it is not an exact
-        // match - this allows these flow-mods to be overridden with
-        // higher priority flow-mods (e.g., from static flow pusher)
-        matchFields.setWildcards(0);
-        matchFields.setWildcards(OFMatch.OFPFW_NW_TOS);
+        // match only on VLAN ID and destination MAC address, wildcard all other fields;
+        // matching on other fields just wastes flow entries since the action (output port)
+        // is always the same for a given VLAN/MAC
+        matchFields.setWildcards(OFMatch.OFPFW_ALL & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_DST);
         flowMod.setMatch(matchFields);
         
         // set rest of header fields as listed above
