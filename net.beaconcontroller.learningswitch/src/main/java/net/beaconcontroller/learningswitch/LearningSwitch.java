@@ -14,6 +14,7 @@ package net.beaconcontroller.learningswitch;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import net.beaconcontroller.packet.Ethernet;
 
 import org.openflow.protocol.OFError;
 import org.openflow.protocol.OFFlowMod;
+import org.openflow.protocol.OFFlowRemoved;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
@@ -49,14 +51,15 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
     // the app cookie management
     public static final int APP_ID_BITS = 12;
     public static final int APP_ID_SHIFT = (64 - APP_ID_BITS);
+    public static final long LEARNING_SWITCH_COOKIE = (long) (LEARNING_SWITCH_APP_ID & ((1 << APP_ID_BITS) - 1)) << APP_ID_SHIFT;
     
     // more flow-mod defaults 
     protected static final short IDLE_TIMEOUT_DEFAULT = 5;
     protected static final short HARD_TIMEOUT_DEFAULT = 0;
-    protected static final short PRIORITY_DEFAULT     = 100;
+    protected static final short PRIORITY_DEFAULT = 100;
     
     // for managing our map sizes
-    protected static final int   MAX_MACS_PER_SWITCH  = 1000;
+    protected static final int MAX_MACS_PER_SWITCH  = 1000;
 
     class MacVlanPair {
         public Long mac;
@@ -91,7 +94,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
     public void startUp() {
         log.trace("Starting");
         beaconProvider.addOFMessageListener(OFType.PACKET_IN, this);
-        beaconProvider.addOFMessageListener(OFType.PORT_STATUS, this);
+        //beaconProvider.addOFMessageListener(OFType.PORT_STATUS, this);
         beaconProvider.addOFMessageListener(OFType.FLOW_REMOVED, this);
         beaconProvider.addOFMessageListener(OFType.ERROR, this);
         beaconProvider.addOFSwitchListener(this);
@@ -100,7 +103,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
     public void shutDown() {
         log.trace("Stopping");
         beaconProvider.removeOFMessageListener(OFType.PACKET_IN, this);
-        beaconProvider.removeOFMessageListener(OFType.PORT_STATUS, this);
+        //beaconProvider.removeOFMessageListener(OFType.PORT_STATUS, this);
         beaconProvider.removeOFMessageListener(OFType.FLOW_REMOVED, this);
         beaconProvider.removeOFMessageListener(OFType.ERROR, this);
         beaconProvider.removeOFSwitchListener(this);
@@ -122,6 +125,12 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
     }
 
     protected void addToPortMap(IOFSwitch sw, Long mac, Short vlan, short portVal) {
+        if (vlan == (short) 0xffff) {
+            // OFMatch.loadFromPacket sets VLAN ID to 0xffff if the packet contains no VLAN tag;
+            // for our purposes that is equivalent to the default VLAN ID 0
+            vlan = 0;
+        }
+        log.debug("learning source MAC {} VLAN {} input port {}", new Object[]{ mac, vlan, portVal });
         Map<MacVlanPair,Short> macToPortMap = this.getPortMap(sw);
         if (macToPortMap != null) {
             macToPortMap.put(new MacVlanPair(mac, vlan), portVal);
@@ -130,14 +139,28 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         }
     }
     
+    protected void removeFromPortMap(IOFSwitch sw, Long mac, Short vlan) {
+        if (vlan == (short) 0xffff) {
+            vlan = 0;
+        }
+        log.debug("forgetting source MAC {} VLAN {}", new Object[]{ mac, vlan });
+        Map<MacVlanPair,Short> macToPortMap = this.getPortMap(sw);
+        if (macToPortMap != null) {
+            macToPortMap.remove(new MacVlanPair(mac, vlan));
+        } else {
+            log.error("Whoa - we should have macToPortMap for the switch");
+        }
+    }
+
     public Short getFromPortMap(IOFSwitch sw, Long mac, Short vlan) {
+        if (vlan == (short) 0xffff) {
+            vlan = 0;
+        }
         return getPortMap(sw).get(new MacVlanPair(mac, vlan));
     }
 
-    private void writeFlowModForMatch(IOFSwitch sw,
-                                     int bufferId,
-                                     OFMatch matchFields,
-                                     short egressPort) {
+    private void writeFlowMod(IOFSwitch sw, short command, int bufferId,
+            OFMatch match, short outPort) {
         // from openflow 1.0 spec - need to set these on a struct ofp_flow_mod:
         // struct ofp_flow_mod {
         //    struct ofp_header header;
@@ -162,24 +185,15 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         //    };
            
         OFFlowMod flowMod = new OFFlowMod();
-        short flowModLength = (short) OFFlowMod.MINIMUM_LENGTH;
-        
-        // match only on VLAN ID and destination MAC address, wildcard all other fields;
-        // matching on other fields just wastes flow entries since the action (output port)
-        // is always the same for a given VLAN/MAC
-        matchFields.setWildcards(OFMatch.OFPFW_ALL & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_DST);
-        flowMod.setMatch(matchFields);
-        
-        // set rest of header fields as listed above
-        long cookie = (long) (LEARNING_SWITCH_APP_ID & ((1 << APP_ID_BITS) - 1)) << APP_ID_SHIFT;
-        flowMod.setCookie(cookie);
-        flowMod.setCommand(OFFlowMod.OFPFC_ADD);
+        flowMod.setMatch(match);
+        flowMod.setCookie(LearningSwitch.LEARNING_SWITCH_COOKIE);
+        flowMod.setCommand(command);
         flowMod.setIdleTimeout(LearningSwitch.IDLE_TIMEOUT_DEFAULT);
         flowMod.setHardTimeout(LearningSwitch.HARD_TIMEOUT_DEFAULT);
         flowMod.setPriority(LearningSwitch.PRIORITY_DEFAULT);
         flowMod.setBufferId(bufferId);
-        flowMod.setOutPort(OFPort.OFPP_NONE.getValue()); // this is not OFPFC_DELETE, so just set none
-        flowMod.setFlags((short)(1 << 0)); // LOOK! This is OFPFF_SEND_FLOW_REM - should be part of OFFlowMod.java 
+        flowMod.setOutPort((command == OFFlowMod.OFPFC_DELETE) ? outPort : OFPort.OFPP_NONE.getValue());
+        flowMod.setFlags((command == OFFlowMod.OFPFC_DELETE) ? 0 : (short) (1 << 0)); // OFPFF_SEND_FLOW_REM
 
         // set the ofp_action_header/out actions:
         // from the openflow 1.0 spec: need to set these on a struct ofp_action_output:
@@ -189,14 +203,11 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         // uint16_t max_len; /* Max length to send to controller. */
         // type/len are set because it is OFActionOutput,
         // and port, max_len are arguments to this constructor
-        List<OFAction> actions = new ArrayList<OFAction>(1);
-        actions.add(new OFActionOutput(egressPort, (short) 0)); // 0 used only if port is OFPP_CONTROLLER
-        flowMod.setActions(actions);
-        flowModLength += OFActionOutput.MINIMUM_LENGTH;
-        
-        // finally, set the total length
-        flowMod.setLength(flowModLength);
-        
+        flowMod.setActions(Arrays.asList((OFAction) new OFActionOutput(outPort, (short) 0xffff)));
+        flowMod.setLength((short) (OFFlowMod.MINIMUM_LENGTH + OFActionOutput.MINIMUM_LENGTH));
+
+        log.debug("{} flow mod {}", (command == OFFlowMod.OFPFC_DELETE) ? "deleting" : "adding", flowMod);
+
         // and write it out
         try {
             sw.getOutputStream().write(flowMod);
@@ -249,48 +260,64 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         }
     }
     
-    private Command processPacketInMessage(IOFSwitch sw, OFPacketIn packetInMessage) {
-        // read in packet data headers by using OFMatch 
-        OFMatch matchFields = new OFMatch();
-        matchFields.loadFromPacket(packetInMessage.getPacketData(), 
-                                   packetInMessage.getInPort());
-        Long sourceMac = Ethernet.toLong(matchFields.getDataLayerSource());
-        Short vlan = matchFields.getDataLayerVirtualLan();
-        if (vlan == (short) 0xffff) {
-            // OFMatch.loadFromPacket sets VLAN ID to 0xffff if the packet contains no VLAN tag;
-            // for our purposes that is equivalent to the default VLAN ID 0
-            vlan = 0;
+    private Command processPacketInMessage(IOFSwitch sw, OFPacketIn pi) {
+        if (!sw.portEnabled(pi.getInPort())) {
+            log.debug("ignoring packet received from disabled port: switch {} port {}", sw, pi.getInPort());
+            return Command.STOP;
         }
+
+        // Read in packet data headers by using OFMatch
+        OFMatch match = new OFMatch();
+        match.loadFromPacket(pi.getPacketData(), pi.getInPort());
+        Long sourceMac = Ethernet.toLong(match.getDataLayerSource());
         if ((sourceMac & 0x010000000000L) == 0) {
-            // sourceMac is a unicast address
-            this.addToPortMap(sw, sourceMac, vlan, packetInMessage.getInPort());
+            // If source MAC is a unicast address, learn the port for this MAC/VLAN
+            this.addToPortMap(sw, sourceMac, match.getDataLayerVirtualLan(), pi.getInPort());
         }
         
-        // now output flow-mod and/or packet
-        Short outPort = getFromPortMap(sw, Ethernet.toLong(matchFields.getDataLayerDestination()), vlan);
+        // Now output flow-mod and/or packet
+        Short outPort = getFromPortMap(sw, Ethernet.toLong(match.getDataLayerDestination()),
+                match.getDataLayerVirtualLan());
         if (outPort == null) {
-            this.writePacketOutForPacketIn(sw, packetInMessage, OFPort.OFPP_FLOOD.getValue());
+            // If we haven't learned the port for the dest MAC/VLAN, flood it
+            this.writePacketOutForPacketIn(sw, pi, OFPort.OFPP_FLOOD.getValue());
         } else {
-            this.writeFlowModForMatch(sw, packetInMessage.getBufferId(), matchFields, outPort);
+            // Add flow table entry matching source MAC, dest MAC, VLAN and input port
+            // that sends to the port we previously learned for the dest MAC/VLAN.  Also
+            // add a flow table entry with source and destination MACs reversed, and
+            // input and output ports reversed.  When either entry expires due to idle
+            // timeout, remove the other one.  This ensures that if a device moves to
+            // a different port, a constant stream of packets headed to the device at
+            // its former location does not keep the stale entry alive forever.
+            match.setWildcards(OFMatch.OFPFW_ALL & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_DST
+                    & ~OFMatch.OFPFW_DL_SRC & ~OFMatch.OFPFW_IN_PORT);
+            this.writeFlowMod(sw, OFFlowMod.OFPFC_ADD, pi.getBufferId(), match, outPort);
+            this.writeFlowMod(sw, OFFlowMod.OFPFC_ADD, -1, match.clone()
+                    .setDataLayerDestination(match.getDataLayerSource())
+                    .setDataLayerSource(match.getDataLayerDestination())
+                    .setInputPort(outPort),
+                    match.getInputPort());
         }
         return Command.CONTINUE;
     }
     
     public void addedSwitch(IOFSwitch sw) {
         // go ahead and initialize structures per switch
-        log.info("adding maps for switch " + sw.getId());
+        log.info("adding macVlanToPortMap for switch {}", sw);
         this.getPortMap(sw);
     }
     
     public void removedSwitch(IOFSwitch sw) {
         // delete the switch structures 
         // they will get recreated on first packetin 
-        log.info("removing maps for switch " + sw.getId());
-        int switchHash = sw.hashCode();
-        this.macVlanToPortMaps.remove(switchHash);
+        log.info("removing macVlanToPortMap for switch {}", sw);
+        this.macVlanToPortMaps.remove(sw.hashCode());
     }
     
-    private void processPortStatusMessage(IOFSwitch sw, OFPortStatus portStatusMessage) {
+    private Command processPortStatusMessage(IOFSwitch sw, OFPortStatus portStatusMessage) {
+        // FIXME This is really just an optimization, speeding up removal of flow
+        // entries for a disabled port; think about whether it's really needed
+        log.info("learning switch got a port_status");
         OFPhysicalPort port = portStatusMessage.getDesc();
         log.info("received port status: " + portStatusMessage.getReason() + " for port " + port.getPortNumber());
         // LOOK! should be using the reason enums - but how?
@@ -303,34 +330,48 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
             // extract out the macs just assigned to a port, but this is ok for now
             this.removedSwitch(sw);
         }
+        return Command.CONTINUE;
+    }
+
+    private Command processFlowRemovedMessage(IOFSwitch sw, OFFlowRemoved flowRemovedMessage) {
+        if (flowRemovedMessage.getCookie() != LearningSwitch.LEARNING_SWITCH_COOKIE) {
+            return Command.CONTINUE;
+        }
+        log.debug("flow entry removed {}", flowRemovedMessage);
+        OFMatch match = flowRemovedMessage.getMatch();
+        // When a flow entry expires, it means the device with the matching source
+        // MAC address and VLAN either stopped sending packets or moved to a different
+        // port.  If the device moved, we can't know where it went until it sends
+        // another packet, allowing us to re-learn its port.  Meanwhile we remove
+        // it from the macVlanToPortMap to revert to flooding packets to this device.
+        this.removeFromPortMap(sw, Ethernet.toLong(match.getDataLayerSource()),
+                match.getDataLayerVirtualLan());
+        // Also, if packets keep coming from another device (e.g. from ping), the
+        // corresponding reverse flow entry will never expire on its own and will
+        // send the packets to the wrong port (the matching input port of the
+        // expired flow entry), so we must delete the reverse entry explicitly.
+        this.writeFlowMod(sw, OFFlowMod.OFPFC_DELETE, -1, match.clone()
+                .setWildcards(OFMatch.OFPFW_ALL & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_DST
+                        & ~OFMatch.OFPFW_DL_SRC)
+                .setDataLayerSource(match.getDataLayerDestination())
+                .setDataLayerDestination(match.getDataLayerSource()),
+                match.getInputPort());
+        return Command.CONTINUE;
     }
     
     public Command receive(IOFSwitch sw, OFMessage msg) {
-        // Spec:
-        // On a per switch, per packet-in basis do the following:
-        //    step a. If the source mac is non broadcast, learn the source port + source mac
-        //    step b. If we know where the dest mac lives, send a flow mod + packet
-        //    step c. If we don't, broadcast a packet out to all ports minus the incoming port
-        //
-        //    Notes:
-        //    note a: The MAC table size should be bounded to avoid overruns
-        //    note b: The module should expire entries
         switch (msg.getType()) {
             case PACKET_IN:
-                // The main "learning" 
-                return this.processPacketInMessage(sw, (OFPacketIn)msg);
-
+                return this.processPacketInMessage(sw, (OFPacketIn) msg);
             case PORT_STATUS:
-                // make sure we don't keep old ports in our table
-                log.info("learning switch got a port_status");
-                this.processPortStatusMessage(sw, (OFPortStatus)msg);
-                break;
+                return this.processPortStatusMessage(sw, (OFPortStatus) msg);
+            case FLOW_REMOVED:
+                return this.processFlowRemovedMessage(sw, (OFFlowRemoved) msg);
             case ERROR:
-                log.info("received an error");
-                OFError err = (OFError)msg;
-                String s = err.toString() + ", code: " + Integer.toString(err.getErrorCode()) + ", type: " + Integer.toString(err.getErrorType());
-                log.info(s);
+                log.info("received an error {} from switch {}", (OFError) msg, sw);
+                return Command.CONTINUE;
         }
+        log.error("received an unexpected message {} from switch {}", msg, sw);
         return Command.CONTINUE;
     }
     
