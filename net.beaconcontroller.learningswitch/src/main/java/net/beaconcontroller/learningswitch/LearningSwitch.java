@@ -275,6 +275,10 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
             this.addToPortMap(sw, sourceMac, match.getDataLayerVirtualLan(), pi.getInPort());
         }
         
+        // FIXME: query the switch to figure out which wildcards it supports in its fast path
+        int fastWildcards = OFMatch.OFPFW_IN_PORT | OFMatch.OFPFW_NW_PROTO | OFMatch.OFPFW_TP_SRC
+            | OFMatch.OFPFW_TP_DST | OFMatch.OFPFW_NW_SRC_ALL | OFMatch.OFPFW_NW_DST_ALL;
+
         // Now output flow-mod and/or packet
         Short outPort = getFromPortMap(sw, Ethernet.toLong(match.getDataLayerDestination()),
                 match.getDataLayerVirtualLan());
@@ -289,7 +293,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
             // timeout, remove the other one.  This ensures that if a device moves to
             // a different port, a constant stream of packets headed to the device at
             // its former location does not keep the stale entry alive forever.
-            match.setWildcards(OFMatch.OFPFW_ALL & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_DST
+            match.setWildcards(fastWildcards & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_DST
                     & ~OFMatch.OFPFW_DL_SRC & ~OFMatch.OFPFW_IN_PORT);
             this.writeFlowMod(sw, OFFlowMod.OFPFC_ADD, pi.getBufferId(), match, outPort);
             this.writeFlowMod(sw, OFFlowMod.OFPFC_ADD, -1, match.clone()
