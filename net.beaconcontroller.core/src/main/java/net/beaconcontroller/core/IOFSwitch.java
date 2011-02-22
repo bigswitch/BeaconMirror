@@ -127,4 +127,11 @@ public interface IOFSwitch {
      */
     public Future<List<OFStatistics>> getStatistics(OFStatisticsRequest request)
             throws IOException;
+
+    /**
+     * Returns the maximal set of wildcards allowed for a match executed in
+     * hardware.
+     * @return wildcard bitmap
+     */
+    public int getFastWildcards();
 }

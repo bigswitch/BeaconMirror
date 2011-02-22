@@ -130,7 +130,6 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
             // for our purposes that is equivalent to the default VLAN ID 0
             vlan = 0;
         }
-        log.debug("learning source MAC {} VLAN {} input port {}", new Object[]{ mac, vlan, portVal });
         Map<MacVlanPair,Short> macToPortMap = this.getPortMap(sw);
         if (macToPortMap != null) {
             macToPortMap.put(new MacVlanPair(mac, vlan), portVal);
@@ -143,7 +142,6 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         if (vlan == (short) 0xffff) {
             vlan = 0;
         }
-        log.debug("forgetting source MAC {} VLAN {}", new Object[]{ mac, vlan });
         Map<MacVlanPair,Short> macToPortMap = this.getPortMap(sw);
         if (macToPortMap != null) {
             macToPortMap.remove(new MacVlanPair(mac, vlan));
@@ -206,7 +204,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         flowMod.setActions(Arrays.asList((OFAction) new OFActionOutput(outPort, (short) 0xffff)));
         flowMod.setLength((short) (OFFlowMod.MINIMUM_LENGTH + OFActionOutput.MINIMUM_LENGTH));
 
-        log.debug("{} flow mod {}", (command == OFFlowMod.OFPFC_DELETE) ? "deleting" : "adding", flowMod);
+        log.debug("{} {} flow mod {}", new Object[]{ sw, (command == OFFlowMod.OFPFC_DELETE) ? "deleting" : "adding", flowMod });
 
         // and write it out
         try {
@@ -275,10 +273,6 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
             this.addToPortMap(sw, sourceMac, match.getDataLayerVirtualLan(), pi.getInPort());
         }
         
-        // FIXME: query the switch to figure out which wildcards it supports in its fast path
-        int fastWildcards = OFMatch.OFPFW_IN_PORT | OFMatch.OFPFW_NW_PROTO | OFMatch.OFPFW_TP_SRC
-            | OFMatch.OFPFW_TP_DST | OFMatch.OFPFW_NW_SRC_ALL | OFMatch.OFPFW_NW_DST_ALL;
-
         // Now output flow-mod and/or packet
         Short outPort = getFromPortMap(sw, Ethernet.toLong(match.getDataLayerDestination()),
                 match.getDataLayerVirtualLan());
@@ -293,12 +287,19 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
             // timeout, remove the other one.  This ensures that if a device moves to
             // a different port, a constant stream of packets headed to the device at
             // its former location does not keep the stale entry alive forever.
-            match.setWildcards(fastWildcards & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_DST
-                    & ~OFMatch.OFPFW_DL_SRC & ~OFMatch.OFPFW_IN_PORT);
+            // FIXME: current HP switches ignore DL_SRC and DL_DST fields, so we have to match on
+            // NW_SRC and NW_DST as well
+            match.setWildcards(sw.getFastWildcards() & ~OFMatch.OFPFW_IN_PORT
+                    & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_SRC & ~OFMatch.OFPFW_DL_DST
+                    & ~OFMatch.OFPFW_NW_SRC_MASK & ~OFMatch.OFPFW_NW_DST_MASK);
             this.writeFlowMod(sw, OFFlowMod.OFPFC_ADD, pi.getBufferId(), match, outPort);
             this.writeFlowMod(sw, OFFlowMod.OFPFC_ADD, -1, match.clone()
-                    .setDataLayerDestination(match.getDataLayerSource())
                     .setDataLayerSource(match.getDataLayerDestination())
+                    .setDataLayerDestination(match.getDataLayerSource())
+                    .setNetworkSource(match.getNetworkDestination())
+                    .setNetworkDestination(match.getNetworkSource())
+                    .setTransportSource(match.getTransportDestination())
+                    .setTransportDestination(match.getTransportSource())
                     .setInputPort(outPort),
                     match.getInputPort());
         }
@@ -341,7 +342,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         if (flowRemovedMessage.getCookie() != LearningSwitch.LEARNING_SWITCH_COOKIE) {
             return Command.CONTINUE;
         }
-        log.debug("flow entry removed {}", flowRemovedMessage);
+        log.debug("{} flow entry removed {}", sw, flowRemovedMessage);
         OFMatch match = flowRemovedMessage.getMatch();
         // When a flow entry expires, it means the device with the matching source
         // MAC address and VLAN either stopped sending packets or moved to a different
@@ -355,10 +356,15 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         // send the packets to the wrong port (the matching input port of the
         // expired flow entry), so we must delete the reverse entry explicitly.
         this.writeFlowMod(sw, OFFlowMod.OFPFC_DELETE, -1, match.clone()
-                .setWildcards(OFMatch.OFPFW_ALL & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_DST
-                        & ~OFMatch.OFPFW_DL_SRC)
+                .setWildcards(sw.getFastWildcards()
+                        & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_SRC & ~OFMatch.OFPFW_DL_DST
+                        & ~OFMatch.OFPFW_NW_SRC_MASK & ~OFMatch.OFPFW_NW_DST_MASK)
                 .setDataLayerSource(match.getDataLayerDestination())
-                .setDataLayerDestination(match.getDataLayerSource()),
+                .setDataLayerDestination(match.getDataLayerSource())
+                .setNetworkSource(match.getNetworkDestination())
+                .setNetworkDestination(match.getNetworkSource())
+                .setTransportSource(match.getTransportDestination())
+                .setTransportDestination(match.getTransportSource()),
                 match.getInputPort());
         return Command.CONTINUE;
     }

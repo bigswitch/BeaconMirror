@@ -17,6 +17,7 @@ import net.beaconcontroller.core.io.OFMessageSafeOutStream;
 
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFeaturesReply;
+import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPhysicalPort.OFPortConfig;
 import org.openflow.protocol.OFPhysicalPort.OFPortState;
@@ -154,6 +155,14 @@ public class OFSwitchImpl implements IOFSwitch {
         this.beaconProvider.addOFSwitchListener(future);
         this.getOutputStream().write(request);
         return future;
+    }
+
+    @Override
+    public int getFastWildcards() {
+        // FIXME: query the switch; this is the set supported by current HP switches
+        return OFMatch.OFPFW_IN_PORT | OFMatch.OFPFW_NW_PROTO | OFMatch.OFPFW_TP_SRC
+            | OFMatch.OFPFW_TP_DST | OFMatch.OFPFW_NW_SRC_ALL | OFMatch.OFPFW_NW_DST_ALL
+            | OFMatch.OFPFW_NW_TOS;
     }
 
     /**
