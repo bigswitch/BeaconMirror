@@ -21,7 +21,6 @@ import net.beaconcontroller.test.BeaconTestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
@@ -41,6 +40,8 @@ public class LearningSwitchTest extends BeaconTestCase {
     protected OFPacketIn packetIn;
     protected IPacket testPacket;
     protected byte[] testPacketSerialized;
+    protected IPacket testPacketReply;
+    protected byte[] testPacketReplySerialized;
 
     @Before
     public void setUp() throws Exception {
@@ -62,6 +63,21 @@ public class LearningSwitchTest extends BeaconTestCase {
                             .setDestinationPort((short) 5001)
                             .setPayload(new Data(new byte[] {0x01}))));
         this.testPacketSerialized = testPacket.serialize();
+        this.testPacketReply = new Ethernet()
+            .setDestinationMACAddress("00:44:33:22:11:00")
+            .setSourceMACAddress("00:11:22:33:44:55")
+            .setVlanID((short) 42)
+            .setEtherType(Ethernet.TYPE_IPv4)
+            .setPayload(
+                    new IPv4()
+                    .setTtl((byte) 128)
+                    .setSourceAddress("192.168.1.2")
+                    .setDestinationAddress("192.168.1.1")
+                    .setPayload(new UDP()
+                    .setSourcePort((short) 5001)
+                    .setDestinationPort((short) 5000)
+                    .setPayload(new Data(new byte[] {0x02}))));
+        this.testPacketReplySerialized = testPacketReply.serialize();
 
         // Build the PacketIn
         this.packetIn = new OFPacketIn()
@@ -101,6 +117,7 @@ public class LearningSwitchTest extends BeaconTestCase {
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
+        expect(mockSwitch.portEnabled((short) 1)).andReturn(true);
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
         mockStream.write(po);
 
@@ -127,14 +144,32 @@ public class LearningSwitchTest extends BeaconTestCase {
         // tweak the test packet in since we need a bufferId
         this.packetIn.setBufferId(50);
 
-        // build expected flow mod
-        OFMessage fm = new OFFlowMod()
-            .setActions(Arrays.asList(new OFAction[] {new OFActionOutput().setPort((short) 2)}))
+        // build expected flow mods
+        OFMessage fm1 = new OFFlowMod()
+            .setActions(Arrays.asList(new OFAction[] {
+                    new OFActionOutput().setPort((short) 2).setMaxLength((short) -1)}))
             .setBufferId(50)
             .setCommand(OFFlowMod.OFPFC_ADD)
             .setIdleTimeout((short) 5)
-            .setMatch(new OFMatch().loadFromPacket(testPacketSerialized, (short) 1)
-                    .setWildcards(OFMatch.OFPFW_ALL & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_DST))
+            .setMatch(new OFMatch()
+                .loadFromPacket(testPacketSerialized, (short) 1)
+                .setWildcards(OFMatch.OFPFW_NW_PROTO | OFMatch.OFPFW_TP_SRC | OFMatch.OFPFW_TP_DST
+                        | OFMatch.OFPFW_NW_TOS))
+            .setOutPort(OFPort.OFPP_NONE.getValue())
+            .setCookie(1L << 52)
+            .setPriority((short) 100)
+            .setFlags((short)(1 << 0))
+            .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
+        OFMessage fm2 = new OFFlowMod()
+            .setActions(Arrays.asList(new OFAction[] {
+                    new OFActionOutput().setPort((short) 1).setMaxLength((short) -1)}))
+            .setBufferId(-1)
+            .setCommand(OFFlowMod.OFPFC_ADD)
+            .setIdleTimeout((short) 5)
+            .setMatch(new OFMatch()
+                .loadFromPacket(testPacketReplySerialized, (short) 2)
+                .setWildcards(OFMatch.OFPFW_NW_PROTO | OFMatch.OFPFW_TP_SRC | OFMatch.OFPFW_TP_DST
+                        | OFMatch.OFPFW_NW_TOS))
             .setOutPort(OFPort.OFPP_NONE.getValue())
             .setCookie(1L << 52)
             .setPriority((short) 100)
@@ -143,13 +178,18 @@ public class LearningSwitchTest extends BeaconTestCase {
 
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
-        OFMessageInStream mockInStream = createMock(OFMessageInStream.class);
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
+        expect(mockSwitch.portEnabled((short) 1)).andReturn(true);
+        expect(mockSwitch.getFastWildcards()).andReturn(OFMatch.OFPFW_IN_PORT | OFMatch.OFPFW_NW_PROTO
+                | OFMatch.OFPFW_TP_SRC | OFMatch.OFPFW_TP_DST | OFMatch.OFPFW_NW_SRC_ALL
+                | OFMatch.OFPFW_NW_DST_ALL | OFMatch.OFPFW_NW_TOS);
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
-        mockStream.write(fm);
+        mockStream.write(fm1);
+        expect(mockSwitch.getOutputStream()).andReturn(mockStream);
+        mockStream.write(fm2);
 
         // Start recording the replay on the mocks
-        replay(mockSwitch, mockStream, mockInStream);
+        replay(mockSwitch, mockStream);
 
         // Populate the MAC table
         learningSwitch.addToPortMap(mockSwitch,
@@ -161,7 +201,7 @@ public class LearningSwitchTest extends BeaconTestCase {
         listener.receive(mockSwitch, this.packetIn);
 
         // Verify the replay matched our expectations
-        verify(mockSwitch, mockStream, mockInStream);
+        verify(mockSwitch, mockStream);
 
         // Verify the MAC table inside the switch
         assertEquals(1, learningSwitch.getFromPortMap(mockSwitch,
