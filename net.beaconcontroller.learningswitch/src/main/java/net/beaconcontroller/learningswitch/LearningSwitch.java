@@ -260,11 +260,6 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
     }
     
     private Command processPacketInMessage(IOFSwitch sw, OFPacketIn pi) {
-        if (!sw.portEnabled(pi.getInPort())) {
-            log.debug("ignoring packet received from disabled port: switch {} port {}", sw, pi.getInPort());
-            return Command.STOP;
-        }
-
         // Read in packet data headers by using OFMatch
         OFMatch match = new OFMatch();
         match.loadFromPacket(pi.getPacketData(), pi.getInPort());

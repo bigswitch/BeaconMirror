@@ -117,7 +117,6 @@ public class LearningSwitchTest extends BeaconTestCase {
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
-        expect(mockSwitch.portEnabled((short) 1)).andReturn(true);
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
         mockStream.write(po);
 
@@ -179,7 +178,6 @@ public class LearningSwitchTest extends BeaconTestCase {
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
-        expect(mockSwitch.portEnabled((short) 1)).andReturn(true);
         expect(mockSwitch.getFastWildcards()).andReturn(OFMatch.OFPFW_IN_PORT | OFMatch.OFPFW_NW_PROTO
                 | OFMatch.OFPFW_TP_SRC | OFMatch.OFPFW_TP_DST | OFMatch.OFPFW_NW_SRC_ALL
                 | OFMatch.OFPFW_NW_DST_ALL | OFMatch.OFPFW_NW_TOS);
