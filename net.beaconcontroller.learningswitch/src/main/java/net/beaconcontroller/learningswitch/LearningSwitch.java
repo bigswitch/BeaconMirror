@@ -271,7 +271,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         Long sourceMac = Ethernet.toLong(match.getDataLayerSource());
         Long destMac = Ethernet.toLong(match.getDataLayerDestination());
         Short vlan = match.getDataLayerVirtualLan();
-        if ((destMac & 0xffffffffff00L) == 0x0180c2000000L) {
+        if ((destMac & 0xfffffffffff0L) == 0x0180c2000000L) {
             log.debug("ignoring packet sent to 802.1D/Q reserved addr: switch {} vlan {} dest MAC {}",
                     new Object[]{ sw, vlan, HexString.toHexString(destMac) });
             return Command.STOP;
