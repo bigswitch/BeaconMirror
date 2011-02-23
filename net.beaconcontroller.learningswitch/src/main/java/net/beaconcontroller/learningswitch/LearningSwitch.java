@@ -205,7 +205,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         flowMod.setActions(Arrays.asList((OFAction) new OFActionOutput(outPort, (short) 0xffff)));
         flowMod.setLength((short) (OFFlowMod.MINIMUM_LENGTH + OFActionOutput.MINIMUM_LENGTH));
 
-        log.debug("{} {} flow mod {}", new Object[]{ sw, (command == OFFlowMod.OFPFC_DELETE) ? "deleting" : "adding", flowMod });
+        log.trace("{} {} flow mod {}", new Object[]{ sw, (command == OFFlowMod.OFPFC_DELETE) ? "deleting" : "adding", flowMod });
 
         // and write it out
         try {
@@ -267,7 +267,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         Long destMac = Ethernet.toLong(match.getDataLayerDestination());
         Short vlan = match.getDataLayerVirtualLan();
         if ((destMac & 0xfffffffffff0L) == 0x0180c2000000L) {
-            log.debug("ignoring packet sent to 802.1D/Q reserved addr: switch {} vlan {} dest MAC {}",
+            log.trace("ignoring packet addressed to 802.1D/Q reserved addr: switch {} vlan {} dest MAC {}",
                     new Object[]{ sw, vlan, HexString.toHexString(destMac) });
             return Command.STOP;
         }
@@ -344,7 +344,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         if (flowRemovedMessage.getCookie() != LearningSwitch.LEARNING_SWITCH_COOKIE) {
             return Command.CONTINUE;
         }
-        log.debug("{} flow entry removed {}", sw, flowRemovedMessage);
+        log.trace("{} flow entry removed {}", sw, flowRemovedMessage);
         OFMatch match = flowRemovedMessage.getMatch();
         // When a flow entry expires, it means the device with the matching source
         // MAC address and VLAN either stopped sending packets or moved to a different
