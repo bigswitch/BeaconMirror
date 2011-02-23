@@ -206,7 +206,7 @@
          unpack="false"/>
 
    <plugin
-         id="net.beaconcontroller.routing.apsp"
+         id="net.beaconcontroller.routing.dijkstra"
          download-size="0"
          install-size="0"
          version="0.0.0"
