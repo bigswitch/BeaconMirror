@@ -38,6 +38,7 @@ import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
+import org.openflow.util.HexString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -268,14 +269,20 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         OFMatch match = new OFMatch();
         match.loadFromPacket(pi.getPacketData(), pi.getInPort());
         Long sourceMac = Ethernet.toLong(match.getDataLayerSource());
+        Long destMac = Ethernet.toLong(match.getDataLayerDestination());
+        Short vlan = match.getDataLayerVirtualLan();
+        if ((destMac & 0xffffffffff00L) == 0x0180c2000000L) {
+            log.debug("ignoring packet sent to 802.1D/Q reserved addr: switch {} vlan {} dest MAC {}",
+                    new Object[]{ sw, vlan, HexString.toHexString(destMac) });
+            return Command.STOP;
+        }
         if ((sourceMac & 0x010000000000L) == 0) {
             // If source MAC is a unicast address, learn the port for this MAC/VLAN
-            this.addToPortMap(sw, sourceMac, match.getDataLayerVirtualLan(), pi.getInPort());
+            this.addToPortMap(sw, sourceMac, vlan, pi.getInPort());
         }
         
         // Now output flow-mod and/or packet
-        Short outPort = getFromPortMap(sw, Ethernet.toLong(match.getDataLayerDestination()),
-                match.getDataLayerVirtualLan());
+        Short outPort = getFromPortMap(sw, destMac, vlan);
         if (outPort == null) {
             // If we haven't learned the port for the dest MAC/VLAN, flood it
             this.writePacketOutForPacketIn(sw, pi, OFPort.OFPP_FLOOD.getValue());
