@@ -112,8 +112,9 @@ public class OFSwitchImpl implements IOFSwitch {
             return false;
         if ((port.getState() & OFPortState.OFPPS_LINK_DOWN.getValue()) > 0)
             return false;
-        if ((port.getState() & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue())
-            return false;
+        // Port STP state doesn't work with multiple VLANs, so ignore it for now
+        //if ((port.getState() & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue())
+        //    return false;
         return true;
     }
     

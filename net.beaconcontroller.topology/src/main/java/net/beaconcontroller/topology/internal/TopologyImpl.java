@@ -497,8 +497,9 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             return false;
         if ((OFPortState.OFPPS_LINK_DOWN.getValue() & port.getState()) > 0)
             return false;
-        if ((port.getState() & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue())
-            return false;
+        // Port STP state doesn't work with multiple VLANs, so ignore it for now
+        //if ((port.getState() & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue())
+        //    return false;
         return true;
     }
 
