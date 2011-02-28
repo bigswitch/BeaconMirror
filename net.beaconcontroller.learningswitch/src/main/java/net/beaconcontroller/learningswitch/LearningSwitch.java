@@ -211,7 +211,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         try {
             sw.getOutputStream().write(flowMod);
         } catch (IOException e) {
-            log.error("could not write flow mod to switch");
+            log.error("Failed to write {} to switch {}: {}", new Object[]{ flowMod, sw, e });
         }
     }
     
@@ -255,7 +255,7 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         try {
             sw.getOutputStream().write(packetOutMessage);
         } catch (IOException e) {
-            log.error("could not write packet out to switch");
+            log.error("Failed to write {} to switch {}: {}", new Object[]{ packetOutMessage, sw, e });
         }
     }
     

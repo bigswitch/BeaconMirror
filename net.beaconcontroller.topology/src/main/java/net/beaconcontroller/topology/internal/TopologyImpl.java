@@ -246,7 +246,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 try {
                     sw.getOutputStream().write(po);
                 } catch (IOException e) {
-                    log.error("Failure sending LLDP", e);
+                    log.error("Failure sending LLDP out port {} on switch {}: {}",
+                            new Object[]{ sw, port.getPortNumber(), e });
                 }
 
                 // rewind for next pass
