@@ -278,7 +278,11 @@ public class LearningSwitch implements IOFMessageListener, IOFSwitchListener {
         
         // Now output flow-mod and/or packet
         Short outPort = getFromPortMap(sw, destMac, vlan);
-        if (outPort == null) {
+        if (outPort == match.getInputPort()) {
+            log.trace("ignoring packet that arrived on same port as learned destination:"
+                    + " switch {} vlan {} dest MAC {} port {}",
+                    new Object[]{ sw, vlan, HexString.toHexString(destMac), outPort });
+        } else if (outPort == null) {
             // If we haven't learned the port for the dest MAC/VLAN, flood it
             this.writePacketOutForPacketIn(sw, pi, OFPort.OFPP_FLOOD.getValue());
         } else {
