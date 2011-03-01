@@ -266,7 +266,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
                 future = sw.getStatistics(req);
                 values = future.get(10, TimeUnit.SECONDS);
             } catch (Exception e) {
-                log.error("Failure retrieving statistics from switch {}: {}", sw, e);
+                log.error("Failure retrieving statistics from switch {}", sw, e);
             }
         }
         return values;
