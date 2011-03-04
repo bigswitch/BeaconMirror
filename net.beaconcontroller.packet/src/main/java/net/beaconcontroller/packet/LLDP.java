@@ -17,6 +17,10 @@ public class LLDP extends BasePacket {
     protected LLDPTLV ttl;
     protected List<LLDPTLV> optionalTLVList;
 
+    public LLDP() {
+        this.optionalTLVList = new ArrayList<LLDPTLV>();
+    }
+    
     /**
      * @return the chassisId
      */
@@ -81,10 +85,8 @@ public class LLDP extends BasePacket {
     public byte[] serialize() {
         int length = 2+this.chassisId.getLength() + 2+this.portId.getLength() +
             2+this.ttl.getLength() + 2;
-        if (this.optionalTLVList != null) {
-            for (LLDPTLV tlv : this.optionalTLVList) {
-                length += 2 + tlv.getLength();
-            }
+        for (LLDPTLV tlv : this.optionalTLVList) {
+            length += 2 + tlv.getLength();
         }
 
         byte[] data = new byte[length];
@@ -92,10 +94,8 @@ public class LLDP extends BasePacket {
         bb.put(this.chassisId.serialize());
         bb.put(this.portId.serialize());
         bb.put(this.ttl.serialize());
-        if (this.optionalTLVList != null) {
-            for (LLDPTLV tlv : this.optionalTLVList) {
-                bb.put(tlv.serialize());
-            }
+        for (LLDPTLV tlv : this.optionalTLVList) {
+            bb.put(tlv.serialize());
         }
         bb.putShort((short) 0); // End of LLDPDU
 
@@ -129,8 +129,6 @@ public class LLDP extends BasePacket {
                     this.ttl = tlv;
                     break;
                 default:
-                    if (this.optionalTLVList == null)
-                        this.optionalTLVList = new ArrayList<LLDPTLV>();
                     this.optionalTLVList.add(tlv);
                     break;
             }
@@ -147,8 +145,7 @@ public class LLDP extends BasePacket {
         int result = super.hashCode();
         result = prime * result
                 + ((chassisId == null) ? 0 : chassisId.hashCode());
-        result = prime * result
-                + ((optionalTLVList == null) ? 0 : optionalTLVList.hashCode());
+        result = prime * result + (optionalTLVList.hashCode());
         result = prime * result + ((portId == null) ? 0 : portId.hashCode());
         result = prime * result + ((ttl == null) ? 0 : ttl.hashCode());
         return result;
@@ -171,10 +168,7 @@ public class LLDP extends BasePacket {
                 return false;
         } else if (!chassisId.equals(other.chassisId))
             return false;
-        if (optionalTLVList == null) {
-            if (other.optionalTLVList != null)
-                return false;
-        } else if (!optionalTLVList.equals(other.optionalTLVList))
+        if (!optionalTLVList.equals(other.optionalTLVList))
             return false;
         if (portId == null) {
             if (other.portId != null)

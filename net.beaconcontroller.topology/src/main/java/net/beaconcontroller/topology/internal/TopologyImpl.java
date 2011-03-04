@@ -201,7 +201,6 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         // OpenFlow OUI - 00-26-E1
         byte[] dpidTLVValue = new byte[] {0x0, 0x26, (byte) 0xe1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         LLDPTLV dpidTLV = new LLDPTLV().setType((byte) 127).setLength((short) 12).setValue(dpidTLVValue);
-        lldp.setOptionalTLVList(new ArrayList<LLDPTLV>());
         lldp.getOptionalTLVList().add(dpidTLV);
 
         Map<Long, IOFSwitch> switches = beaconProvider.getSwitches();
