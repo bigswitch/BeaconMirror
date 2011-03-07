@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
@@ -302,6 +301,10 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
             OFFeaturesReply fr = sw.getFeaturesReply();
             model.put(BeaconJsonView.ROOT_OBJECT_KEY, fr);
+            return view;
+        } else if (statType.equals("hosts")) {
+            IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
+            model.put(BeaconJsonView.ROOT_OBJECT_KEY, sw.getMacVlanToPortMap());
             return view;
         }
         model.put(BeaconJsonView.ROOT_OBJECT_KEY, values);
