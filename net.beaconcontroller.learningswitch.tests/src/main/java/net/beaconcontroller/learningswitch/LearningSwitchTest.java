@@ -117,22 +117,25 @@ public class LearningSwitchTest extends BeaconTestCase {
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
+        mockSwitch.addToPortMap(Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")), (short) 42, (short) 1);       
+        expect(mockSwitch.getFromPortMap(Ethernet.toLong(Ethernet.toMACAddress("00:11:22:33:44:55")), (short) 42)).andReturn(null);        
         expect(mockSwitch.getOutputStream()).andReturn(mockStream);
         mockStream.write(po);
 
-        // Start recording the replay on the mocks
+        // Start recording the replay on the mocks       
+        expect(mockSwitch.getFromPortMap(Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")), (short) 42)).andReturn((short) 1);
         replay(mockSwitch, mockStream);
         // Get the listener and trigger the packet in
         IOFMessageListener listener = mockBeaconProvider.getListeners().get(
                 OFType.PACKET_IN).get(0);
         listener.receive(mockSwitch, this.packetIn);
 
-        // Verify the replay matched our expectations
+        // Verify the replay matched our expectations      
+        short result = learningSwitch.getFromPortMap(mockSwitch, Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")), (short) 42).shortValue();
         verify(mockSwitch, mockStream);
 
         // Verify the MAC table inside the switch
-        assertEquals(1, learningSwitch.getFromPortMap(mockSwitch,
-                Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")), (short) 42).shortValue());
+        assertEquals(1, result);
     }
 
     @Test
@@ -178,6 +181,10 @@ public class LearningSwitchTest extends BeaconTestCase {
         // Mock up our expected behavior
         IOFSwitch mockSwitch = createMock(IOFSwitch.class);
         OFMessageSafeOutStream mockStream = createMock(OFMessageSafeOutStream.class);
+        mockSwitch.addToPortMap(Ethernet.toLong(Ethernet.toMACAddress("00:11:22:33:44:55")), (short) 42, (short) 2);
+        mockSwitch.addToPortMap(Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")), (short) 42, (short) 1);
+        expect(mockSwitch.getFromPortMap(Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")), (short) 42)).andReturn((short) 1);
+        expect(mockSwitch.getFromPortMap(Ethernet.toLong(Ethernet.toMACAddress("00:11:22:33:44:55")), (short) 42)).andReturn((short) 2);
         expect(mockSwitch.getFastWildcards()).andReturn(OFMatch.OFPFW_IN_PORT | OFMatch.OFPFW_NW_PROTO
                 | OFMatch.OFPFW_TP_SRC | OFMatch.OFPFW_TP_DST | OFMatch.OFPFW_NW_SRC_ALL
                 | OFMatch.OFPFW_NW_DST_ALL | OFMatch.OFPFW_NW_TOS);
@@ -199,10 +206,10 @@ public class LearningSwitchTest extends BeaconTestCase {
         listener.receive(mockSwitch, this.packetIn);
 
         // Verify the replay matched our expectations
+        short result = learningSwitch.getFromPortMap(mockSwitch, Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")), (short) 42).shortValue();
         verify(mockSwitch, mockStream);
 
         // Verify the MAC table inside the switch
-        assertEquals(1, learningSwitch.getFromPortMap(mockSwitch,
-                Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")), (short) 42).shortValue());
+        assertEquals(1, result);
     }
 }

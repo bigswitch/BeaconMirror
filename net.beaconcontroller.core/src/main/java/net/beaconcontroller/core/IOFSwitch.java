@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
 
 import net.beaconcontroller.core.io.OFMessageSafeOutStream;
+import net.beaconcontroller.core.types.MacVlanPair;
 
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFeaturesReply;
@@ -134,4 +136,37 @@ public interface IOFSwitch {
      * @return wildcard bitmap
      */
     public int getFastWildcards();
+    
+    /**
+     * Adds a host to the macVlanPortMap
+     * @param mac The MAC address of the host to add
+     * @param vlan The VLAN that the host is on
+     * @param portVal The switchport that the host is on
+     */
+    public void addToPortMap(Long mac, Short vlan, short portVal);
+    
+    /**
+     * Removes a host from the macVlanPortMap 
+     * @param mac The MAC address of the host to remove
+     * @param vlan The VLAN that the host is on
+     */
+    public void removeFromPortMap(Long mac, Short vlan);
+    
+    /**
+     * Get the port that a MAC/VLAN pair is associated with
+     * @param mac The MAC address to get
+     * @param vlan The VLAN number to get
+     * @return The port the host is on
+     */
+    public Short getFromPortMap(Long mac, Short vlan);
+    
+    /**
+     * Clear the switch table
+     */
+    public void clearPortMapTable();
+    
+    /**
+     * Get the macVlanPortMap of the switch
+     */
+    public Map<MacVlanPair,Short> getMacVlanToPortMap();
 }

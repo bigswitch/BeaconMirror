@@ -18,4 +18,5 @@ Import-Package: net.beaconcontroller.packet,
  org.springframework.beans.factory.config
 Export-Package: net.beaconcontroller.core,
  net.beaconcontroller.core.io,
- net.beaconcontroller.core.test
+ net.beaconcontroller.core.test,
+ net.beaconcontroller.core.types

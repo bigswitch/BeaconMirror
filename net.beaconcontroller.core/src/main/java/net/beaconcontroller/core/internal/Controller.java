@@ -6,7 +6,6 @@ package net.beaconcontroller.core.internal;
 import java.io.IOException;
 import java.io.EOFException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;

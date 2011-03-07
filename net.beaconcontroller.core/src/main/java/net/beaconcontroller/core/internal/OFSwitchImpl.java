@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.io.OFMessageSafeOutStream;
+import net.beaconcontroller.core.types.MacVlanPair;
 
 import org.openflow.io.OFMessageInStream;
 import org.openflow.protocol.OFFeaturesReply;
@@ -25,6 +27,7 @@ import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.statistics.OFStatistics;
 import org.openflow.util.HexString;
+import org.openflow.util.LRULinkedHashMap;
 
 /**
  *
@@ -40,12 +43,17 @@ public class OFSwitchImpl implements IOFSwitch {
     protected SocketChannel socketChannel;
     protected AtomicInteger transactionIdSource;
     protected HashMap<Short, OFPhysicalPort> ports;
+    protected Map<MacVlanPair,Short> macVlanToPortMap;
+    
+    // for managing our map sizes
+    protected static final int MAX_MACS_PER_SWITCH  = 1000;
     
     public OFSwitchImpl() {
         this.attributes = new ConcurrentHashMap<Object, Object>();
         this.connectedSince = new Date();
         this.transactionIdSource = new AtomicInteger();
         this.ports = new HashMap<Short, OFPhysicalPort>();
+        this.macVlanToPortMap = new LRULinkedHashMap<MacVlanPair,Short>(MAX_MACS_PER_SWITCH);
     }
 
     public SocketChannel getSocketChannel() {
@@ -171,5 +179,41 @@ public class OFSwitchImpl implements IOFSwitch {
      */
     public void setBeaconProvider(IBeaconProvider beaconProvider) {
         this.beaconProvider = beaconProvider;
+    }
+
+    @Override
+    public void addToPortMap(Long mac, Short vlan, short portVal) {
+        if (vlan == (short) 0xffff) {
+            // OFMatch.loadFromPacket sets VLAN ID to 0xffff if the packet contains no VLAN tag;
+            // for our purposes that is equivalent to the default VLAN ID 0
+            vlan = 0;
+        }
+        macVlanToPortMap.put(new MacVlanPair(mac, vlan), portVal);
+    }
+
+    @Override
+    public void removeFromPortMap(Long mac, Short vlan) {
+        if (vlan == (short) 0xffff) {
+            vlan = 0;
+        }
+        macVlanToPortMap.remove(new MacVlanPair(mac, vlan));
+    }
+
+    @Override
+    public Short getFromPortMap(Long mac, Short vlan) {
+        if (vlan == (short) 0xffff) {
+            vlan = 0;
+        }
+        return macVlanToPortMap.get(new MacVlanPair(mac, vlan));
+    }
+
+    @Override
+    public void clearPortMapTable() {
+        macVlanToPortMap.clear();
+    }
+
+    @Override
+    public Map<MacVlanPair, Short> getMacVlanToPortMap() {
+        return macVlanToPortMap;
     }
 }
