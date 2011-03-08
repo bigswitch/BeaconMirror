@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.core.types.MacVlanPair;
 import net.beaconcontroller.util.BundleAction;
 import net.beaconcontroller.web.IWebManageable;
 import net.beaconcontroller.web.view.BeaconJsonView;
@@ -34,10 +36,8 @@ import org.openflow.protocol.OFType;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.statistics.OFPortStatisticsRequest;
 import org.openflow.protocol.statistics.OFFlowStatisticsRequest;
-import org.openflow.protocol.statistics.OFTableStatistics;
 import org.openflow.protocol.statistics.OFAggregateStatisticsRequest;
 import org.openflow.protocol.statistics.OFQueueStatisticsRequest;
-import org.openflow.protocol.statistics.OFDescriptionStatistics;
 import org.openflow.protocol.statistics.OFStatistics;
 import org.openflow.protocol.statistics.OFStatisticsType;
 import org.openflow.util.HexString;
@@ -302,9 +302,22 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             OFFeaturesReply fr = sw.getFeaturesReply();
             model.put(BeaconJsonView.ROOT_OBJECT_KEY, fr);
             return view;
-        } else if (statType.equals("hosts")) {
+        } else if (statType.equals("host")) {
             IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
-            model.put(BeaconJsonView.ROOT_OBJECT_KEY, sw.getMacVlanToPortMap());
+            if (sw != null) {
+                List<Map<String, Long>> switchTableJson = new ArrayList<Map<String, Long>>();
+                Map<MacVlanPair, Short> swTable = sw.getMacVlanToPortMap();
+                Iterator<MacVlanPair> iterSwitchTable = swTable.keySet().iterator();
+                while (iterSwitchTable.hasNext()) {
+                    MacVlanPair key = iterSwitchTable.next();
+                    Map<String, Long> switchTableEntry = new HashMap<String, Long>();
+                    switchTableEntry.put("mac", key.mac);
+                    switchTableEntry.put("vlan", (long) key.vlan);
+                    switchTableEntry.put("port", (long) swTable.get(key));
+                    switchTableJson.add(switchTableEntry);
+                }
+                model.put(BeaconJsonView.ROOT_OBJECT_KEY, switchTableJson);
+            }
             return view;
         }
         model.put(BeaconJsonView.ROOT_OBJECT_KEY, values);
@@ -319,7 +332,6 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             Map<String, Long> m = new HashMap<String, Long>();
             m.put("dpid", s.getId());
             switchIds.add(m);
-           
         }
        model.put(BeaconJsonView.ROOT_OBJECT_KEY, switchIds);
        return view;

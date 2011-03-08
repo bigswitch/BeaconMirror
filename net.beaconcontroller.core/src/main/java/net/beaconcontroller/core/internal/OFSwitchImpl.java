@@ -182,7 +182,7 @@ public class OFSwitchImpl implements IOFSwitch {
     }
 
     @Override
-    public void addToPortMap(Long mac, Short vlan, short portVal) {
+    public synchronized void addToPortMap(Long mac, Short vlan, short portVal) {
         if (vlan == (short) 0xffff) {
             // OFMatch.loadFromPacket sets VLAN ID to 0xffff if the packet contains no VLAN tag;
             // for our purposes that is equivalent to the default VLAN ID 0
@@ -192,7 +192,7 @@ public class OFSwitchImpl implements IOFSwitch {
     }
 
     @Override
-    public void removeFromPortMap(Long mac, Short vlan) {
+    public synchronized void removeFromPortMap(Long mac, Short vlan) {
         if (vlan == (short) 0xffff) {
             vlan = 0;
         }
@@ -200,7 +200,7 @@ public class OFSwitchImpl implements IOFSwitch {
     }
 
     @Override
-    public Short getFromPortMap(Long mac, Short vlan) {
+    public synchronized Short getFromPortMap(Long mac, Short vlan) {
         if (vlan == (short) 0xffff) {
             vlan = 0;
         }
@@ -208,12 +208,12 @@ public class OFSwitchImpl implements IOFSwitch {
     }
 
     @Override
-    public void clearPortMapTable() {
+    public synchronized void clearPortMapTable() {
         macVlanToPortMap.clear();
     }
 
     @Override
-    public Map<MacVlanPair, Short> getMacVlanToPortMap() {
-        return macVlanToPortMap;
+    public synchronized Map<MacVlanPair, Short> getMacVlanToPortMap() {
+        return new HashMap<MacVlanPair, Short>(macVlanToPortMap);
     }
 }

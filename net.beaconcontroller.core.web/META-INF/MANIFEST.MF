@@ -16,3 +16,4 @@ Import-Package: net.beaconcontroller.packet,
  org.springframework.web.multipart;version="3.0.0",
  org.springframework.web.servlet;version="3.0.4.RELEASE",
  org.springframework.web.servlet.tags;version="3.0.4.RELEASE"
+Require-Bundle: net.beaconcontroller.core

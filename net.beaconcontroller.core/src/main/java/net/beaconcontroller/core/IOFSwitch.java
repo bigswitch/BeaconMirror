@@ -166,7 +166,7 @@ public interface IOFSwitch {
     public void clearPortMapTable();
     
     /**
-     * Get the macVlanPortMap of the switch
+     * Returns a COPY of the switch's macVlanPortMap
      */
     public Map<MacVlanPair,Short> getMacVlanToPortMap();
 }
