@@ -1,6 +1,7 @@
 package net.beaconcontroller.devicemanager;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -18,10 +19,17 @@ public class Device {
     protected byte[] dataLayerAddress;
     protected Queue<Integer> networkAddresses;
     protected Queue<SwitchPortTuple> swPorts;
+    protected Date lastSeen;
+    protected Date lastSeenInDb;
+    boolean shouldUpdateLastSeenToDb;
 
     public Device() {
         this.networkAddresses = new ConcurrentLinkedQueue<Integer>();
         this.swPorts = new ConcurrentLinkedQueue<SwitchPortTuple>();
+        lastSeen = new Date();
+        lastSeenInDb = null;
+        shouldUpdateLastSeenToDb = true;
+        // TODO - Alex - we need to read this from the db because it might be aged out in Beacon?
     }
 
     /**
@@ -65,7 +73,47 @@ public class Device {
     public void setNetworkAddresses(Queue<Integer> networkAddresses) {
         this.networkAddresses = networkAddresses;
     }
-
+    
+    /**
+     * Updates the last seen timestamp for the device
+     */
+    public void updateLastSeen() {
+        shouldUpdateLastSeenToDb = false;
+        lastSeen.setTime(System.currentTimeMillis());
+        /*
+         * We only update the DB if it has not been updated in an hour.
+         * This is done in order to prevent too many writes to the DB.
+         * TODO - Alex - find a better update strategy. This one will
+         * not work well in some edge cases (i.e. a flow starts at
+         * minute 59).
+         */
+        if ((lastSeenInDb == null) || (lastSeen.getTime() - lastSeenInDb.getTime()) > 3600000) {
+            if (lastSeenInDb == null) {
+                lastSeenInDb = new Date(lastSeen.getTime());
+            } else {
+                lastSeenInDb.setTime(lastSeen.getTime());
+            }
+            System.out.println("shouldUpdateLastSeenToDb = true");
+            shouldUpdateLastSeenToDb = true;
+        }
+    }
+    
+    /**
+     * Checks to see if we should write the last seen timestamp to the storage service.
+     * @return True if we should udpate the storage service, false otherwise
+     */
+    public boolean shouldUpdateLastSeenStorage() {
+        return shouldUpdateLastSeenToDb;
+    }
+    
+    /**
+     * Gets the UTC timestamp when the device was last seen.
+     * @return The UTC timestamp of when the device was last seen.
+     */
+    public Date getLastSeenDate() {
+        return lastSeen;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */

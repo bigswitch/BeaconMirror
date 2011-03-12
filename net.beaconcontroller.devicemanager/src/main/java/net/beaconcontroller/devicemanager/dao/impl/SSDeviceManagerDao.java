@@ -23,6 +23,7 @@ public class SSDeviceManagerDao implements IDeviceManagerDao {
     private static final String IP_COLUMN_NAME = "ip";
     private static final String SWITCH_COLUMN_NAME = "switch_id";
     private static final String PORT_COLUMN_NAME = "inport";
+    private static final String LAST_SEEN_COLUMN_NAME = "last_seen";
 
     public SSDeviceManagerDao() {}
 
@@ -53,6 +54,10 @@ public class SSDeviceManagerDao implements IDeviceManagerDao {
         for (SwitchPortTuple t : device.getSwPorts()) { swPort = t; }
         rowValues.put(SWITCH_COLUMN_NAME, (swPort == null) ? "" : HexString.toHexString(swPort.getSw().getId()));
         rowValues.put(PORT_COLUMN_NAME, (swPort == null) ? "" : swPort.getPort());
+        device.updateLastSeen();
+        if (device.shouldUpdateLastSeenStorage()) {
+            rowValues.put(LAST_SEEN_COLUMN_NAME, device.getLastSeenDate());
+        }
         rowValues.put("id", macString);
         storageSource.updateRow(DEVICE_TABLE_NAME, rowValues);
     }
@@ -72,8 +77,8 @@ public class SSDeviceManagerDao implements IDeviceManagerDao {
         d.setDataLayerAddress(dlAddress);
         String ipString = rs.getString(IP_COLUMN_NAME);
         d.getNetworkAddresses().add(IPv4.toIPv4Address(ipString));
-        String switchString = rs.getString(SWITCH_COLUMN_NAME);
-        Long switchId = HexString.toLong(switchString);
+        // String switchString = rs.getString(SWITCH_COLUMN_NAME);
+        // Long switchId = HexString.toLong(switchString);
         // d.setSwId(switchId); // FIXME xyx
         // d.setSwPort(rs.getShort(PORT_COLUMN_NAME)); // FIXME xyx
         return d;
