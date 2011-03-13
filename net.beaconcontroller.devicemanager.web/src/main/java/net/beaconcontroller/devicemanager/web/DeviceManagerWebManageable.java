@@ -3,6 +3,7 @@ package net.beaconcontroller.devicemanager.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import net.beaconcontroller.devicemanager.Device;
 import net.beaconcontroller.devicemanager.IDeviceManager;
@@ -13,6 +14,7 @@ import net.beaconcontroller.web.view.Tab;
 import net.beaconcontroller.web.view.layout.Layout;
 import net.beaconcontroller.web.view.layout.TwoColumnLayout;
 import net.beaconcontroller.web.view.section.TableSection;
+import net.beaconcontroller.topology.SwitchPortTuple;
 
 import org.openflow.util.HexString;
 import org.slf4j.Logger;
@@ -78,9 +80,18 @@ public class DeviceManagerWebManageable implements IWebManageable {
                 sb.append(IPv4.fromIPv4Address(nw) + " ");
             }
             row.add(sb.toString());
-            row.add(HexString.toHexString(device.getSw().getId()));
-            row.add(device.getSwPort().toString());
-            cells.add(row);
+            
+            Queue<SwitchPortTuple> swp_tuple = device.getSwPorts();
+            SwitchPortTuple swp = (swp_tuple != null) ? swp_tuple.peek(): null;
+            if (swp != null) {
+                row.add(HexString.toHexString(swp.getSw().getId()));
+                row.add(swp.getPort().toString());
+            }
+            else {
+                row.add("");
+                row.add("");
+            }
+           cells.add(row);
         }
         layout.addSection(new TableSection("Devices", columnNames, cells), TwoColumnLayout.COLUMN1);
 
