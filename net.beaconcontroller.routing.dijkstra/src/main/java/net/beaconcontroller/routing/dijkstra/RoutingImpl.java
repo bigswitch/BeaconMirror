@@ -6,7 +6,6 @@ package net.beaconcontroller.routing.dijkstra;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
-import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
@@ -32,7 +31,7 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
 
     protected static Logger log;
     protected ReentrantReadWriteLock lock;
-    protected HashMap<Long, TreeMap<Link, Link>> network;
+    protected HashMap<Long, HashMap<Link, Link>> network;
     protected HashMap<Long, HashMap<Long, Link>> nexthoplinkmaps;
     protected HashMap<Long, HashMap<Long, Long>> nexthopnodemaps;
     protected LRUHashMap<RouteId, Route> pathcache;
@@ -46,7 +45,7 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
         log = LoggerFactory.getLogger(RoutingImpl.class);
         lock = new ReentrantReadWriteLock();
 
-        network = new HashMap<Long, TreeMap<Link, Link>>();
+        network = new HashMap<Long, HashMap<Link, Link>>();
         nexthoplinkmaps = new HashMap<Long, HashMap<Long, Link>>();
         nexthopnodemaps = new HashMap<Long, HashMap<Long, Long>>();
         pathcache = new LRUHashMap<RouteId, Route>(PATH_CACHE_SIZE);
@@ -150,18 +149,18 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
         lock.writeLock().lock();
         boolean network_updated = false;
        
-        TreeMap<Link, Link> src = network.get(srcId);
+        HashMap<Link, Link> src = network.get(srcId);
         if (src == null) {
             log.debug("update: new node: {}", srcId);
-            src = new TreeMap<Link, Link>();
+            src = new HashMap<Link, Link>();
             network.put(srcId, src);
             network_updated = true;
         }
 
-        TreeMap<Link, Link> dst = network.get(dstId);
+        HashMap<Link, Link> dst = network.get(dstId);
         if (dst == null) {
             log.debug("update: new node: {}", dstId);
-            dst = new TreeMap<Link, Link>();
+            dst = new HashMap<Link, Link>();
             network.put(dstId, dst);
             network_updated = true;
         }
@@ -255,7 +254,7 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
             if (seen.containsKey(cnode)) continue;
             seen.put(cnode, true);
             
-            TreeMap<Link,Link> ports = network.get(cnode);
+            HashMap<Link,Link> ports = network.get(cnode);
             for (Link linkspec : ports.keySet()) {
                 Link link = ports.get(linkspec);
                 Long neighbor = link.getDst();
