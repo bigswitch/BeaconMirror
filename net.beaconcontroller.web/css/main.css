@@ -1,0 +1,41 @@
+/* set base body font size so that the relative font sizing below works */
+body {font-size: 12px}
+
+/* neutralize pane formatting BEFORE loading UI Theme */
+.ui-layout-pane, .ui-layout-content {
+    background: rgb(250, 250, 250);
+    border:   0;
+    padding:  0;
+    overflow: auto;
+}
+
+p               { margin: 1em 0; }
+.grey           { background: #999 !important; }      /* use !important to override UI theme styles */
+.outline        { }                                   /* border:   1px dashed #F00 !important;*/
+.add-padding    { padding:    10px !important; }
+.no-padding     { padding:    0 !important; }
+.add-scrollbar  { overflow:   auto; }
+.no-scrollbar   { overflow:   hidden; }
+.allow-overflow { overflow:   visible; }
+.full-height    { height:   100%; }
+.ui-layout-west h3 a { font-size: 120% !important; font-weight: bolder !important;}
+
+.two_column .column {float: left; width: 50%; padding-bottom: 10px;}
+.section { margin: 0 1em 1em 1em; border: 0px}
+.section-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+.section-header .ui-icon { float: right; }
+.section-content { width: 100%; height: 100%; padding: 0.1em; } /* set height/width so children's % spec will be relative to section-content not column */
+
+.ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
+.ui-sortable-placeholder * { visibility: hidden; }
+
+/* style the close button for tabs */
+#tabs li .ui-icon-close { float: left; margin: 0 0 0 -1em; cursor: pointer; }
+
+/* set styles for the beacon templating */
+.beaconTable {width: 100%; height: 100%;}
+
+/* set style fix-up for datatables plug-in */
+.css_right {float:right;}
+.css_left {float:left;}
+.rowHover {background-color: #ededed;}
