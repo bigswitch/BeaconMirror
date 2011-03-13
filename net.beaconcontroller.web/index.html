@@ -11,6 +11,10 @@
     <script type="text/javascript" src="js/jquery.values.js"></script>
     <script type="text/javascript" src="js/jquery.xclone.js"></script>
     <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="js/jquery.address-1.3.2.js"></script>
+
+    
+    
     
     <!-- TODO - move these back to dynamically loaded scripts (here for debugger) -->
     
@@ -64,23 +68,8 @@
     <script type="text/javascript">
       var APPLICATIONS_LIST_URI = "wm.do";
 
-      /**
-      * Removes all of the tabs from the main panel and replaces them with the tabs referenced
-      * here.  Takes an array of tab objects {url: "some URL", title: "some string"}
-      **/
-      function newTabs(tabSet) {
-        //remove all existing tabs
-        $tabs = $("#center");
-        while($tabs.tabs("length") > 0)
-          $tabs.tabs("remove", 0);
-
-        //Add in the tabs that came with the tab set
-        for(var i = 0; i < tabSet.length; i++) {
-          $tabs.tabs('add', tabSet[i].url, tabSet[i].title);
-        }
-      };
       
-
+      
       /**
        * Registers a "decorator" -- this is basically a small function that is given a matching dom element as an argument
        * every time a tab is loaded (or refreshed).  The string "selector" uses jquery syntax to find the dom element.  The callback
@@ -191,6 +180,8 @@
       
       
       $(document).ready(function () {
+    	  
+    	 
 
         
         /**
@@ -354,8 +345,37 @@
         , spacing_open:     0
         ,   spacing_closed:     0
       });
+      
+      
 
-      var currentTab;
+      /**
+      * Removes all of the tabs from the main panel and replaces them with the tabs referenced
+      * here.  Takes an array of tab objects {url: "some URL", title: "some string"}.  The optional tabIndex
+      * specifies which tabd to show
+      **/
+      function loadTabs(tabSet) {
+    	$tabs = $("#center");
+	        
+    	//use static variable currentTabSet
+    	if(tabSet == loadTabs.currentTabSet)
+    		return;
+    	
+   		loadTabs.currentTabSet = tabSet;
+   	
+        //remove all existing tabs
+        while($tabs.tabs("length") > 0)
+          $tabs.tabs("remove", 0);
+
+        //Add in the tabs that came with the tab set
+        for(var i = 0; i < tabSet.length; i++) {
+          $tabs.tabs('add', tabSet[i].url, tabSet[i].title);
+        }
+    	
+      };
+      
+	  /**
+	   * Wire up the ui component that represents the tabs control
+	   */
       // Center panel - set up tabs
       $("#center").tabs({
         //Hooks up the tab panel decoration code to run when tabs are loaded from remote
@@ -365,24 +385,158 @@
           window.loadScripts(function(){
             decorateTab(newTab); // set up callback chain to makes ure libs are loaded before decorate
             sendBeaconEvent(newTab, "tabLoad", {});
-            currentTab = newTab;
           });
          },
          remove: function(event, ui) {
            var tab = ui.panel;
            sendBeaconEvent(currentTab, "tabRemove", {});
           },
+         select: function(event, ui) {
+        	var tabIndex = $("#center").tabs('option', 'selected'); // janky way to get the tabIndex of the newly selected tab
+        	console.log("selected tabIndex " + tabIndex);
+        	showTab(null, tabIndex);
+         }
       });
+      
+      var currentTab = {
+    		  appName: null,
+    		  tabIndex: null
+      };
+      
+      function getCurrentTab() {
+    	  return currentLocation;
+      };
+      
+      function setCurrentTab(newAppName, newTabIndex) {
+    	  currentLocation = {
+    		appName: newAppName,
+    		tabIndex: newTabIndex
+    	  };
+      };
+      
+      /**
+       * Parses the window.location.hash in to an object with two properties -- appName and tabIndex.
+       */
+      function parseLocation() {
+    	  var appName = window.appList ? window.appList[0].name : "";
+    	  var tabIndex = 0;
+    	  
+    	  if(window.location.hash) {
+    		  var s = window.location.hash.split("--", 2);
+        	  appName = s ? s[0].substring(1) : window.appList[0].name; //note - need to split off the leading hash
+        	  tabIndex = s.length > 1 ? s[1] : null; 
+ 	      }	
+    	  return {'appName' : appName, 'tabIndex' : tabIndex};
+      }
+      
+      /**
+       * Show the app specified by appName - note that this can come from either forward/back buttons, from 
+       * the app accordian control or from the tab control.
+       *
+       * It can be called multiple times.
+       * If tabIndex is null, just show the first tab in the app
+       * If appName is null, just show the tabIndex in the currently active app
+       */
+      function showTab(appName, tabIndex) {
+    	//Use static vars for currentAppName and currentTabIndex - declare here for readability
+    	showTab.currentAppName;
+    	showTab.currentTabIndex;
+    	
+    	console.log("show tab new: " + appName + " index " + tabIndex);
+    	console.log("show tab current: " + showTab.currentAppName + " index " + showTab.currentTabIndex);
 
+    	
+  		//Figure out the current app and tab index
+  		/*
+  		var s = parseLocation();
+  		
+  		var currentAppName = s.appName;
+  		var currentTabIndex = s.tabIndex;
+  		*/
+  		
+  		if(!appName)
+  			appName = showTab.currentAppName;
+
+  		if(!tabIndex)
+  			tabIndex = 0;
+
+  		
+		var newLoc = appName + "--" + tabIndex : appName;
+
+		//This appName/tabIndex is already showing
+		if(newLoc == window.location.hash)
+			return;
+    	  
+    	var appList = window.appList;  //TODO - fix this so appList isn't a global variable
+    	
+    	if(!appList) //may happen if showApp gets called early
+    		return;
+    	
+    	//Find the underlying app
+    	var app = null;
+    	var appIndex = -1;
+		for(var i = 0; i < appList.length; i++) {
+          if (appList[i].name == appName) {
+            app = appList[i];
+            appIndex = i;
+            break;
+          }
+		}
+		
+		//If there is no app with this name, just return
+		if(!app)
+			return;
+		
+        //Step 1 - update the window location hash if needed
+       	if(window.location.hash != newLoc) {
+       		//Note this will almost immediately cause this function to be called
+       		//a second time - sigh - no good separation of model and view for window.location
+       		window.location.hash = newLoc;
+       	}
+       	
+       	//Step 2 - update the app accordian if needed
+       	if($( "#appAccordian" ).accordion( "option", "active" ) != appIndex) {
+           	$("#appAccordian").accordion( "activate", i );
+       	}
+       	
+       	//Step 3 - load in the tabs if needed (change of app or not yet loaded)
+       	if(currentAppName != appName || $("#center").tabs("length") == 0) {
+       		loadTabs(app.tabs);
+       	}
+       	
+       	$tabs = $("#center");
+    	
+       	//Step 4 - open the appropriate tab if needed
+    	if(tabIndex != null && $tabs.tabs('option', 'selected') != tabIndex) {
+    		$tabs.tabs("select", tabIndex)       
+    	}
+      }
+      
+      //Wire up forward and back buttons
+      //(see http://stackoverflow.com/questions/813601/jquery-ui-tabs-back-button-history)
+      //Note the parallel with accordian change
+   	  $.address.change(function(event){
+   		if(window.location.hash) {
+   			var s = parseLocation();
+   			showTab(s.appName, s.tabIndex);
+   		}
+   		else if(window.appList) { //make sure to check that window.appList has been loaded - this fires once before that happens
+   			window.location.hash = window.appList[0].name + "--" + "0";
+   		}
+   	  });
+      
+   	  
       pageLayout.sizeContent("east"); // resize pane-content-elements after creating tabs
-
 
       //Retrieve the app list from the server
       $.get(APPLICATIONS_LIST_URI, function(appList, status) {
+    	//for now, just shove the appList in to a global variable (TODO - fix this) as it is re-used for change events
+    	window.appList = appList;
+    	
         firstTabSet = appList[0].tabs;
 
         //Fetch the content for the tabs needed
-        newTabs(firstTabSet);
+        //newTabs(firstTabSet);
         
         //Init the left panel nav (copy in values and do a little html munging)
         for(var i = 0; i < appList.length; i++) {
@@ -394,13 +548,17 @@
         // Wire the accordian change in the left panel nav to changing up the tabs in the center panel
         $("#appAccordian").bind( "accordionchange", function(event, ui) {
           var name = ui.newHeader.find("a").html(); //crumby way to fish the app name back out
-          var app = null;
-          for(var i = 0; i < appList.length; i++)
-          if (appList[i].name == name)
-            app = appList[i];
-          if(app)
-            newTabs(app.tabs);
+          showTab(name, null);
         });
+        
+        //Wire up for the first time that the window is loaded (note that this has to occur after the app list is loaded)
+        if(window.location.hash) {
+        	var s = parseLocation();
+   			showTab(s.appName, s.tabIndex);
+        }
+        else {
+        	showTab(appList[0].name, 0);
+        }
       });
     });
 
