@@ -1,6 +1,8 @@
 package net.beaconcontroller.topology;
 
 import java.util.Map;
+import java.util.Set;
+import net.beaconcontroller.core.IOFSwitch;
 
 /**
  *
@@ -23,4 +25,23 @@ public interface ITopology {
      * @return
      */
     public Map<LinkTuple, Long> getLinks();
+    
+    /**
+     * Retrieves a set of all the switches in the same cluster as sw.
+     * A cluster is a set of switches that are directly or indirectly
+     * connected via Openflow switches that use the same controller
+     * (not necessarily the same controller instance but any controller
+     * instance in a group sharing the same network database).
+     * @param sw The switch whose cluster we're obtaining
+     * @return Set of switches in the cluster
+     */
+    public Set<IOFSwitch> getSwitchesInCluster(IOFSwitch sw);
+    
+    /**
+     * Queries whether two switches are in the same cluster.
+     * @param switch1
+     * @param switch2
+     * @return true if the switches are in the same cluster
+     */
+    public boolean inSameCluster(IOFSwitch switch1, IOFSwitch switch2);
 }

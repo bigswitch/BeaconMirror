@@ -20,9 +20,10 @@ public class DaoLinkTuple {
         this.dst = dst;
     }
 
-    public DaoLinkTuple(Long srcId, Short srcPort, Long dstId, Short dstPort) {
-        this.src = new DaoSwitchPortTuple(srcId, srcPort);
-        this.dst = new DaoSwitchPortTuple(dstId, dstPort);
+    public DaoLinkTuple(Long srcId, Short srcPortNumber, Integer srcPortState,
+            Long dstId, Short dstPortNumber, Integer dstPortState) {
+        this.src = new DaoSwitchPortTuple(srcId, srcPortNumber, srcPortState);
+        this.dst = new DaoSwitchPortTuple(dstId, dstPortNumber, dstPortState);
     }
 
     /**
@@ -32,9 +33,10 @@ public class DaoLinkTuple {
      * @param dstId
      * @param dstPort
      */
-    public DaoLinkTuple(Long srcId, Integer srcPort, Long dstId, Integer dstPort) {
-        this.src = new DaoSwitchPortTuple(srcId, srcPort);
-        this.dst = new DaoSwitchPortTuple(dstId, dstPort);
+    public DaoLinkTuple(Long srcId, Integer srcPortNumber, Integer srcPortState,
+            Long dstId, Integer dstPortNumber, Integer dstPortState) {
+        this.src = new DaoSwitchPortTuple(srcId, srcPortNumber, srcPortState);
+        this.dst = new DaoSwitchPortTuple(dstId, dstPortNumber, dstPortState);
     }
 
     /**
@@ -121,9 +123,12 @@ public class DaoLinkTuple {
     public static DaoLinkTuple fromBytes(byte[] data) {
         ByteBuffer bb = ByteBuffer.wrap(data);
         long srcId = bb.getLong();
-        short srcPort = bb.getShort();
+        short srcPortNumber = bb.getShort();
+        int srcPortState = bb.getInt();
         long dstId = bb.getLong();
-        short dstPort = bb.getShort();
-        return new DaoLinkTuple(srcId, srcPort, dstId, dstPort);
+        short dstPortNumber = bb.getShort();
+        int dstPortState = bb.getInt();
+        return new DaoLinkTuple(srcId, srcPortNumber, srcPortState,
+                dstId, dstPortNumber, dstPortState);
     }
 }

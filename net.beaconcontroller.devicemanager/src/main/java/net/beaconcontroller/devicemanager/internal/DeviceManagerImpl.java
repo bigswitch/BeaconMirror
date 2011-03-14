@@ -399,11 +399,11 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
     }
 
     @Override
-    public void linkUpdate(IOFSwitch src, short srcPort, IOFSwitch dst,
-            short dstPort, boolean added) {
+    public void linkUpdate(IOFSwitch src, short srcPortNumber, int srcPortState,
+            IOFSwitch dst, short dstPortNumber, int dstPortState, boolean added) {
         if (added) {
             // Remove all devices living on this switch:port now that it is internal
-            SwitchPortTuple id = new SwitchPortTuple(dst, dstPort);
+            SwitchPortTuple id = new SwitchPortTuple(dst, dstPortNumber);
             lock.writeLock().lock();
             try {
                 if (switchPortDeviceMap.containsKey(id)) {
@@ -466,9 +466,9 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
         Update update = new Update(UpdateType.MOVED);
         update.device = device;
         update.oldSw = oldSwPort.getSw();
-        update.oldSwPort = oldSwPort.getPort();
+        update.oldSwPort = oldSwPort.getPortNumber();
         update.sw = swPort.getSw();
-        update.swPort = swPort.getPort();
+        update.swPort = swPort.getPortNumber();
         this.updates.add(update);
     }
 }

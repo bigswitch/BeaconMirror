@@ -135,8 +135,9 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
     }
 
     @Override
-    public void linkUpdate(IOFSwitch src, short srcPort, IOFSwitch dst, short dstPort, boolean added) {
-        update(src.getId(), srcPort, dst.getId(), dstPort, added);
+    public void linkUpdate(IOFSwitch src, short srcPortNumber, int srcPortState,
+            IOFSwitch dst, short dstPortNumber, int dstPortState, boolean added) {
+        update(src.getId(), srcPortNumber, dst.getId(), dstPortNumber, added);
     }
 
     @Override

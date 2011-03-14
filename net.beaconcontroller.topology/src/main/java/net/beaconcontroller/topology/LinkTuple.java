@@ -1,6 +1,7 @@
 package net.beaconcontroller.topology;
 
 import net.beaconcontroller.core.IOFSwitch;
+import org.openflow.protocol.OFPhysicalPort.OFPortState;
 
 /**
  *
@@ -20,21 +21,23 @@ public class LinkTuple {
         this.dst = dst;
     }
 
-    public LinkTuple(IOFSwitch src, Short srcPort, IOFSwitch dst, Short dstPort) {
-        this.src = new SwitchPortTuple(src, srcPort);
-        this.dst = new SwitchPortTuple(dst, dstPort);
+    public LinkTuple(IOFSwitch src, Short srcPortNumber, Integer srcPortState,
+            IOFSwitch dst, Short dstPortNumber, Integer dstPortState) {
+        this.src = new SwitchPortTuple(src, srcPortNumber, srcPortState);
+        this.dst = new SwitchPortTuple(dst, dstPortNumber, dstPortState);
     }
 
     /**
      * Convenience constructor, ports are cast to shorts
      * @param srcId
-     * @param srcPort
+     * @param srcPortNumber
      * @param dstId
-     * @param dstPort
+     * @param dstPortNumber
      */
-    public LinkTuple(IOFSwitch src, Integer srcPort, IOFSwitch dst, Integer dstPort) {
-        this.src = new SwitchPortTuple(src, srcPort);
-        this.dst = new SwitchPortTuple(dst, dstPort);
+    public LinkTuple(IOFSwitch src, Integer srcPortNumber, Integer srcPortState,
+            IOFSwitch dst, Integer dstPortNumber, Integer dstPortState) {
+        this.src = new SwitchPortTuple(src, srcPortNumber, srcPortState);
+        this.dst = new SwitchPortTuple(dst, dstPortNumber, dstPortState);
     }
 
     /**

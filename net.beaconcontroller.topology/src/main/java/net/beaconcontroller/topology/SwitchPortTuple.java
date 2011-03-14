@@ -4,7 +4,7 @@
 package net.beaconcontroller.topology;
 
 import net.beaconcontroller.core.IOFSwitch;
-
+import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.util.HexString;
 
 /**
@@ -13,12 +13,16 @@ import org.openflow.util.HexString;
  */
 public class SwitchPortTuple {
     protected IOFSwitch sw;
-    protected Short port;
+    protected Short portNumber;
+    protected Integer portState;
 
-    public SwitchPortTuple(IOFSwitch sw, Short port) {
+    public SwitchPortTuple(IOFSwitch sw, Short portNumber) {
         super();
         this.sw = sw;
-        this.port = port;
+        this.portNumber = portNumber;
+        OFPhysicalPort port = sw.getPort(portNumber);
+        if (port != null)
+            this.portState = port.getState();
     }
 
     /**
@@ -27,9 +31,18 @@ public class SwitchPortTuple {
      * @param port
      */
     public SwitchPortTuple(IOFSwitch sw, Integer port) {
+        this(sw, port.shortValue());
+    }
+
+    public SwitchPortTuple(IOFSwitch sw, Short portNumber, Integer portState) {
         super();
         this.sw = sw;
-        this.port = port.shortValue();
+        this.portNumber = portNumber;
+        this.portState = portState;
+    }
+
+    public SwitchPortTuple(IOFSwitch sw, Integer portNumber, Integer portState) {
+        this(sw, portNumber.shortValue(), portState);
     }
 
     /**
@@ -40,12 +53,27 @@ public class SwitchPortTuple {
     }
 
     /**
-     * @return the port
+     * @return the port number
      */
-    public Short getPort() {
-        return port;
+    public Short getPortNumber() {
+        return portNumber;
     }
 
+    /**
+     * @return the port state
+     */
+    public Integer getPortState() {
+        return portState;
+    }
+    
+    /**
+     * Set the port state
+     * @param portState
+     */
+    public void setPortState(Integer portState) {
+        this.portState = portState;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -54,7 +82,8 @@ public class SwitchPortTuple {
         final int prime = 5557;
         int result = 1;
         result = prime * result + ((sw == null) ? 0 : sw.hashCode());
-        result = prime * result + ((port == null) ? 0 : port.hashCode());
+        result = prime * result + ((portNumber == null) ? 0 : portNumber.hashCode());
+        result = prime * result + ((portState == null) ? 0 : portState.hashCode());
         return result;
     }
 
@@ -75,11 +104,19 @@ public class SwitchPortTuple {
                 return false;
         } else if (!sw.equals(other.sw))
             return false;
-        if (port == null) {
-            if (other.port != null)
+        
+        if (portNumber == null) {
+            if (other.portNumber != null)
                 return false;
-        } else if (!port.equals(other.port))
+        } else if (!portNumber.equals(other.portNumber))
             return false;
+        
+        if (portState == null) {
+            if (other.portState != null)
+                return false;
+        } else if (!portState.equals(other.portState))
+            return false;
+
         return true;
     }
 
@@ -90,6 +127,7 @@ public class SwitchPortTuple {
     public String toString() {
         return "SwitchPortTuple [id="
                 + ((sw == null) ? "null" : HexString.toHexString(sw.getId()))
-                + ", port=" + ((port == null) ? "null" : (0xff & port)) + "]";
+                + ", portNumber=" + ((portNumber == null) ? "null" : (0xff & portNumber))
+                + ", portState=" + ((portState == null) ? "null" : portState) + "]";
     }
 }

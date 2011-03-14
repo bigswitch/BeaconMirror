@@ -16,6 +16,6 @@ public interface ITopologyAware {
      * @param dstPort
      * @param added
      */
-    public void linkUpdate(IOFSwitch src, short srcPort,
-            IOFSwitch dst, short dstPort, boolean added);
+    public void linkUpdate(IOFSwitch src, short srcPortNumber, int srcPortState,
+            IOFSwitch dst, short dstPortNumber, int dstPortState, boolean added);
 }

@@ -100,7 +100,11 @@ public class OFSwitchImpl implements IOFSwitch {
         }
         return result;
     }
-    
+
+    public synchronized OFPhysicalPort getPort(short portNumber) {
+        return ports.get(portNumber);
+    }
+
     public synchronized void setPort(OFPhysicalPort port) {
         ports.put(port.getPortNumber(), port);
     }

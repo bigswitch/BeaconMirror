@@ -66,6 +66,15 @@ public interface IOFSwitch {
     public List<OFPhysicalPort> getEnabledPorts();
 
     /**
+     * Retrieve the port object by the port number. The port object
+     * is the one that reflects the port status updates that have been
+     * received, not the one from the features reply.
+     * @param portNumber
+     * @return port object
+     */
+    public OFPhysicalPort getPort(short portNumber);
+
+    /**
      * Add or modify a switch port. This is called by the core controller
      * code in response to a OFPortStatus message. It should not typically be
      * called by other beacon applications.
