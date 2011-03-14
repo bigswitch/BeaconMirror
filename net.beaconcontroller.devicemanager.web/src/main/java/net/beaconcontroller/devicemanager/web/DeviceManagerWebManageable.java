@@ -69,32 +69,43 @@ public class DeviceManagerWebManageable implements IWebManageable {
         columnNames.add("IP");
         columnNames.add("Switch");
         columnNames.add("Port");
+        
         cells = new ArrayList<List<String>>();
         for (Device device : deviceManager.getDevices()) {
-            List<String> row = new ArrayList<String>();
-            row.add(HexString.toHexString(device.getDataLayerAddress()));
-            StringBuffer sb = new StringBuffer();
-            for (Integer nw : device.getNetworkAddresses()) {
-                if (sb.length() > 0)
-                    sb.append(" ");
-                sb.append(IPv4.fromIPv4Address(nw) + " ");
-            }
-            row.add(sb.toString());
-            
             Queue<SwitchPortTuple> swp_tuple = device.getSwPorts();
-            SwitchPortTuple swp = (swp_tuple != null) ? swp_tuple.peek(): null;
-            if (swp != null) {
-                row.add(HexString.toHexString(swp.getSw().getId()));
-                row.add(swp.getPort().toString());
+            if (swp_tuple != null && swp_tuple.size() > 0) {
+                for (SwitchPortTuple swp : swp_tuple) {
+                    List<String> row = new ArrayList<String>();
+                    row.add(HexString.toHexString(device.getDataLayerAddress()));
+                    StringBuffer sb = new StringBuffer();
+                    for (Integer nw : device.getNetworkAddresses()) {
+                        if (sb.length() > 0)
+                            sb.append(" ");
+                        sb.append(IPv4.fromIPv4Address(nw) + " ");
+                    }
+                    row.add(sb.toString());
+                    row.add(HexString.toHexString(swp.getSw().getId()));
+                    row.add(swp.getPort().toString());
+                    cells.add(row);
+                }
             }
             else {
+                List<String> row = new ArrayList<String>();
+                row.add(HexString.toHexString(device.getDataLayerAddress()));
+                StringBuffer sb = new StringBuffer();
+                for (Integer nw : device.getNetworkAddresses()) {
+                    if (sb.length() > 0)
+                        sb.append(" ");
+                    sb.append(IPv4.fromIPv4Address(nw) + " ");
+                }
+                row.add(sb.toString());
                 row.add("");
                 row.add("");
+                cells.add(row);
             }
-           cells.add(row);
         }
+        
         layout.addSection(new TableSection("Devices", columnNames, cells), TwoColumnLayout.COLUMN1);
-
         return BeaconViewResolver.SIMPLE_VIEW;
     }
 
