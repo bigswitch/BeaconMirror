@@ -466,9 +466,9 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
         Update update = new Update(UpdateType.MOVED);
         update.device = device;
         update.oldSw = oldSwPort.getSw();
-        update.oldSwPort = oldSwPort.getPortNumber();
+        update.oldSwPort = oldSwPort.getPort();
         update.sw = swPort.getSw();
-        update.swPort = swPort.getPortNumber();
+        update.swPort = swPort.getPort();
         this.updates.add(update);
     }
 }

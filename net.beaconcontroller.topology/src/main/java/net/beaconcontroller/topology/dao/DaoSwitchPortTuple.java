@@ -13,14 +13,12 @@ import org.openflow.util.HexString;
  */
 public class DaoSwitchPortTuple {
     protected Long id;
-    protected Short portNumber;
-    protected Integer portState;
+    protected Short port;
     
-    public DaoSwitchPortTuple(Long id, Short portNumber, Integer portState) {
+    public DaoSwitchPortTuple(Long id, Short port) {
         super();
         this.id = id;
-        this.portNumber = portNumber;
-        this.portState = portState;
+        this.port = port;
     }
 
     /**
@@ -28,8 +26,8 @@ public class DaoSwitchPortTuple {
      * @param id
      * @param port
      */
-    public DaoSwitchPortTuple(Long id, Integer portNumber, Integer portState) {
-        this(id, portNumber.shortValue(), portState);
+    public DaoSwitchPortTuple(Long id, Integer portNumber) {
+        this(id, portNumber.shortValue());
     }
 
     /**
@@ -42,12 +40,8 @@ public class DaoSwitchPortTuple {
     /**
      * @return the port
      */
-    public Short getPortNumber() {
-        return portNumber;
-    }
-
-    public Integer getPortState() {
-        return portState;
+    public Short getPort() {
+        return port;
     }
     
     /* (non-Javadoc)
@@ -58,8 +52,7 @@ public class DaoSwitchPortTuple {
         final int prime = 5557;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((portNumber == null) ? 0 : portNumber.hashCode());
-        result = prime * result + ((portState == null) ? 0 : portState.hashCode());
+        result = prime * result + ((port == null) ? 0 : port.hashCode());
         return result;
     }
 
@@ -80,15 +73,10 @@ public class DaoSwitchPortTuple {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        if (portNumber == null) {
-            if (other.portNumber != null)
+        if (port == null) {
+            if (other.port != null)
                 return false;
-        } else if (!portNumber.equals(other.portNumber))
-            return false;
-        if (portState == null) {
-            if (other.portState != null)
-                return false;
-        } else if (!portState.equals(other.portState))
+        } else if (!port.equals(other.port))
             return false;
         return true;
     }
@@ -100,24 +88,21 @@ public class DaoSwitchPortTuple {
     public String toString() {
         return "DaoSwitchPortTuple [id="
                 + ((id == null) ? "null" : HexString.toHexString(id))
-                + ", portNumber=" + ((portNumber == null) ? "null" : (0xff & portNumber))
-                + ", portState=" + ((portState == null) ? "null" : portState) + "]";
+                + ", portNumber=" + ((port == null) ? "null" : (0xff & port)) + "]";
     }
 
     public byte[] toBytes() {
         byte[] ret = new byte[10];
         ByteBuffer bb = ByteBuffer.wrap(ret);
         bb.putLong(id);
-        bb.putShort(portNumber);
-        bb.putInt(portState);
+        bb.putShort(port);
         return ret;
     }
 
     public static DaoSwitchPortTuple fromBytes(byte[] data) {
         ByteBuffer bb = ByteBuffer.wrap(data);
         long id = bb.getLong();
-        short portNumber = bb.getShort();
-        int portState = bb.getInt();
-        return new DaoSwitchPortTuple(id, portNumber, portState);
+        short port = bb.getShort();
+        return new DaoSwitchPortTuple(id, port);
     }
 }

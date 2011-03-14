@@ -87,7 +87,7 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
             if (route != null) {
                 // set the route
                 if (log.isTraceEnabled())
-                    log.trace("Pushing route match={} route={} destination={}:{}", new Object[] {match, route, dstSwPort.getSw(), dstSwPort.getPortNumber()});
+                    log.trace("Pushing route match={} route={} destination={}:{}", new Object[] {match, route, dstSwPort.getSw(), dstSwPort.getPort()});
                 OFMessageInStream in = sw.getInputStream();
                 pushRoute(in.getMessageFactory(), match, route, dstSwPort, pi.getBufferId());
 
@@ -138,7 +138,7 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
             .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
         IOFSwitch sw = dstSwPort.getSw();
         OFMessageSafeOutStream out = sw.getOutputStream(); // to prevent NoClassDefFoundError
-        ((OFActionOutput)fm.getActions().get(0)).setPort(dstSwPort.getPortNumber());
+        ((OFActionOutput)fm.getActions().get(0)).setPort(dstSwPort.getPort());
 
         for (int i = route.getPath().size() - 1; i >= 0; --i) {
             Link link = route.getPath().get(i);

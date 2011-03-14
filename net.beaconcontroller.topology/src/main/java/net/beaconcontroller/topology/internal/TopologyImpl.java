@@ -120,11 +120,11 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
         public Update(LinkTuple lt, boolean added) {
             this.src = lt.getSrc().getSw();
-            this.srcPortNumber = lt.getSrc().getPortNumber();
-            this.srcPortState = lt.getSrc().getPortState();
+            this.srcPortNumber = lt.getSrc().getPort();
+            this.srcPortState = lt.getSrcPortState();
             this.dst = lt.getDst().getSw();
-            this.dstPortNumber = lt.getDst().getPortNumber();
-            this.dstPortState = lt.getDst().getPortState();
+            this.dstPortNumber = lt.getDst().getPort();
+            this.dstPortState = lt.getDstPortState();
             this.added = added;
         }
     }
@@ -334,9 +334,14 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             return Command.STOP;
         }
 
+        OFPhysicalPort physicalPort = remoteSwitch.getPort(remotePort);
+        int srcPortState = (physicalPort != null) ? physicalPort.getState() : 0;
+        physicalPort = sw.getPort(remotePort);
+        int dstPortState = (physicalPort != null) ? physicalPort.getState() : 0;
+
         // Store the time of update to this link, and push it out to routingEngine
-        LinkTuple lt = new LinkTuple(new SwitchPortTuple(remoteSwitch, remotePort),
-                new SwitchPortTuple(sw, pi.getInPort()));
+        LinkTuple lt = new LinkTuple(new SwitchPortTuple(remoteSwitch, remotePort), srcPortState,
+                new SwitchPortTuple(sw, pi.getInPort()), dstPortState);
         addOrUpdateLink(lt);
 
         // Consume this message
@@ -360,20 +365,18 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
                 // index both ends by switch:port
                 // Don't include the port state in the tuple used as the key
-                SwitchPortTuple srcKeyTuple = new SwitchPortTuple(lt.getSrc().getSw(), lt.getSrc().getPortNumber(), 0);
-                if (!portLinks.containsKey(srcKeyTuple))
-                    portLinks.put(srcKeyTuple, new HashSet<LinkTuple>());
-                portLinks.get(srcKeyTuple).add(lt);
+                if (!portLinks.containsKey(lt.getSrc()))
+                    portLinks.put(lt.getSrc(), new HashSet<LinkTuple>());
+                portLinks.get(lt.getSrc()).add(lt);
 
-                SwitchPortTuple dstKeyTuple = new SwitchPortTuple(lt.getDst().getSw(), lt.getDst().getPortNumber(), 0);
-                if (!portLinks.containsKey(dstKeyTuple))
-                    portLinks.put(dstKeyTuple, new HashSet<LinkTuple>());
-                portLinks.get(dstKeyTuple).add(lt);
+                if (!portLinks.containsKey(lt.getDst()))
+                    portLinks.put(lt.getDst(), new HashSet<LinkTuple>());
+                portLinks.get(lt.getDst()).add(lt);
 
                 updates.add(new Update(lt, true));
 
-                DaoLinkTuple daoLt = new DaoLinkTuple(lt.getSrc().getSw().getId(), lt.getSrc().getPortNumber(), lt.getSrc().getPortState(),
-                                                      lt.getDst().getSw().getId(), lt.getDst().getPortNumber(), lt.getDst().getPortState());
+                DaoLinkTuple daoLt = new DaoLinkTuple(lt.getSrc().getSw().getId(), lt.getSrc().getPort(), lt.getSrcPortState(),
+                                                      lt.getDst().getSw().getId(), lt.getDst().getPort(), lt.getDstPortState());
                 if (topologyDao.getLink(daoLt) == null) {
                     topologyDao.addLink(daoLt, t);
                 } else {
@@ -406,22 +409,20 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                         this.switchLinks.get(lt.getDst().getSw()).isEmpty())
                     this.switchLinks.remove(lt.getDst().getSw());
 
-                SwitchPortTuple srcKeyTuple = new SwitchPortTuple(lt.getSrc().getSw(), lt.getSrc().getPortNumber(), 0);
-                this.portLinks.get(srcKeyTuple).remove(lt);
-                if (this.portLinks.get(srcKeyTuple).isEmpty())
-                    this.portLinks.remove(srcKeyTuple);
-                SwitchPortTuple dstKeyTuple = new SwitchPortTuple(lt.getDst().getSw(), lt.getDst().getPortNumber(), 0);
-                this.portLinks.get(dstKeyTuple).remove(lt);
-                if (this.portLinks.get(dstKeyTuple).isEmpty())
-                    this.portLinks.remove(dstKeyTuple);
+                this.portLinks.get(lt.getSrc()).remove(lt);
+                if (this.portLinks.get(lt.getSrc()).isEmpty())
+                    this.portLinks.remove(lt.getSrc());
+                this.portLinks.get(lt.getDst()).remove(lt);
+                if (this.portLinks.get(lt.getDst()).isEmpty())
+                    this.portLinks.remove(lt.getDst());
 
                 this.links.remove(lt);
                 updates.add(new Update(lt, false));
 
                 DaoLinkTuple daoLt = new DaoLinkTuple(lt.getSrc().getSw().getId(),
-                        lt.getSrc().getPortNumber(), lt.getSrc().getPortState(),
-                        lt.getDst().getSw().getId(), lt.getDst().getPortNumber(),
-                        lt.getDst().getPortState());
+                        lt.getSrc().getPort(), lt.getSrcPortState(),
+                        lt.getDst().getSw().getId(), lt.getDst().getPort(),
+                        lt.getDstPortState());
                 topologyDao.removeLink(daoLt);
 
                 log.debug("Deleted link {}", lt);
@@ -439,7 +440,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                                 ps.getDesc().getConfig(),
                                 ps.getDesc().getState()});
         
-        SwitchPortTuple keyTuple = new SwitchPortTuple(sw, ps.getDesc().getPortNumber(), 0);
+        SwitchPortTuple tuple = new SwitchPortTuple(sw, ps.getDesc().getPortNumber());
 
         lock.writeLock().lock();
         try {
@@ -449,12 +450,12 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 ((byte)OFPortReason.OFPPR_MODIFY.ordinal() == ps.getReason() && !portEnabled(ps.getDesc()))) {
     
                 List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
-                    if (this.portLinks.containsKey(keyTuple)) {
+                    if (this.portLinks.containsKey(tuple)) {
                         log.debug("handlePortStatus: Switch {} port #{} reason {}; removing links",
                                   new Object[] {HexString.toHexString(sw.getId()),
                                                 ps.getDesc().getPortNumber(),
                                                 ps.getReason()});
-                        eraseList.addAll(this.portLinks.get(keyTuple));
+                        eraseList.addAll(this.portLinks.get(tuple));
                         deleteLinks(eraseList);
                         topologyChanged = true;
                     } else {
@@ -466,16 +467,12 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             }
             // If ps is a port modification and the port state has changed that affects links in the topology
             else if (ps.getReason() == (byte)OFPortReason.OFPPR_MODIFY.ordinal()) {
-                for (LinkTuple link: this.portLinks.get(keyTuple)) {
-                    if ((link.getSrc().getSw() == keyTuple.getSw()) &&
-                            (link.getSrc().getPortNumber() == keyTuple.getPortNumber()) &&
-                            (link.getSrc().getPortState() != ps.getDesc().getState())) {
-                        link.getSrc().setPortState(ps.getDesc().getState());
+                for (LinkTuple link: this.portLinks.get(tuple)) {
+                    if (link.getSrc().equals(tuple) && (link.getSrcPortState() != ps.getDesc().getState())) {
+                        link.setSrcPortState(ps.getDesc().getState());
                         topologyChanged = true;
-                    } else if ((link.getDst().getSw() == keyTuple.getSw()) &&
-                            (link.getDst().getPortNumber() == keyTuple.getPortNumber()) &&
-                            (link.getDst().getPortState() != ps.getDesc().getState())) {
-                        link.getDst().setPortState(ps.getDesc().getState());
+                    } else if (link.getDst().equals(tuple) && (link.getDstPortState() != ps.getDesc().getState())) {
+                        link.setDstPortState(ps.getDesc().getState());
                         topologyChanged = true;
                     }
                 }
@@ -556,8 +553,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         lock.readLock().lock();
         boolean result;
         try {
-            SwitchPortTuple keyTuple = new SwitchPortTuple(idPort.getSw(), idPort.getPortNumber(), 0);
-            result = this.portLinks.containsKey(keyTuple);
+            result = this.portLinks.containsKey(idPort);
         } finally {
             lock.readLock().unlock();
         }
@@ -587,8 +583,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         // use recursion to avoid stack overflow.
         for (LinkTuple link: links) {
             // FIXME: Is this the right check for handling STP correctly?
-            if (!portStpBlocked(link.getSrc().getPortState()) &&
-                    !portStpBlocked(link.getSrc().getPortState())) {
+            if (!portStpBlocked(link.getSrcPortState()) && !portStpBlocked(link.getDstPortState())) {
                 IOFSwitch dstSw = link.getDst().getSw();
                 if (switchClusterMap.get(dstSw) == null) {
                     cluster.add(dstSw);

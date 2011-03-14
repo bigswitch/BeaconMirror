@@ -53,7 +53,7 @@ public class SSDeviceManagerDao implements IDeviceManagerDao {
         SwitchPortTuple swPort = null;
         for (SwitchPortTuple t : device.getSwPorts()) { swPort = t; }
         rowValues.put(SWITCH_COLUMN_NAME, (swPort == null) ? "" : HexString.toHexString(swPort.getSw().getId()));
-        rowValues.put(PORT_COLUMN_NAME, (swPort == null) ? "" : swPort.getPortNumber());
+        rowValues.put(PORT_COLUMN_NAME, (swPort == null) ? "" : swPort.getPort());
         device.updateLastSeen();
         if (device.shouldUpdateLastSeenStorage()) {
             rowValues.put(LAST_SEEN_COLUMN_NAME, device.getLastSeenDate());

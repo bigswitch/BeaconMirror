@@ -9,34 +9,45 @@ import java.nio.ByteBuffer;
  */
 public class DaoLinkTuple {
     protected DaoSwitchPortTuple src;
+    protected Integer srcPortState;
     protected DaoSwitchPortTuple dst;
+    protected Integer dstPortState;
 
     /**
      * @param src
      * @param dst
      */
-    public DaoLinkTuple(DaoSwitchPortTuple src, DaoSwitchPortTuple dst) {
+    public DaoLinkTuple(DaoSwitchPortTuple src, Integer srcPortState,
+            DaoSwitchPortTuple dst, Integer dstPortState) {
         this.src = src;
+        this.srcPortState = srcPortState;
         this.dst = dst;
+        this.dstPortState = dstPortState;
     }
 
-    public DaoLinkTuple(Long srcId, Short srcPortNumber, Integer srcPortState,
-            Long dstId, Short dstPortNumber, Integer dstPortState) {
-        this.src = new DaoSwitchPortTuple(srcId, srcPortNumber, srcPortState);
-        this.dst = new DaoSwitchPortTuple(dstId, dstPortNumber, dstPortState);
+    public DaoLinkTuple(Long srcId, Short srcPort, Integer srcPortState,
+            Long dstId, Short dstPort, Integer dstPortState) {
+        this.src = new DaoSwitchPortTuple(srcId, srcPort);
+        this.srcPortState = srcPortState;
+        this.dst = new DaoSwitchPortTuple(dstId, dstPort);
+        this.dstPortState = dstPortState;
     }
 
     /**
      * Convenience constructor, ports are cast to shorts
      * @param srcId
      * @param srcPort
+     * @param srcPortState
      * @param dstId
      * @param dstPort
+     * @param dstPortState
      */
-    public DaoLinkTuple(Long srcId, Integer srcPortNumber, Integer srcPortState,
-            Long dstId, Integer dstPortNumber, Integer dstPortState) {
-        this.src = new DaoSwitchPortTuple(srcId, srcPortNumber, srcPortState);
-        this.dst = new DaoSwitchPortTuple(dstId, dstPortNumber, dstPortState);
+    public DaoLinkTuple(Long srcId, Integer srcPort, Integer srcPortState,
+            Long dstId, Integer dstPort, Integer dstPortState) {
+        this.src = new DaoSwitchPortTuple(srcId, srcPort);
+        this.srcPortState = srcPortState;
+        this.dst = new DaoSwitchPortTuple(dstId, dstPort);
+        this.dstPortState = dstPortState;
     }
 
     /**
@@ -53,6 +64,14 @@ public class DaoLinkTuple {
         this.src = src;
     }
 
+    public Integer getSrcPortState() {
+        return srcPortState;
+    }
+    
+    public void setSrcPortState(Integer srcPortState) {
+        this.srcPortState = srcPortState;
+    }
+    
     /**
      * @return the dst
      */
@@ -67,6 +86,14 @@ public class DaoLinkTuple {
         this.dst = dst;
     }
 
+    public Integer getDstPortState() {
+        return dstPortState;
+    }
+    
+    public void setDstPortState(Integer dstPortState) {
+        this.dstPortState = dstPortState;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -75,7 +102,9 @@ public class DaoLinkTuple {
         final int prime = 2221;
         int result = 1;
         result = prime * result + ((dst == null) ? 0 : dst.hashCode());
+        result = prime * result + ((dstPortState == null) ? 0 : dstPortState.hashCode());
         result = prime * result + ((src == null) ? 0 : src.hashCode());
+        result = prime * result + ((srcPortState == null) ? 0 : srcPortState.hashCode());
         return result;
     }
 
@@ -96,10 +125,20 @@ public class DaoLinkTuple {
                 return false;
         } else if (!dst.equals(other.dst))
             return false;
+        if (dstPortState == null) {
+            if (other.dstPortState != null)
+                return false;
+        } else if (!dstPortState.equals(other.dstPortState))
+            return false;
         if (src == null) {
             if (other.src != null)
                 return false;
         } else if (!src.equals(other.src))
+            return false;
+        if (srcPortState == null) {
+            if (other.srcPortState != null)
+                return false;
+        } else if (!srcPortState.equals(other.srcPortState))
             return false;
         return true;
     }
@@ -109,14 +148,17 @@ public class DaoLinkTuple {
      */
     @Override
     public String toString() {
-        return "DaoLinkTuple [src=" + src + ", dst=" + dst + "]";
+        return "DaoLinkTuple [src=" + src + ", srcPortState=" + srcPortState +
+            ", dst=" + dst + ", dstPortState=" + dstPortState + "]";
     }
 
     public byte[] toBytes() {
         byte[] ret = new byte[20];
         ByteBuffer bb = ByteBuffer.wrap(ret);
         bb.put(src.toBytes());
+        bb.putInt(srcPortState);
         bb.put(dst.toBytes());
+        bb.putInt(dstPortState);
         return ret;
     }
 
