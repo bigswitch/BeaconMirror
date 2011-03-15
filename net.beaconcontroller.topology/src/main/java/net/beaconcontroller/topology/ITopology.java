@@ -1,5 +1,11 @@
 package net.beaconcontroller.topology;
 
+/**
+ *
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
+
 import java.util.Map;
 import java.util.Set;
 import net.beaconcontroller.core.IOFSwitch;
