@@ -478,16 +478,23 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             }
             // If ps is a port modification and the port state has changed that affects links in the topology
             else if (ps.getReason() == (byte)OFPortReason.OFPPR_MODIFY.ordinal()) {
-                for (LinkTuple link: this.portLinks.get(tuple)) {
-                    if (link.getSrc().equals(tuple) && (link.getSrcPortState() != ps.getDesc().getState())) {
-                        link.setSrcPortState(ps.getDesc().getState());
-                        writeLinkSrcPortState(link);
-                        topologyChanged = true;
-                    } else if (link.getDst().equals(tuple) && (link.getDstPortState() != ps.getDesc().getState())) {
-                        link.setDstPortState(ps.getDesc().getState());
-                        writeLinkDstPortState(link);
-                        topologyChanged = true;
+                if (this.portLinks.containsKey(tuple)) {
+                    for (LinkTuple link: this.portLinks.get(tuple)) {
+                        if (link.getSrc().equals(tuple) && (link.getSrcPortState() != ps.getDesc().getState())) {
+                            link.setSrcPortState(ps.getDesc().getState());
+                            writeLinkSrcPortState(link);
+                            topologyChanged = true;
+                        } else if (link.getDst().equals(tuple) && (link.getDstPortState() != ps.getDesc().getState())) {
+                            link.setDstPortState(ps.getDesc().getState());
+                            writeLinkDstPortState(link);
+                            topologyChanged = true;
+                        }
                     }
+                } else {
+                    log.debug("handlePortStatus: Switch {} port #{} reason {}; no links to update",
+                            new Object[] {HexString.toHexString(sw.getId()),
+                                          ps.getDesc().getPortNumber(),
+                                          ps.getReason()});
                 }
             }
             
