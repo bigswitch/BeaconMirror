@@ -8,7 +8,7 @@
   <bean id="topology" class="net.beaconcontroller.topology.internal.TopologyImpl"
     init-method="startUp" destroy-method="shutDown">
     <property name="beaconProvider" ref="mockBeaconProvider"/>
-    <property name="topologyDao" ref="topologyDao"/>
+    <property name="storageSource" ref="storageSource"/>
   </bean>
 
   <bean id="mockBeaconProvider" class="net.beaconcontroller.core.test.MockBeaconProvider">

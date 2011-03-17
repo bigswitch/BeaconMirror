@@ -23,12 +23,14 @@ import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.LLDP;
 import net.beaconcontroller.packet.LLDPTLV;
+import net.beaconcontroller.storage.CompoundPredicate;
+import net.beaconcontroller.storage.IResultSet;
+import net.beaconcontroller.storage.IStorageSource;
+import net.beaconcontroller.storage.OperatorPredicate;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.LinkTuple;
 import net.beaconcontroller.topology.SwitchPortTuple;
 import net.beaconcontroller.topology.ITopologyAware;
-import net.beaconcontroller.topology.dao.ITopologyDao;
-import net.beaconcontroller.topology.dao.DaoLinkTuple;
 
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
@@ -69,7 +71,19 @@ import org.slf4j.LoggerFactory;
 public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITopology {
     protected static Logger log = LoggerFactory.getLogger(TopologyImpl.class);
 
+    // Names of table/fields for links in the storage API
+    private static final String LINK_TABLE_NAME = "controller_link";
+    private static final String LINK_ID = "id";
+    private static final String LINK_SRC_SWITCH = "src_switch_id";
+    private static final String LINK_SRC_PORT = "src_port";
+    private static final String LINK_SRC_PORT_STATE = "src_port_state";
+    private static final String LINK_DST_SWITCH = "dst_switch_id";
+    private static final String LINK_DST_PORT = "dst_port";
+    private static final String LINK_DST_PORT_STATE = "dst_port_state";
+    private static final String LINK_VALID_TIME = "valid_time";
+
     protected IBeaconProvider beaconProvider;
+    protected IStorageSource storageSource;
 
     /**
      * Map from link to the most recent time it was verified functioning
@@ -94,7 +108,6 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     protected Set<ITopologyAware> topologyAware;
     protected BlockingQueue<Update> updates;
     protected Thread updatesThread;
-    protected ITopologyDao topologyDao;
 
     protected Map<IOFSwitch, Set<IOFSwitch>> switchClusterMap;
     
@@ -375,12 +388,10 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
 
                 updates.add(new Update(lt, true));
 
-                DaoLinkTuple daoLt = new DaoLinkTuple(lt.getSrc().getSw().getId(), lt.getSrc().getPort(), lt.getSrcPortState(),
-                                                      lt.getDst().getSw().getId(), lt.getDst().getPort(), lt.getDstPortState());
-                if (topologyDao.getLink(daoLt) == null) {
-                    topologyDao.addLink(daoLt, t);
+                if (readLinkValidTime(lt) == null) {
+                    writeLink(lt, t);
                 } else {
-                    topologyDao.updateLink(daoLt, t);
+                    writeLinkValidTime(lt, t);
                 }
 
                 updateClusters();
@@ -423,11 +434,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 this.links.remove(lt);
                 updates.add(new Update(lt, false));
 
-                DaoLinkTuple daoLt = new DaoLinkTuple(lt.getSrc().getSw().getId(),
-                        lt.getSrc().getPort(), lt.getSrcPortState(),
-                        lt.getDst().getSw().getId(), lt.getDst().getPort(),
-                        lt.getDstPortState());
-                topologyDao.removeLink(daoLt);
+                removeLink(lt);
 
                 log.debug("Deleted link {}", lt);
             }
@@ -474,9 +481,11 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 for (LinkTuple link: this.portLinks.get(tuple)) {
                     if (link.getSrc().equals(tuple) && (link.getSrcPortState() != ps.getDesc().getState())) {
                         link.setSrcPortState(ps.getDesc().getState());
+                        writeLinkSrcPortState(link);
                         topologyChanged = true;
                     } else if (link.getDst().equals(tuple) && (link.getDstPortState() != ps.getDesc().getState())) {
                         link.setDstPortState(ps.getDesc().getState());
+                        writeLinkDstPortState(link);
                         topologyChanged = true;
                     }
                 }
@@ -647,6 +656,160 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         }
     }
 
+    // Storage methods
+    void clearAllLinks() {
+        IResultSet resultSet = storageSource.executeQuery(LINK_TABLE_NAME, null, null, null);
+        while (resultSet.next())
+            resultSet.deleteRow();
+        resultSet.save();
+        resultSet.close();
+    }
+
+    private String getLinkId(LinkTuple lt) {
+        String srcDpid = HexString.toHexString(lt.getSrc().getSw().getId());
+        String dstDpid = HexString.toHexString(lt.getDst().getSw().getId());
+        return srcDpid + "-" + lt.getSrc().getPort() + "-" +
+            dstDpid + "-" + lt.getDst().getPort();
+    }
+    
+    void writeLink(LinkTuple lt, Long timeStamp) {
+        Map<String, Object> rowValues = new HashMap<String, Object>();
+        
+        String id = getLinkId(lt);
+        rowValues.put(LINK_ID, id);
+        String srcDpid = HexString.toHexString(lt.getSrc().getSw().getId());
+        rowValues.put(LINK_SRC_SWITCH, srcDpid);
+        rowValues.put(LINK_SRC_PORT, lt.getSrc().getPort());
+        rowValues.put(LINK_SRC_PORT_STATE, lt.getSrcPortState());
+        String dstDpid = HexString.toHexString(lt.getDst().getSw().getId());
+        rowValues.put(LINK_DST_SWITCH, dstDpid);
+        rowValues.put(LINK_DST_PORT, lt.getDst().getPort());
+        rowValues.put(LINK_DST_PORT_STATE, lt.getDstPortState());
+        rowValues.put(LINK_VALID_TIME, timeStamp);
+        storageSource.updateRow(LINK_TABLE_NAME, rowValues);
+    }
+
+    public void writeLinkValidTime(LinkTuple lt, Long timeStamp) {
+        Map<String, Object> rowValues = new HashMap<String, Object>();
+        String id = getLinkId(lt);
+        rowValues.put(LINK_ID, id);
+        rowValues.put(LINK_VALID_TIME, timeStamp);
+        storageSource.updateRow(LINK_TABLE_NAME, id, rowValues);
+    }
+
+    public Long readLinkValidTime(LinkTuple lt) {
+        String[] columns = { LINK_VALID_TIME };
+        String id = getLinkId(lt);
+        IResultSet resultSet = storageSource.executeQuery(LINK_TABLE_NAME, columns,
+                new OperatorPredicate(LINK_ID, OperatorPredicate.Operator.EQ, id), null);
+        if (!resultSet.next())
+            return null;
+        Long validTime = resultSet.getLong(LINK_VALID_TIME);
+        return validTime;
+    }
+
+    public void writeLinkSrcPortState(LinkTuple lt) {
+        Map<String, Object> rowValues = new HashMap<String, Object>();
+        String id = getLinkId(lt);
+        rowValues.put(LINK_ID, id);
+        rowValues.put(LINK_SRC_PORT_STATE, lt.getSrcPortState());
+        storageSource.updateRow(LINK_TABLE_NAME, id, rowValues);
+    }
+
+    public void writeLinkDstPortState(LinkTuple lt) {
+        Map<String, Object> rowValues = new HashMap<String, Object>();
+        String id = getLinkId(lt);
+        rowValues.put(LINK_ID, id);
+        rowValues.put(LINK_DST_PORT_STATE, lt.getDstPortState());
+        storageSource.updateRow(LINK_TABLE_NAME, id, rowValues);
+    }
+
+    /*
+    private LinkTuple readDaoLinkTuple(IResultSet resultSet) {
+        String srcDpidString = resultSet.getString(LINK_SRC_SWITCH);
+        Long srcDpid = HexString.toLong(srcDpidString);
+        Short srcPortNumber = resultSet.getShortObject(LINK_SRC_PORT);
+        Integer srcPortState = resultSet.getIntegerObject(LINK_SRC_PORT_STATE);
+        String dstDpidString = resultSet.getString(LINK_DST_SWITCH);
+        Long dstDpid = HexString.toLong(dstDpidString);
+        Short dstPortNumber = resultSet.getShort(LINK_DST_PORT);
+        Integer dstPortState = resultSet.getIntegerObject(LINK_DST_PORT_STATE);
+        DaoLinkTuple lt = new DaoLinkTuple(srcDpid, srcPortNumber, srcPortState,
+                dstDpid, dstPortNumber, dstPortState);
+        return lt;
+    }
+    
+    public Set<DaoLinkTuple> getLinks(Long id) {
+        Set<DaoLinkTuple> results = new HashSet<DaoLinkTuple>();
+        String idString = HexString.toHexString(id);
+        IResultSet resultSet = storageSource.executeQuery(LINK_TABLE_NAME, null,
+                new CompoundPredicate(CompoundPredicate.Operator.OR, false,
+                        new OperatorPredicate(LINK_SRC_SWITCH, OperatorPredicate.Operator.EQ, idString),
+                        new OperatorPredicate(LINK_DST_SWITCH, OperatorPredicate.Operator.EQ, idString)), null);
+        for (IResultSet nextResult : resultSet) {
+            DaoLinkTuple lt = readDaoLinkTuple(nextResult);
+            results.add(lt);
+        }
+        return results.size() > 0 ? results : null;
+    }
+
+    public Set<DaoLinkTuple> getLinks(DaoSwitchPortTuple idPort) {
+        Set<DaoLinkTuple> results = new HashSet<DaoLinkTuple>();
+        String idString = HexString.toHexString(idPort.getId());
+        IResultSet resultSet = storageSource.executeQuery(LINK_TABLE_NAME, null,
+                new CompoundPredicate(CompoundPredicate.Operator.OR, false,
+                        new CompoundPredicate(CompoundPredicate.Operator.AND, false,
+                                new OperatorPredicate(LINK_SRC_SWITCH, OperatorPredicate.Operator.EQ, idString),
+                                new OperatorPredicate(LINK_SRC_PORT, OperatorPredicate.Operator.EQ, idPort.getPort())),
+                        new CompoundPredicate(CompoundPredicate.Operator.AND, false,
+                                new OperatorPredicate(LINK_DST_SWITCH, OperatorPredicate.Operator.EQ, idString),
+                                new OperatorPredicate(LINK_DST_PORT, OperatorPredicate.Operator.EQ, idPort.getPort()))), null);
+        for (IResultSet nextResult : resultSet) {            
+            DaoLinkTuple lt = readDaoLinkTuple(nextResult);
+            results.add(lt);
+        }
+        return results.size() > 0 ? results : null;
+    }
+
+    public Set<DaoLinkTuple> getLinksToExpire(Long deadline) {
+        Set<DaoLinkTuple> results = new HashSet<DaoLinkTuple>();
+        IResultSet resultSet = storageSource.executeQuery(LINK_TABLE_NAME, null,
+                new OperatorPredicate(LINK_VALID_TIME, OperatorPredicate.Operator.LTE, deadline), null);
+        for (IResultSet nextResult : resultSet) {
+            DaoLinkTuple lt = readDaoLinkTuple(nextResult);
+            results.add(lt);
+        }
+        return results.size() > 0 ? results : null;
+    }
+    */
+    
+    void removeLink(LinkTuple lt) {
+        String id = getLinkId(lt);
+        storageSource.deleteRow(LINK_TABLE_NAME, id);
+    }
+
+    /*
+    Set<DaoLinkTuple> removeLinksBySwitch(Long id) {
+        Set<DaoLinkTuple> deleteSet = getLinks(id);
+        if (deleteSet != null) {
+            for (DaoLinkTuple lt : deleteSet) {
+                removeLink(lt);
+            }
+        }
+        return deleteSet;
+    }
+
+    public Set<DaoLinkTuple> removeLinksBySwitchPort(DaoSwitchPortTuple idPort) {
+        Set<DaoLinkTuple> deleteSet = getLinks(idPort);
+        if (deleteSet != null) {
+            for (DaoLinkTuple lt : deleteSet) {
+                removeLink(lt);
+            }
+        }
+        return deleteSet;
+    }
+    */
+    
     /**
      * @param topologyAware the topologyAware to set
      */
@@ -656,16 +819,12 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     }
 
     /**
-     * @return the topologyDao
+     * @param storageSource the storage source to use for persisting link info
      */
-    public ITopologyDao getTopologyDao() {
-        return topologyDao;
+    public void setStorageSource(IStorageSource storageSource) {
+        this.storageSource = storageSource;
+        storageSource.createTable(LINK_TABLE_NAME);
+        storageSource.setTablePrimaryKeyName(LINK_TABLE_NAME, LINK_ID);
     }
-    
-    /**
-     * @param topologyDao the topologyDao to set
-     */
-    public void setTopologyDao(ITopologyDao topologyDao) {
-        this.topologyDao = topologyDao;
-    }
+
 }

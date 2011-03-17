@@ -11,10 +11,6 @@
     init-method="startUp" destroy-method="shutDown">
     <property name="beaconProvider" ref="beaconProvider"/>
     <property name="topologyAware" ref="topologyAwareSet"/>
-    <property name="topologyDao" ref="topologyDao"/>
-  </bean>
-
-  <bean id="topologyDao" class="net.beaconcontroller.topology.dao.impl.SSTopologyDao">
     <property name="storageSource" ref="storageSource"/>
   </bean>
 </beans>
