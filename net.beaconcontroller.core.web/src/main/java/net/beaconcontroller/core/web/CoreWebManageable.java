@@ -2,6 +2,7 @@ package net.beaconcontroller.core.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.Thread.State;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -216,9 +217,9 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         view.setContentType("text/javascript");
         return view;
     }
-
-    protected List<OFStatistics> getSwitchStatistics(String switchId, OFStatisticsType statType) {
-        IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
+    
+    protected List<OFStatistics> getSwitchStatistics(long switchId, OFStatisticsType statType) {
+        IOFSwitch sw = beaconProvider.getSwitches().get(switchId);
         Future<List<OFStatistics>> future;
         List<OFStatistics> values = null;
         if (sw != null) {
@@ -270,6 +271,9 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         }
         return values;
     }
+    protected List<OFStatistics> getSwitchStatistics(String switchId, OFStatisticsType statType) {
+        return getSwitchStatistics(HexString.toLong(switchId), statType);
+    }
 
     @RequestMapping("/switch/{switchId}/flows")
     public String getSwitchFlows(@PathVariable String switchId, Map<String,Object> model) {
@@ -279,6 +283,81 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         model.put("flows", getSwitchStatistics(switchId, OFStatisticsType.FLOW));
         layout.addSection(new JspSection("flows.jsp", model), null);
         return BeaconViewResolver.SIMPLE_VIEW;
+    }
+    
+    @RequestMapping("/switch/all/{statType}/json")
+    public View getAllSwitchStatisticsJson(@PathVariable String statType, Map<String,Object> model) {
+        BeaconJsonView view = new BeaconJsonView();
+        OFStatisticsType type = null;
+        
+        if (statType.equals("port")) {
+            type = OFStatisticsType.PORT;
+        } else if (statType.equals("queue")) {
+            type = OFStatisticsType.QUEUE;
+        } else if (statType.equals("flow")) {
+            type = OFStatisticsType.FLOW;
+        } else if (statType.equals("aggregate")) {
+            type = OFStatisticsType.AGGREGATE;
+        } else if (statType.equals("desc")) {
+            type = OFStatisticsType.DESC;
+        } else if (statType.equals("table")) {
+            type = OFStatisticsType.TABLE;
+        } else if (statType.equals("features")) {
+            type = null;
+        } else {
+            return view;
+        }
+        
+        Long[] switchDpids = beaconProvider.getSwitches().keySet().toArray(new Long[0]);
+        List<GetConcurrentStatsThread> activeThreads = new ArrayList<GetConcurrentStatsThread>(switchDpids.length);
+        List<GetConcurrentStatsThread> pendingRemovalThreads = new ArrayList<GetConcurrentStatsThread>();
+        GetConcurrentStatsThread t;
+        for (Long l : switchDpids) {
+            t = new GetConcurrentStatsThread(l, type);
+            activeThreads.add(t);
+            t.start();
+        }
+        
+        /*
+         * Join all the threads after the timeout. Set a hard timeout
+         * of 12 seconds for the threads to finish. If the thread has not
+         * finished the switch has not replied yet and therefore we won't 
+         * add the switch's stats to the reply.
+         */
+        for (int iSleepCycles = 0; iSleepCycles < 12; iSleepCycles++) {
+            for (GetConcurrentStatsThread curThread : activeThreads) {
+                if (curThread.getState() == State.TERMINATED) {
+                    if (curThread.getSwitchReply() != null) {
+                        model.put(Long.toString(curThread.getSwitchId()), curThread.getSwitchReply());
+                    } else {
+                        model.put(Long.toString(curThread.getSwitchId()), curThread.getFeaturesReply());
+                    }
+                    pendingRemovalThreads.add(curThread);
+                }
+            }
+            
+            // remove the threads that have completed the queries to the switches
+            for (GetConcurrentStatsThread curThread : pendingRemovalThreads) {
+                activeThreads.remove(curThread);
+            }
+            // clear the list so we don't try to double remove them
+            pendingRemovalThreads.clear();
+            
+            // if we are done finish early so we don't always get the worst case
+            if (activeThreads.isEmpty()) {
+                break;
+            }
+            
+            // sleep for 1 s here
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println("CoreWebManageable thread failed to sleep!"); 
+                e.printStackTrace();
+            }
+        }
+        
+        return view;
     }
     
     @RequestMapping("/switch/{switchId}/{statType}/json")
@@ -359,5 +438,39 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         }
         model.put(BeaconJsonView.ROOT_OBJECT_KEY, bundleNames);
         return view;
+    }
+    
+    class GetConcurrentStatsThread extends Thread {
+        private List<OFStatistics> switchReply;
+        private long switchId;
+        private OFStatisticsType statType;
+        private OFFeaturesReply featuresReply;
+        
+        public GetConcurrentStatsThread(long switchId, OFStatisticsType statType) {
+            this.switchId = switchId;
+            this.statType = statType;
+            this.switchReply = null;
+            this.featuresReply = null;
+        }
+        
+        public List<OFStatistics> getSwitchReply() {
+            return switchReply;
+        }
+        
+        public OFFeaturesReply getFeaturesReply() {
+            return featuresReply;
+        }
+        
+        public long getSwitchId() {
+            return switchId;
+        }
+        
+        public void run() {
+            if (statType != null) {
+                switchReply = getSwitchStatistics(switchId, statType);
+            } else {
+                featuresReply = beaconProvider.getSwitches().get(switchId).getFeaturesReply();
+            }
+        }
     }
 }
