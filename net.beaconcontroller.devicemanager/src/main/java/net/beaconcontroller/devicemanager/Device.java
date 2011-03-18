@@ -93,7 +93,6 @@ public class Device {
             } else {
                 lastSeenInDb.setTime(lastSeen.getTime());
             }
-            System.out.println("shouldUpdateLastSeenToDb = true");
             shouldUpdateLastSeenToDb = true;
         }
     }
