@@ -23,7 +23,6 @@ import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.LLDP;
 import net.beaconcontroller.packet.LLDPTLV;
-//import net.beaconcontroller.storage.CompoundPredicate;
 import net.beaconcontroller.storage.IResultSet;
 import net.beaconcontroller.storage.IStorageSource;
 import net.beaconcontroller.storage.OperatorPredicate;

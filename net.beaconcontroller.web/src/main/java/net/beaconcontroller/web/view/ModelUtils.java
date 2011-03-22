@@ -7,9 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.osgi.framework.Bundle;
 
 /**
  * Collection of utility methods used to create useful models, primarily
