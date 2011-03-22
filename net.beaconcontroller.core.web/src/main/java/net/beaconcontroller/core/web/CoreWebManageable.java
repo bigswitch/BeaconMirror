@@ -78,6 +78,12 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
     protected PackageAdmin packageAdmin;
     protected List<Tab> tabs;
 
+    public enum REQUESTTYPE {
+        OFSTATS,
+        OFFEATURES,
+        SWITCHTABLE
+    }
+    
     public CoreWebManageable() {
         tabs = new ArrayList<Tab>();
         tabs.add(new Tab("Overview", "/wm/core/overview.do"));
@@ -289,21 +295,30 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
     public View getAllSwitchStatisticsJson(@PathVariable String statType, Map<String,Object> model) {
         BeaconJsonView view = new BeaconJsonView();
         OFStatisticsType type = null;
+        REQUESTTYPE rType = null;
         
         if (statType.equals("port")) {
             type = OFStatisticsType.PORT;
+            rType = REQUESTTYPE.OFSTATS;
         } else if (statType.equals("queue")) {
             type = OFStatisticsType.QUEUE;
+            rType = REQUESTTYPE.OFSTATS;
         } else if (statType.equals("flow")) {
             type = OFStatisticsType.FLOW;
+            rType = REQUESTTYPE.OFSTATS;
         } else if (statType.equals("aggregate")) {
             type = OFStatisticsType.AGGREGATE;
+            rType = REQUESTTYPE.OFSTATS;
         } else if (statType.equals("desc")) {
             type = OFStatisticsType.DESC;
+            rType = REQUESTTYPE.OFSTATS;
         } else if (statType.equals("table")) {
             type = OFStatisticsType.TABLE;
+            rType = REQUESTTYPE.OFSTATS;
         } else if (statType.equals("features")) {
-            type = null;
+            rType = REQUESTTYPE.OFFEATURES;
+        } else if (statType.equals("host")) {
+            rType = REQUESTTYPE.SWITCHTABLE;
         } else {
             return view;
         }
@@ -313,7 +328,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         List<GetConcurrentStatsThread> pendingRemovalThreads = new ArrayList<GetConcurrentStatsThread>();
         GetConcurrentStatsThread t;
         for (Long l : switchDpids) {
-            t = new GetConcurrentStatsThread(l, type);
+            t = new GetConcurrentStatsThread(l, rType, type);
             activeThreads.add(t);
             t.start();
         }
@@ -327,10 +342,22 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         for (int iSleepCycles = 0; iSleepCycles < 12; iSleepCycles++) {
             for (GetConcurrentStatsThread curThread : activeThreads) {
                 if (curThread.getState() == State.TERMINATED) {
-                    if (curThread.getSwitchReply() != null) {
-                        model.put(Long.toString(curThread.getSwitchId()), curThread.getSwitchReply());
-                    } else {
-                        model.put(Long.toString(curThread.getSwitchId()), curThread.getFeaturesReply());
+                    if (rType == REQUESTTYPE.OFSTATS) {
+                        model.put(HexString.toHexString(curThread.getSwitchId()), curThread.getStatisticsReply());
+                    } else if (rType == REQUESTTYPE.OFFEATURES) {
+                        model.put(HexString.toHexString(curThread.getSwitchId()), curThread.getFeaturesReply());
+                    } else if (rType == REQUESTTYPE.SWITCHTABLE) {
+                        List<Map<String, Long>> switchTableJson = new ArrayList<Map<String, Long>>();
+                        Iterator<MacVlanPair> iterSwitchTable = curThread.getSwitchTable().keySet().iterator();
+                        while (iterSwitchTable.hasNext()) {
+                            MacVlanPair key = iterSwitchTable.next();
+                            Map<String, Long> switchTableEntry = new HashMap<String, Long>();
+                            switchTableEntry.put("mac", key.mac);
+                            switchTableEntry.put("vlan", (long) key.vlan);
+                            switchTableEntry.put("port", (long) curThread.getSwitchTable().get(key));
+                            switchTableJson.add(switchTableEntry);
+                        }
+                        model.put(HexString.toHexString(curThread.getSwitchId()), switchTableJson   );
                     }
                     pendingRemovalThreads.add(curThread);
                 }
@@ -444,16 +471,19 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         private List<OFStatistics> switchReply;
         private long switchId;
         private OFStatisticsType statType;
+        private REQUESTTYPE requestType;
         private OFFeaturesReply featuresReply;
+        private Map<MacVlanPair, Short> switchTable;
         
-        public GetConcurrentStatsThread(long switchId, OFStatisticsType statType) {
+        public GetConcurrentStatsThread(long switchId, REQUESTTYPE requestType, OFStatisticsType statType) {
             this.switchId = switchId;
+            this.requestType = requestType;
             this.statType = statType;
             this.switchReply = null;
             this.featuresReply = null;
         }
         
-        public List<OFStatistics> getSwitchReply() {
+        public List<OFStatistics> getStatisticsReply() {
             return switchReply;
         }
         
@@ -461,15 +491,21 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             return featuresReply;
         }
         
+        public Map<MacVlanPair, Short> getSwitchTable() {
+            return switchTable;
+        }
+        
         public long getSwitchId() {
             return switchId;
         }
         
         public void run() {
-            if (statType != null) {
+            if ((requestType == REQUESTTYPE.OFSTATS) && (statType != null)) {
                 switchReply = getSwitchStatistics(switchId, statType);
-            } else {
+            } else if (requestType == REQUESTTYPE.OFFEATURES) {
                 featuresReply = beaconProvider.getSwitches().get(switchId).getFeaturesReply();
+            } else if (requestType == REQUESTTYPE.SWITCHTABLE) {
+                switchTable = beaconProvider.getSwitches().get(switchId).getMacVlanToPortMap();
             }
         }
     }
