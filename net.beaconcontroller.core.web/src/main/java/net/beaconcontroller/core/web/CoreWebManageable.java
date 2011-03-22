@@ -406,7 +406,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         } else if (statType.equals("features")) {
             IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
             OFFeaturesReply fr = sw.getFeaturesReply();
-            model.put(BeaconJsonView.ROOT_OBJECT_KEY, fr);
+            model.put(HexString.toHexString(sw.getId()), fr);
             return view;
         } else if (statType.equals("host")) {
             IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
@@ -422,11 +422,13 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
                     switchTableEntry.put("port", (long) swTable.get(key));
                     switchTableJson.add(switchTableEntry);
                 }
-                model.put(BeaconJsonView.ROOT_OBJECT_KEY, switchTableJson);
+                model.put(HexString.toHexString(sw.getId()), switchTableJson);
             }
             return view;
         }
-        model.put(BeaconJsonView.ROOT_OBJECT_KEY, values);
+        // this will only format as a correct DPID if the full DPID is given,
+        // otherwise it will just use the decimal representation (i.e. whatever switchId is)
+        model.put(switchId, values);
         return view;
     }
     
