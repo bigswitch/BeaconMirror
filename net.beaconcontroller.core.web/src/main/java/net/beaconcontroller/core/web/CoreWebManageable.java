@@ -481,6 +481,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             this.statType = statType;
             this.switchReply = null;
             this.featuresReply = null;
+            this.switchTable = null;
         }
         
         public List<OFStatistics> getStatisticsReply() {
