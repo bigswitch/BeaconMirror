@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.openflow.protocol.OFPhysicalPort.OFPortState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,11 +136,29 @@ public class RoutingImpl implements IRoutingEngine, ITopologyAware {
     }
 
     @Override
-    public void linkUpdate(IOFSwitch src, short srcPortNumber, int srcPortState,
-            IOFSwitch dst, short dstPortNumber, int dstPortState, boolean added) {
-        update(src.getId(), srcPortNumber, dst.getId(), dstPortNumber, added);
+    public void addedLink(IOFSwitch srcSw, short srcPort, int srcPortState,
+            IOFSwitch dstSw, short dstPort, int dstPortState)
+    {
+        updatedLink(srcSw, srcPort, srcPortState, dstSw, dstPort, dstPortState);
+    }
+    
+    @Override
+    public void updatedLink(IOFSwitch src, short srcPort, int srcPortState,
+            IOFSwitch dst, short dstPort, int dstPortState)
+    {
+        boolean added = (((srcPortState & OFPortState.OFPPS_STP_MASK.getValue()) != OFPortState.OFPPS_STP_BLOCK.getValue()) &&
+            ((dstPortState & OFPortState.OFPPS_STP_MASK.getValue()) != OFPortState.OFPPS_STP_BLOCK.getValue()));
+        update(src.getId(), srcPort, dst.getId(), dstPort, added);
+    }
+    
+    @Override
+    public void removedLink(IOFSwitch src, short srcPort, IOFSwitch dst, short dstPort)
+    {
+        update(src.getId(), srcPort, dst.getId(), dstPort, false);
     }
 
+    
+    
     @Override
     public void update(Long srcId, Integer srcPort, Long dstId, Integer dstPort, boolean added) {
         update(srcId, srcPort.shortValue(), dstId, dstPort.shortValue(), added);

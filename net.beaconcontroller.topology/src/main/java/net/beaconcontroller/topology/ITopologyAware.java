@@ -9,13 +9,32 @@ import net.beaconcontroller.core.IOFSwitch;
  */
 public interface ITopologyAware {
     /**
-     * 
-     * @param src the source switch
+     * @param srcSw the source switch
      * @param srcPort the source port from the source switch
-     * @param dst
+     * @param srcPortState the state of the port (i.e. STP state)
+     * @param dstSw
      * @param dstPort
-     * @param added
      */
-    public void linkUpdate(IOFSwitch src, short srcPortNumber, int srcPortState,
-            IOFSwitch dst, short dstPortNumber, int dstPortState, boolean added);
+    public void addedLink(IOFSwitch srcSw, short srcPort, int srcPortState,
+            IOFSwitch dstSw, short dstPort, int dstPortState);
+    
+    /**
+     * @param srcSw the source switch
+     * @param srcPort the source port from the source switch
+     * @param srcPortState the state of the src port (i.e. STP state)
+     * @param dstSw
+     * @param dstPort
+     * @param dstPortState
+     */
+    public void updatedLink(IOFSwitch srcSw, short srcPort, int srcPortState,
+            IOFSwitch dstSw, short dstPort, int dstPortState);
+
+    /**
+     * @param srcSw
+     * @param srcPort
+     * @param dstSw
+     * @param dstPort
+     */
+    public void removedLink(IOFSwitch srcSw, short srcPort,
+            IOFSwitch dstSw, short dstPort);
 }

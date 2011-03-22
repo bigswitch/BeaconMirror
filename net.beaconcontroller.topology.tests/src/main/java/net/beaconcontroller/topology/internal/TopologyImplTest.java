@@ -54,8 +54,8 @@ public class TopologyImplTest extends BeaconTestCase {
         IOFSwitch sw1 = createMockSwitch(1L);
         IOFSwitch sw2 = createMockSwitch(2L);
         replay(sw1, sw2);
-        LinkTuple lt = new LinkTuple(sw1, 2, 0, sw2, 1, 0);
-        topology.addOrUpdateLink(lt);
+        LinkTuple lt = new LinkTuple(sw1, 2, sw2, 1);
+        topology.addOrUpdateLink(lt, 0, 0);
 
         // check invariants hold
         assertNotNull(topology.switchLinks.get(lt.getSrc().getSw()));
@@ -73,8 +73,8 @@ public class TopologyImplTest extends BeaconTestCase {
         IOFSwitch sw1 = createMockSwitch(1L);
         IOFSwitch sw2 = createMockSwitch(2L);
         replay(sw1, sw2);
-        LinkTuple lt = new LinkTuple(sw1, 2, 0, sw2, 1, 0);
-        topology.addOrUpdateLink(lt);
+        LinkTuple lt = new LinkTuple(sw1, 2, sw2, 1);
+        topology.addOrUpdateLink(lt, 0, 0);
         topology.deleteLinks(Collections.singletonList(lt));
 
         // check invariants hold
@@ -91,8 +91,8 @@ public class TopologyImplTest extends BeaconTestCase {
         IOFSwitch sw1 = createMockSwitch(1L);
         IOFSwitch sw2 = createMockSwitch(2L);
         replay(sw1, sw2);
-        LinkTuple lt = new LinkTuple(sw1, 2, 0, sw1, 3, 0);
-        topology.addOrUpdateLink(lt);
+        LinkTuple lt = new LinkTuple(sw1, 2, sw1, 3);
+        topology.addOrUpdateLink(lt, 0, 0);
 
         // check invariants hold
         assertNotNull(topology.switchLinks.get(lt.getSrc().getSw()));
@@ -109,8 +109,8 @@ public class TopologyImplTest extends BeaconTestCase {
         TopologyImpl topology = getTopology();
         IOFSwitch sw1 = createMockSwitch(1L);
         replay(sw1);
-        LinkTuple lt = new LinkTuple(sw1, 2, 0, sw1, 3, 0);
-        topology.addOrUpdateLink(lt);
+        LinkTuple lt = new LinkTuple(sw1, 2, sw1, 3);
+        topology.addOrUpdateLink(lt, 0, 0);
         topology.deleteLinks(Collections.singletonList(lt));
 
         // check invariants hold
@@ -127,8 +127,8 @@ public class TopologyImplTest extends BeaconTestCase {
         IOFSwitch sw1 = createMockSwitch(1L);
         IOFSwitch sw2 = createMockSwitch(2L);
         replay(sw1, sw2);
-        LinkTuple lt = new LinkTuple(sw1, 2, 0, sw2, 1, 0);
-        topology.addOrUpdateLink(lt);
+        LinkTuple lt = new LinkTuple(sw1, 2, sw2, 1);
+        topology.addOrUpdateLink(lt, 0, 0);
 
         // Mock up our expected behavior
         topology.removedSwitch(sw1);
@@ -147,8 +147,8 @@ public class TopologyImplTest extends BeaconTestCase {
         TopologyImpl topology = getTopology();
         IOFSwitch sw1 = createMockSwitch(1L);
         replay(sw1);
-        LinkTuple lt = new LinkTuple(sw1, 2, 0, sw1, 3, 0);
-        topology.addOrUpdateLink(lt);
+        LinkTuple lt = new LinkTuple(sw1, 2, sw1, 3);
+        topology.addOrUpdateLink(lt, 0, 0);
 
         // Mock up our expected behavior
         topology.removedSwitch(sw1);
@@ -164,8 +164,8 @@ public class TopologyImplTest extends BeaconTestCase {
     private void createLinks(TopologyImpl topology, IOFSwitch[] switches, int[][] linkInfoArray) {
         for (int i = 0; i < linkInfoArray.length; i++) {
             int[] linkInfo = linkInfoArray[i];
-            LinkTuple lt = new LinkTuple(switches[linkInfo[0]-1], linkInfo[1], linkInfo[2], switches[linkInfo[3]-1], linkInfo[4], linkInfo[5]);
-            topology.addOrUpdateLink(lt);
+            LinkTuple lt = new LinkTuple(switches[linkInfo[0]-1], linkInfo[1], switches[linkInfo[3]-1], linkInfo[4]);
+            topology.addOrUpdateLink(lt, linkInfo[2], linkInfo[5]);
         }
     }
     

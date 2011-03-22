@@ -7,4 +7,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: net.beaconcontroller.core,
  net.beaconcontroller.routing,
  net.beaconcontroller.topology,
+ org.openflow.protocol,
  org.slf4j;version="1.5.11"

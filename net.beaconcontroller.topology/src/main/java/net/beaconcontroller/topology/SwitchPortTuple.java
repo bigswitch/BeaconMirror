@@ -89,6 +89,6 @@ public class SwitchPortTuple {
     public String toString() {
         return "SwitchPortTuple [id="
                 + ((sw == null) ? "null" : HexString.toHexString(sw.getId()))
-                + ", portNumber=" + ((port == null) ? "null" : (0xff & port)) + "]";
+                + ", port=" + ((port == null) ? "null" : (0xff & port)) + "]";
     }
 }

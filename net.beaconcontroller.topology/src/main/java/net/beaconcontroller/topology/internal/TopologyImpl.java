@@ -23,12 +23,13 @@ import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.LLDP;
 import net.beaconcontroller.packet.LLDPTLV;
-import net.beaconcontroller.storage.CompoundPredicate;
+//import net.beaconcontroller.storage.CompoundPredicate;
 import net.beaconcontroller.storage.IResultSet;
 import net.beaconcontroller.storage.IStorageSource;
 import net.beaconcontroller.storage.OperatorPredicate;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.LinkTuple;
+import net.beaconcontroller.topology.LinkInfo;
 import net.beaconcontroller.topology.SwitchPortTuple;
 import net.beaconcontroller.topology.ITopologyAware;
 
@@ -88,7 +89,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     /**
      * Map from link to the most recent time it was verified functioning
      */
-    protected Map<LinkTuple, Long> links;
+    protected Map<LinkTuple, LinkInfo> links;
     protected Timer lldpSendTimer;
     protected Long lldpFrequency = 15L * 1000; // sending frequency
     protected Long lldpTimeout = 35L * 1000; // timeout
@@ -98,6 +99,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      * Map from a id:port to the set of links containing it as an endpoint
      */
     protected Map<SwitchPortTuple, Set<LinkTuple>> portLinks;
+    
     protected volatile boolean shuttingDown = false;
 
     /**
@@ -110,35 +112,32 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     protected Thread updatesThread;
 
     protected Map<IOFSwitch, Set<IOFSwitch>> switchClusterMap;
-    
+
+    public static enum UpdateOperation {ADD, UPDATE, REMOVE};
+
     protected class Update {
         public IOFSwitch src;
-        public short srcPortNumber;
+        public short srcPort;
         public int srcPortState;
         public IOFSwitch dst;
-        public short dstPortNumber;
+        public short dstPort;
         public int dstPortState;
-        public boolean added;
+        public UpdateOperation operation;
 
-        public Update(IOFSwitch src, short srcPortNumber, int srcPortState,
-                IOFSwitch dst, short dstPortNumber, int dstPortState, boolean added) {
+        public Update(IOFSwitch src, short srcPort, int srcPortState,
+                IOFSwitch dst, short dstPort, int dstPortState, UpdateOperation operation) {
             this.src = src;
-            this.srcPortNumber = srcPortNumber;
+            this.srcPort = srcPort;
             this.srcPortState = srcPortState;
             this.dst = dst;
-            this.dstPortNumber = dstPortNumber;
+            this.dstPort = dstPort;
             this.dstPortState = dstPortState;
-            this.added = added;
+            this.operation = operation;
         }
 
-        public Update(LinkTuple lt, boolean added) {
-            this.src = lt.getSrc().getSw();
-            this.srcPortNumber = lt.getSrc().getPort();
-            this.srcPortState = lt.getSrcPortState();
-            this.dst = lt.getDst().getSw();
-            this.dstPortNumber = lt.getDst().getPort();
-            this.dstPortState = lt.getDstPortState();
-            this.added = added;
+        public Update(LinkTuple lt, int srcPortState, int dstPortState, UpdateOperation operation) {
+            this(lt.getSrc().getSw(), lt.getSrc().getPort(), srcPortState,
+                    lt.getDst().getSw(), lt.getDst().getPort(), dstPortState, operation);
         }
     }
 
@@ -151,7 +150,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         beaconProvider.addOFMessageListener(OFType.PACKET_IN, this);
         beaconProvider.addOFMessageListener(OFType.PORT_STATUS, this);
         beaconProvider.addOFSwitchListener(this);
-        links = new HashMap<LinkTuple, Long>();
+        links = new HashMap<LinkTuple, LinkInfo>();
         portLinks = new HashMap<SwitchPortTuple, Set<LinkTuple>>();
         switchLinks = new HashMap<IOFSwitch, Set<LinkTuple>>();
 
@@ -178,10 +177,19 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                         if (topologyAware != null) {
                             for (ITopologyAware ta : topologyAware) {
                                 try {
-                                    ta.linkUpdate(update.src, update.srcPortNumber,
-                                            update.srcPortState, update.dst,
-                                            update.dstPortNumber, update.dstPortState,
-                                            update.added);
+                                    switch (update.operation) {
+                                        case ADD:
+                                            ta.addedLink(update.src, update.srcPort, update.srcPortState,
+                                                    update.dst, update.dstPort, update.dstPortState);
+                                            break;
+                                        case UPDATE:
+                                            ta.updatedLink(update.src, update.srcPort, update.srcPortState,
+                                                    update.dst, update.dstPort, update.dstPortState);
+                                            break;
+                                        case REMOVE:
+                                            ta.removedLink(update.src, update.srcPort, update.dst, update.dstPort);
+                                            break;
+                                    }
                                 } catch (Exception e) {
                                     log.error("Exception on callback", e);
                                 }
@@ -353,19 +361,29 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         int dstPortState = (physicalPort != null) ? physicalPort.getState() : 0;
 
         // Store the time of update to this link, and push it out to routingEngine
-        LinkTuple lt = new LinkTuple(new SwitchPortTuple(remoteSwitch, remotePort), srcPortState,
-                new SwitchPortTuple(sw, pi.getInPort()), dstPortState);
-        addOrUpdateLink(lt);
+        LinkTuple lt = new LinkTuple(new SwitchPortTuple(remoteSwitch, remotePort),
+                new SwitchPortTuple(sw, pi.getInPort()));
+        addOrUpdateLink(lt, srcPortState, dstPortState);
 
         // Consume this message
         return Command.STOP;
     }
 
-    protected void addOrUpdateLink(LinkTuple lt) {
+    protected void addOrUpdateLink(LinkTuple lt, int srcPortState, int dstPortState) {
         lock.writeLock().lock();
         try {
-            Long t = System.currentTimeMillis();
-            if (links.put(lt, t) == null) {
+            Integer srcPortStateObj = Integer.valueOf(srcPortState);
+            Integer dstPortStateObj = Integer.valueOf(dstPortState);
+            
+            Long validTime = System.currentTimeMillis();
+            
+            LinkInfo newLinkInfo = new LinkInfo(validTime, srcPortStateObj, dstPortStateObj);
+            LinkInfo oldLinkInfo = links.put(lt, newLinkInfo);
+            
+            UpdateOperation updateOperation = null;
+            boolean linkChanged = false;
+            
+            if (oldLinkInfo == null) {
                 // index it by switch source
                 if (!switchLinks.containsKey(lt.getSrc().getSw()))
                     switchLinks.put(lt.getSrc().getSw(), new HashSet<LinkTuple>());
@@ -377,7 +395,6 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 switchLinks.get(lt.getDst().getSw()).add(lt);
 
                 // index both ends by switch:port
-                // Don't include the port state in the tuple used as the key
                 if (!portLinks.containsKey(lt.getSrc()))
                     portLinks.put(lt.getSrc(), new HashSet<LinkTuple>());
                 portLinks.get(lt.getSrc()).add(lt);
@@ -386,18 +403,38 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                     portLinks.put(lt.getDst(), new HashSet<LinkTuple>());
                 portLinks.get(lt.getDst()).add(lt);
 
-                updates.add(new Update(lt, true));
-
-                if (readLinkValidTime(lt) == null) {
-                    writeLink(lt, t);
-                } else {
-                    writeLinkValidTime(lt, t);
-                }
-
-                updateClusters();
+                writeLink(lt, newLinkInfo);
+                updateOperation = UpdateOperation.ADD;
+                linkChanged = true;
                 
                 log.debug("Added link {}", lt);
+            } else {
+                // Only update the port states if they've changed
+                if (srcPortState == oldLinkInfo.getSrcPortState().intValue())
+                    srcPortStateObj = null;
+                if (dstPortState == oldLinkInfo.getDstPortState().intValue())
+                    dstPortStateObj = null;
+                
+                // Write changes to storage. This will always write the updated valid time,
+                // plus the port states if they've changed (i.e. if they weren't set to
+                // null in the previous block of code.
+                writeLinkInfo(lt, validTime, srcPortStateObj, dstPortStateObj);
+                
+                // Check if either of the port states changed to see if we need to send
+                // an update and recompute the clusters below.
+                linkChanged = (srcPortStateObj != null) || (dstPortStateObj != null);
+                
+                if (linkChanged) {
+                    updateOperation = UpdateOperation.UPDATE;
+                    log.debug("Updated link {}", lt);
+                }
             }
+
+            if (linkChanged) {
+                updates.add(new Update(lt, srcPortState, dstPortState, updateOperation));
+                updateClusters();
+            }
+            
         } finally {
             lock.writeLock().unlock();
         }
@@ -432,7 +469,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                     this.portLinks.remove(lt.getDst());
 
                 this.links.remove(lt);
-                updates.add(new Update(lt, false));
+                updates.add(new Update(lt, 0, 0, UpdateOperation.REMOVE));
 
                 removeLink(lt);
 
@@ -461,45 +498,48 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
                 ((byte)OFPortReason.OFPPR_MODIFY.ordinal() == ps.getReason() && !portEnabled(ps.getDesc()))) {
     
                 List<LinkTuple> eraseList = new ArrayList<LinkTuple>();
-                    if (this.portLinks.containsKey(tuple)) {
-                        log.debug("handlePortStatus: Switch {} port #{} reason {}; removing links",
-                                  new Object[] {HexString.toHexString(sw.getId()),
-                                                ps.getDesc().getPortNumber(),
-                                                ps.getReason()});
-                        eraseList.addAll(this.portLinks.get(tuple));
-                        deleteLinks(eraseList);
-                        topologyChanged = true;
-                    } else {
-                        log.debug("handlePortStatus: Switch {} port #{} reason {}; no links to remove",
-                                  new Object[] {HexString.toHexString(sw.getId()),
-                                                ps.getDesc().getPortNumber(),
-                                                ps.getReason()});
-                    }
+                if (this.portLinks.containsKey(tuple)) {
+                    log.debug("handlePortStatus: Switch {} port #{} reason {}; removing links",
+                              new Object[] {HexString.toHexString(sw.getId()),
+                                            ps.getDesc().getPortNumber(),
+                                            ps.getReason()});
+                    eraseList.addAll(this.portLinks.get(tuple));
+                    deleteLinks(eraseList);
+                    topologyChanged = true;
+                }
             }
             // If ps is a port modification and the port state has changed that affects links in the topology
             else if (ps.getReason() == (byte)OFPortReason.OFPPR_MODIFY.ordinal()) {
                 if (this.portLinks.containsKey(tuple)) {
                     for (LinkTuple link: this.portLinks.get(tuple)) {
-                        if (link.getSrc().equals(tuple) && (link.getSrcPortState() != ps.getDesc().getState())) {
-                            link.setSrcPortState(ps.getDesc().getState());
-                            writeLinkSrcPortState(link);
-                            topologyChanged = true;
-                        } else if (link.getDst().equals(tuple) && (link.getDstPortState() != ps.getDesc().getState())) {
-                            link.setDstPortState(ps.getDesc().getState());
-                            writeLinkDstPortState(link);
+                        LinkInfo linkInfo = links.get(link);
+                        assert(linkInfo != null);
+                        Integer updatedSrcPortState = null;
+                        Integer updatedDstPortState = null;
+                        if (link.getSrc().equals(tuple) && (linkInfo.getSrcPortState() != ps.getDesc().getState())) {
+                            updatedSrcPortState = ps.getDesc().getState();
+                            linkInfo.setSrcPortState(updatedSrcPortState);
+                        }
+                        if (link.getDst().equals(tuple) && (linkInfo.getDstPortState() != ps.getDesc().getState())) {
+                            updatedDstPortState = ps.getDesc().getState();
+                            linkInfo.setDstPortState(updatedDstPortState);
+                        }
+                        if ((updatedSrcPortState != null) || (updatedDstPortState != null)) {
+                            writeLinkInfo(link, null, updatedSrcPortState, updatedDstPortState);
                             topologyChanged = true;
                         }
                     }
-                } else {
-                    log.debug("handlePortStatus: Switch {} port #{} reason {}; no links to update",
-                            new Object[] {HexString.toHexString(sw.getId()),
-                                          ps.getDesc().getPortNumber(),
-                                          ps.getReason()});
                 }
-            }
+            } 
             
-            if (topologyChanged)
+            if (topologyChanged) {
                 updateClusters();
+            } else {
+                log.debug("handlePortStatus: Switch {} port #{} reason {}; no links to update/remove",
+                        new Object[] {HexString.toHexString(sw.getId()),
+                                      ps.getDesc().getPortNumber(),
+                                      ps.getReason()});
+            }
         } finally {
             lock.writeLock().unlock();
         }
@@ -534,10 +574,10 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         // reentrant required here because deleteLink also write locks
         lock.writeLock().lock();
         try {
-            Iterator<Entry<LinkTuple, Long>> it = this.links.entrySet().iterator();
+            Iterator<Entry<LinkTuple, LinkInfo>> it = this.links.entrySet().iterator();
             while (it.hasNext()) {
-                Entry<LinkTuple, Long> entry = it.next();
-                if (entry.getValue() + this.lldpTimeout < curTime) {
+                Entry<LinkTuple, LinkInfo> entry = it.next();
+                if (entry.getValue().getValidTime() + this.lldpTimeout < curTime) {
                     eraseList.add(entry.getKey());
                 }
             }
@@ -581,29 +621,33 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     }
 
     @Override
-    public Map<LinkTuple, Long> getLinks() {
+    public Map<LinkTuple, LinkInfo> getLinks() {
         lock.readLock().lock();
-        Map<LinkTuple, Long> result;
+        Map<LinkTuple, LinkInfo> result;
         try {
-            result = new HashMap<LinkTuple, Long>(links);
+            result = new HashMap<LinkTuple, LinkInfo>(links);
         } finally {
             lock.readLock().unlock();
         }
         return result;
     }
 
-    private boolean portStpBlocked(int portState) {
-        return ((portState & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue());
+    private boolean linkStpBlocked(LinkTuple tuple) {
+        LinkInfo linkInfo = links.get(tuple);
+        if (linkInfo == null)
+            return false;
+        return ((linkInfo.getSrcPortState() & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue()) ||
+            ((linkInfo.getDstPortState() & OFPortState.OFPPS_STP_MASK.getValue()) == OFPortState.OFPPS_STP_BLOCK.getValue());
     }
     
     private void traverseCluster(Set<LinkTuple> links, Set<IOFSwitch> cluster) {
         // NOTE: This function assumes that the caller has already acquired
         // a write lock on the "lock" data member.
-        // FIXME: For really large networks we may want to recode this to not
+        // FIXME: To handle large networks we probably should recode this to not
         // use recursion to avoid stack overflow.
         for (LinkTuple link: links) {
             // FIXME: Is this the right check for handling STP correctly?
-            if (!portStpBlocked(link.getSrcPortState()) && !portStpBlocked(link.getDstPortState())) {
+            if (!linkStpBlocked(link)) {
                 IOFSwitch dstSw = link.getDst().getSw();
                 if (switchClusterMap.get(dstSw) == null) {
                     cluster.add(dstSw);
@@ -663,7 +707,8 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         }
     }
 
-    // Storage methods
+    // STORAGE METHODS
+    
     void clearAllLinks() {
         IResultSet resultSet = storageSource.executeQuery(LINK_TABLE_NAME, null, null, null);
         while (resultSet.next())
@@ -679,7 +724,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
             dstDpid + "-" + lt.getDst().getPort();
     }
     
-    void writeLink(LinkTuple lt, Long timeStamp) {
+    void writeLink(LinkTuple lt, LinkInfo linkInfo) {
         Map<String, Object> rowValues = new HashMap<String, Object>();
         
         String id = getLinkId(lt);
@@ -687,21 +732,13 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         String srcDpid = HexString.toHexString(lt.getSrc().getSw().getId());
         rowValues.put(LINK_SRC_SWITCH, srcDpid);
         rowValues.put(LINK_SRC_PORT, lt.getSrc().getPort());
-        rowValues.put(LINK_SRC_PORT_STATE, lt.getSrcPortState());
+        rowValues.put(LINK_SRC_PORT_STATE, linkInfo.getSrcPortState());
         String dstDpid = HexString.toHexString(lt.getDst().getSw().getId());
         rowValues.put(LINK_DST_SWITCH, dstDpid);
         rowValues.put(LINK_DST_PORT, lt.getDst().getPort());
-        rowValues.put(LINK_DST_PORT_STATE, lt.getDstPortState());
-        rowValues.put(LINK_VALID_TIME, timeStamp);
+        rowValues.put(LINK_DST_PORT_STATE, linkInfo.getDstPortState());
+        rowValues.put(LINK_VALID_TIME, linkInfo.getValidTime());
         storageSource.updateRow(LINK_TABLE_NAME, rowValues);
-    }
-
-    public void writeLinkValidTime(LinkTuple lt, Long timeStamp) {
-        Map<String, Object> rowValues = new HashMap<String, Object>();
-        String id = getLinkId(lt);
-        rowValues.put(LINK_ID, id);
-        rowValues.put(LINK_VALID_TIME, timeStamp);
-        storageSource.updateRow(LINK_TABLE_NAME, id, rowValues);
     }
 
     public Long readLinkValidTime(LinkTuple lt) {
@@ -715,19 +752,16 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         return validTime;
     }
 
-    public void writeLinkSrcPortState(LinkTuple lt) {
+    public void writeLinkInfo(LinkTuple lt, Long validTime, Integer srcPortState, Integer dstPortState) {
         Map<String, Object> rowValues = new HashMap<String, Object>();
         String id = getLinkId(lt);
         rowValues.put(LINK_ID, id);
-        rowValues.put(LINK_SRC_PORT_STATE, lt.getSrcPortState());
-        storageSource.updateRow(LINK_TABLE_NAME, id, rowValues);
-    }
-
-    public void writeLinkDstPortState(LinkTuple lt) {
-        Map<String, Object> rowValues = new HashMap<String, Object>();
-        String id = getLinkId(lt);
-        rowValues.put(LINK_ID, id);
-        rowValues.put(LINK_DST_PORT_STATE, lt.getDstPortState());
+        if (validTime != null)
+            rowValues.put(LINK_VALID_TIME, validTime);
+        if (srcPortState != null)
+            rowValues.put(LINK_SRC_PORT_STATE, srcPortState);
+        if (dstPortState != null)
+            rowValues.put(LINK_DST_PORT_STATE, dstPortState);
         storageSource.updateRow(LINK_TABLE_NAME, id, rowValues);
     }
 

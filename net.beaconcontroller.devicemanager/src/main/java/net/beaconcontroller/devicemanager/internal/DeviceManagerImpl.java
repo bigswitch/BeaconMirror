@@ -398,12 +398,22 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
         }
     }
 
+    
     @Override
-    public void linkUpdate(IOFSwitch src, short srcPortNumber, int srcPortState,
-            IOFSwitch dst, short dstPortNumber, int dstPortState, boolean added) {
-        if (added) {
+    public void addedLink(IOFSwitch srcSw, short srcPort, int srcPortState,
+            IOFSwitch dstSw, short dstPort, int dstPortState)
+    {
+        updatedLink(srcSw, srcPort, srcPortState, dstSw, dstPort, dstPortState);
+    }
+    
+    @Override
+    public void updatedLink(IOFSwitch src, short srcPort, int srcPortState,
+            IOFSwitch dst, short dstPort, int dstPortState)
+    {
+        if (((srcPortState & OFPortState.OFPPS_STP_MASK.getValue()) != OFPortState.OFPPS_STP_BLOCK.getValue()) &&
+            ((dstPortState & OFPortState.OFPPS_STP_MASK.getValue()) != OFPortState.OFPPS_STP_BLOCK.getValue())) {
             // Remove all devices living on this switch:port now that it is internal
-            SwitchPortTuple id = new SwitchPortTuple(dst, dstPortNumber);
+            SwitchPortTuple id = new SwitchPortTuple(dst, dstPort);
             lock.writeLock().lock();
             try {
                 if (switchPortDeviceMap.containsKey(id)) {
@@ -420,6 +430,11 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                 lock.writeLock().unlock();
             }
         }
+    }
+    
+    @Override
+    public void removedLink(IOFSwitch src, short srcPort, IOFSwitch dst, short dstPort)
+    {
     }
 
     /**
