@@ -405,8 +405,10 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             values = getSwitchStatistics(switchId, OFStatisticsType.TABLE);
         } else if (statType.equals("features")) {
             IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
-            OFFeaturesReply fr = sw.getFeaturesReply();
-            model.put(HexString.toHexString(sw.getId()), fr);
+            if (sw != null) {
+                OFFeaturesReply fr = sw.getFeaturesReply();
+                model.put(HexString.toHexString(sw.getId()), fr);
+            }
             return view;
         } else if (statType.equals("host")) {
             IOFSwitch sw = beaconProvider.getSwitches().get(HexString.toLong(switchId));
