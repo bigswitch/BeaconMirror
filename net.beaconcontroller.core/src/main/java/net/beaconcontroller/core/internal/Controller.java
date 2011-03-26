@@ -297,7 +297,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                             try {
                                 if (listener instanceof IOFSwitchFilter) {
                                     if (!((IOFSwitchFilter)listener).isInterested(sw)) {
-                                        break;
+                                        next;
                                     }
                                 }
                                 if (Command.STOP.equals(listener.receive(sw, m))) {
