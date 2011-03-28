@@ -710,6 +710,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                         if (preferIPv6) {
                             continue;
                         }
+                        log.debug("Got address {} for controller node", addr.getHostAddress());
                         return addr;
                     }
                     if (addr instanceof Inet6Address) {
@@ -721,6 +722,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                 }
             }
         }
+        log.debug("No non-loopback IP found!");
         return null;
     }
     
