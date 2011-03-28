@@ -5,13 +5,18 @@ package net.beaconcontroller.core.internal;
 
 import java.io.IOException;
 import java.io.EOFException;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -688,6 +693,37 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         return getListenAddress() + ":" + Integer.toString(getListenPort());
     }
     
+    /**
+     * Gets the first non-loopback IP address that it finds in 'ifconfig'
+     * @param preferIPv6 Whether to prefer IPv6 addresses over IPv4
+     * @return The first non-loopback IPv4/6 address or null if none exists
+     * @throws SocketException
+     */
+    private static InetAddress getFirstNonLoopbackAddress(boolean preferIPv6) throws SocketException {
+        Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
+        while (en.hasMoreElements()) {
+            NetworkInterface i = (NetworkInterface) en.nextElement();
+            for (Enumeration<InetAddress> en2 = i.getInetAddresses(); en2.hasMoreElements();) {
+                InetAddress addr = (InetAddress) en2.nextElement();
+                if (!addr.isLoopbackAddress()) {
+                    if (addr instanceof Inet4Address) {
+                        if (preferIPv6) {
+                            continue;
+                        }
+                        return addr;
+                    }
+                    if (addr instanceof Inet6Address) {
+                        if (!preferIPv6) {
+                            continue;
+                        }
+                        return addr;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
     @Override
     public String getListenAddress() {
         if (listenAddress != null)
@@ -695,9 +731,9 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         
         String localAddress = "UnknownAddress";
         try {
-            localAddress = InetAddress.getLocalHost().getHostAddress();
+            localAddress = getFirstNonLoopbackAddress(false).getHostAddress();
         }
-        catch (Exception e) {
+        catch (SocketException e) {
             log.error("Error getting local IP address", e);
         }
         return localAddress;
