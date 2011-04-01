@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.EOFException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
+import java.lang.Long;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -42,6 +43,8 @@ import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFSwitchFilter;
 import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.core.io.internal.OFStream;
+import net.beaconcontroller.counter.ICounter;
+import net.beaconcontroller.counter.ICounterStoreProvider;
 import net.beaconcontroller.packet.IPv4;
 
 import org.openflow.example.SelectListener;
@@ -63,12 +66,14 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFGetConfigReply;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFSetConfig;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.BasicFactory;
+import org.openflow.util.HexString;
 import org.openflow.util.U16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +101,16 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
     protected Integer threadCount;
     protected BlockingQueue<Update> updates;
     protected Thread updatesThread;
+    protected ICounterStoreProvider counterStore;
 
+    public ICounterStoreProvider getCounterStore() {
+        return counterStore;
+    }
+    
+    public void setCounterStore(ICounterStoreProvider counterStore) {
+        this.counterStore = counterStore;
+    }
+    
     protected class Update {
         public IOFSwitch sw;
         public boolean added;
@@ -284,6 +298,23 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                     OFError error = (OFError) m;
                     logError(sw, error);
                     break;
+                case PACKET_IN:
+                    OFPacketIn packet = (OFPacketIn)m;
+                    String packetName = m.getType().toClass().getName();
+                    packetName = packetName.substring(packetName.lastIndexOf('.')+1);
+                    String counterName = counterStore.createTitle(HexString.toHexString(sw.getId()), 
+                            (int)packet.getInPort(), packetName);
+                    try {
+                        ICounter counter = counterStore.getCounter(counterName);
+                        if (counter == null) {
+                            counter = counterStore.createCounter(counterName);
+                        }
+                        counter.increment();
+                        log.debug("Counter, " + counterName + " is incremented to " + counter.get());
+                    }
+                    catch (IllegalArgumentException e) {
+                        log.error("Invalid Counter, " + counterName);
+                    }
                 default:
                     // Don't pass along messages until we have the features reply
                     if (sw.getFeaturesReply() == null) {
@@ -454,6 +485,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
     }
 
     public void startUp() throws IOException {
+        
         listenSock = ServerSocketChannel.open();
         listenSock.configureBlocking(false);
         if (listenAddress != null) {

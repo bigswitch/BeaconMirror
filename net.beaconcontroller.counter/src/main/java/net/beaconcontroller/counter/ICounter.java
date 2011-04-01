@@ -23,6 +23,16 @@ public interface ICounter {
   public void increment(Date d, long delta);
   
   /**
+   * Return the most current value
+   */
+  public long get();
+  
+  /**
+   * Reset the value
+   */
+  public void reset(Date d);
+  
+  /**
    * Returns a CountSeries that is a snapshot of the counter's values for the given dateSpan.  (Further changes
    * to this counter won't be reflected in the CountSeries that comes  back.)
    * 
@@ -33,13 +43,11 @@ public interface ICounter {
   
 
   public static enum DateSpan {
+    REALTIME,
     SECONDS,
     MINUTES,
     HOURS,
     DAYS,
     WEEKS
   }
-
-
-  
 }

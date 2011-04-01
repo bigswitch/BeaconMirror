@@ -12,14 +12,10 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import net.beaconcontroller.counter.CountSeries;
 import net.beaconcontroller.counter.ICounter;
-import net.beaconcontroller.counter.ICounter.DateSpan;
 
 
 /**
@@ -43,6 +39,7 @@ public class ConcurrentCounter implements ICounter {
 
   protected static final Map<DateSpan, Integer> MAX_HISTORY = new HashMap<DateSpan, Integer>();
   static {
+    MAX_HISTORY.put(DateSpan.REALTIME, new Integer(1));
     MAX_HISTORY.put(DateSpan.SECONDS, new Integer(120));
     MAX_HISTORY.put(DateSpan.MINUTES, new Integer(60));
     MAX_HISTORY.put(DateSpan.HOURS, new Integer(48));
@@ -108,16 +105,19 @@ public class ConcurrentCounter implements ICounter {
    * @param startDate
    */
   protected ConcurrentCounter(Date startDate) {
+    init(startDate);
+  }
+  
+  protected void init(Date startDate) {
     this.startDate = startDate;
     this.unprocessedCountBuffer = new ConcurrentLinkedQueue<CountAtom>();
     this.counts = new HashMap<DateSpan, CountBuffer>();
-    
+      
     for(DateSpan ds : DateSpan.values()) {
       CountBuffer cb = new CountBuffer(startDate, ds, MAX_HISTORY.get(ds));
       counts.put(ds, cb);
     }
   }
-  
   /**
    * This is the key method that has to be both fast and very thread-safe.
    */
@@ -129,6 +129,14 @@ public class ConcurrentCounter implements ICounter {
   @Override
   public void increment(Date d, long delta) {
     this.unprocessedCountBuffer.add(new CountAtom(d, delta));
+  }
+  
+  /**
+   * Reset the value.
+   */
+  @Override
+  public void reset(Date startDate) {
+    init(startDate);
   }
   
   /**
@@ -144,7 +152,12 @@ public class ConcurrentCounter implements ICounter {
     }
   }
   
-
+  @Override
+  public long get() {
+      CountSeries cs = counts.get(DateSpan.REALTIME).snapshot();
+      return cs.getSeries()[0];
+  }
+  
   @Override
   /**
    * This method returns a disconnected copy of the underlying CountSeries corresponding to dateSpan.

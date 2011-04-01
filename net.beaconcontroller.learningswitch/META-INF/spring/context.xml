@@ -8,6 +8,7 @@
     class="net.beaconcontroller.learningswitch.LearningSwitch"
     init-method="startUp" destroy-method="shutDown">
     <property name="beaconProvider" ref="beaconProvider"/>
+    <property name="counterStore" ref="counterStore"/>
   </bean>
 
 </beans>
