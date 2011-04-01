@@ -271,11 +271,13 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                             log.info("Device {} added IP {}", device,
                                     IPv4.fromIPv4Address(nwSrc));
                         }
+                        // FIXME: Probably shouldn't do storage operation while
+                        // holding lock.
+                        deviceManagerDao.updateDevice(device);
                     } finally {
                         lock.writeLock().unlock();
                     }
                 }
-                deviceManagerDao.updateDevice(device);
             } else {
                 device = new Device();
                 device.setDataLayerAddress(match.getDataLayerSource());
