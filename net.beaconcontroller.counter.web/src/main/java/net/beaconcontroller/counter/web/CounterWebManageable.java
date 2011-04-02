@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.CountSeries;
 import net.beaconcontroller.counter.ICounter;
 import net.beaconcontroller.counter.ICounter.DateSpan;
@@ -110,7 +111,7 @@ public class CounterWebManageable implements IWebManageable {
             } catch (UnsupportedEncodingException e) {
               //Swallow silently if this encoding isn't supported, i.e. the link will be broken
             }
-            row.add("<a href=\"/wm/counter/snapshot/" + encodedTitle + "\"" +
+            row.add("<a href=\"/wm/counter/port/" + encodedTitle + "\"" +
                     " class=\"beaconNewRefreshingTab\"" +
                     " name=\"" + counterTitle + "\">Chart</a>");
             //todo - add another interesting column here
@@ -123,8 +124,8 @@ public class CounterWebManageable implements IWebManageable {
         return BeaconViewResolver.SIMPLE_VIEW;
     }
     
-    @RequestMapping("/snapshot/{counterTitle}")
-    public String snapshotCounterChart(Map<String, Object> model, @PathVariable String counterTitle) {
+    @RequestMapping("/port/{counterTitle}")
+    public String portCounter(Map<String, Object> model, @PathVariable String counterTitle) {
       OneColumnLayout layout = new OneColumnLayout();
       try {
         counterTitle = URLDecoder.decode(counterTitle, "UTF-8");
@@ -133,20 +134,16 @@ public class CounterWebManageable implements IWebManageable {
       }
       model.put("title", "Counter: " + counterTitle);
       model.put("layout", layout);
-      
-      DateSpan ds = DateSpan.SECONDS;
-      CountSeries cs = this.counterStore.getCounter(counterTitle).snapshot(ds);
-      
+
+      ICounter counter = this.counterStore.getCounter(counterTitle);      
       
       List<String> columnNames = Arrays.asList("Date", "Count");
       List<List<String>> cells = new ArrayList<List<String>>();
-      Date d = cs.getStartDate();
+      Date d = counter.getCounterDate();
+      CounterValue v = counter.getCounterValue();
       
-      for(long countVal : cs.getSeries()) {
-        List<String> row = Arrays.asList(d.toString(), "" + countVal);
-        cells.add(row);
-        d = new Date(d.getTime() + CountSeries.dateSpanToMilliseconds(ds));
-      }
+      List<String> row = Arrays.asList(d.toString(), "" + v.getLong());
+      cells.add(row);
       
       layout.addSection(new TableSection("Counter " + counterTitle, columnNames, cells), null);
       
@@ -154,16 +151,14 @@ public class CounterWebManageable implements IWebManageable {
   }
     
 
-    @RequestMapping("/snapshot/{counterTitle}/json")
+    @RequestMapping("/port/{counterTitle}/json")
     public View snapshotCounter(Map<String, Object> model, @PathVariable String counterTitle, 
                                                              @RequestParam(required=false) String format) {
         
-        ICounter c = this.counterStore.getCounter(counterTitle); //Do I need to URL-unencode this? -KYLE
+        ICounter counter = this.counterStore.getCounter(counterTitle); //Do I need to URL-unencode this? -KYLE
         
         Map<String, Object> m = new HashMap<String, Object>();
-        for(DateSpan ds : DateSpan.values()) {
-          m.put(ds.toString(), c.snapshot(ds));
-        }
+        m.put(counter.getCounterDate().toString(), counter.getCounterValue().getLong());
         ModelUtils.generateTableModel(model, format, Arrays.asList(m), "dateSpan");
 
         return new BeaconJsonView();

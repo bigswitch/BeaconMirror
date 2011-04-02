@@ -43,6 +43,7 @@ import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFSwitchFilter;
 import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.core.io.internal.OFStream;
+import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.ICounter;
 import net.beaconcontroller.counter.ICounterStoreProvider;
 import net.beaconcontroller.packet.IPv4;
@@ -302,18 +303,27 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                     OFPacketIn packet = (OFPacketIn)m;
                     String packetName = m.getType().toClass().getName();
                     packetName = packetName.substring(packetName.lastIndexOf('.')+1);
-                    String counterName = counterStore.createTitle(HexString.toHexString(sw.getId()), 
+                    // Construct both port and switch counter for the packet_in
+                    String portCounterName = counterStore.createCounterName(HexString.toHexString(sw.getId()), 
                             (int)packet.getInPort(), packetName);
+                    String switchCounterName = counterStore.createCounterName(HexString.toHexString(sw.getId()), 
+                            -1, packetName);
                     try {
-                        ICounter counter = counterStore.getCounter(counterName);
-                        if (counter == null) {
-                            counter = counterStore.createCounter(counterName);
+                        ICounter portCounter = counterStore.getCounter(portCounterName);
+                        if (portCounter == null) {
+                            portCounter = counterStore.createCounter(portCounterName, CounterValue.CounterType.LONG);
                         }
-                        counter.increment();
-                        log.debug("Counter, " + counterName + " is incremented to " + counter.get());
+                        ICounter switchCounter = counterStore.getCounter(switchCounterName);
+                        if (switchCounter == null) {
+                            switchCounter = counterStore.createCounter(switchCounterName, CounterValue.CounterType.LONG);
+                        }
+                        portCounter.increment();
+                        switchCounter.increment();
+                        log.debug("Port Counter, " + portCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
+                        log.debug("Switch Counter, " + switchCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
                     }
                     catch (IllegalArgumentException e) {
-                        log.error("Invalid Counter, " + counterName);
+                        log.error("Invalid Counter, " + portCounterName + " or " + switchCounterName);
                     }
                 default:
                     // Don't pass along messages until we have the features reply

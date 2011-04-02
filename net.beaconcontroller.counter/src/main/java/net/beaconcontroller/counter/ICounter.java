@@ -23,9 +23,19 @@ public interface ICounter {
   public void increment(Date d, long delta);
   
   /**
+   * Counter value setter
+   */
+  public void setCounter(Date d, CounterValue value);
+  
+  /**
    * Return the most current value
    */
-  public long get();
+  public Date getCounterDate();
+  
+  /**
+   * Return the most current value
+   */
+  public CounterValue getCounterValue();
   
   /**
    * Reset the value

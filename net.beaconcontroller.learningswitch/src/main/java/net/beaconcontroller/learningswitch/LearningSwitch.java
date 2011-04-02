@@ -20,6 +20,7 @@ import java.util.List;
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.ICounter;
 import net.beaconcontroller.counter.ICounterStoreProvider;
 import net.beaconcontroller.packet.Ethernet;
@@ -165,15 +166,16 @@ public class LearningSwitch implements IOFMessageListener {
         try {
             String packetName = flowMod.getType().toClass().getName();
             packetName = packetName.substring(packetName.lastIndexOf('.')+1);
-            String counterName = counterStore.createTitle(HexString.toHexString(sw.getId()), 
-                    (int)outPort, packetName);
+            // flowmod is per switch. portid = -1
+            String counterName = counterStore.createCounterName(HexString.toHexString(sw.getId()), 
+                    -1, packetName);
             try {
                 ICounter counter = counterStore.getCounter(counterName);
                 if (counter == null) {
-                    counter = counterStore.createCounter(counterName);
+                    counter = counterStore.createCounter(counterName, CounterValue.CounterType.LONG);
                 }
                 counter.increment();
-                log.debug("Counter, " + counterName + " is incremented to " + counter.get());
+                log.debug("Counter, " + counterName + " is incremented to " + counter.getCounterValue().getLong());
             }
             catch (IllegalArgumentException e) {
                 log.error("Invalid Counter, " + counterName);

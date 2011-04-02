@@ -14,11 +14,15 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.CountSeries;
+import net.beaconcontroller.counter.CounterValue.CounterType;
 import net.beaconcontroller.counter.ICounter;
 
 
 /**
+ * This module needs to be updated with CounterValue.
+ * 
  * This is a crumby attempt at a highly concurrent implementation of the Counter interface.
  * 
  * (Help! Help!  Someone please re-write me!  This will almost certainly break at high loads.)
@@ -131,6 +135,11 @@ public class ConcurrentCounter implements ICounter {
     this.unprocessedCountBuffer.add(new CountAtom(d, delta));
   }
   
+  @Override
+  public void setCounter(Date d, CounterValue value) {
+      // To be done later
+  }
+  
   /**
    * Reset the value.
    */
@@ -153,9 +162,19 @@ public class ConcurrentCounter implements ICounter {
   }
   
   @Override
-  public long get() {
-      CountSeries cs = counts.get(DateSpan.REALTIME).snapshot();
-      return cs.getSeries()[0];
+  public CounterValue getCounterValue() {
+      // To be done later
+      //CountSeries cs = counts.get(DateSpan.REALTIME).snapshot();
+      //return cs.getSeries()[0];
+      return new CounterValue(CounterType.LONG);
+  }
+  
+  @Override
+  public Date getCounterDate() {
+      // To be done later
+      //CountSeries cs = counts.get(DateSpan.REALTIME).snapshot();
+      //return cs.getSeries()[0];
+      return new Date();
   }
   
   @Override

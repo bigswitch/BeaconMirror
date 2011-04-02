@@ -11,6 +11,7 @@ import java.util.TimerTask;
 
 import javax.annotation.PostConstruct;
 
+import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.ICounter;
 import net.beaconcontroller.counter.ICounterStoreProvider;
 
@@ -21,59 +22,26 @@ import net.beaconcontroller.counter.ICounterStoreProvider;
 //Note - I can't seem to get the @Component annotation working... falling back to the xml file approach
 //@Component("counterStoreProvider")
 public class CounterStore implements ICounterStoreProvider {
-        
-    protected class Title {
-        String switchID;
-        int portID;
-        String counterName;
-    }
-    
+          
   protected class CounterEntry {
     protected ICounter counter;
     String title;
   }
   
   /**
-   * The is a hierarchical map:
-   * <String of SwitchID> --> portID --> Counters
+   * A map of counterName --> Counter
    */
-  protected Map<String, Map<Integer, Map<String, CounterEntry>>> nameToCEIndex = 
-      new HashMap<String, Map<Integer, Map<String, CounterEntry>>>();
-
+  protected Map<String, CounterEntry> nameToCEIndex = 
+      new HashMap<String, CounterEntry>();
+  
   protected ICounter heartbeatCounter;
   protected ICounter randomCounter;
   
-  /**
-   * Parse key string into Title class
-   * @param key
-   * @return
-   */
-  protected Title getTitleFromString(String key) {
-      if (key == null) {
-          return null;
-      }
-      
-      String[] fields = key.split(TitleDelimitor);
-      Title title = new Title();
-      title.switchID = fields[0];
-      
-      if (fields.length > 1) {
-          try {
-              title.portID = Integer.parseInt(fields[1]);
-          }
-          catch (NumberFormatException e){
-              title.portID = -1;
-          }
-      }
-      
-      return title;
-  }
-  
   /* 
-   * @see net.beaconcontroller.counter.ICounterStoreProvider#createTitle(java.lang.String, int, int, String)
+   * @see net.beaconcontroller.counter.ICounterStoreProvider#createCounterName(java.lang.String, int, int, String)
    */
   @Override
-  public String createTitle(String switchID, int portID, String counterName) {
+  public String createCounterName(String switchID, int portID, String counterName) {
       if (portID < 0) {
           return switchID + TitleDelimitor + counterName;
       } else {
@@ -85,38 +53,16 @@ public class CounterStore implements ICounterStoreProvider {
    * @see net.beaconcontroller.counter.ICounterStoreProvider#createCounter(java.lang.String)
    */
   @Override
-  public ICounter createCounter(String key) {
-    Title title = getTitleFromString(key);
-    
-    if (title.portID < 0) {
-        throw new IllegalArgumentException("Title for counters must be of format switchid_portid_countername, where portid is a non-negative integer.");
-    }
-    
-    Map<Integer, Map<String, CounterEntry>> switchCounters;
-    Map<String, CounterEntry> counterEntries;
+  public ICounter createCounter(String key, CounterValue.CounterType type) {
     CounterEntry ce;
     ICounter c;
     
-    if (!nameToCEIndex.containsKey(title.switchID)) {
-        switchCounters = new HashMap<Integer, Map<String, CounterEntry>>();
-        nameToCEIndex.put(title.switchID, switchCounters); 
-    } else {
-        switchCounters = nameToCEIndex.get(title.switchID);
-    }
-    
-    if (!switchCounters.containsKey(title.portID)) {
-        counterEntries = new HashMap<String, CounterEntry>();
-        switchCounters.put(title.portID, counterEntries);
-    } else {
-        counterEntries = switchCounters.get(title.portID);
-    }
-    
-    if (!counterEntries.containsKey(title.counterName)) {
-        c = SimpleCounter.createCounter(new Date());
+    if (!nameToCEIndex.containsKey(key)) {
+        c = SimpleCounter.createCounter(new Date(), type);
         ce = new CounterEntry();
         ce.counter = c;
         ce.title = key;
-        counterEntries.put(title.counterName, ce);
+        nameToCEIndex.put(key, ce);
     } else {
         throw new IllegalArgumentException("Title for counters must be unique, and there is already a counter with title " + key);
     }
@@ -130,8 +76,8 @@ public class CounterStore implements ICounterStoreProvider {
   @PostConstruct
   public void startUp() {
     System.out.println("CounterStore startUp");
-    this.heartbeatCounter = this.createCounter("CounterStore heartbeat");
-    this.randomCounter = this.createCounter("CounterStore random");
+    this.heartbeatCounter = this.createCounter("CounterStore heartbeat", CounterValue.CounterType.LONG);
+    this.randomCounter = this.createCounter("CounterStore random", CounterValue.CounterType.LONG);
   //Set a background thread to flush any liveCounters every 100 milliseconds
     Timer healthCheckTimer = new Timer();
     healthCheckTimer.scheduleAtFixedRate(new TimerTask() {
@@ -143,29 +89,11 @@ public class CounterStore implements ICounterStoreProvider {
   }
   
   public ICounter getCounter(String key) {
-    @SuppressWarnings("unchecked")
-    Title title = getTitleFromString(key);
-    
-    if (title.portID < 0) {
-        throw new IllegalArgumentException("Title for counters must be of format switchid_portid_countername, where portid is a non-negative integer.");
-    }
-
-    return getCounter(title);
-}
-
-  protected ICounter getCounter(Title title) {
-      if (nameToCEIndex.containsKey(title.switchID)) {
-          Map<Integer, Map<String, CounterEntry>> switchCounters = nameToCEIndex.get(title.switchID);
-          if (switchCounters.containsKey(title.portID)) {
-              Map<String, CounterEntry> counterEntries = switchCounters.get(title.portID);
-              if (counterEntries.containsKey(title.counterName)) {
-                  CounterEntry ce = counterEntries.get(title.counterName);
-                  return ce.counter;
-              }
-          }
+      if (nameToCEIndex.containsKey(key)) {
+          return nameToCEIndex.get(key).counter;
+      } else {
+          return null;
       }
-      
-      return null;
   }
 
   /**
@@ -174,49 +102,12 @@ public class CounterStore implements ICounterStoreProvider {
   @Override
   public Map<String, ICounter> getAll() {
     Map<String, ICounter> ret = new HashMap<String, ICounter>();
-    for(Map.Entry<String, Map<Integer, Map<String, CounterEntry>>> swEntry : this.nameToCEIndex.entrySet()) {
-        String switchID = swEntry.getKey();
-        Map<String, ICounter> counters = getAllInSwitch(switchID);
-        ret.putAll(counters);
+    for(Map.Entry<String, CounterEntry> counterEntry : this.nameToCEIndex.entrySet()) {
+        String key = counterEntry.getKey();
+        ICounter counter = counterEntry.getValue().counter;
+        ret.put(key, counter);
      }
     return ret;
   }
-
-  /**
-   * Debug method to get all of the counters in the same switch.
-   */
-  @Override
-  public Map<String, ICounter> getAllInSwitch(String switchID){
-      Map<String, ICounter> ret = new HashMap<String, ICounter>();
-      if (this.nameToCEIndex.containsKey(switchID)) {
-          Map<Integer, Map<String, CounterEntry>> switchCounters = this.nameToCEIndex.get(switchID);
-          for(Map.Entry<Integer, Map<String, CounterEntry>> portEntry : switchCounters.entrySet()) {
-              int portID = portEntry.getKey().intValue();
-              Map<String, ICounter> counters = getAllInSwitchPort(switchID, portID);
-              ret.putAll(counters);
-          }
-      }
-      return ret;
-  }
-  
-  /**
-   * Debug method to get all of the counters given a switch and port.
-   */
-  @Override
-  public Map<String, ICounter> getAllInSwitchPort(String switchID, int portID) {
-      Map<String, ICounter> ret = new HashMap<String, ICounter>();
-      if (this.nameToCEIndex.containsKey(switchID)) {
-          Map<Integer, Map<String, CounterEntry>> switchCounters = this.nameToCEIndex.get(switchID);
-          if (switchCounters.containsKey(portID)) {
-              Map<String, CounterEntry> counterEntries = switchCounters.get(portID);
-              for(Map.Entry<String, CounterEntry> counterEntry: counterEntries.entrySet()) {
-                  CounterEntry ce = counterEntry.getValue();
-                  ret.put(ce.title, ce.counter);
-              }
-          }
-      }
-      return ret;
-  }
-
 
 }

@@ -1,7 +1,6 @@
 package net.beaconcontroller.counter;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Interface in to the CounterStore.  The CounterStore is intended to be a singleton repository of all of the human-facing
@@ -20,7 +19,7 @@ public interface ICounterStoreProvider {
    * If portID is -1, the title represents the given switch only
    * If portID is a non-negative number, the title represents the given port on the given switch
    */
-  public String createTitle(String switchID, int portID, String counterName);
+  public String createCounterName(String switchID, int portID, String counterName);
   
   /**
    * Create a new ICounter and set the title.  Note that the title must be unique, otherwise this will
@@ -29,7 +28,7 @@ public interface ICounterStoreProvider {
    * @param title
    * @return
    */
-  public ICounter createCounter(String title);
+  public ICounter createCounter(String title, CounterValue.CounterType type);
   
   /**
    * Retrieves a counter with the given title, or null if none can be found.
@@ -43,19 +42,5 @@ public interface ICounterStoreProvider {
    * (Note - this method may be slow - primarily for debugging/UI)
    */
   public Map<String, ICounter> getAll();
-  
-  /**
-   * Returns an immutable map of title:counter with all of the counters in the same switch.
-   * 
-   * (Note - this method may be slow - primarily for debugging/UI)
-   */
-  public Map<String, ICounter> getAllInSwitch(String switchID);
-  
-  /**
-   * Returns an immutable map of title:counter with all of the counters given a switch and port.
-   * 
-   * (Note - this method may be slow - primarily for debugging/UI)
-   */
-  public Map<String, ICounter> getAllInSwitchPort(String switchID, int portID);
   
 }

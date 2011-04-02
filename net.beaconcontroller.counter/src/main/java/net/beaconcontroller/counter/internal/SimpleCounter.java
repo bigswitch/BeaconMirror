@@ -5,6 +5,7 @@ package net.beaconcontroller.counter.internal;
 
 import java.util.Date;
 
+import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.CountSeries;
 import net.beaconcontroller.counter.ICounter;
 
@@ -19,8 +20,8 @@ import net.beaconcontroller.counter.ICounter;
  */
 public class SimpleCounter implements ICounter {
 
-  protected Date date;
-  protected long value;    
+  protected CounterValue counter;
+  protected Date samplingTime;
   protected Date startDate;
   
   /**
@@ -29,8 +30,8 @@ public class SimpleCounter implements ICounter {
    * @param startDate
    * @return
    */
-  public static ICounter createCounter(Date startDate) {
-    SimpleCounter cc = new SimpleCounter(startDate);
+  public static ICounter createCounter(Date startDate, CounterValue.CounterType type) {
+    SimpleCounter cc = new SimpleCounter(startDate, type);
     return cc;
     
   }
@@ -39,15 +40,16 @@ public class SimpleCounter implements ICounter {
    * Protected constructor - use createCounter factory method instead
    * @param startDate
    */
-  protected SimpleCounter(Date startDate) {
-    init(startDate);
+  protected SimpleCounter(Date startDate, CounterValue.CounterType type) {
+    init(startDate, type);
   }
   
-  protected void init(Date startDate) {
+  protected void init(Date startDate, CounterValue.CounterType type) {
     this.startDate = startDate;
-    this.value = 0;
-    this.date = new Date(0);
+    this.samplingTime = new Date();
+    this.counter = new CounterValue(type);
   }
+  
   /**
    * This is the key method that has to be both fast and very thread-safe.
    */
@@ -58,24 +60,37 @@ public class SimpleCounter implements ICounter {
   
   @Override
   public void increment(Date d, long delta) {
-    this.date = d;
-    this.value += delta;
+    this.samplingTime = d;
+    this.counter.increment(delta);
+  }
+  
+  public void setCounter(Date d, CounterValue value) {
+      this.samplingTime = d;
+      this.counter = value;
   }
   
   /**
    * This is the method to retrieve the current value.
    */
   @Override
-  public long get() {
-    return value;
+  public CounterValue getCounterValue() {
+    return this.counter;
   }
 
+  /**
+   * This is the method to retrieve the last sampling time.
+   */
+  @Override
+  public Date getCounterDate() {
+    return this.samplingTime;
+  }
+  
   /**
    * Reset value.
    */
   @Override
   public void reset(Date startDate) {
-    init(startDate);
+    init(startDate, this.counter.getType());
   }
   
   @Override
@@ -84,8 +99,8 @@ public class SimpleCounter implements ICounter {
    */
   public CountSeries snapshot(DateSpan dateSpan) {
     long[] values = new long[1];
-    values[0] = this.value;
-    return new CountSeries(this.date, DateSpan.DAYS, values);
+    values[0] = this.counter.getLong();
+    return new CountSeries(this.samplingTime, DateSpan.DAYS, values);
   }
 
   
