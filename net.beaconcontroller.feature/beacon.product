@@ -47,6 +47,7 @@
       <plugin id="javax.servlet.jsp" autoStart="true" startLevel="0" />
       <plugin id="jcl.over.slf4j" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.core" autoStart="true" startLevel="0" />
+      <plugin id="net.beaconcontroller.counter" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.devicemanager" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.learningswitch" autoStart="true" startLevel="0" />
       <plugin id="net.beaconcontroller.logging.bridge" autoStart="true" startLevel="1" />

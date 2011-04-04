@@ -164,21 +164,22 @@ public class LearningSwitch implements IOFMessageListener {
 
         // and write it out
         try {
-            String packetName = flowMod.getType().toClass().getName();
-            packetName = packetName.substring(packetName.lastIndexOf('.')+1);
-            // flowmod is per switch. portid = -1
-            String counterName = counterStore.createCounterName(HexString.toHexString(sw.getId()), 
-                    -1, packetName);
-            try {
-                ICounter counter = counterStore.getCounter(counterName);
-                if (counter == null) {
-                    counter = counterStore.createCounter(counterName, CounterValue.CounterType.LONG);
+            if (counterStore != null) {
+                String packetName = flowMod.getType().toClass().getName();
+                packetName = packetName.substring(packetName.lastIndexOf('.')+1);
+                // flowmod is per switch. portid = -1
+                String counterName = counterStore.createCounterName(HexString.toHexString(sw.getId()), -1, packetName);
+                try {
+                    ICounter counter = counterStore.getCounter(counterName);
+                    if (counter == null) {
+                        counter = counterStore.createCounter(counterName, CounterValue.CounterType.LONG);
+                    }
+                    counter.increment();
+                    log.debug("Counter, " + counterName + " is incremented to " + counter.getCounterValue().getLong());
                 }
-                counter.increment();
-                log.debug("Counter, " + counterName + " is incremented to " + counter.getCounterValue().getLong());
-            }
-            catch (IllegalArgumentException e) {
-                log.error("Invalid Counter, " + counterName);
+                catch (IllegalArgumentException e) {
+                    log.error("Invalid Counter, " + counterName);
+                }
             }
             sw.getOutputStream().write(flowMod);
         } catch (IOException e) {

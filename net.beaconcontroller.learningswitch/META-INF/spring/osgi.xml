@@ -8,7 +8,7 @@
     interface="net.beaconcontroller.core.IBeaconProvider">
   </osgi:reference>
   
-    <osgi:reference id="counterStore" cardinality="1..1"
+  <osgi:reference id="counterStore" cardinality="1..1"
     interface="net.beaconcontroller.counter.ICounterStoreProvider">
   </osgi:reference>
 

@@ -75,10 +75,9 @@ public class CounterStore implements ICounterStoreProvider {
    */
   @PostConstruct
   public void startUp() {
-    System.out.println("CounterStore startUp");
     this.heartbeatCounter = this.createCounter("CounterStore heartbeat", CounterValue.CounterType.LONG);
     this.randomCounter = this.createCounter("CounterStore random", CounterValue.CounterType.LONG);
-  //Set a background thread to flush any liveCounters every 100 milliseconds
+    //Set a background thread to flush any liveCounters every 100 milliseconds
     Timer healthCheckTimer = new Timer();
     healthCheckTimer.scheduleAtFixedRate(new TimerTask() {
         public void run() {

@@ -199,12 +199,12 @@ public class LearningSwitchTest extends BeaconTestCase {
         // Populate the MAC table
         learningSwitch.addToPortMap(mockSwitch,
                 Ethernet.toLong(Ethernet.toMACAddress("00:11:22:33:44:55")), (short) 42, (short) 2);
-
+        
         // Get the listener and trigger the packet in
         IOFMessageListener listener = mockBeaconProvider.getListeners().get(
                 OFType.PACKET_IN).get(0);
         listener.receive(mockSwitch, this.packetIn);
-
+        
         // Verify the replay matched our expectations
         short result = learningSwitch.getFromPortMap(mockSwitch, Ethernet.toLong(Ethernet.toMACAddress("00:44:33:22:11:00")), (short) 42).shortValue();
         verify(mockSwitch, mockStream);

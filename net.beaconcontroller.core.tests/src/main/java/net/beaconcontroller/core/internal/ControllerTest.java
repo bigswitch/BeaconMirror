@@ -127,6 +127,7 @@ public class ControllerTest extends BeaconTestCase {
         controller.setCallbackOrdering(callbackOrdering);
 
         IOFSwitch sw = createMock(IOFSwitch.class);
+        expect(sw.getId()).andReturn(new Long(0));
         expect(sw.getFeaturesReply()).andReturn(new OFFeaturesReply()).anyTimes();
         OFPacketIn pi = new OFPacketIn();
         IOFMessageListener test1 = createMock(IOFMessageListener.class);
@@ -145,6 +146,7 @@ public class ControllerTest extends BeaconTestCase {
         // verify STOP works
         reset(test1, test2, sw);
         expect(test1.receive(sw, pi)).andReturn(Command.STOP);
+        expect(sw.getId()).andReturn(new Long(0));
         expect(sw.getFeaturesReply()).andReturn(new OFFeaturesReply()).anyTimes();
         replay(test1, test2, sw);
         controller.handleMessages(sw, Arrays.asList(new OFMessage[] {pi}));

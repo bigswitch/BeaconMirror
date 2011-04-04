@@ -301,29 +301,32 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                     break;
                 case PACKET_IN:
                     OFPacketIn packet = (OFPacketIn)m;
-                    String packetName = m.getType().toClass().getName();
-                    packetName = packetName.substring(packetName.lastIndexOf('.')+1);
-                    // Construct both port and switch counter for the packet_in
-                    String portCounterName = counterStore.createCounterName(HexString.toHexString(sw.getId()), 
-                            (int)packet.getInPort(), packetName);
-                    String switchCounterName = counterStore.createCounterName(HexString.toHexString(sw.getId()), 
-                            -1, packetName);
-                    try {
-                        ICounter portCounter = counterStore.getCounter(portCounterName);
-                        if (portCounter == null) {
-                            portCounter = counterStore.createCounter(portCounterName, CounterValue.CounterType.LONG);
+                    if (counterStore != null) {
+                        String packetName = m.getType().toClass().getName();
+                        packetName = packetName.substring(packetName.lastIndexOf('.')+1);
+                        // Construct both port and switch counter for the packet_in
+                        String switchIdHex = HexString.toHexString(sw.getId());
+                        String portCounterName = counterStore.createCounterName(switchIdHex, 
+                                (int)packet.getInPort(), packetName);
+                        String switchCounterName = counterStore.createCounterName(switchIdHex, 
+                                -1, packetName);
+                        try {
+                            ICounter portCounter = counterStore.getCounter(portCounterName);
+                            if (portCounter == null) {
+                                portCounter = counterStore.createCounter(portCounterName, CounterValue.CounterType.LONG);
+                            }
+                            ICounter switchCounter = counterStore.getCounter(switchCounterName);
+                            if (switchCounter == null) {
+                                switchCounter = counterStore.createCounter(switchCounterName, CounterValue.CounterType.LONG);
+                            }
+                            portCounter.increment();
+                            switchCounter.increment();
+                            log.debug("Port Counter, " + portCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
+                            log.debug("Switch Counter, " + switchCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
                         }
-                        ICounter switchCounter = counterStore.getCounter(switchCounterName);
-                        if (switchCounter == null) {
-                            switchCounter = counterStore.createCounter(switchCounterName, CounterValue.CounterType.LONG);
+                        catch (IllegalArgumentException e) {
+                            log.error("Invalid Counter, " + portCounterName + " or " + switchCounterName);
                         }
-                        portCounter.increment();
-                        switchCounter.increment();
-                        log.debug("Port Counter, " + portCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
-                        log.debug("Switch Counter, " + switchCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
-                    }
-                    catch (IllegalArgumentException e) {
-                        log.error("Invalid Counter, " + portCounterName + " or " + switchCounterName);
                     }
                 default:
                     // Don't pass along messages until we have the features reply
