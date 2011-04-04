@@ -168,7 +168,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                     for (Device device : switchPortDevices) {
                         // Remove the device from the switch->device mapping
                         switchDeviceMap.get(id.getSw()).remove(device);
-                        delDevice(device);
+                        deviceManagerDao.updateDevice(device);
                     }
                 }
             } finally {
@@ -425,7 +425,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                     for (Device device : devices) {
                         // Remove the device from the switch->device mapping
                         delSwitchDeviceMapping(id.getSw(), device);
-                        delDevice(device);
+                        deviceManagerDao.updateDevice(device);
                     }
                 }
             } finally {
