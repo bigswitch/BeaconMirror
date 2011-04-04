@@ -575,47 +575,107 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             v = new CounterValue(CounterValue.CounterType.LONG);
         }
         
-        Map<String, Object> m = new HashMap<String, Object>();
         if (CounterValue.CounterType.LONG == v.getType()) {
-            m.put(samplingDate.toString(), v.getLong());
+            model.put(samplingDate.toString(), v.getLong());
         } else if (v.getType() == CounterValue.CounterType.DOUBLE) {
-            m.put(samplingDate.toString(), v.getDouble());
+            model.put(samplingDate.toString(), v.getDouble());
         }
-        ModelUtils.generateTableModel(model, format, Arrays.asList(m), "dateSpan");
 
         return new BeaconJsonView();
         
     }
     
+    protected void getOneSwitchCounter(List<List<String>> cells, String switchID, String counterName) {
+        String fullCounterName = "";      
+        
+        try {
+            counterName = URLDecoder.decode(counterName, "UTF-8");
+            fullCounterName = switchID + ICounterStoreProvider.TitleDelimitor + counterName;
+        } catch (UnsupportedEncodingException e) {
+            //Just leave counterTitle undecoded if there is an issue - fail silently
+        }
+
+
+        ICounter counter = this.counterStore.getCounter(fullCounterName);
+        if (counter != null) {
+            List<String> row = Arrays.asList(switchID, counter.getCounterDate().toString(), 
+                      "" + counter.getCounterValue().getLong());
+            cells.add(row);
+//      } else {
+//          samplingDate = new Date(0);
+//          v = new CounterValue(CounterValue.CounterType.LONG);
+        }
+    }
+    
     @RequestMapping("/counter/{switchID}/{counterName}")
     public String switchCounter(Map<String, Object> model, @PathVariable String switchID, 
                                                            @PathVariable String counterName) {
-      String fullCounterName = "";
-      try {
-        switchID = URLDecoder.decode(switchID, "UTF-8");
-        counterName = URLDecoder.decode(counterName, "UTF-8");
-        fullCounterName = switchID + ICounterStoreProvider.TitleDelimitor + counterName;
-      } catch (UnsupportedEncodingException e) {
-        //Just leave counterTitle undecoded if there is an issue - fail silently
-      }
+      String fullCounterName = "";      
+      TwoColumnLayout layout = new TwoColumnLayout();
 
-      return getCounter(model, fullCounterName);
+      model.put("title", "Counter: " + fullCounterName);
+      model.put("layout", layout);
+      
+      List<String> columnNames = Arrays.asList("SwitchID", "Date", "Count");
+      List<List<String>> cells = new ArrayList<List<String>>();
+      
+      Long[] switchDpids;
+      if (switchID.equals("all")) {
+          switchDpids = beaconProvider.getSwitches().keySet().toArray(new Long[0]);
+          for (Long dpid : switchDpids) {
+              switchID = HexString.toHexString(dpid);
+
+              getOneSwitchCounter(cells, switchID, counterName);
+          }
+      } else {
+          getOneSwitchCounter(cells, switchID, counterName);
+      }
+                 
+      layout.addSection(new TableSection("Counter " + fullCounterName, columnNames, cells), null);
+      
+      return BeaconViewResolver.SIMPLE_VIEW;
+    }
+    
+    protected void getOneSwitchCounterJson(Map<String, Object> model, String switchID, String counterName) {
+        String fullCounterName = "";      
+        
+        try {
+            counterName = URLDecoder.decode(counterName, "UTF-8");
+            fullCounterName = switchID + ICounterStoreProvider.TitleDelimitor + counterName;
+        } catch (UnsupportedEncodingException e) {
+            //Just leave counterTitle undecoded if there is an issue - fail silently
+        }
+
+
+        ICounter counter = this.counterStore.getCounter(fullCounterName);
+        Map<String, Long> sample = new HashMap<String, Long> ();
+        if (counter != null) {
+            sample.put(counter.getCounterDate().toString(), counter.getCounterValue().getLong());
+            model.put(switchID, sample);
+//      } else {
+//          samplingDate = new Date(0);
+//          v = new CounterValue(CounterValue.CounterType.LONG);
+        }
     }
     
     @RequestMapping("/counter/{switchID}/{counterName}/json")
     public View switchCounterJson(Map<String, Object> model, @PathVariable String switchID, 
                                                              @PathVariable String counterName,
                                                              @RequestParam(required=false) String format) {        
-        String fullCounterName = "";
-        try {
-          switchID = URLDecoder.decode(switchID, "UTF-8");
-          counterName = URLDecoder.decode(counterName, "UTF-8");
-          fullCounterName = switchID + ICounterStoreProvider.TitleDelimitor + counterName;
-        } catch (UnsupportedEncodingException e) {
-          //Just leave counterTitle undecoded if there is an issue - fail silently
+        
+        Long[] switchDpids;
+        if (switchID.equalsIgnoreCase("all")) {
+            switchDpids = beaconProvider.getSwitches().keySet().toArray(new Long[0]);
+            for (Long dpid : switchDpids) {
+                switchID = HexString.toHexString(dpid);
+
+                getOneSwitchCounterJson(model, switchID, counterName);
+            }
+        } else {
+            getOneSwitchCounterJson(model, switchID, counterName);
         }
 
-        return getCounterJson(model, fullCounterName, format);
+        return new BeaconJsonView();
         
     }
     
