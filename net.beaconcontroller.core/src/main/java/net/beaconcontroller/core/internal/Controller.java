@@ -47,6 +47,7 @@ import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.ICounter;
 import net.beaconcontroller.counter.ICounterStoreProvider;
 import net.beaconcontroller.packet.IPv4;
+import net.beaconcontroller.storage.StorageException;
 
 import org.openflow.example.SelectListener;
 import org.openflow.example.SelectLoop;
@@ -233,15 +234,36 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         OFPhysicalPort port = m.getDesc();
         if (m.getReason() == (byte)OFPortReason.OFPPR_MODIFY.ordinal()) {
             sw.setPort(port);
-            coreDao.modifiedPort(sw, port);
+            if (coreDao != null) {
+                try {
+                    coreDao.modifiedPort(sw, port);
+                }
+                catch (StorageException e) {
+                    log.error("Error updating port info to storage", e);
+                }
+            }
             log.debug("Port #{} modified for {}", portNumber, sw);
         } else if (m.getReason() == (byte)OFPortReason.OFPPR_ADD.ordinal()) {
             sw.setPort(port);
-            coreDao.addedPort(sw, port);
+            if (coreDao != null) {
+                try {
+                    coreDao.addedPort(sw, port);
+                }
+                catch (StorageException e) {
+                    log.error("Error adding new port info to storage", e);
+                }
+            }
             log.debug("Port #{} added for {}", portNumber, sw);
         } else if (m.getReason() == (byte)OFPortReason.OFPPR_DELETE.ordinal()) {
             sw.deletePort(portNumber);
-            coreDao.deletedPort(sw, portNumber);
+            if (coreDao != null) {
+                try {
+                    coreDao.deletedPort(sw, portNumber);
+                }
+                catch (StorageException e) {
+                    log.error("Error deleting port info from storage", e);
+                }
+            }
             log.debug("Port #{} deleted for {}", portNumber, sw);
         }
     }

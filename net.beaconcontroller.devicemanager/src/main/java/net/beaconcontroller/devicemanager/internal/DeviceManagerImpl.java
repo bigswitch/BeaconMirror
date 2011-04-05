@@ -25,6 +25,7 @@ import net.beaconcontroller.devicemanager.dao.IDeviceManagerDao;
 import net.beaconcontroller.packet.ARP;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPv4;
+import net.beaconcontroller.storage.StorageException;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.ITopologyAware;
 import net.beaconcontroller.topology.SwitchPortTuple;
@@ -168,7 +169,14 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                     for (Device device : switchPortDevices) {
                         // Remove the device from the switch->device mapping
                         switchDeviceMap.get(id.getSw()).remove(device);
-                        deviceManagerDao.updateDevice(device);
+                        if (deviceManagerDao != null) {
+                            try {
+                                deviceManagerDao.updateDevice(device);
+                            }
+                            catch (StorageException e) {
+                                log.error("Error updating device to storage", e);
+                            }
+                        }
                     }
                 }
             } finally {
@@ -186,7 +194,14 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
      */
     protected void delDevice(Device device) {
         dataLayerAddressDeviceMap.remove(Ethernet.toLong(device.getDataLayerAddress()));
-        deviceManagerDao.removeDevice(device);
+        if (deviceManagerDao != null) {
+            try {
+                deviceManagerDao.removeDevice(device);
+            }
+            catch (StorageException e) {
+                log.error("Error deleting device from storage", e);
+            }
+        }
         updateStatus(device, false);
         if (log.isDebugEnabled()) {
             log.debug("Removed device {}", device);
@@ -273,7 +288,14 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                         }
                         // FIXME: Probably shouldn't do storage operation while
                         // holding lock.
-                        deviceManagerDao.updateDevice(device);
+                        if (deviceManagerDao != null) {
+                            try {
+                                deviceManagerDao.updateDevice(device);
+                            }
+                            catch (StorageException e) {
+                                log.error("Error updating device to storage", e);
+                            }
+                        }
                     } finally {
                         lock.writeLock().unlock();
                     }
@@ -288,7 +310,14 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                         device.getNetworkAddresses().add(nwSrc);
                     }
                     this.dataLayerAddressDeviceMap.put(dlAddr, device);
-                    deviceManagerDao.addDevice(device);
+                    if (deviceManagerDao != null) {
+                        try {
+                            deviceManagerDao.addDevice(device);
+                        }
+                        catch (StorageException e) {
+                            log.error("Error adding device to storage", e);
+                        }
+                    }
                     addSwitchDeviceMapping(ipt.getSw(), device);
                     addSwitchPortDeviceMapping(ipt, device);
                     updateStatus(device, true);
@@ -425,7 +454,14 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                     for (Device device : devices) {
                         // Remove the device from the switch->device mapping
                         delSwitchDeviceMapping(id.getSw(), device);
-                        deviceManagerDao.updateDevice(device);
+                        if (deviceManagerDao != null) {
+                            try {
+                                deviceManagerDao.updateDevice(device);
+                            }
+                            catch (StorageException e) {
+                                log.error("Error updating device to storage", e);
+                            }
+                        }
                     }
                 }
             } finally {

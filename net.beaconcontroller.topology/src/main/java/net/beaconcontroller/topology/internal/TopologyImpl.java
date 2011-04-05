@@ -26,6 +26,7 @@ import net.beaconcontroller.packet.LLDPTLV;
 import net.beaconcontroller.storage.IResultSet;
 import net.beaconcontroller.storage.IStorageSource;
 import net.beaconcontroller.storage.OperatorPredicate;
+import net.beaconcontroller.storage.StorageException;
 import net.beaconcontroller.topology.ITopology;
 import net.beaconcontroller.topology.LinkTuple;
 import net.beaconcontroller.topology.LinkInfo;
@@ -709,11 +710,19 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     // STORAGE METHODS
     
     void clearAllLinks() {
-        IResultSet resultSet = storageSource.executeQuery(LINK_TABLE_NAME, null, null, null);
-        while (resultSet.next())
-            resultSet.deleteRow();
-        resultSet.save();
-        resultSet.close();
+        try {
+            IResultSet resultSet = storageSource.executeQuery(LINK_TABLE_NAME, null, null, null);
+            while (resultSet.next())
+                resultSet.deleteRow();
+            resultSet.save();
+            resultSet.close();
+        }
+        catch (StorageException e) {
+            // FIXME: We're ignoring the exception for now, but we really
+            // need to have some mechanism for capturing that the save was
+            // unsuccessful so we can try again later.
+            log.error("Error clearing all link state from storage", e);
+        }
     }
 
     private String getLinkId(LinkTuple lt) {
@@ -737,31 +746,56 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         rowValues.put(LINK_DST_PORT, lt.getDst().getPort());
         rowValues.put(LINK_DST_PORT_STATE, linkInfo.getDstPortState());
         rowValues.put(LINK_VALID_TIME, linkInfo.getValidTime());
-        storageSource.updateRow(LINK_TABLE_NAME, rowValues);
+        
+        try {
+            storageSource.updateRow(LINK_TABLE_NAME, rowValues);
+        }
+        catch (StorageException e) {
+            // FIXME: We're ignoring the exception for now, but we really
+            // need to have some mechanism for capturing that the save was
+            // unsuccessful so we can try again later.
+            log.error("Error writing link info to storage", e);
+        }
     }
 
     public Long readLinkValidTime(LinkTuple lt) {
-        String[] columns = { LINK_VALID_TIME };
-        String id = getLinkId(lt);
-        IResultSet resultSet = storageSource.executeQuery(LINK_TABLE_NAME, columns,
-                new OperatorPredicate(LINK_ID, OperatorPredicate.Operator.EQ, id), null);
-        if (!resultSet.next())
-            return null;
-        Long validTime = resultSet.getLong(LINK_VALID_TIME);
+        Long validTime = null;
+        try {
+            String[] columns = { LINK_VALID_TIME };
+            String id = getLinkId(lt);
+            IResultSet resultSet = storageSource.executeQuery(LINK_TABLE_NAME, columns,
+                    new OperatorPredicate(LINK_ID, OperatorPredicate.Operator.EQ, id), null);
+            if (resultSet.next())
+                validTime = resultSet.getLong(LINK_VALID_TIME);
+        }
+        catch (StorageException e) {
+            // FIXME: We're ignoring the exception for now, but we really
+            // need to have some mechanism for capturing that the save was
+            // unsuccessful so we can try again later.
+            log.error("Error reading link info from storage", e);
+        }
         return validTime;
     }
 
     public void writeLinkInfo(LinkTuple lt, Long validTime, Integer srcPortState, Integer dstPortState) {
-        Map<String, Object> rowValues = new HashMap<String, Object>();
-        String id = getLinkId(lt);
-        rowValues.put(LINK_ID, id);
-        if (validTime != null)
-            rowValues.put(LINK_VALID_TIME, validTime);
-        if (srcPortState != null)
-            rowValues.put(LINK_SRC_PORT_STATE, srcPortState);
-        if (dstPortState != null)
-            rowValues.put(LINK_DST_PORT_STATE, dstPortState);
-        storageSource.updateRow(LINK_TABLE_NAME, id, rowValues);
+        try {
+            Map<String, Object> rowValues = new HashMap<String, Object>();
+            String id = getLinkId(lt);
+            rowValues.put(LINK_ID, id);
+            if (validTime != null)
+                rowValues.put(LINK_VALID_TIME, validTime);
+            if (srcPortState != null)
+                rowValues.put(LINK_SRC_PORT_STATE, srcPortState);
+            if (dstPortState != null)
+                rowValues.put(LINK_DST_PORT_STATE, dstPortState);
+            storageSource.updateRow(LINK_TABLE_NAME, id, rowValues);
+        }
+        catch (StorageException e) {
+            // FIXME: We're ignoring the exception for now, but we really
+            // need to have some mechanism for capturing that the save was
+            // unsuccessful so we can try again later.
+            log.error("Error writing link info to storage", e);
+        }
     }
 
     /*
@@ -824,8 +858,16 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     */
     
     void removeLink(LinkTuple lt) {
-        String id = getLinkId(lt);
-        storageSource.deleteRow(LINK_TABLE_NAME, id);
+        try {
+            String id = getLinkId(lt);
+            storageSource.deleteRow(LINK_TABLE_NAME, id);
+        }
+        catch (StorageException e) {
+            // FIXME: We're ignoring the exception for now, but we really
+            // need to have some mechanism for capturing that the save was
+            // unsuccessful so we can try again later.
+            log.error("Error removing link from storage", e);
+        }
     }
 
     /*
