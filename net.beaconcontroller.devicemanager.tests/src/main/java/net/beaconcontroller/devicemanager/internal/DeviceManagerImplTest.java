@@ -1,5 +1,6 @@
 package net.beaconcontroller.devicemanager.internal;
 
+import java.util.Date;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -83,11 +84,13 @@ public class DeviceManagerImplTest extends BeaconTestCase {
         expect(mockTopology.isInternal(new SwitchPortTuple(mockSwitch, 1))).andReturn(false);
         deviceManager.setTopology(mockTopology);
 
+        Date currentDate = new Date();
+        
         // build our expected Device
         Device device = new Device();
         device.setDataLayerAddress(dataLayerSource);
-        device.getSwPorts().add(new SwitchPortTuple(mockSwitch, (short)1));
-        device.getNetworkAddresses().add(IPv4.toIPv4Address("192.168.1.1"));
+        device.addAttachmentPoint(new SwitchPortTuple(mockSwitch, (short)1), currentDate);
+        device.addNetworkAddress(IPv4.toIPv4Address("192.168.1.1"), currentDate);
 
 
         // Start recording the replay on the mocks
@@ -102,7 +105,7 @@ public class DeviceManagerImplTest extends BeaconTestCase {
         assertEquals(device, deviceManager.getDeviceByDataLayerAddress(dataLayerSource));
 
         // move the port on this device
-        device.getSwPorts().add(new SwitchPortTuple(mockSwitch, (short)2));
+        device.addAttachmentPoint(new SwitchPortTuple(mockSwitch, (short)2), currentDate);
 
         reset(mockSwitch, mockTopology);
         expect(mockSwitch.getId()).andReturn(2L).atLeastOnce();

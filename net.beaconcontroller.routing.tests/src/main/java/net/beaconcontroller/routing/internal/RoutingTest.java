@@ -7,6 +7,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,10 +102,12 @@ public class RoutingTest extends BeaconTestCase {
         expect(sw2.getId()).andReturn(2L).anyTimes();
         OFMessageSafeOutStream out2 = createMock(OFMessageSafeOutStream.class);
 
+        Date currentDate = new Date();
+        
         // build our expected Device
         Device dstDevice = new Device();
         dstDevice.setDataLayerAddress(dataLayerSource);
-        dstDevice.getSwPorts().add(new SwitchPortTuple(sw2, (short)3));
+        dstDevice.addAttachmentPoint(new SwitchPortTuple(sw2, (short)3), currentDate);
 
         // Mock deviceManager
         IDeviceManager deviceManager = createMock(IDeviceManager.class);

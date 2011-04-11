@@ -679,32 +679,37 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
     
     public Set<IOFSwitch> getSwitchesInCluster(IOFSwitch sw) {
         Set<IOFSwitch> returnCluster = null;
-        lock.readLock().lock();
-        try {
-            Set<IOFSwitch> cluster = switchClusterMap.get(sw);
-            if (cluster != null) {
-                returnCluster = new HashSet<IOFSwitch>(cluster);
-            } else {
-                returnCluster = new HashSet<IOFSwitch>();
-                returnCluster.add(sw);
+        if (switchClusterMap != null) {
+            lock.readLock().lock();
+            try {
+                Set<IOFSwitch> cluster = switchClusterMap.get(sw);
+                if (cluster != null) {
+                    returnCluster = new HashSet<IOFSwitch>(cluster);
+                } else {
+                    returnCluster = new HashSet<IOFSwitch>();
+                    returnCluster.add(sw);
+                }
             }
-        }
-        finally {
-            lock.readLock().unlock();
+            finally {
+                lock.readLock().unlock();
+            }
         }
         return returnCluster;
     }
 
     public boolean inSameCluster(IOFSwitch switch1, IOFSwitch switch2) {
-        lock.readLock().lock();
-        try {
-            Set<IOFSwitch> cluster1 = switchClusterMap.get(switch1);
-            Set<IOFSwitch> cluster2 = switchClusterMap.get(switch2);
-            return (cluster1 != null) && (cluster1 == cluster2);
+        if (switchClusterMap != null) {
+            lock.readLock().lock();
+            try {
+                Set<IOFSwitch> cluster1 = switchClusterMap.get(switch1);
+                Set<IOFSwitch> cluster2 = switchClusterMap.get(switch2);
+                return (cluster1 != null) && (cluster1 == cluster2);
+            }
+            finally {
+                lock.readLock().unlock();
+            }
         }
-        finally {
-            lock.readLock().unlock();
-        }
+        return false;
     }
 
     // STORAGE METHODS

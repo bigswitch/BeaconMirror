@@ -9,6 +9,7 @@ import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.io.OFMessageSafeOutStream;
 import net.beaconcontroller.devicemanager.Device;
+import net.beaconcontroller.devicemanager.DeviceAttachmentPoint;
 import net.beaconcontroller.devicemanager.IDeviceManager;
 import net.beaconcontroller.devicemanager.IDeviceManagerAware;
 import net.beaconcontroller.routing.IRoutingEngine;
@@ -76,10 +77,11 @@ public class Routing implements IOFMessageListener, IDeviceManagerAware {
             // does a route exist?
             Route route = null;
             SwitchPortTuple dstSwPort = null;
-            for (SwitchPortTuple p : dstDevice.getSwPorts()) {
-                route = routingEngine.getRoute(sw.getId(), p.getSw().getId());
+            for (DeviceAttachmentPoint attachmentPoint : dstDevice.getAttachmentPoints()) {
+                SwitchPortTuple swPort = attachmentPoint.getSwitchPort();
+                route = routingEngine.getRoute(sw.getId(), swPort.getSw().getId());
                 if (route != null) {
-                    dstSwPort = p;
+                    dstSwPort = swPort;
                     break;
                 }
             }
