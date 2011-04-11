@@ -25,7 +25,6 @@ import net.beaconcontroller.devicemanager.DeviceAttachmentPoint;
 import net.beaconcontroller.devicemanager.DeviceNetworkAddress;
 import net.beaconcontroller.devicemanager.IDeviceManager;
 import net.beaconcontroller.devicemanager.IDeviceManagerAware;
-import net.beaconcontroller.devicemanager.dao.IDeviceManagerDao;
 import net.beaconcontroller.packet.ARP;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPv4;
