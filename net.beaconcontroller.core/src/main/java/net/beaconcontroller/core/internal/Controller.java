@@ -800,7 +800,10 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         
         String localAddress = "UnknownAddress";
         try {
-            localAddress = getFirstNonLoopbackAddress(false).getHostAddress();
+            InetAddress ip = getFirstNonLoopbackAddress(false);
+            if (ip != null) {
+                localAddress = ip.getHostAddress();
+            }
         }
         catch (SocketException e) {
             log.error("Error getting local IP address", e);
