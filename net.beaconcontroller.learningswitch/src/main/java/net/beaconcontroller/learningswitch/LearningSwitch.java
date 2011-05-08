@@ -175,7 +175,7 @@ public class LearningSwitch implements IOFMessageListener {
                         counter = counterStore.createCounter(counterName, CounterValue.CounterType.LONG);
                     }
                     counter.increment();
-                    log.debug("Counter, " + counterName + " is incremented to " + counter.getCounterValue().getLong());
+                    //log.debug("Counter, " + counterName + " is incremented to " + counter.getCounterValue().getLong());
                 }
                 catch (IllegalArgumentException e) {
                     log.error("Invalid Counter, " + counterName);

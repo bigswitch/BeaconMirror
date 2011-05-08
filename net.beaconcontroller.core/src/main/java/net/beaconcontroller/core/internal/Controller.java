@@ -343,8 +343,8 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                             }
                             portCounter.increment();
                             switchCounter.increment();
-                            log.debug("Port Counter, " + portCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
-                            log.debug("Switch Counter, " + switchCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
+                            //log.debug("Port Counter, " + portCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
+                            //log.debug("Switch Counter, " + switchCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
                         }
                         catch (IllegalArgumentException e) {
                             log.error("Invalid Counter, " + portCounterName + " or " + switchCounterName);
