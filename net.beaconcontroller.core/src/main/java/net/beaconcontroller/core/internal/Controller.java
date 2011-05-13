@@ -136,10 +136,14 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
     }
 
     public void handleEvent(SelectionKey key, Object arg) throws IOException {
-        if (arg instanceof ServerSocketChannel)
-            handleListenEvent(key, (ServerSocketChannel)arg);
-        else
-            handleSwitchEvent(key, (IOFSwitch) arg);
+        try {
+            if (arg instanceof ServerSocketChannel)
+                handleListenEvent(key, (ServerSocketChannel)arg);
+            else
+                handleSwitchEvent(key, (IOFSwitch) arg);
+        } catch (Exception e) {
+            log.error("Exception while handling switch event", e);
+        }
     }
 
     protected void handleListenEvent(SelectionKey key, ServerSocketChannel ssc)
@@ -323,7 +327,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                     break;
                 case PACKET_IN:
                     OFPacketIn packet = (OFPacketIn)m;
-                    if (counterStore != null) {
+                    if (counterStore != null && sw.getFeaturesReply() != null) {
                         String packetName = m.getType().toClass().getName();
                         packetName = packetName.substring(packetName.lastIndexOf('.')+1);
                         // Construct both port and switch counter for the packet_in
@@ -575,6 +579,11 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                         sl.doLoop();
                     } catch (Exception e) {
                         log.error("Exception during worker loop, terminating thread", e);
+                        // Terminating the thread seems like a terrible idea under any
+                        // circumstances, since it would leave the controller process
+                        // running yet unable to communicate with a subset of switches;
+                        // we avoid this by catching all exceptions in handleEvent, which
+                        // is invoked by SelectLoop.doLoop
                     }
                 }}
             );
@@ -587,6 +596,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                     listenSelectLoop.doLoop();
                 } catch (Exception e) {
                     log.error("Exception during accept loop, terminating thread", e);
+                    // See note about thread termination above
                 }
             }}
         );
