@@ -23,5 +23,5 @@
     <appender-ref ref="STDOUT" />
     <appender-ref ref="beacon.log" />
   </root>
-  <logger name="net.beaconcontroller" level="DEBUG"/>
+  <logger name="net.beaconcontroller" level="INFO"/>
 </configuration>
