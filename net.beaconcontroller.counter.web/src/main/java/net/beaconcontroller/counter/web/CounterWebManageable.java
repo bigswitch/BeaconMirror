@@ -87,10 +87,10 @@ public class CounterWebManageable implements IWebManageable {
         model.put("layout", layout);
 
         // Description
-        layout.addSection(
-                new StringSection("Welcome",
-                        "Thanks for using the counter store!"),
-                TwoColumnLayout.COLUMN1);
+        //layout.addSection(
+        //        new StringSection("Welcome",
+        //                "Thanks for using the counter store!"),
+        //        TwoColumnLayout.COLUMN1);
 
 
         // Counter List Table
@@ -118,7 +118,8 @@ public class CounterWebManageable implements IWebManageable {
         }
         TableSection ts = new TableSection("Counters", columnNames, cells);
         ts.dontEscapeXML("Chart");
-        layout.addSection(ts, TwoColumnLayout.COLUMN2);
+        //layout.addSection(ts, TwoColumnLayout.COLUMN2);
+        layout.addSection(ts, TwoColumnLayout.COLUMN1);
 
         return BeaconViewResolver.SIMPLE_VIEW;
     }

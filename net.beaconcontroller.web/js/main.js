@@ -269,6 +269,8 @@ function parseLocation() {
               appName = s ? s[0].substring(1) : window.appList[0].name; //note - need to split off the leading hash
               tabIndex = s.length > 1 ? parseInt(s[1], 10) : 0; 
       } 
+
+      appName = unescape(appName);
       return {'appName' : appName, 'tabIndex' : tabIndex};
 }
   

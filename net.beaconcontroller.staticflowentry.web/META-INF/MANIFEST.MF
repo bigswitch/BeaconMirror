@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: net.beaconcontroller.staticflowentry.web
+Bundle-SymbolicName: net.beaconcontroller.staticflowentry.web
+Bundle-Version: 0.1.0.qualifier
+Fragment-Host: net.beaconcontroller.web;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: net.beaconcontroller.staticflowentry,
+ net.beaconcontroller.packet,
+ org.openflow.protocol,
+ org.openflow.protocol.action,
+ org.openflow.protocol.statistics,
+ org.openflow.util,
+ org.springframework.beans.factory.annotation,
+ org.springframework.stereotype

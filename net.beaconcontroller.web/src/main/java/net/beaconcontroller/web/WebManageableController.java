@@ -1,6 +1,8 @@
 package net.beaconcontroller.web;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,11 @@ public class WebManageableController {
     public View overview(Map<String, Object> model) {
         BeaconJsonView view = new BeaconJsonView();
         view.setDisableCaching(true);
+        Collections.sort(webManageables, new Comparator<IWebManageable>(){
+            public int compare(IWebManageable w1, IWebManageable w2) {
+                    return w1.getName().compareToIgnoreCase(w2.getName());
+            }
+        });
         model.put(BeaconJsonView.ROOT_OBJECT_KEY, webManageables);
         return view;
     }

@@ -34,9 +34,8 @@
     <module>../net.beaconcontroller.packet</module>
     <module>../net.beaconcontroller.product</module>
     <module>../net.beaconcontroller.routing</module>
-    <module>../net.beaconcontroller.routing.apsp</module>
-    <module>../net.beaconcontroller.routing.apsp.tests</module>
     <module>../net.beaconcontroller.routing.tests</module>
+    <module>../net.beaconcontroller.routing.dijkstra</module>
     <module>../net.beaconcontroller.test</module>
     <module>../net.beaconcontroller.topology</module>
     <module>../net.beaconcontroller.topology.tests</module>

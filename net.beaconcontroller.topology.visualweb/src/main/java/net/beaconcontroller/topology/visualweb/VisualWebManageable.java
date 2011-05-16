@@ -20,7 +20,6 @@ import net.beaconcontroller.web.view.Tab;
 import net.beaconcontroller.web.view.layout.Layout;
 import net.beaconcontroller.web.view.layout.OneColumnLayout;
 import net.beaconcontroller.web.view.layout.TwoColumnLayout;
-import net.beaconcontroller.web.view.section.JspSection;
 import net.beaconcontroller.web.view.section.StringSection;
 
 import org.slf4j.Logger;
@@ -56,7 +55,7 @@ public class VisualWebManageable implements IWebManageable {
 
     public VisualWebManageable() {
         tabs = new ArrayList<Tab>();
-        tabs.add(new Tab("Overview", "/wm/visualtopology/overview.do"));
+        //tabs.add(new Tab("Overview", "/wm/visualtopology/overview.do"));
         tabs.add(new Tab("Topology Viewer", "/wm/visualtopology/topoview.do"));
         switchViews = new HashMap<Long, SwitchView>();
     }
