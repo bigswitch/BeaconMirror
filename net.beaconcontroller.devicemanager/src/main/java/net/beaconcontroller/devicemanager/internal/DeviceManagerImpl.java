@@ -155,7 +155,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                             }
                         }
                     } catch (InterruptedException e) {
-                        log.warn("DeviceManager Updates thread interupted", e);
+                        log.warn("DeviceManager Updates thread interrupted", e);
                         if (shuttingDown)
                             return;
                     }

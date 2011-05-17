@@ -631,7 +631,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                             }
                         }
                     } catch (InterruptedException e) {
-                        log.warn("Controller updates thread interupted", e);
+                        log.warn("Controller updates thread interrupted", e);
                         if (shuttingDown)
                             return;
                     }
