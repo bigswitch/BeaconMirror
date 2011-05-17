@@ -366,7 +366,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                             addSwitchPortDeviceMapping(switchPort, device);
                             writeAttachmentPointToStorage(device, attachmentPoint, currentDate);
                             updateMoved(device, switchPort, switchPort);
-                            log.info("Device {} added {}", device, switchPort);
+                            log.debug("Device {} added {}", device, switchPort);
                         }
                         if (updateAttachmentPointLastSeen) {
                             writeAttachmentPointLastSeenToStorage(device, attachmentPoint, currentDate);
@@ -375,8 +375,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                             // add the address
                             device.addNetworkAddress(networkAddress);
                             writeNetworkAddressToStorage(device, networkAddress, currentDate);
-                            log.info("Device {} added IP {}", device,
-                                    IPv4.fromIPv4Address(nwSrc));
+                            log.debug("Device {} added IP {}", device, IPv4.fromIPv4Address(nwSrc));
                         }
                         if (updateNetworkAddressLastSeen) {
                             writeNetworkAddressLastSeenToStorage(device, networkAddress, currentDate);
@@ -404,7 +403,7 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                     addSwitchPortDeviceMapping(switchPort, device);
                     writeDeviceToStorage(device, currentDate);
                     updateStatus(device, true);
-                    log.info("New device {}", device);
+                    log.debug("New device {}", device);
                 } finally {
                     lock.writeLock().unlock();
                 }
