@@ -24,6 +24,7 @@ import net.beaconcontroller.core.types.MacVlanPair;
 import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.ICounter;
 import net.beaconcontroller.counter.ICounterStoreProvider;
+import net.beaconcontroller.counter.ICounterStoreProvider.NetworkLayer;
 import net.beaconcontroller.util.BundleAction;
 import net.beaconcontroller.web.IWebManageable;
 import net.beaconcontroller.web.view.BeaconJsonView;
@@ -557,7 +558,8 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
       
       return BeaconViewResolver.SIMPLE_VIEW;
     }
-    
+
+    @SuppressWarnings("unchecked")
     @RequestMapping("/counter/{counterTitle}/json")
     public View getCounterJson(Map<String, Object> model, @PathVariable String counterTitle, 
                                                              @RequestParam(required=false) String format) {        
@@ -582,7 +584,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         
     }
     
-    protected void getOneSwitchCounter(List<List<String>> cells, String switchID, String counterName) {
+    protected String getOneSwitchCounter(List<List<String>> cells, String switchID, String counterName) {
         String fullCounterName = "";      
         
         try {
@@ -602,6 +604,8 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
 //          samplingDate = new Date(0);
 //          v = new CounterValue(CounterValue.CounterType.LONG);
         }
+        
+        return fullCounterName;
     }
     
     @RequestMapping("/counter/{switchID}/{counterName}")
@@ -622,10 +626,10 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
           for (Long dpid : switchDpids) {
               switchID = HexString.toHexString(dpid);
 
-              getOneSwitchCounter(cells, switchID, counterName);
+              fullCounterName = getOneSwitchCounter(cells, switchID, counterName);
           }
       } else {
-          getOneSwitchCounter(cells, switchID, counterName);
+          fullCounterName = getOneSwitchCounter(cells, switchID, counterName);
       }
                  
       layout.addSection(new TableSection("Counter " + fullCounterName, columnNames, cells), null);
@@ -675,6 +679,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         return new BeaconJsonView();
         
     }
+
     
     @RequestMapping("/counter/{switchID}/{portID}/{counterName}")
     public String portCounter(Map<String, Object> model, @PathVariable String switchID, 
@@ -716,4 +721,199 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
         
     }
     
+    
+    @RequestMapping("/counter/categories/{counterName}/{layer}")
+    public String getCounterSubCategories(Map<String, Object> model, @PathVariable String counterName, 
+            @PathVariable String layer) {
+      OneColumnLayout layout = new OneColumnLayout();
+      try {
+        counterName = URLDecoder.decode(counterName, "UTF-8");
+        layer = URLDecoder.decode(layer, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        //Just leave counterTitle undecoded if there is an issue - fail silently
+      }
+      model.put("title", "Type: " + counterName + " L" + layer);
+      model.put("layout", layout);
+
+      NetworkLayer nl = NetworkLayer.L2;
+      if (layer.compareToIgnoreCase("3") == 0) {
+          nl = NetworkLayer.L3;
+      }
+      List<String> columnNames = Arrays.asList("Type", "Categories");
+      List<List<String>> cells = new ArrayList<List<String>>();
+      List<String> categories = this.counterStore.getAllCategories(counterName, nl);
+      if (categories != null) {
+          List<String> row = Arrays.asList(counterName, categories.toString());
+          cells.add(row);
+      }
+            
+      layout.addSection(new TableSection("Type: " + counterName + " L" + layer, columnNames, cells), null);
+      
+      return BeaconViewResolver.SIMPLE_VIEW;
+    }
+
+    @SuppressWarnings("unchecked")
+    @RequestMapping("/counter/categories/{counterTitle}/{layer}/json")
+    public View getCounterSubCategoriesJson(Map<String, Object> model, @PathVariable String counterTitle,
+            @PathVariable String layer, @RequestParam(required=false) String format) {
+        NetworkLayer nl = NetworkLayer.L2;
+        if (layer.compareToIgnoreCase("3") == 0) {
+            nl = NetworkLayer.L3;
+        }
+        List<String> categories = this.counterStore.getAllCategories(counterTitle, nl);
+        if (categories != null) {
+            model.put(counterTitle + "." + layer, categories);
+            //log.info("Switch L2 Counter, " + counterTitle + " has " + categories.toString());
+        }
+
+        //log.info("Switch L2 Counter, " + counterTitle + " has no sub-categories");
+        
+        return new BeaconJsonView();
+    }
+    
+    protected String getOneSwitchCounterCategories(List<List<String>> cells, String switchID, String counterName, String layer) {
+        String fullCounterName = "";      
+        
+        try {
+            counterName = URLDecoder.decode(counterName, "UTF-8");
+            layer = URLDecoder.decode(layer, "UTF-8");
+            fullCounterName = switchID + ICounterStoreProvider.TitleDelimitor + counterName;
+        } catch (UnsupportedEncodingException e) {
+            //Just leave counterTitle undecoded if there is an issue - fail silently
+        }
+
+        NetworkLayer nl = NetworkLayer.L2;
+        if (layer.compareToIgnoreCase("3") == 0) {
+            nl = NetworkLayer.L3;
+        }
+
+        List<String> categories = this.counterStore.getAllCategories(fullCounterName, nl);
+        if (categories != null) {
+            List<String> row = Arrays.asList(switchID, categories.toString());
+            cells.add(row);
+            
+            //log.info("Switch L2 Counter, " + fullCounterName + " has " + categories.toString());
+        }
+        //log.info("Switch L2 Counter, " + fullCounterName + " has no sub-categories");
+        
+        return fullCounterName;
+    }
+    
+    @RequestMapping("/counter/categories/{switchID}/{counterName}/{layer}")
+    public String getSwitchCounterSubCategories(Map<String, Object> model, @PathVariable String switchID, 
+                                                             @PathVariable String counterName,
+                                                             @PathVariable String layer) {
+        String fullCounterName = "";
+        TwoColumnLayout layout = new TwoColumnLayout();
+
+        model.put("title", "Type:" + counterName + " L" + layer);
+        model.put("layout", layout);
+        
+        List<String> columnNames = Arrays.asList("SwitchID", "Categories");
+        List<List<String>> cells = new ArrayList<List<String>>();
+        
+        Long[] switchDpids;
+        if (switchID.equals("all")) {
+            switchDpids = beaconProvider.getSwitches().keySet().toArray(new Long[0]);
+            for (Long dpid : switchDpids) {
+                switchID = HexString.toHexString(dpid);
+
+                fullCounterName = getOneSwitchCounterCategories(cells, switchID, counterName, layer);
+            }
+        } else {
+            fullCounterName = getOneSwitchCounterCategories(cells, switchID, counterName, layer);
+        }
+                   
+        layout.addSection(new TableSection("Counter " + fullCounterName, columnNames, cells), null);
+        
+        return BeaconViewResolver.SIMPLE_VIEW;
+
+    }
+    
+    protected void getOneSwitchCounterCategoriesJson(Map<String, Object> model, String switchID, String counterName, String layer) {
+        String fullCounterName = "";      
+        NetworkLayer nl = NetworkLayer.L2;
+        
+        try {
+            counterName = URLDecoder.decode(counterName, "UTF-8");
+            layer = URLDecoder.decode(layer, "UTF-8");
+            fullCounterName = switchID + ICounterStoreProvider.TitleDelimitor + counterName;
+        } catch (UnsupportedEncodingException e) {
+            //Just leave counterTitle undecoded if there is an issue - fail silently
+        }
+
+        if (layer.compareToIgnoreCase("3") == 0) {
+            nl = NetworkLayer.L3;
+        }
+        List<String> categories = this.counterStore.getAllCategories(fullCounterName, nl);
+        if (categories != null) {
+            model.put(fullCounterName + "." + layer, categories);
+            //log.info("Switch L2 Counter, " + fullCounterName + " has " + categories.toString());
+        }
+    }
+    
+    @RequestMapping("/counter/categories/{switchID}/{counterName}/{layer}/json")
+    public View getSwitchCounterSubCategoriesJson(Map<String, Object> model, @PathVariable String switchID, 
+                                                             @PathVariable String counterName,
+                                                             @PathVariable String layer,
+                                                             @RequestParam(required=false) String format) {
+        Long[] switchDpids;
+        if (switchID.equalsIgnoreCase("all")) {
+            switchDpids = beaconProvider.getSwitches().keySet().toArray(new Long[0]);
+            for (Long dpid : switchDpids) {
+                switchID = HexString.toHexString(dpid);
+
+                getOneSwitchCounterCategoriesJson(model, switchID, counterName, layer);
+            }
+        } else {
+            getOneSwitchCounterCategoriesJson(model, switchID, counterName, layer);
+        }
+        
+        return new BeaconJsonView();
+    }
+    
+     
+    @RequestMapping("/counter/categories/{switchID}/{portID}/{counterName}/{layer}")
+    public String portCounterSubCategories(Map<String, Object> model, @PathVariable String switchID, 
+                                                         @PathVariable String portID,
+                                                         @PathVariable String counterName,
+                                                         @PathVariable String layer) {
+      String fullCounterName = "";
+      try {
+        switchID = URLDecoder.decode(switchID, "UTF-8");
+        portID = URLDecoder.decode(portID, "UTF-8");
+        counterName = URLDecoder.decode(counterName, "UTF-8");
+        layer = URLDecoder.decode(layer, "UTF-8");
+        fullCounterName = switchID + ICounterStoreProvider.TitleDelimitor +
+                          portID + ICounterStoreProvider.TitleDelimitor + 
+                          counterName;
+      } catch (UnsupportedEncodingException e) {
+        //Just leave parameter undecoded if there is an issue - fail silently
+      }
+
+      return getCounterSubCategories(model, fullCounterName, layer);
+    }
+    
+    @RequestMapping("/counter/categories/{switchID}/{portID}/{counterName}/{layer}/json")
+    public View portCounterSubCategoriesJson(Map<String, Object> model, @PathVariable String switchID,
+                                                           @PathVariable String portID,
+                                                           @PathVariable String counterName,
+                                                           @PathVariable String layer,
+                                                           @RequestParam(required=false) String format) {        
+        String fullCounterName = "";
+        try {
+          switchID = URLDecoder.decode(switchID, "UTF-8");
+          portID = URLDecoder.decode(portID, "UTF-8");
+          counterName = URLDecoder.decode(counterName, "UTF-8");
+          layer = URLDecoder.decode(layer, "UTF-8");
+          fullCounterName = switchID + ICounterStoreProvider.TitleDelimitor +
+                            portID + ICounterStoreProvider.TitleDelimitor + 
+                            counterName;
+        } catch (UnsupportedEncodingException e) {
+          //Just leave counterTitle undecoded if there is an issue - fail silently
+        }
+
+        return getCounterSubCategoriesJson(model, fullCounterName, layer, format);
+        
+    }
 }

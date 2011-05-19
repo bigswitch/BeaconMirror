@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,8 @@ import net.beaconcontroller.core.io.internal.OFStream;
 import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.ICounter;
 import net.beaconcontroller.counter.ICounterStoreProvider;
+import net.beaconcontroller.counter.ICounterStoreProvider.NetworkLayer;
+import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.storage.StorageException;
 
@@ -272,6 +275,97 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         }
     }
     
+    protected void updateCounters(IOFSwitch sw, OFMessage m) {
+        OFPacketIn packet = (OFPacketIn)m;
+        
+        /** Get the Ethernet packet from the PacketIn;
+         *  Then extract the etherType and protocol field for IPv4 packet.
+         */
+        Ethernet eth = new Ethernet();
+        eth.deserialize(packet.getPacketData(), 0, packet.getPacketData().length);        
+        String etherType = String.format("%04x", eth.getEtherType());
+        String switchIdHex = HexString.toHexString(sw.getId());
+   
+        String packetName = m.getType().toClass().getName();
+        packetName = packetName.substring(packetName.lastIndexOf('.')+1); 
+        
+        // Construct both port and switch counter for the packet_in
+        String portCounterName = counterStore.createCounterName(switchIdHex, 
+                (int)packet.getInPort(), packetName);
+        String switchCounterName = counterStore.createCounterName(switchIdHex, 
+                -1, packetName);
+        
+        String portL2CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                (int)packet.getInPort(), packetName, etherType, NetworkLayer.L2);
+        String switchL2CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                -1, packetName, etherType, NetworkLayer.L2);
+        
+        try {
+            ICounter portCounter = counterStore.getCounter(portCounterName);
+            if (portCounter == null) {
+                portCounter = counterStore.createCounter(portCounterName, CounterValue.CounterType.LONG);
+            }
+            ICounter switchCounter = counterStore.getCounter(switchCounterName);
+            if (switchCounter == null) {
+                switchCounter = counterStore.createCounter(switchCounterName, CounterValue.CounterType.LONG);
+            }
+            ICounter portL2Counter = counterStore.getCounter(portL2CategoryCounterName);
+            if (portL2Counter == null) {
+                portL2Counter = counterStore.createCounter(portL2CategoryCounterName, CounterValue.CounterType.LONG);
+            }
+            ICounter switchL2Counter = counterStore.getCounter(switchL2CategoryCounterName);
+            if (switchL2Counter == null) {
+                switchL2Counter = counterStore.createCounter(switchL2CategoryCounterName, CounterValue.CounterType.LONG);
+            }
+            portCounter.increment();
+            switchCounter.increment();
+            portL2Counter.increment();
+            switchL2Counter.increment();
+            
+            /***
+            log.info("Port Counter, " + portCounterName + " is incremented to " + 
+                    portCounter.getCounterValue().getLong());
+            log.info("Switch Counter, " + switchCounterName + " is incremented to " + 
+                    portCounter.getCounterValue().getLong());
+            log.info("Port L2 Counter, " + portL2CategoryCounterName + " is incremented to " + 
+                    portL2Counter.getCounterValue().getLong());
+            log.info("Switch L2 Counter, " + switchL2CategoryCounterName + " is incremented to " + 
+                    switchL2Counter.getCounterValue().getLong());
+            **/
+            
+            if (etherType.compareTo(ICounterStoreProvider.L2ET_IPV4) == 0) {
+                IPv4 ipV4 = (IPv4)eth.getPayload();
+                String l3Type = String.format("%04x", ipV4.getProtocol());
+                String portL3CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                        (int)packet.getInPort(), packetName, l3Type, NetworkLayer.L3);
+                String switchL3CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                        -1, packetName, l3Type, NetworkLayer.L3);
+                
+                ICounter portL3Counter = counterStore.getCounter(portL3CategoryCounterName);
+                if (portL3Counter == null) {
+                    portL3Counter = counterStore.createCounter(portL3CategoryCounterName, CounterValue.CounterType.LONG);
+                }
+                ICounter switchL3Counter = counterStore.getCounter(switchL3CategoryCounterName);
+                if (switchL3Counter == null) {
+                    switchL3Counter = counterStore.createCounter(switchL3CategoryCounterName, CounterValue.CounterType.LONG);
+                }
+                portL3Counter.increment();
+                switchL3Counter.increment();
+                
+                /***
+                log.info("Port L3 Counter, " + portL3CategoryCounterName + " is incremented to " + 
+                        portL3Counter.getCounterValue().getLong());
+                log.info("Switch L3 Counter, " + switchL3CategoryCounterName + " is incremented to " + 
+                        switchL3Counter.getCounterValue().getLong());
+                **/
+            }
+
+        }
+        catch (IllegalArgumentException e) {
+            log.error("Invalid Counter, " + portCounterName + " or " + switchCounterName);
+        }
+    }
+    
     /**
      * Handle replies to certain OFMessages, and pass others off to listeners
      * @param sw
@@ -326,34 +420,11 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                     logError(sw, error);
                     break;
                 case PACKET_IN:
-                    OFPacketIn packet = (OFPacketIn)m;
+                    
                     if (counterStore != null && sw.getFeaturesReply() != null) {
-                        String packetName = m.getType().toClass().getName();
-                        packetName = packetName.substring(packetName.lastIndexOf('.')+1);
-                        // Construct both port and switch counter for the packet_in
-                        String switchIdHex = HexString.toHexString(sw.getId());
-                        String portCounterName = counterStore.createCounterName(switchIdHex, 
-                                (int)packet.getInPort(), packetName);
-                        String switchCounterName = counterStore.createCounterName(switchIdHex, 
-                                -1, packetName);
-                        try {
-                            ICounter portCounter = counterStore.getCounter(portCounterName);
-                            if (portCounter == null) {
-                                portCounter = counterStore.createCounter(portCounterName, CounterValue.CounterType.LONG);
-                            }
-                            ICounter switchCounter = counterStore.getCounter(switchCounterName);
-                            if (switchCounter == null) {
-                                switchCounter = counterStore.createCounter(switchCounterName, CounterValue.CounterType.LONG);
-                            }
-                            portCounter.increment();
-                            switchCounter.increment();
-                            //log.debug("Port Counter, " + portCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
-                            //log.debug("Switch Counter, " + switchCounterName + " is incremented to " + portCounter.getCounterValue().getLong());
-                        }
-                        catch (IllegalArgumentException e) {
-                            log.error("Invalid Counter, " + portCounterName + " or " + switchCounterName);
-                        }
+                        updateCounters (sw, m);
                     }
+
                 default:
                     // Don't pass along messages until we have the features reply
                     if (sw.getFeaturesReply() == null) {

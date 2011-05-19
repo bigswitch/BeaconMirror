@@ -3,8 +3,10 @@
  */
 package net.beaconcontroller.counter.internal;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,6 +16,7 @@ import javax.annotation.PostConstruct;
 import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.ICounter;
 import net.beaconcontroller.counter.ICounterStoreProvider;
+import net.beaconcontroller.counter.ICounterStoreProvider.NetworkLayer;
 
 /**
  * @author kyle
@@ -37,8 +40,16 @@ public class CounterStore implements ICounterStoreProvider {
   protected ICounter heartbeatCounter;
   protected ICounter randomCounter;
   
+  /**
+   * Counter Categories grouped by network layers
+   * NetworkLayer -> CounterToCategories
+   */
+  Map<NetworkLayer, Map<String, List<String>>> layeredCategories = 
+      new HashMap<NetworkLayer, Map<String, List<String>>> ();
+      
+  
   /* 
-   * @see net.beaconcontroller.counter.ICounterStoreProvider#createCounterName(java.lang.String, int, int, String)
+   * @see net.beaconcontroller.counter.ICounterStoreProvider#createCounterName(java.lang.String, int, String)
    */
   @Override
   public String createCounterName(String switchID, int portID, String counterName) {
@@ -49,6 +60,58 @@ public class CounterStore implements ICounterStoreProvider {
       }
   }
   
+  /* 
+   * @see net.beaconcontroller.counter.ICounterStoreProvider#createCounterName(java.lang.String, 
+   *                int, String, String, NetworkLayer)
+   */
+  @Override
+  public String createCounterName(String switchID, int portID, String counterName, String subCategory, NetworkLayer layer) {
+      String fullCounterName = "";
+      String groupCounterName = "";
+      
+      if (portID < 0) {
+          groupCounterName = switchID + TitleDelimitor + counterName;
+          fullCounterName = groupCounterName + TitleDelimitor + subCategory;
+      } else {
+          groupCounterName = switchID + TitleDelimitor + portID + TitleDelimitor + counterName;
+          fullCounterName = groupCounterName + TitleDelimitor + subCategory;
+      }
+      
+      Map<String, List<String>> counterToCategories;      
+      if (layeredCategories.containsKey(layer)) {
+          counterToCategories = layeredCategories.get(layer);
+      } else {
+          counterToCategories = new HashMap<String, List<String>> ();
+          layeredCategories.put(layer, counterToCategories);
+      }
+      
+      List<String> categories;
+      if (counterToCategories.containsKey(groupCounterName)) {
+          categories = counterToCategories.get(groupCounterName);
+      } else {
+          categories = new ArrayList<String>();
+          counterToCategories.put(groupCounterName, categories);
+      }
+      
+      if (!categories.contains(subCategory)) {
+          categories.add(subCategory);
+      }
+      return fullCounterName;
+  }
+  
+  /* 
+   * @see net.beaconcontroller.counter.ICounterStoreProvider#getAllCategories(java.lang.String, String)
+   */
+  @Override
+  public List<String> getAllCategories(String counterName, NetworkLayer layer) {
+      if (layeredCategories.containsKey(layer)) {
+          Map<String, List<String>> counterToCategories = layeredCategories.get(layer);
+          if (counterToCategories.containsKey(counterName)) {
+              return counterToCategories.get(counterName);
+          }
+      }
+      return null;
+  }
   /* 
    * @see net.beaconcontroller.counter.ICounterStoreProvider#createCounter(java.lang.String)
    */
