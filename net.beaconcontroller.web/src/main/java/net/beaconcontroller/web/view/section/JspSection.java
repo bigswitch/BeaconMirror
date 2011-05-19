@@ -2,10 +2,6 @@ package net.beaconcontroller.web.view.section;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class takes a jsp file and embeds its content within a Section wrapper.

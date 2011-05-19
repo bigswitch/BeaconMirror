@@ -28,7 +28,6 @@ import net.beaconcontroller.util.BundleAction;
 import net.beaconcontroller.web.IWebManageable;
 import net.beaconcontroller.web.view.BeaconJsonView;
 import net.beaconcontroller.web.view.BeaconViewResolver;
-import net.beaconcontroller.web.view.ModelUtils;
 import net.beaconcontroller.web.view.Tab;
 import net.beaconcontroller.web.view.layout.Layout;
 import net.beaconcontroller.web.view.layout.OneColumnLayout;
@@ -559,8 +558,6 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
       return BeaconViewResolver.SIMPLE_VIEW;
     }
     
-
-    @SuppressWarnings("unchecked")
     @RequestMapping("/counter/{counterTitle}/json")
     public View getCounterJson(Map<String, Object> model, @PathVariable String counterTitle, 
                                                              @RequestParam(required=false) String format) {        

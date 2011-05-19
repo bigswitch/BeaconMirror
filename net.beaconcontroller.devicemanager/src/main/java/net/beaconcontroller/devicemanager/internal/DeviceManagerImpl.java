@@ -319,7 +319,6 @@ public class DeviceManagerImpl implements IDeviceManager, IOFMessageListener,
                         updateAttachmentPointLastSeen = attachmentPoint.shouldWriteLastSeenToStorage(currentDate);
                     } else {
                         attachmentPoint = new DeviceAttachmentPoint(switchPort, currentDate);
-                        DeviceAttachmentPoint sameClusterAttachmentPoint = null;
                         for (DeviceAttachmentPoint existingAttachmentPoint: device.getAttachmentPoints()) {
                             IOFSwitch existingSwitch = existingAttachmentPoint.getSwitchPort().getSw();
                             IOFSwitch newSwitch = switchPort.getSw();
