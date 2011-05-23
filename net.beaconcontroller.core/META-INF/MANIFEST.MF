@@ -7,6 +7,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: net.beaconcontroller.counter,
  net.beaconcontroller.packet,
  net.beaconcontroller.storage,
+ org.codehaus.jackson;version="1.6.1",
+ org.codehaus.jackson.map;version="1.6.1",
  org.openflow.example,
  org.openflow.io,
  org.openflow.protocol,

@@ -5,6 +5,7 @@ package net.beaconcontroller.core.internal;
 
 import java.io.IOException;
 import java.io.EOFException;
+import java.io.File;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.lang.Long;
@@ -80,6 +81,8 @@ import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.BasicFactory;
 import org.openflow.util.HexString;
 import org.openflow.util.U16;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +93,10 @@ import org.slf4j.LoggerFactory;
 public class Controller implements IBeaconProvider, IOFController, SelectListener {
     protected static Logger log = LoggerFactory.getLogger(Controller.class);
     protected static String SWITCH_REQUIREMENTS_TIMER_KEY = "SW_REQ_TIMER";
+    protected static String L23TypeFile = "/opt/bigswitch/l2l3TypeFile.json";
 
+    protected Map<String,String> l2TypeAliasMap;
+    protected Map<String,String> l3TypeAliasMap;
     protected Map<String,String> callbackOrdering;
     protected ExecutorService es;
     protected BasicFactory factory;
@@ -136,8 +142,37 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
             new ConcurrentHashMap<OFType, List<IOFMessageListener>>();
         this.switchListeners = new CopyOnWriteArraySet<IOFSwitchListener>();
         this.updates = new LinkedBlockingQueue<Update>();
+        //this.l2TypeAliasMap = new HashMap<String, String>();
+        //this.l3TypeAliasMap = new HashMap<String, String>();
+        
+        init();
     }
 
+    protected void init() {
+        ObjectMapper mapper = new ObjectMapper();
+        
+        try {
+        	HashMap<String,Object> untyped = mapper.readValue(new File(L23TypeFile), HashMap.class);
+            if (untyped.containsKey("l2")) {
+            	l2TypeAliasMap = (HashMap<String, String>)untyped.get("l2");
+            	for (Entry<String, String> entry : l2TypeAliasMap.entrySet()) {
+            		log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
+            	}
+            }
+            if (untyped.containsKey("l2")) {
+            	l3TypeAliasMap = (HashMap<String, String>)untyped.get("l3");
+            	for (Entry<String, String> entry : l3TypeAliasMap.entrySet()) {
+            		log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
+            	}
+            }
+
+        } catch (Exception e) {
+            log.error("Exception while parsing file: " + L23TypeFile, e);
+        }
+        
+        
+    }
+    
     public void handleEvent(SelectionKey key, Object arg) throws IOException {
         try {
             if (arg instanceof ServerSocketChannel)
@@ -284,6 +319,9 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         Ethernet eth = new Ethernet();
         eth.deserialize(packet.getPacketData(), 0, packet.getPacketData().length);        
         String etherType = String.format("%04x", eth.getEtherType());
+        if (l2TypeAliasMap != null && l2TypeAliasMap.containsKey(etherType)) {
+        	etherType = "L2_" + l2TypeAliasMap.get(etherType);
+        }
         String switchIdHex = HexString.toHexString(sw.getId());
    
         String packetName = m.getType().toClass().getName();
@@ -335,7 +373,10 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
             
             if (etherType.compareTo(ICounterStoreProvider.L2ET_IPV4) == 0) {
                 IPv4 ipV4 = (IPv4)eth.getPayload();
-                String l3Type = String.format("%04x", ipV4.getProtocol());
+                String l3Type = String.format("%02x", ipV4.getProtocol());
+                if (l3TypeAliasMap != null && l3TypeAliasMap.containsKey(l3Type)) {
+                	l3Type = "L3_" + l3TypeAliasMap.get(l3Type);
+                }
                 String portL3CategoryCounterName = counterStore.createCounterName(switchIdHex, 
                         (int)packet.getInPort(), packetName, l3Type, NetworkLayer.L3);
                 String switchL3CategoryCounterName = counterStore.createCounterName(switchIdHex, 
