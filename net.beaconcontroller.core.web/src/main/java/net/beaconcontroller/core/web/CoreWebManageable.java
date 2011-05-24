@@ -735,9 +735,9 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
       model.put("title", "Type: " + counterName + " L" + layer);
       model.put("layout", layout);
 
-      NetworkLayer nl = NetworkLayer.L2;
-      if (layer.compareToIgnoreCase("3") == 0) {
-          nl = NetworkLayer.L3;
+      NetworkLayer nl = NetworkLayer.L3;
+      if (layer.compareToIgnoreCase("4") == 0) {
+          nl = NetworkLayer.L4;
       }
       List<String> columnNames = Arrays.asList("Type", "Categories");
       List<List<String>> cells = new ArrayList<List<String>>();
@@ -756,17 +756,17 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
     @RequestMapping("/counter/categories/{counterTitle}/{layer}/json")
     public View getCounterSubCategoriesJson(Map<String, Object> model, @PathVariable String counterTitle,
             @PathVariable String layer, @RequestParam(required=false) String format) {
-        NetworkLayer nl = NetworkLayer.L2;
-        if (layer.compareToIgnoreCase("3") == 0) {
-            nl = NetworkLayer.L3;
+        NetworkLayer nl = NetworkLayer.L3;
+        if (layer.compareToIgnoreCase("4") == 0) {
+            nl = NetworkLayer.L4;
         }
         List<String> categories = this.counterStore.getAllCategories(counterTitle, nl);
         if (categories != null) {
             model.put(counterTitle + "." + layer, categories);
-            //log.info("Switch L2 Counter, " + counterTitle + " has " + categories.toString());
+            //log.info("Switch L3 Counter, " + counterTitle + " has " + categories.toString());
         }
 
-        //log.info("Switch L2 Counter, " + counterTitle + " has no sub-categories");
+        //log.info("Switch L3 Counter, " + counterTitle + " has no sub-categories");
         
         return new BeaconJsonView();
     }
@@ -782,9 +782,9 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             //Just leave counterTitle undecoded if there is an issue - fail silently
         }
 
-        NetworkLayer nl = NetworkLayer.L2;
-        if (layer.compareToIgnoreCase("3") == 0) {
-            nl = NetworkLayer.L3;
+        NetworkLayer nl = NetworkLayer.L3;
+        if (layer.compareToIgnoreCase("4") == 0) {
+            nl = NetworkLayer.L4;
         }
 
         List<String> categories = this.counterStore.getAllCategories(fullCounterName, nl);
@@ -792,9 +792,9 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             List<String> row = Arrays.asList(switchID, categories.toString());
             cells.add(row);
             
-            //log.info("Switch L2 Counter, " + fullCounterName + " has " + categories.toString());
+            //log.info("Switch L3 Counter, " + fullCounterName + " has " + categories.toString());
         }
-        //log.info("Switch L2 Counter, " + fullCounterName + " has no sub-categories");
+        //log.info("Switch L3 Counter, " + fullCounterName + " has no sub-categories");
         
         return fullCounterName;
     }
@@ -832,7 +832,7 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
     
     protected void getOneSwitchCounterCategoriesJson(Map<String, Object> model, String switchID, String counterName, String layer) {
         String fullCounterName = "";      
-        NetworkLayer nl = NetworkLayer.L2;
+        NetworkLayer nl = NetworkLayer.L3;
         
         try {
             counterName = URLDecoder.decode(counterName, "UTF-8");
@@ -842,8 +842,8 @@ public class CoreWebManageable implements BundleContextAware, IWebManageable {
             //Just leave counterTitle undecoded if there is an issue - fail silently
         }
 
-        if (layer.compareToIgnoreCase("3") == 0) {
-            nl = NetworkLayer.L3;
+        if (layer.compareToIgnoreCase("4") == 0) {
+            nl = NetworkLayer.L4;
         }
         List<String> categories = this.counterStore.getAllCategories(fullCounterName, nl);
         if (categories != null) {
