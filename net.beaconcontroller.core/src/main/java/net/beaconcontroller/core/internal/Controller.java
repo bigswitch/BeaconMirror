@@ -357,16 +357,16 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
             portL3Counter.increment();
             switchL3Counter.increment();
             
-            /***/
-            log.info("Port Counter, " + portCounterName + " is incremented to " + 
-                    portCounter.getCounterValue().getLong());
-            log.info("Switch Counter, " + switchCounterName + " is incremented to " + 
-                    portCounter.getCounterValue().getLong());
-            log.info("Port L3 Counter, " + portL3CategoryCounterName + " is incremented to " + 
-                    portL3Counter.getCounterValue().getLong());
-            log.info("Switch L3 Counter, " + switchL3CategoryCounterName + " is incremented to " + 
-                    switchL3Counter.getCounterValue().getLong());
-            /**/
+            /*
+            log.trace("Port Counter, " + portCounterName + " is incremented to " +
+                      portCounter.getCounterValue().getLong());
+            log.trace("Switch Counter, " + switchCounterName + " is incremented to " +
+                      portCounter.getCounterValue().getLong());
+            log.trace("Port L3 Counter, " + portL3CategoryCounterName + " is incremented to " +
+                      portL3Counter.getCounterValue().getLong());
+            log.trace("Switch L3 Counter, " + switchL3CategoryCounterName + " is incremented to " +
+                      switchL3Counter.getCounterValue().getLong());
+            */
             
             if (etherType.compareTo(ICounterStoreProvider.L3ET_IPV4) == 0) {
                 IPv4 ipV4 = (IPv4)eth.getPayload();
@@ -390,12 +390,12 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                 portL4Counter.increment();
                 switchL4Counter.increment();
                 
-                /***/
-                log.info("Port L4 Counter, " + portL4CategoryCounterName + " is incremented to " + 
-                        portL4Counter.getCounterValue().getLong());
-                log.info("Switch L4 Counter, " + switchL4CategoryCounterName + " is incremented to " + 
-                        switchL4Counter.getCounterValue().getLong());
-                /**/
+                /*
+                log.trace("Port L4 Counter, " + portL4CategoryCounterName + " is incremented to " +
+                          portL4Counter.getCounterValue().getLong());
+                log.trace("Switch L4 Counter, " + switchL4CategoryCounterName + " is incremented to " +
+                          switchL4Counter.getCounterValue().getLong());
+                */
             }
 
         }
