@@ -318,6 +318,8 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         String etherType = String.format("%04x", eth.getEtherType());
         if (l3TypeAliasMap != null && l3TypeAliasMap.containsKey(etherType)) {
         	etherType = "L3_" + l3TypeAliasMap.get(etherType);
+        } else {
+        	etherType = "L3_" + etherType;
         }
         String switchIdHex = HexString.toHexString(sw.getId());
    
@@ -373,6 +375,8 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                 String l4Type = String.format("%02x", ipV4.getProtocol());
                 if (l4TypeAliasMap != null && l4TypeAliasMap.containsKey(l4Type)) {
                 	l4Type = "L4_" + l4TypeAliasMap.get(l4Type);
+                } else {
+                	l4Type = "L4_" + l4Type;
                 }
                 String portL4CategoryCounterName = counterStore.createCounterName(switchIdHex, 
                         (int)packet.getInPort(), packetName, l4Type, NetworkLayer.L4);
