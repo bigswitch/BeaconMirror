@@ -81,7 +81,6 @@ import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.BasicFactory;
 import org.openflow.util.HexString;
 import org.openflow.util.U16;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,10 +92,10 @@ import org.slf4j.LoggerFactory;
 public class Controller implements IBeaconProvider, IOFController, SelectListener {
     protected static Logger log = LoggerFactory.getLogger(Controller.class);
     protected static String SWITCH_REQUIREMENTS_TIMER_KEY = "SW_REQ_TIMER";
-    protected static String L23TypeFile = "/opt/bigswitch/l2l3TypeFile.json";
+    protected static String L3L4TypeFile = "/opt/bigswitch/L3L4TypeFile.json";
 
-    protected Map<String,String> l2TypeAliasMap;
     protected Map<String,String> l3TypeAliasMap;
+    protected Map<String,String> l4TypeAliasMap;
     protected Map<String,String> callbackOrdering;
     protected ExecutorService es;
     protected BasicFactory factory;
@@ -142,8 +141,6 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
             new ConcurrentHashMap<OFType, List<IOFMessageListener>>();
         this.switchListeners = new CopyOnWriteArraySet<IOFSwitchListener>();
         this.updates = new LinkedBlockingQueue<Update>();
-        //this.l2TypeAliasMap = new HashMap<String, String>();
-        //this.l3TypeAliasMap = new HashMap<String, String>();
         
         init();
     }
@@ -152,22 +149,22 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         ObjectMapper mapper = new ObjectMapper();
         
         try {
-        	HashMap<String,Object> untyped = mapper.readValue(new File(L23TypeFile), HashMap.class);
-            if (untyped.containsKey("l2")) {
-            	l2TypeAliasMap = (HashMap<String, String>)untyped.get("l2");
-            	for (Entry<String, String> entry : l2TypeAliasMap.entrySet()) {
-            		log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
-            	}
-            }
-            if (untyped.containsKey("l2")) {
+        	HashMap<String,Object> untyped = mapper.readValue(new File(L3L4TypeFile), HashMap.class);
+            if (untyped.containsKey("l3")) {
             	l3TypeAliasMap = (HashMap<String, String>)untyped.get("l3");
             	for (Entry<String, String> entry : l3TypeAliasMap.entrySet()) {
             		log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
             	}
             }
+            if (untyped.containsKey("l4")) {
+            	l4TypeAliasMap = (HashMap<String, String>)untyped.get("l4");
+            	for (Entry<String, String> entry : l4TypeAliasMap.entrySet()) {
+            		log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
+            	}
+            }
 
         } catch (Exception e) {
-            log.error("Exception while parsing file: " + L23TypeFile, e);
+            log.error("Exception while parsing file: " + L3L4TypeFile, e);
         }
         
         
@@ -319,8 +316,8 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         Ethernet eth = new Ethernet();
         eth.deserialize(packet.getPacketData(), 0, packet.getPacketData().length);        
         String etherType = String.format("%04x", eth.getEtherType());
-        if (l2TypeAliasMap != null && l2TypeAliasMap.containsKey(etherType)) {
-        	etherType = "L2_" + l2TypeAliasMap.get(etherType);
+        if (l3TypeAliasMap != null && l3TypeAliasMap.containsKey(etherType)) {
+        	etherType = "L3_" + l3TypeAliasMap.get(etherType);
         }
         String switchIdHex = HexString.toHexString(sw.getId());
    
@@ -333,10 +330,10 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         String switchCounterName = counterStore.createCounterName(switchIdHex, 
                 -1, packetName);
         
-        String portL2CategoryCounterName = counterStore.createCounterName(switchIdHex, 
-                (int)packet.getInPort(), packetName, etherType, NetworkLayer.L2);
-        String switchL2CategoryCounterName = counterStore.createCounterName(switchIdHex, 
-                -1, packetName, etherType, NetworkLayer.L2);
+        String portL3CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                (int)packet.getInPort(), packetName, etherType, NetworkLayer.L3);
+        String switchL3CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                -1, packetName, etherType, NetworkLayer.L3);
         
         try {
             ICounter portCounter = counterStore.getCounter(portCounterName);
@@ -347,58 +344,58 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
             if (switchCounter == null) {
                 switchCounter = counterStore.createCounter(switchCounterName, CounterValue.CounterType.LONG);
             }
-            ICounter portL2Counter = counterStore.getCounter(portL2CategoryCounterName);
-            if (portL2Counter == null) {
-                portL2Counter = counterStore.createCounter(portL2CategoryCounterName, CounterValue.CounterType.LONG);
+            ICounter portL3Counter = counterStore.getCounter(portL3CategoryCounterName);
+            if (portL3Counter == null) {
+                portL3Counter = counterStore.createCounter(portL3CategoryCounterName, CounterValue.CounterType.LONG);
             }
-            ICounter switchL2Counter = counterStore.getCounter(switchL2CategoryCounterName);
-            if (switchL2Counter == null) {
-                switchL2Counter = counterStore.createCounter(switchL2CategoryCounterName, CounterValue.CounterType.LONG);
+            ICounter switchL3Counter = counterStore.getCounter(switchL3CategoryCounterName);
+            if (switchL3Counter == null) {
+                switchL3Counter = counterStore.createCounter(switchL3CategoryCounterName, CounterValue.CounterType.LONG);
             }
             portCounter.increment();
             switchCounter.increment();
-            portL2Counter.increment();
-            switchL2Counter.increment();
+            portL3Counter.increment();
+            switchL3Counter.increment();
             
-            /***
+            /***/
             log.info("Port Counter, " + portCounterName + " is incremented to " + 
                     portCounter.getCounterValue().getLong());
             log.info("Switch Counter, " + switchCounterName + " is incremented to " + 
                     portCounter.getCounterValue().getLong());
-            log.info("Port L2 Counter, " + portL2CategoryCounterName + " is incremented to " + 
-                    portL2Counter.getCounterValue().getLong());
-            log.info("Switch L2 Counter, " + switchL2CategoryCounterName + " is incremented to " + 
-                    switchL2Counter.getCounterValue().getLong());
-            **/
+            log.info("Port L3 Counter, " + portL3CategoryCounterName + " is incremented to " + 
+                    portL3Counter.getCounterValue().getLong());
+            log.info("Switch L3 Counter, " + switchL3CategoryCounterName + " is incremented to " + 
+                    switchL3Counter.getCounterValue().getLong());
+            /**/
             
-            if (etherType.compareTo(ICounterStoreProvider.L2ET_IPV4) == 0) {
+            if (etherType.compareTo(ICounterStoreProvider.L3ET_IPV4) == 0) {
                 IPv4 ipV4 = (IPv4)eth.getPayload();
-                String l3Type = String.format("%02x", ipV4.getProtocol());
-                if (l3TypeAliasMap != null && l3TypeAliasMap.containsKey(l3Type)) {
-                	l3Type = "L3_" + l3TypeAliasMap.get(l3Type);
+                String l4Type = String.format("%02x", ipV4.getProtocol());
+                if (l4TypeAliasMap != null && l4TypeAliasMap.containsKey(l4Type)) {
+                	l4Type = "L4_" + l4TypeAliasMap.get(l4Type);
                 }
-                String portL3CategoryCounterName = counterStore.createCounterName(switchIdHex, 
-                        (int)packet.getInPort(), packetName, l3Type, NetworkLayer.L3);
-                String switchL3CategoryCounterName = counterStore.createCounterName(switchIdHex, 
-                        -1, packetName, l3Type, NetworkLayer.L3);
+                String portL4CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                        (int)packet.getInPort(), packetName, l4Type, NetworkLayer.L4);
+                String switchL4CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                        -1, packetName, l4Type, NetworkLayer.L4);
                 
-                ICounter portL3Counter = counterStore.getCounter(portL3CategoryCounterName);
-                if (portL3Counter == null) {
-                    portL3Counter = counterStore.createCounter(portL3CategoryCounterName, CounterValue.CounterType.LONG);
+                ICounter portL4Counter = counterStore.getCounter(portL4CategoryCounterName);
+                if (portL4Counter == null) {
+                    portL4Counter = counterStore.createCounter(portL4CategoryCounterName, CounterValue.CounterType.LONG);
                 }
-                ICounter switchL3Counter = counterStore.getCounter(switchL3CategoryCounterName);
-                if (switchL3Counter == null) {
-                    switchL3Counter = counterStore.createCounter(switchL3CategoryCounterName, CounterValue.CounterType.LONG);
+                ICounter switchL4Counter = counterStore.getCounter(switchL4CategoryCounterName);
+                if (switchL4Counter == null) {
+                    switchL4Counter = counterStore.createCounter(switchL4CategoryCounterName, CounterValue.CounterType.LONG);
                 }
-                portL3Counter.increment();
-                switchL3Counter.increment();
+                portL4Counter.increment();
+                switchL4Counter.increment();
                 
-                /***
-                log.info("Port L3 Counter, " + portL3CategoryCounterName + " is incremented to " + 
-                        portL3Counter.getCounterValue().getLong());
-                log.info("Switch L3 Counter, " + switchL3CategoryCounterName + " is incremented to " + 
-                        switchL3Counter.getCounterValue().getLong());
-                **/
+                /***/
+                log.info("Port L4 Counter, " + portL4CategoryCounterName + " is incremented to " + 
+                        portL4Counter.getCounterValue().getLong());
+                log.info("Switch L4 Counter, " + switchL4CategoryCounterName + " is incremented to " + 
+                        switchL4Counter.getCounterValue().getLong());
+                /**/
             }
 
         }

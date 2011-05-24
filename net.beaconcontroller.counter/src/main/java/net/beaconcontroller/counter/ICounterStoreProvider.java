@@ -16,10 +16,10 @@ public interface ICounterStoreProvider {
   public final String TitleDelimitor = "_";
     
   /** L2 EtherType subCategories */
-  public final String L2ET_IPV4 = "L2_IPv4";
+  public final String L3ET_IPV4 = "L3_IPv4";
   
   public enum NetworkLayer {
-      L2, L3
+      L3, L4
   }
   
   /**
