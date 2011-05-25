@@ -149,25 +149,22 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         ObjectMapper mapper = new ObjectMapper();
         
         try {
-        	HashMap<String,Object> untyped = mapper.readValue(new File(L3L4TypeFile), HashMap.class);
+            HashMap<String,Object> untyped = mapper.readValue(new File(L3L4TypeFile), HashMap.class);
             if (untyped.containsKey("l3")) {
-            	l3TypeAliasMap = (HashMap<String, String>)untyped.get("l3");
-            	for (Entry<String, String> entry : l3TypeAliasMap.entrySet()) {
-            		log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
-            	}
+                l3TypeAliasMap = (HashMap<String, String>)untyped.get("l3");
+                for (Entry<String, String> entry : l3TypeAliasMap.entrySet()) {
+                    log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
+                }
             }
             if (untyped.containsKey("l4")) {
-            	l4TypeAliasMap = (HashMap<String, String>)untyped.get("l4");
-            	for (Entry<String, String> entry : l4TypeAliasMap.entrySet()) {
-            		log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
-            	}
+                l4TypeAliasMap = (HashMap<String, String>)untyped.get("l4");
+                for (Entry<String, String> entry : l4TypeAliasMap.entrySet()) {
+                    log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
+                }
             }
-
         } catch (Exception e) {
             log.error("Exception while parsing file: " + L3L4TypeFile, e);
         }
-        
-        
     }
     
     public void handleEvent(SelectionKey key, Object arg) throws IOException {
@@ -317,9 +314,9 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         eth.deserialize(packet.getPacketData(), 0, packet.getPacketData().length);        
         String etherType = String.format("%04x", eth.getEtherType());
         if (l3TypeAliasMap != null && l3TypeAliasMap.containsKey(etherType)) {
-        	etherType = "L3_" + l3TypeAliasMap.get(etherType);
+            etherType = "L3_" + l3TypeAliasMap.get(etherType);
         } else {
-        	etherType = "L3_" + etherType;
+            etherType = "L3_" + etherType;
         }
         String switchIdHex = HexString.toHexString(sw.getId());
    
@@ -374,9 +371,9 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                 IPv4 ipV4 = (IPv4)eth.getPayload();
                 String l4Type = String.format("%02x", ipV4.getProtocol());
                 if (l4TypeAliasMap != null && l4TypeAliasMap.containsKey(l4Type)) {
-                	l4Type = "L4_" + l4TypeAliasMap.get(l4Type);
+                    l4Type = "L4_" + l4TypeAliasMap.get(l4Type);
                 } else {
-                	l4Type = "L4_" + l4Type;
+                    l4Type = "L4_" + l4Type;
                 }
                 String portL4CategoryCounterName = counterStore.createCounterName(switchIdHex, 
                         (int)packet.getInPort(), packetName, l4Type, NetworkLayer.L4);
