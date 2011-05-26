@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -32,6 +30,7 @@ import net.beaconcontroller.topology.LinkTuple;
 import net.beaconcontroller.topology.LinkInfo;
 import net.beaconcontroller.topology.SwitchPortTuple;
 import net.beaconcontroller.topology.ITopologyAware;
+import net.beaconcontroller.util.FixedTimer;
 
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
@@ -90,7 +89,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      * Map from link to the most recent time it was verified functioning
      */
     protected Map<LinkTuple, LinkInfo> links;
-    protected Timer lldpSendTimer;
+    protected FixedTimer lldpSendTimer;
     protected Long lldpFrequency = 15L * 1000; // sending frequency
     protected Long lldpTimeout = 35L * 1000; // timeout
     protected ReentrantReadWriteLock lock;
@@ -106,7 +105,7 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
      * Map from switch id to a set of all links with it as an endpoint
      */
     protected Map<IOFSwitch, Set<LinkTuple>> switchLinks;
-    protected Timer timeoutLinksTimer;
+    protected FixedTimer timeoutLinksTimer;
     protected Set<ITopologyAware> topologyAware;
     protected BlockingQueue<Update> updates;
     protected Thread updatesThread;
@@ -154,19 +153,17 @@ public class TopologyImpl implements IOFMessageListener, IOFSwitchListener, ITop
         portLinks = new HashMap<SwitchPortTuple, Set<LinkTuple>>();
         switchLinks = new HashMap<IOFSwitch, Set<LinkTuple>>();
 
-        lldpSendTimer = new Timer();
-        lldpSendTimer.scheduleAtFixedRate(new TimerTask() {
+        lldpSendTimer = new FixedTimer(1000, lldpFrequency) {
             @Override
             public void run() {
                 sendLLDPs();
-            }}, 1000, lldpFrequency);
+            }};
 
-        timeoutLinksTimer = new Timer();
-        timeoutLinksTimer.scheduleAtFixedRate(new TimerTask() {
+        timeoutLinksTimer = new FixedTimer(1000, lldpTimeout) {
             @Override
             public void run() {
                 timeoutLinks();
-            }}, 1000, lldpTimeout);
+            }};
 
         updatesThread = new Thread(new Runnable () {
             @Override

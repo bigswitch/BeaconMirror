@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -52,6 +50,7 @@ import net.beaconcontroller.counter.ICounterStoreProvider.NetworkLayer;
 import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.storage.StorageException;
+import net.beaconcontroller.util.FixedTimer;
 
 import org.openflow.example.SelectListener;
 import org.openflow.example.SelectLoop;
@@ -543,8 +542,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
      * @param sw
      */
     protected void startSwitchRequirementsTimer(final IOFSwitch sw) {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        FixedTimer timer = new FixedTimer(500, 500) {
             @Override
             public void run() {
                 try {
@@ -569,12 +567,12 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                     stopSwitchRequirementsTimer(sw);
                     log.error("Exception in switch requirements timer", e);
                 }
-            }}, 500, 500);
+            }};
         sw.getAttributes().put(SWITCH_REQUIREMENTS_TIMER_KEY, timer);
     }
 
     protected void stopSwitchRequirementsTimer(final IOFSwitch sw) {
-        Timer timer = (Timer) sw.getAttributes().get(
+        FixedTimer timer = (FixedTimer) sw.getAttributes().get(
                 SWITCH_REQUIREMENTS_TIMER_KEY);
         if (timer != null) {
             timer.cancel();
