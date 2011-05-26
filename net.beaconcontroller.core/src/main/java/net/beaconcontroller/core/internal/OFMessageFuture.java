@@ -1,7 +1,5 @@
 package net.beaconcontroller.core.internal;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -16,6 +14,7 @@ import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFSwitchFilter;
 import net.beaconcontroller.core.IOFSwitchListener;
+import net.beaconcontroller.util.FixedTimer;
 
 /**
  * A Future object used to retrieve asynchronous OFMessage replies. Unregisters
@@ -34,7 +33,7 @@ public abstract class OFMessageFuture<T,V> implements Future<V>, IOFMessageListe
     protected OFType responseType;
     protected volatile V result;
     protected IOFSwitch sw;
-    protected Timer timeoutTimer;
+    protected FixedTimer timeoutTimer;
     protected int transactionId;
 
     public OFMessageFuture(IBeaconProvider beaconProvider, IOFSwitch sw,
@@ -51,13 +50,12 @@ public abstract class OFMessageFuture<T,V> implements Future<V>, IOFMessageListe
         this.sw = sw;
         this.transactionId = transactionId;
 
-        this.timeoutTimer = new Timer();
         final OFMessageFuture<T, V> future = this;
-        this.timeoutTimer.schedule(new TimerTask() {
+        this.timeoutTimer = new FixedTimer(unit.toMillis(timeout)) {
             @Override
             public void run() {
                 future.cancel(true);
-            }}, unit.toMillis(timeout));
+            }};
     }
 
     protected void unRegister() {

@@ -1,7 +1,7 @@
 package net.beaconcontroller.util;
 
 /**
- * Execute a task periodically, every period milliseconds at most.
+ * Execute a task once or periodically, every period milliseconds at most.
  *
  * As long as the duration of the task is less than the timer period, the
  * task will execute every period milliseconds.  If a task iteration takes
@@ -9,6 +9,8 @@ package net.beaconcontroller.util;
  * subsequent iterations will be executed every period milliseconds.
  *
  * Unlike java.util.Timer, FixedTimer does not rely on the system clock.
+ * It calls System.nanoTime() which should use a monotonic clock. See
+ * http://blogs.oracle.com/dholmes/entry/inside_the_hotspot_vm_clocks.
  */
 public abstract class FixedTimer {
 
@@ -34,6 +36,8 @@ public abstract class FixedTimer {
                     nextRun = FixedTimer.now();
                     while (!FixedTimer.this.cancelled) {
                         FixedTimer.this.run();
+                        if (FixedTimer.this.period < 0)
+                            break;
                         long now = FixedTimer.now();
                         nextRun += FixedTimer.this.period;
                         if (nextRun > now)
@@ -46,6 +50,10 @@ public abstract class FixedTimer {
             }
         };
         this.thread.start();
+    }
+
+    public FixedTimer(long delay) {
+        this(delay, -1);
     }
 
     public void cancel() {

@@ -8,15 +8,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.annotation.PostConstruct;
 
 import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.ICounter;
 import net.beaconcontroller.counter.ICounterStoreProvider;
-import net.beaconcontroller.counter.ICounterStoreProvider.NetworkLayer;
+import net.beaconcontroller.util.FixedTimer;
 
 /**
  * @author kyle
@@ -141,13 +139,12 @@ public class CounterStore implements ICounterStoreProvider {
     this.heartbeatCounter = this.createCounter("CounterStore heartbeat", CounterValue.CounterType.LONG);
     this.randomCounter = this.createCounter("CounterStore random", CounterValue.CounterType.LONG);
     //Set a background thread to flush any liveCounters every 100 milliseconds
-    Timer healthCheckTimer = new Timer();
-    healthCheckTimer.scheduleAtFixedRate(new TimerTask() {
+    new FixedTimer(100, 100) {
         public void run() {
           heartbeatCounter.increment();
           randomCounter.increment(new Date(), (long) (Math.random() * 100)); //TODO - pull this in to random timing
         }
-    }, 100, 100);
+    };
   }
   
   public ICounter getCounter(String key) {

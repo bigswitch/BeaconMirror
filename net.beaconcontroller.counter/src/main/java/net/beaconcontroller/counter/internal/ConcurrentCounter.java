@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,6 +16,7 @@ import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.CountSeries;
 import net.beaconcontroller.counter.CounterValue.CounterType;
 import net.beaconcontroller.counter.ICounter;
+import net.beaconcontroller.util.FixedTimer;
 
 
 /**
@@ -56,13 +55,12 @@ public class ConcurrentCounter implements ICounter {
   static {
     liveCounters = Collections.newSetFromMap(new ConcurrentHashMap<ConcurrentCounter, Boolean>()); //nifty way to get concurrent hash set
     //Set a background thread to flush any liveCounters every 100 milliseconds
-    Timer flushTimer = new Timer();
-    flushTimer.scheduleAtFixedRate(new TimerTask() {
+    new FixedTimer(100, 100) {
         public void run() {
           for(ConcurrentCounter c : liveCounters) {
             c.flush();
           }
-        }}, 100, 100);
+        }};
   }
 
   /**

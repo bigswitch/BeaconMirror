@@ -4,4 +4,5 @@ Bundle-Name: Counter
 Bundle-SymbolicName: net.beaconcontroller.counter
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: net.beaconcontroller.util
 Export-Package: net.beaconcontroller.counter
