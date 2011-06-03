@@ -1,6 +1,5 @@
 package net.beaconcontroller.counter.internal;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import net.beaconcontroller.counter.CountSeries;

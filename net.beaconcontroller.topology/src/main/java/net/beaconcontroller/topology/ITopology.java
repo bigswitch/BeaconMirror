@@ -1,5 +1,11 @@
 package net.beaconcontroller.topology;
 
+/**
+ *
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
+
 import java.util.Map;
 import java.util.Set;
 import net.beaconcontroller.core.IOFSwitch;
@@ -21,10 +27,10 @@ public interface ITopology {
 
     /**
      * Retrieves a map of all known link connections between OpenFlow switches
-     * and the last time each link was known to be functioning.
+     * and the associated info (valid time, port states) for the link.
      * @return
      */
-    public Map<LinkTuple, Long> getLinks();
+    public Map<LinkTuple, LinkInfo> getLinks();
     
     /**
      * Retrieves a set of all the switches in the same cluster as sw.

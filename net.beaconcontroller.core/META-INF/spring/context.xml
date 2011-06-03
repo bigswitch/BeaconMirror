@@ -17,6 +17,7 @@
     <property name="callbackOrdering" ref="callbackOrdering"/>
     <property name="listenPort" value="6633"/>
     <property name="controllerDao" ref="controllerDao"/>
+    <property name="counterStore" ref="counterStore"/>
   </bean>
 
   <bean id="controllerDao"

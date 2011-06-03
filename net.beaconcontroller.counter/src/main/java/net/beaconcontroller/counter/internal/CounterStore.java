@@ -3,24 +3,18 @@
  */
 package net.beaconcontroller.counter.internal;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.annotation.PostConstruct;
 
+import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.ICounter;
 import net.beaconcontroller.counter.ICounterStoreProvider;
-
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
-import org.apache.commons.collections.map.MultiValueMap;
-import org.apache.commons.collections.MultiMap;
+import net.beaconcontroller.util.FixedTimer;
 
 /**
  * @author kyle
@@ -29,37 +23,111 @@ import org.apache.commons.collections.MultiMap;
 //Note - I can't seem to get the @Component annotation working... falling back to the xml file approach
 //@Component("counterStoreProvider")
 public class CounterStore implements ICounterStoreProvider {
-
+          
   protected class CounterEntry {
     protected ICounter counter;
     String title;
-    protected Set<String> tags = new HashSet<String>();
   }
   
-  protected Set<CounterEntry> allCounters = new HashSet<CounterEntry>();
-  protected MultiMap tagToCEIndex = MultiValueMap.decorate(new HashMap<String, CounterEntry>(), HashSet.class);
-  protected Map<ICounter, CounterEntry> counterToCEIndex = new HashMap<ICounter, CounterEntry>();
+  /**
+   * A map of counterName --> Counter
+   */
+  protected Map<String, CounterEntry> nameToCEIndex = 
+      new HashMap<String, CounterEntry>();
+  
   protected ICounter heartbeatCounter;
   protected ICounter randomCounter;
   
+  /**
+   * Counter Categories grouped by network layers
+   * NetworkLayer -> CounterToCategories
+   */
+  Map<NetworkLayer, Map<String, List<String>>> layeredCategories = 
+      new HashMap<NetworkLayer, Map<String, List<String>>> ();
+      
+  
+  /* 
+   * @see net.beaconcontroller.counter.ICounterStoreProvider#createCounterName(java.lang.String, int, String)
+   */
+  @Override
+  public String createCounterName(String switchID, int portID, String counterName) {
+      if (portID < 0) {
+          return switchID + TitleDelimitor + counterName;
+      } else {
+          return switchID + TitleDelimitor + portID + TitleDelimitor + counterName;
+      }
+  }
+  
+  /* 
+   * @see net.beaconcontroller.counter.ICounterStoreProvider#createCounterName(java.lang.String, 
+   *                int, String, String, NetworkLayer)
+   */
+  @Override
+  public String createCounterName(String switchID, int portID, String counterName, String subCategory, NetworkLayer layer) {
+      String fullCounterName = "";
+      String groupCounterName = "";
+      
+      if (portID < 0) {
+          groupCounterName = switchID + TitleDelimitor + counterName;
+          fullCounterName = groupCounterName + TitleDelimitor + subCategory;
+      } else {
+          groupCounterName = switchID + TitleDelimitor + portID + TitleDelimitor + counterName;
+          fullCounterName = groupCounterName + TitleDelimitor + subCategory;
+      }
+      
+      Map<String, List<String>> counterToCategories;      
+      if (layeredCategories.containsKey(layer)) {
+          counterToCategories = layeredCategories.get(layer);
+      } else {
+          counterToCategories = new HashMap<String, List<String>> ();
+          layeredCategories.put(layer, counterToCategories);
+      }
+      
+      List<String> categories;
+      if (counterToCategories.containsKey(groupCounterName)) {
+          categories = counterToCategories.get(groupCounterName);
+      } else {
+          categories = new ArrayList<String>();
+          counterToCategories.put(groupCounterName, categories);
+      }
+      
+      if (!categories.contains(subCategory)) {
+          categories.add(subCategory);
+      }
+      return fullCounterName;
+  }
+  
+  /* 
+   * @see net.beaconcontroller.counter.ICounterStoreProvider#getAllCategories(java.lang.String, String)
+   */
+  @Override
+  public List<String> getAllCategories(String counterName, NetworkLayer layer) {
+      if (layeredCategories.containsKey(layer)) {
+          Map<String, List<String>> counterToCategories = layeredCategories.get(layer);
+          if (counterToCategories.containsKey(counterName)) {
+              return counterToCategories.get(counterName);
+          }
+      }
+      return null;
+  }
   /* 
    * @see net.beaconcontroller.counter.ICounterStoreProvider#createCounter(java.lang.String)
    */
   @Override
-  public ICounter createCounter(String title) {
-    ICounter c = this.getCounter(title);
-    if(c != null)
-      throw new IllegalArgumentException("Title for counters must be unique, and there is already a counter with title " + title);
-      
-    c = ConcurrentCounter.createCounter(new Date());
-    CounterEntry ce = new CounterEntry();
-    ce.counter = c;
-    ce.title = title;
+  public ICounter createCounter(String key, CounterValue.CounterType type) {
+    CounterEntry ce;
+    ICounter c;
     
-    allCounters.add(ce);
-    this.counterToCEIndex.put(c, ce);
+    if (!nameToCEIndex.containsKey(key)) {
+        c = SimpleCounter.createCounter(new Date(), type);
+        ce = new CounterEntry();
+        ce.counter = c;
+        ce.title = key;
+        nameToCEIndex.put(key, ce);
+    } else {
+        throw new IllegalArgumentException("Title for counters must be unique, and there is already a counter with title " + key);
+    }
 
-    this.addTag(c, title);
     return c;
   }
   
@@ -68,65 +136,23 @@ public class CounterStore implements ICounterStoreProvider {
    */
   @PostConstruct
   public void startUp() {
-    System.out.println("CounterStore startUp");
-    this.heartbeatCounter = this.createCounter("CounterStore heartbeat");
-    this.randomCounter = this.createCounter("CounterStore random");
-  //Set a background thread to flush any liveCounters every 100 milliseconds
-    Timer healthCheckTimer = new Timer();
-    healthCheckTimer.scheduleAtFixedRate(new TimerTask() {
+    this.heartbeatCounter = this.createCounter("CounterStore heartbeat", CounterValue.CounterType.LONG);
+    this.randomCounter = this.createCounter("CounterStore random", CounterValue.CounterType.LONG);
+    //Set a background thread to flush any liveCounters every 100 milliseconds
+    new FixedTimer(100, 100) {
         public void run() {
           heartbeatCounter.increment();
           randomCounter.increment(new Date(), (long) (Math.random() * 100)); //TODO - pull this in to random timing
         }
-    }, 100, 100);
+    };
   }
   
-  public ICounter getCounter(String title) {
-    @SuppressWarnings("unchecked")
-    Set<CounterEntry> ces = (Set<CounterEntry>)tagToCEIndex.get(title);
-    if(ces == null)
-      return null;
-    
-    for(CounterEntry ce : ces) {
-      if(ce.title.equals(title))
-        return ce.counter;
-    }
-    return null;
-  }
-
-  /* 
-   * Throws an IllegalArgumentException if the counter didn't come from this store (would be very odd - all counters should come from this
-   * store).
-   * 
-   * (Synchronized to avoid corruption of the index structures underneath, but note that thread-safetiness wrt to the get
-   * and search methods is not guaranteed.)
-   * 
-   * @see net.beaconcontroller.counter.ICounterStoreProvider#addMetadata(net.beaconcontroller.counter.ICounter, java.lang.String, java.lang.String)
-   */
-  @Override
-  public synchronized void addTag(ICounter counter, String tag) {
-    CounterEntry ce = this.counterToCEIndex.get(counter);
-    if(ce == null)
-      throw new IllegalArgumentException("Couldn't find counter " + counter + " in the CounterStore...");
-    
-    ce.tags.add(tag);
-    this.tagToCEIndex.put(tag, ce);
-  }
-
-  /* 
-   * Currently supports only exact matches.  TODO - support inexact matches.
-   * 
-   * @see net.beaconcontroller.counter.ICounterStoreProvider#search(java.lang.String, java.lang.String)
-   */
-  @Override
-  public Set<ICounter> search(String tag) {
-    @SuppressWarnings("unchecked")
-    Set<CounterEntry> ces = (Set<CounterEntry>)tagToCEIndex.get(tag);
-    HashSet<ICounter> ret = new HashSet<ICounter>();
-    for(CounterEntry ce : ces) {
-      ret.add(ce.counter);
-    }
-    return ret;
+  public ICounter getCounter(String key) {
+      if (nameToCEIndex.containsKey(key)) {
+          return nameToCEIndex.get(key).counter;
+      } else {
+          return null;
+      }
   }
 
   /**
@@ -135,10 +161,12 @@ public class CounterStore implements ICounterStoreProvider {
   @Override
   public Map<String, ICounter> getAll() {
     Map<String, ICounter> ret = new HashMap<String, ICounter>();
-    for(CounterEntry ce : this.allCounters)
-      ret.put(ce.title, ce.counter);
+    for(Map.Entry<String, CounterEntry> counterEntry : this.nameToCEIndex.entrySet()) {
+        String key = counterEntry.getKey();
+        ICounter counter = counterEntry.getValue().counter;
+        ret.put(key, counter);
+     }
     return ret;
   }
-
 
 }

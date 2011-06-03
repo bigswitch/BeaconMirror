@@ -9,20 +9,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
+import net.beaconcontroller.counter.CounterValue;
 import net.beaconcontroller.counter.CountSeries;
+import net.beaconcontroller.counter.CounterValue.CounterType;
 import net.beaconcontroller.counter.ICounter;
-import net.beaconcontroller.counter.ICounter.DateSpan;
+import net.beaconcontroller.util.FixedTimer;
 
 
 /**
+ * This module needs to be updated with CounterValue.
+ * 
  * This is a crumby attempt at a highly concurrent implementation of the Counter interface.
  * 
  * (Help! Help!  Someone please re-write me!  This will almost certainly break at high loads.)
@@ -43,6 +42,7 @@ public class ConcurrentCounter implements ICounter {
 
   protected static final Map<DateSpan, Integer> MAX_HISTORY = new HashMap<DateSpan, Integer>();
   static {
+    MAX_HISTORY.put(DateSpan.REALTIME, new Integer(1));
     MAX_HISTORY.put(DateSpan.SECONDS, new Integer(120));
     MAX_HISTORY.put(DateSpan.MINUTES, new Integer(60));
     MAX_HISTORY.put(DateSpan.HOURS, new Integer(48));
@@ -55,13 +55,12 @@ public class ConcurrentCounter implements ICounter {
   static {
     liveCounters = Collections.newSetFromMap(new ConcurrentHashMap<ConcurrentCounter, Boolean>()); //nifty way to get concurrent hash set
     //Set a background thread to flush any liveCounters every 100 milliseconds
-    Timer flushTimer = new Timer();
-    flushTimer.scheduleAtFixedRate(new TimerTask() {
+    new FixedTimer(100, 100) {
         public void run() {
           for(ConcurrentCounter c : liveCounters) {
             c.flush();
           }
-        }}, 100, 100);
+        }};
   }
 
   /**
@@ -108,16 +107,19 @@ public class ConcurrentCounter implements ICounter {
    * @param startDate
    */
   protected ConcurrentCounter(Date startDate) {
+    init(startDate);
+  }
+  
+  protected void init(Date startDate) {
     this.startDate = startDate;
     this.unprocessedCountBuffer = new ConcurrentLinkedQueue<CountAtom>();
     this.counts = new HashMap<DateSpan, CountBuffer>();
-    
+      
     for(DateSpan ds : DateSpan.values()) {
       CountBuffer cb = new CountBuffer(startDate, ds, MAX_HISTORY.get(ds));
       counts.put(ds, cb);
     }
   }
-  
   /**
    * This is the key method that has to be both fast and very thread-safe.
    */
@@ -129,6 +131,19 @@ public class ConcurrentCounter implements ICounter {
   @Override
   public void increment(Date d, long delta) {
     this.unprocessedCountBuffer.add(new CountAtom(d, delta));
+  }
+  
+  @Override
+  public void setCounter(Date d, CounterValue value) {
+      // To be done later
+  }
+  
+  /**
+   * Reset the value.
+   */
+  @Override
+  public void reset(Date startDate) {
+    init(startDate);
   }
   
   /**
@@ -144,7 +159,22 @@ public class ConcurrentCounter implements ICounter {
     }
   }
   
-
+  @Override
+  public CounterValue getCounterValue() {
+      // To be done later
+      //CountSeries cs = counts.get(DateSpan.REALTIME).snapshot();
+      //return cs.getSeries()[0];
+      return new CounterValue(CounterType.LONG);
+  }
+  
+  @Override
+  public Date getCounterDate() {
+      // To be done later
+      //CountSeries cs = counts.get(DateSpan.REALTIME).snapshot();
+      //return cs.getSeries()[0];
+      return new Date();
+  }
+  
   @Override
   /**
    * This method returns a disconnected copy of the underlying CountSeries corresponding to dateSpan.

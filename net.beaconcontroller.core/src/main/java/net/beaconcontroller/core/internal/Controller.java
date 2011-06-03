@@ -5,20 +5,26 @@ package net.beaconcontroller.core.internal;
 
 import java.io.IOException;
 import java.io.EOFException;
+import java.io.File;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.lang.Long;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -37,7 +43,14 @@ import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.IOFSwitchFilter;
 import net.beaconcontroller.core.IOFSwitchListener;
 import net.beaconcontroller.core.io.internal.OFStream;
+import net.beaconcontroller.counter.CounterValue;
+import net.beaconcontroller.counter.ICounter;
+import net.beaconcontroller.counter.ICounterStoreProvider;
+import net.beaconcontroller.counter.ICounterStoreProvider.NetworkLayer;
+import net.beaconcontroller.packet.Ethernet;
 import net.beaconcontroller.packet.IPv4;
+import net.beaconcontroller.storage.StorageException;
+import net.beaconcontroller.util.FixedTimer;
 
 import org.openflow.example.SelectListener;
 import org.openflow.example.SelectLoop;
@@ -58,13 +71,16 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFGetConfigReply;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFSetConfig;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.BasicFactory;
+import org.openflow.util.HexString;
 import org.openflow.util.U16;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +91,10 @@ import org.slf4j.LoggerFactory;
 public class Controller implements IBeaconProvider, IOFController, SelectListener {
     protected static Logger log = LoggerFactory.getLogger(Controller.class);
     protected static String SWITCH_REQUIREMENTS_TIMER_KEY = "SW_REQ_TIMER";
+    protected static String L3L4TypeFile = "/opt/bigswitch/L3L4TypeFile.json";
 
+    protected Map<String,String> l3TypeAliasMap;
+    protected Map<String,String> l4TypeAliasMap;
     protected Map<String,String> callbackOrdering;
     protected ExecutorService es;
     protected BasicFactory factory;
@@ -91,7 +110,16 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
     protected Integer threadCount;
     protected BlockingQueue<Update> updates;
     protected Thread updatesThread;
+    protected ICounterStoreProvider counterStore;
 
+    public ICounterStoreProvider getCounterStore() {
+        return counterStore;
+    }
+    
+    public void setCounterStore(ICounterStoreProvider counterStore) {
+        this.counterStore = counterStore;
+    }
+    
     protected class Update {
         public IOFSwitch sw;
         public boolean added;
@@ -112,13 +140,41 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
             new ConcurrentHashMap<OFType, List<IOFMessageListener>>();
         this.switchListeners = new CopyOnWriteArraySet<IOFSwitchListener>();
         this.updates = new LinkedBlockingQueue<Update>();
+        
+        init();
     }
 
+    protected void init() {
+        ObjectMapper mapper = new ObjectMapper();
+        
+        try {
+            HashMap<String,Object> untyped = mapper.readValue(new File(L3L4TypeFile), HashMap.class);
+            if (untyped.containsKey("l3")) {
+                l3TypeAliasMap = (HashMap<String, String>)untyped.get("l3");
+                for (Entry<String, String> entry : l3TypeAliasMap.entrySet()) {
+                    log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
+                }
+            }
+            if (untyped.containsKey("l4")) {
+                l4TypeAliasMap = (HashMap<String, String>)untyped.get("l4");
+                for (Entry<String, String> entry : l4TypeAliasMap.entrySet()) {
+                    log.debug("Type: " + entry.getKey() + "\tValue: " + entry.getValue());
+                }
+            }
+        } catch (Exception e) {
+            log.error("Exception while parsing file: " + L3L4TypeFile, e);
+        }
+    }
+    
     public void handleEvent(SelectionKey key, Object arg) throws IOException {
-        if (arg instanceof ServerSocketChannel)
-            handleListenEvent(key, (ServerSocketChannel)arg);
-        else
-            handleSwitchEvent(key, (IOFSwitch) arg);
+        try {
+            if (arg instanceof ServerSocketChannel)
+                handleListenEvent(key, (ServerSocketChannel)arg);
+            else
+                handleSwitchEvent(key, (IOFSwitch) arg);
+        } catch (Exception e) {
+            log.error("Exception while handling switch event", e);
+        }
     }
 
     protected void handleListenEvent(SelectionKey key, ServerSocketChannel ssc)
@@ -213,16 +269,138 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         OFPhysicalPort port = m.getDesc();
         if (m.getReason() == (byte)OFPortReason.OFPPR_MODIFY.ordinal()) {
             sw.setPort(port);
-            coreDao.modifiedPort(sw, port);
+            if (coreDao != null) {
+                try {
+                    coreDao.modifiedPort(sw, port);
+                }
+                catch (StorageException e) {
+                    log.error("Error updating port info to storage", e);
+                }
+            }
             log.debug("Port #{} modified for {}", portNumber, sw);
         } else if (m.getReason() == (byte)OFPortReason.OFPPR_ADD.ordinal()) {
             sw.setPort(port);
-            coreDao.addedPort(sw, port);
+            if (coreDao != null) {
+                try {
+                    coreDao.addedPort(sw, port);
+                }
+                catch (StorageException e) {
+                    log.error("Error adding new port info to storage", e);
+                }
+            }
             log.debug("Port #{} added for {}", portNumber, sw);
         } else if (m.getReason() == (byte)OFPortReason.OFPPR_DELETE.ordinal()) {
             sw.deletePort(portNumber);
-            coreDao.deletedPort(sw, portNumber);
+            if (coreDao != null) {
+                try {
+                    coreDao.deletedPort(sw, portNumber);
+                }
+                catch (StorageException e) {
+                    log.error("Error deleting port info from storage", e);
+                }
+            }
             log.debug("Port #{} deleted for {}", portNumber, sw);
+        }
+    }
+    
+    protected void updateCounters(IOFSwitch sw, OFMessage m) {
+        OFPacketIn packet = (OFPacketIn)m;
+        
+        /** Get the Ethernet packet from the PacketIn;
+         *  Then extract the etherType and protocol field for IPv4 packet.
+         */
+        Ethernet eth = new Ethernet();
+        eth.deserialize(packet.getPacketData(), 0, packet.getPacketData().length);        
+        String etherType = String.format("%04x", eth.getEtherType());
+        if (l3TypeAliasMap != null && l3TypeAliasMap.containsKey(etherType)) {
+            etherType = "L3_" + l3TypeAliasMap.get(etherType);
+        } else {
+            etherType = "L3_" + etherType;
+        }
+        String switchIdHex = HexString.toHexString(sw.getId());
+   
+        String packetName = m.getType().toClass().getName();
+        packetName = packetName.substring(packetName.lastIndexOf('.')+1); 
+        
+        // Construct both port and switch counter for the packet_in
+        String portCounterName = counterStore.createCounterName(switchIdHex, 
+                (int)packet.getInPort(), packetName);
+        String switchCounterName = counterStore.createCounterName(switchIdHex, 
+                -1, packetName);
+        
+        String portL3CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                (int)packet.getInPort(), packetName, etherType, NetworkLayer.L3);
+        String switchL3CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                -1, packetName, etherType, NetworkLayer.L3);
+        
+        try {
+            ICounter portCounter = counterStore.getCounter(portCounterName);
+            if (portCounter == null) {
+                portCounter = counterStore.createCounter(portCounterName, CounterValue.CounterType.LONG);
+            }
+            ICounter switchCounter = counterStore.getCounter(switchCounterName);
+            if (switchCounter == null) {
+                switchCounter = counterStore.createCounter(switchCounterName, CounterValue.CounterType.LONG);
+            }
+            ICounter portL3Counter = counterStore.getCounter(portL3CategoryCounterName);
+            if (portL3Counter == null) {
+                portL3Counter = counterStore.createCounter(portL3CategoryCounterName, CounterValue.CounterType.LONG);
+            }
+            ICounter switchL3Counter = counterStore.getCounter(switchL3CategoryCounterName);
+            if (switchL3Counter == null) {
+                switchL3Counter = counterStore.createCounter(switchL3CategoryCounterName, CounterValue.CounterType.LONG);
+            }
+            portCounter.increment();
+            switchCounter.increment();
+            portL3Counter.increment();
+            switchL3Counter.increment();
+            
+            /*
+            log.trace("Port Counter, " + portCounterName + " is incremented to " +
+                      portCounter.getCounterValue().getLong());
+            log.trace("Switch Counter, " + switchCounterName + " is incremented to " +
+                      portCounter.getCounterValue().getLong());
+            log.trace("Port L3 Counter, " + portL3CategoryCounterName + " is incremented to " +
+                      portL3Counter.getCounterValue().getLong());
+            log.trace("Switch L3 Counter, " + switchL3CategoryCounterName + " is incremented to " +
+                      switchL3Counter.getCounterValue().getLong());
+            */
+            
+            if (etherType.compareTo(ICounterStoreProvider.L3ET_IPV4) == 0) {
+                IPv4 ipV4 = (IPv4)eth.getPayload();
+                String l4Type = String.format("%02x", ipV4.getProtocol());
+                if (l4TypeAliasMap != null && l4TypeAliasMap.containsKey(l4Type)) {
+                    l4Type = "L4_" + l4TypeAliasMap.get(l4Type);
+                } else {
+                    l4Type = "L4_" + l4Type;
+                }
+                String portL4CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                        (int)packet.getInPort(), packetName, l4Type, NetworkLayer.L4);
+                String switchL4CategoryCounterName = counterStore.createCounterName(switchIdHex, 
+                        -1, packetName, l4Type, NetworkLayer.L4);
+                
+                ICounter portL4Counter = counterStore.getCounter(portL4CategoryCounterName);
+                if (portL4Counter == null) {
+                    portL4Counter = counterStore.createCounter(portL4CategoryCounterName, CounterValue.CounterType.LONG);
+                }
+                ICounter switchL4Counter = counterStore.getCounter(switchL4CategoryCounterName);
+                if (switchL4Counter == null) {
+                    switchL4Counter = counterStore.createCounter(switchL4CategoryCounterName, CounterValue.CounterType.LONG);
+                }
+                portL4Counter.increment();
+                switchL4Counter.increment();
+                
+                /*
+                log.trace("Port L4 Counter, " + portL4CategoryCounterName + " is incremented to " +
+                          portL4Counter.getCounterValue().getLong());
+                log.trace("Switch L4 Counter, " + switchL4CategoryCounterName + " is incremented to " +
+                          switchL4Counter.getCounterValue().getLong());
+                */
+            }
+
+        }
+        catch (IllegalArgumentException e) {
+            log.error("Invalid Counter, " + portCounterName + " or " + switchCounterName);
         }
     }
     
@@ -279,6 +457,12 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                     OFError error = (OFError) m;
                     logError(sw, error);
                     break;
+                case PACKET_IN:
+                    
+                    if (counterStore != null && sw.getFeaturesReply() != null) {
+                        updateCounters (sw, m);
+                    }
+
                 default:
                     // Don't pass along messages until we have the features reply
                     if (sw.getFeaturesReply() == null) {
@@ -297,7 +481,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                             try {
                                 if (listener instanceof IOFSwitchFilter) {
                                     if (!((IOFSwitchFilter)listener).isInterested(sw)) {
-                                        break;
+                                        continue;
                                     }
                                 }
                                 if (Command.STOP.equals(listener.receive(sw, m))) {
@@ -358,8 +542,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
      * @param sw
      */
     protected void startSwitchRequirementsTimer(final IOFSwitch sw) {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        FixedTimer timer = new FixedTimer(500, 500) {
             @Override
             public void run() {
                 try {
@@ -384,12 +567,12 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                     stopSwitchRequirementsTimer(sw);
                     log.error("Exception in switch requirements timer", e);
                 }
-            }}, 500, 500);
+            }};
         sw.getAttributes().put(SWITCH_REQUIREMENTS_TIMER_KEY, timer);
     }
 
     protected void stopSwitchRequirementsTimer(final IOFSwitch sw) {
-        Timer timer = (Timer) sw.getAttributes().get(
+        FixedTimer timer = (FixedTimer) sw.getAttributes().get(
                 SWITCH_REQUIREMENTS_TIMER_KEY);
         if (timer != null) {
             timer.cancel();
@@ -449,6 +632,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
     }
 
     public void startUp() throws IOException {
+        
         listenSock = ServerSocketChannel.open();
         listenSock.configureBlocking(false);
         if (listenAddress != null) {
@@ -503,6 +687,11 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                         sl.doLoop();
                     } catch (Exception e) {
                         log.error("Exception during worker loop, terminating thread", e);
+                        // Terminating the thread seems like a terrible idea under any
+                        // circumstances, since it would leave the controller process
+                        // running yet unable to communicate with a subset of switches;
+                        // we avoid this by catching all exceptions in handleEvent, which
+                        // is invoked by SelectLoop.doLoop
                     }
                 }}
             );
@@ -515,6 +704,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                     listenSelectLoop.doLoop();
                 } catch (Exception e) {
                     log.error("Exception during accept loop, terminating thread", e);
+                    // See note about thread termination above
                 }
             }}
         );
@@ -549,7 +739,7 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
                             }
                         }
                     } catch (InterruptedException e) {
-                        log.warn("Controller updates thread interupted", e);
+                        log.warn("Controller updates thread interrupted", e);
                         if (shuttingDown)
                             return;
                     }
@@ -688,6 +878,39 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         return getListenAddress() + ":" + Integer.toString(getListenPort());
     }
     
+    /**
+     * Gets the first non-loopback IP address that it finds in 'ifconfig'
+     * @param preferIPv6 Whether to prefer IPv6 addresses over IPv4
+     * @return The first non-loopback IPv4/6 address or null if none exists
+     * @throws SocketException
+     */
+    private static InetAddress getFirstNonLoopbackAddress(boolean preferIPv6) throws SocketException {
+        Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
+        while (en.hasMoreElements()) {
+            NetworkInterface i = (NetworkInterface) en.nextElement();
+            for (Enumeration<InetAddress> en2 = i.getInetAddresses(); en2.hasMoreElements();) {
+                InetAddress addr = (InetAddress) en2.nextElement();
+                if (!addr.isLoopbackAddress()) {
+                    if (addr instanceof Inet4Address) {
+                        if (preferIPv6) {
+                            continue;
+                        }
+                        log.debug("Got address {} for controller node", addr.getHostAddress());
+                        return addr;
+                    }
+                    if (addr instanceof Inet6Address) {
+                        if (!preferIPv6) {
+                            continue;
+                        }
+                        return addr;
+                    }
+                }
+            }
+        }
+        log.debug("No non-loopback IP found!");
+        return null;
+    }
+    
     @Override
     public String getListenAddress() {
         if (listenAddress != null)
@@ -695,9 +918,12 @@ public class Controller implements IBeaconProvider, IOFController, SelectListene
         
         String localAddress = "UnknownAddress";
         try {
-            localAddress = InetAddress.getLocalHost().getHostAddress();
+            InetAddress ip = getFirstNonLoopbackAddress(false);
+            if (ip != null) {
+                localAddress = ip.getHostAddress();
+            }
         }
-        catch (Exception e) {
+        catch (SocketException e) {
             log.error("Error getting local IP address", e);
         }
         return localAddress;

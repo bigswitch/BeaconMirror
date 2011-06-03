@@ -13,4 +13,8 @@
   <osgi:reference id="packageAdmin" cardinality="1..1"
     interface="org.osgi.service.packageadmin.PackageAdmin">
   </osgi:reference>
+  
+    <osgi:reference id="counterStoreProvider" cardinality="1..1"
+    interface="net.beaconcontroller.counter.ICounterStoreProvider">
+  </osgi:reference>
 </beans>

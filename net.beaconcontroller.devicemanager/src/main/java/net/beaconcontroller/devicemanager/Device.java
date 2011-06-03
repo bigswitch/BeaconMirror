@@ -1,10 +1,10 @@
 package net.beaconcontroller.devicemanager;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.topology.SwitchPortTuple;
 
@@ -17,19 +17,12 @@ import org.openflow.util.HexString;
  */
 public class Device {
     protected byte[] dataLayerAddress;
-    protected Queue<Integer> networkAddresses;
-    protected Queue<SwitchPortTuple> swPorts;
-    protected Date lastSeen;
-    protected Date lastSeenInDb;
-    boolean shouldUpdateLastSeenToDb;
+    Map<Integer, DeviceNetworkAddress> networkAddresses;
+    Map<SwitchPortTuple, DeviceAttachmentPoint> attachmentPoints;
 
     public Device() {
-        this.networkAddresses = new ConcurrentLinkedQueue<Integer>();
-        this.swPorts = new ConcurrentLinkedQueue<SwitchPortTuple>();
-        lastSeen = new Date();
-        lastSeenInDb = null;
-        shouldUpdateLastSeenToDb = true;
-        // TODO - Alex - we need to read this from the db because it might be aged out in Beacon?
+        this.networkAddresses = new ConcurrentHashMap<Integer, DeviceNetworkAddress>();
+        this.attachmentPoints = new ConcurrentHashMap<SwitchPortTuple, DeviceAttachmentPoint>();
     }
 
     /**
@@ -49,70 +42,105 @@ public class Device {
     /**
      * @return the swPorts
      */
-    public Queue<SwitchPortTuple> getSwPorts() {
-        return swPorts;
+    public Collection<DeviceAttachmentPoint> getAttachmentPoints() {
+        return attachmentPoints.values();
     }
 
+    public DeviceAttachmentPoint getAttachmentPoint(SwitchPortTuple switchPort) {
+        return attachmentPoints.get(switchPort);
+    }
+    
+    public void addAttachmentPoint(DeviceAttachmentPoint attachmentPoint) {
+        attachmentPoints.put(attachmentPoint.getSwitchPort(), attachmentPoint);
+    }
+    
+    public void addAttachmentPoint(SwitchPortTuple switchPort, Date lastSeen) {
+        DeviceAttachmentPoint attachmentPoint = new DeviceAttachmentPoint(switchPort, lastSeen);
+        attachmentPoints.put(switchPort, attachmentPoint);
+    }
+    
+    public DeviceAttachmentPoint removeAttachmentPoint(DeviceAttachmentPoint attachmentPoint) {
+        return attachmentPoints.remove(attachmentPoint.getSwitchPort());
+    }
+    
+    public DeviceAttachmentPoint removeAttachmentPoint(SwitchPortTuple switchPort) {
+        return attachmentPoints.remove(switchPort);
+    }
+    
     /**
-     * @param swPort the swPort to set
+     * @param attachmentPoints the new collection of attachment points for the device
      */
-    public void setSwPorts(Queue<SwitchPortTuple> swPorts) {
-        this.swPorts = swPorts;
+    public void setAttachmentPoints(Collection<DeviceAttachmentPoint> attachmentPoints) {
+        // FIXME: Should we really be exposing this method? Who would use it?
+        this.attachmentPoints = new ConcurrentHashMap<SwitchPortTuple, DeviceAttachmentPoint>();
+        for (DeviceAttachmentPoint attachmentPoint: attachmentPoints) {
+            assert(attachmentPoint.getSwitchPort() != null);
+            this.attachmentPoints.put(attachmentPoint.getSwitchPort(), attachmentPoint);
+        }
     }
 
     /**
      * @return the networkAddresses
      */
-    public Queue<Integer> getNetworkAddresses() {
-        return networkAddresses;
+    public Collection<DeviceNetworkAddress> getNetworkAddresses() {
+        return networkAddresses.values();
     }
 
+    public DeviceNetworkAddress getNetworkAddress(Integer networkAddress) {
+        return networkAddresses.get(networkAddress);
+    }
+    
+    public void addNetworkAddress(DeviceNetworkAddress networkAddress) {
+        networkAddresses.put(networkAddress.getNetworkAddress(), networkAddress);
+    }
+    
+    public void addNetworkAddress(Integer networkAddress, Date lastSeen) {
+        DeviceNetworkAddress deviceNetworkAddress = new DeviceNetworkAddress(networkAddress, lastSeen);
+        networkAddresses.put(networkAddress, deviceNetworkAddress);
+    }
+
+    public DeviceNetworkAddress removeNetworkAddress(Integer networkAddress) {
+        return networkAddresses.remove(networkAddress);
+    }
+
+    public DeviceNetworkAddress removeNetworkAddress(DeviceNetworkAddress networkAddress) {
+        return networkAddresses.remove(networkAddress.getNetworkAddress());
+    }
+    
     /**
      * @param networkAddresses the networkAddresses to set
      */
-    public void setNetworkAddresses(Queue<Integer> networkAddresses) {
-        this.networkAddresses = networkAddresses;
-    }
-    
-    /**
-     * Updates the last seen timestamp for the device
-     */
-    public void updateLastSeen() {
-        shouldUpdateLastSeenToDb = false;
-        lastSeen.setTime(System.currentTimeMillis());
-        /*
-         * We only update the DB if it has not been updated in an hour.
-         * This is done in order to prevent too many writes to the DB.
-         * TODO - Alex - find a better update strategy. This one will
-         * not work well in some edge cases (i.e. a flow starts at
-         * minute 59).
-         */
-        if ((lastSeenInDb == null) || (lastSeen.getTime() - lastSeenInDb.getTime()) > 3600000) {
-            if (lastSeenInDb == null) {
-                lastSeenInDb = new Date(lastSeen.getTime());
-            } else {
-                lastSeenInDb.setTime(lastSeen.getTime());
-            }
-            System.out.println("shouldUpdateLastSeenToDb = true");
-            shouldUpdateLastSeenToDb = true;
+    public void setNetworkAddresses(Collection<DeviceNetworkAddress> networkAddresses) {
+        // FIXME: Should we really be exposing this method? Who would use it?
+        this.networkAddresses = new ConcurrentHashMap<Integer, DeviceNetworkAddress>();
+        for (DeviceNetworkAddress networkAddress: networkAddresses) {
+            assert(networkAddress.getNetworkAddress() != null);
+            this.networkAddresses.put(networkAddress.getNetworkAddress(), networkAddress);
         }
     }
     
-    /**
-     * Checks to see if we should write the last seen timestamp to the storage service.
-     * @return True if we should udpate the storage service, false otherwise
-     */
-    public boolean shouldUpdateLastSeenStorage() {
-        return shouldUpdateLastSeenToDb;
-    }
-    
-    /**
-     * Gets the UTC timestamp when the device was last seen.
-     * @return The UTC timestamp of when the device was last seen.
-     */
-    public Date getLastSeenDate() {
-        return lastSeen;
-    }
+//    /**
+//     * Updates the last seen timestamp for the device
+//     */
+//    public void updateLastSeen() {
+//        shouldUpdateLastSeenToDb = false;
+//        lastSeen.setTime(System.currentTimeMillis());
+//        /*
+//         * We only update the DB if it has not been updated in an hour.
+//         * This is done in order to prevent too many writes to the DB.
+//         * TODO - Alex - find a better update strategy. This one will
+//         * not work well in some edge cases (i.e. a flow starts at
+//         * minute 59).
+//         */
+//        if ((lastSeenInDb == null) || (lastSeen.getTime() - lastSeenInDb.getTime()) > 3600000) {
+//            if (lastSeenInDb == null) {
+//                lastSeenInDb = new Date(lastSeen.getTime());
+//            } else {
+//                lastSeenInDb.setTime(lastSeen.getTime());
+//            }
+//            shouldUpdateLastSeenToDb = true;
+//        }
+//    }
     
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
@@ -122,10 +150,8 @@ public class Device {
         final int prime = 2633;
         int result = 1;
         result = prime * result + Arrays.hashCode(dataLayerAddress);
-        result = prime
-                * result
-                + ((networkAddresses == null) ? 0 : networkAddresses.hashCode());
-        result = prime * result + ((swPorts == null) ? 0 : swPorts.hashCode());
+        result = prime * result + ((networkAddresses == null) ? 0 : networkAddresses.hashCode());
+        result = prime * result + ((attachmentPoints == null) ? 0 : attachmentPoints.hashCode());
         return result;
     }
 
@@ -146,14 +172,12 @@ public class Device {
         if (networkAddresses == null) {
             if (other.networkAddresses != null)
                 return false;
-        } else if (!Arrays.equals(networkAddresses.toArray(new Integer[0]),
-                other.networkAddresses.toArray(new Integer[0])))
+        } else if (!networkAddresses.equals(other.networkAddresses))
             return false;
-        if (swPorts == null) {
-            if (other.swPorts != null)
+        if (attachmentPoints == null) {
+            if (other.attachmentPoints != null)
                 return false;
-        } else if (!Arrays.equals(swPorts.toArray(new SwitchPortTuple[0]),
-                other.swPorts.toArray(new SwitchPortTuple[0])))
+        } else if (!attachmentPoints.equals(other.attachmentPoints))
             return false;
         return true;
     }
@@ -163,9 +187,10 @@ public class Device {
      */
     @Override
     public String toString() {
+        
         return "Device [dataLayerAddress=" + 
                 ((dataLayerAddress == null) ? "null" : HexString.toHexString(dataLayerAddress)) +
-                ", swPorts=" + swPorts + ", networkAddresses="
-                + IPv4.fromIPv4AddressCollection(networkAddresses) + "]";
+                ", attachmentPoints=" + attachmentPoints + ", networkAddresses="
+                + IPv4.fromIPv4AddressCollection(networkAddresses.keySet()) + "]";
     }
 }

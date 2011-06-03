@@ -20,6 +20,9 @@ import java.util.List;
 import net.beaconcontroller.core.IBeaconProvider;
 import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFSwitch;
+import net.beaconcontroller.counter.CounterValue;
+import net.beaconcontroller.counter.ICounter;
+import net.beaconcontroller.counter.ICounterStoreProvider;
 import net.beaconcontroller.packet.Ethernet;
 
 import org.openflow.protocol.OFError;
@@ -42,6 +45,7 @@ import org.slf4j.LoggerFactory;
 public class LearningSwitch implements IOFMessageListener {
     protected static Logger log = LoggerFactory.getLogger(LearningSwitch.class);
     protected IBeaconProvider beaconProvider;
+    protected ICounterStoreProvider counterStore;
 
     // flow-mod - for use in the cookie
     public static final int LEARNING_SWITCH_APP_ID = 1;
@@ -57,8 +61,8 @@ public class LearningSwitch implements IOFMessageListener {
     protected static final short PRIORITY_DEFAULT = 100;
     
     // for managing our map sizes
-    protected static final int MAX_MACS_PER_SWITCH  = 1000;
-    
+    protected static final int MAX_MACS_PER_SWITCH  = 1000;    
+
     public LearningSwitch() {
     }
     
@@ -67,6 +71,14 @@ public class LearningSwitch implements IOFMessageListener {
      */
     public void setBeaconProvider(IBeaconProvider beaconProvider) {
         this.beaconProvider = beaconProvider;
+    }
+    
+    public ICounterStoreProvider getCounterStore() {
+        return counterStore;
+    }
+    
+    public void setCounterStore(ICounterStoreProvider counterStore) {
+        this.counterStore = counterStore;
     }
     
     public void startUp() {
@@ -152,6 +164,23 @@ public class LearningSwitch implements IOFMessageListener {
 
         // and write it out
         try {
+            if (counterStore != null) {
+                String packetName = flowMod.getType().toClass().getName();
+                packetName = packetName.substring(packetName.lastIndexOf('.')+1);
+                // flowmod is per switch. portid = -1
+                String counterName = counterStore.createCounterName(HexString.toHexString(sw.getId()), -1, packetName);
+                try {
+                    ICounter counter = counterStore.getCounter(counterName);
+                    if (counter == null) {
+                        counter = counterStore.createCounter(counterName, CounterValue.CounterType.LONG);
+                    }
+                    counter.increment();
+                    //log.debug("Counter, " + counterName + " is incremented to " + counter.getCounterValue().getLong());
+                }
+                catch (IllegalArgumentException e) {
+                    log.error("Invalid Counter, " + counterName);
+                }
+            }
             sw.getOutputStream().write(flowMod);
         } catch (IOException e) {
             log.error("Failed to write {} to switch {}", new Object[]{ flowMod, sw }, e);

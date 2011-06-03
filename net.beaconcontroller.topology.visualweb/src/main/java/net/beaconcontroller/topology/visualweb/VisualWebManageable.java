@@ -20,7 +20,6 @@ import net.beaconcontroller.web.view.Tab;
 import net.beaconcontroller.web.view.layout.Layout;
 import net.beaconcontroller.web.view.layout.OneColumnLayout;
 import net.beaconcontroller.web.view.layout.TwoColumnLayout;
-import net.beaconcontroller.web.view.section.JspSection;
 import net.beaconcontroller.web.view.section.StringSection;
 
 import org.slf4j.Logger;

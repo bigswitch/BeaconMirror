@@ -1,5 +1,11 @@
 package net.beaconcontroller.devicemanager;
 
+/**
+ * Used to interact with DeviceManager implementations
+ *
+ * @author David Erickson (daviderickson@cs.stanford.edu)
+ */
+
 import java.util.List;
 
 /**

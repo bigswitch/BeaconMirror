@@ -2,9 +2,6 @@ package net.beaconcontroller.counter;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.springframework.stereotype.Service;
 
 /**
  * Interface in to the CounterStore.  The CounterStore is intended to be a singleton repository of all of the human-facing
@@ -15,8 +12,36 @@ import org.springframework.stereotype.Service;
  * @author kyle
  *
  */
-@Service
 public interface ICounterStoreProvider {
+  public final String TitleDelimitor = "_";
+    
+  /** L2 EtherType subCategories */
+  public final String L3ET_IPV4 = "L3_IPv4";
+  
+  public enum NetworkLayer {
+      L3, L4
+  }
+  
+  /**
+   * Create a title based on switch ID, portID, vlanID, and counterName
+   * If portID is -1, the title represents the given switch only
+   * If portID is a non-negative number, the title represents the port on the given switch
+   */
+  public String createCounterName(String switchID, int portID, String counterName);
+  
+  /**
+   * Create a title based on switch ID, portID, vlanID, counterName, and subCategory
+   * If portID is -1, the title represents the given switch only
+   * If portID is a non-negative number, the title represents the port on the given switch
+   * For example: PacketIns can be further categorized based on L2 etherType or L3 protocol
+   */
+  public String createCounterName(String switchID, int portID, String counterName, String subCategory, NetworkLayer layer);
+  
+  /**
+   * Retrieve a list of subCategories by counterName.
+   * null if nothing.
+   */
+  public List<String> getAllCategories(String counterName, NetworkLayer layer);
   
   /**
    * Create a new ICounter and set the title.  Note that the title must be unique, otherwise this will
@@ -25,27 +50,13 @@ public interface ICounterStoreProvider {
    * @param title
    * @return
    */
-  public ICounter createCounter(String title);
+  public ICounter createCounter(String title, CounterValue.CounterType type);
   
   /**
    * Retrieves a counter with the given title, or null if none can be found.
    */
   public ICounter getCounter(String title);
-  
-  /**
-   * Adds search-able (human readable) metadata tag
-   * to an instance of a counter.
-   * 
-   */
-  public void addTag(ICounter counter, String tag);
-  
-  /**
-   * Search the store for counters that have the specified tag.
-   * 
-   * @param key
-   * @param value
-   */
-  public Set<ICounter> search(String tag);
+
   
   /**
    * Returns an immutable map of title:counter with all of the counters in the store.
@@ -53,4 +64,5 @@ public interface ICounterStoreProvider {
    * (Note - this method may be slow - primarily for debugging/UI)
    */
   public Map<String, ICounter> getAll();
+  
 }

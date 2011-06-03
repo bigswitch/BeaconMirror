@@ -19,6 +19,10 @@ import net.beaconcontroller.core.IOFMessageListener;
 import net.beaconcontroller.core.IOFMessageListener.Command;
 import net.beaconcontroller.core.IOFSwitch;
 import net.beaconcontroller.core.test.MockBeaconProvider;
+import net.beaconcontroller.packet.ARP;
+import net.beaconcontroller.packet.Ethernet;
+import net.beaconcontroller.packet.IPacket;
+import net.beaconcontroller.packet.IPv4;
 import net.beaconcontroller.test.BeaconTestCase;
 
 import org.junit.Test;
@@ -27,6 +31,7 @@ import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFStatisticsReply;
 import org.openflow.protocol.OFType;
+import org.openflow.protocol.OFPacketIn.OFPacketInReason;
 import org.openflow.protocol.statistics.OFFlowStatisticsReply;
 import org.openflow.protocol.statistics.OFStatistics;
 import org.openflow.protocol.statistics.OFStatisticsType;
@@ -127,8 +132,35 @@ public class ControllerTest extends BeaconTestCase {
         controller.setCallbackOrdering(callbackOrdering);
 
         IOFSwitch sw = createMock(IOFSwitch.class);
+        expect(sw.getId()).andReturn(new Long(0));
         expect(sw.getFeaturesReply()).andReturn(new OFFeaturesReply()).anyTimes();
-        OFPacketIn pi = new OFPacketIn();
+        
+        // Build our test packet
+        IPacket testPacket = new Ethernet()
+            .setSourceMACAddress("00:44:33:22:11:00")
+            .setDestinationMACAddress("00:11:22:33:44:55")
+            .setEtherType(Ethernet.TYPE_ARP)
+            .setPayload(
+                    new ARP()
+                    .setHardwareType(ARP.HW_TYPE_ETHERNET)
+                    .setProtocolType(ARP.PROTO_TYPE_IP)
+                    .setHardwareAddressLength((byte) 6)
+                    .setProtocolAddressLength((byte) 4)
+                    .setOpCode(ARP.OP_REPLY)
+                    .setSenderHardwareAddress(Ethernet.toMACAddress("00:44:33:22:11:00"))
+                    .setSenderProtocolAddress(IPv4.toIPv4AddressBytes("192.168.1.1"))
+                    .setTargetHardwareAddress(Ethernet.toMACAddress("00:11:22:33:44:55"))
+                    .setTargetProtocolAddress(IPv4.toIPv4AddressBytes("192.168.1.2")));
+        byte[] testPacketSerialized = testPacket.serialize();
+
+        // Build the PacketIn        
+        OFPacketIn pi = new OFPacketIn()
+                .setBufferId(-1)
+                .setInPort((short) 1)
+                .setPacketData(testPacketSerialized)
+                .setReason(OFPacketInReason.NO_MATCH)
+                .setTotalLength((short) testPacketSerialized.length);
+        
         IOFMessageListener test1 = createMock(IOFMessageListener.class);
         expect(test1.getName()).andReturn("test1").anyTimes();
         expect(test1.receive(sw, pi)).andThrow(new RuntimeException("Catch me!"));
@@ -145,6 +177,7 @@ public class ControllerTest extends BeaconTestCase {
         // verify STOP works
         reset(test1, test2, sw);
         expect(test1.receive(sw, pi)).andReturn(Command.STOP);
+        expect(sw.getId()).andReturn(new Long(0));
         expect(sw.getFeaturesReply()).andReturn(new OFFeaturesReply()).anyTimes();
         replay(test1, test2, sw);
         controller.handleMessages(sw, Arrays.asList(new OFMessage[] {pi}));

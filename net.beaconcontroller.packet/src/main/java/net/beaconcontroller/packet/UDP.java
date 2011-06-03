@@ -13,8 +13,12 @@ public class UDP extends BasePacket {
 
     static {
         decodeMap = new HashMap<Short, Class<? extends IPacket>>();
+        /*
+         * Disable DHCP until the deserialize code is hardened to deal with garbage input
+         *
         UDP.decodeMap.put((short)67, DHCP.class);
         UDP.decodeMap.put((short)68, DHCP.class);
+        */
     }
 
     protected short sourcePort;
